@@ -1,0 +1,202 @@
+// CMS Nova - Base Schema
+// This can be extended in your project's schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --------- USUARIOS Y AUTENTICACIÓN ---------
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime? // Cambiar a DateTime para Better Auth
+  name          String?
+  image         String?
+  password      String?   // Agregar campo password
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  role          String    @default("USER")
+  accounts      Account[]
+  banned        Boolean?
+  banReason     String?
+  banExpires    DateTime?
+  sessions      Session[]
+
+  @@map("user")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  idToken               String?   @db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?   @db.Text
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  expiresAt             DateTime?
+
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@map("account")
+}
+
+model Session {
+  id             String   @id
+  expiresAt      DateTime
+  token          String
+  createdAt      DateTime
+  updatedAt      DateTime
+  ipAddress      String?
+  userAgent      String?
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impersonatedBy String?
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+// --------- DESTINOS ---------
+model Destination {
+  id     String @id @default(cuid())
+  name   String @unique
+  plans  Plan[]
+}
+
+// --------- CONTENIDO/PLANES ---------
+model Plan {
+  id                   String   @id @default(cuid())
+  mainTitle            String
+  articleAlias         String   @unique
+  categoryAlias        String
+  promotionalText      String   @db.Text
+  attractionsTitle     String
+  attractionsText      String   @db.Text
+  transfersTitle       String
+  transfersText        String   @db.Text
+  holidayTitle         String
+  holidayText          String   @db.Text
+  destinationId        String?
+  destination          Destination? @relation(fields: [destinationId], references: [id])
+  includes             String   @db.Text
+  notIncludes          String   @db.Text
+  itinerary            Json[]
+  priceOptions         Json[]
+  generalPolicies      String?  @db.Text
+  transportOptions     Json[]
+  allowGroundTransport Boolean  @default(false)
+  videoUrl             String?
+  mainImage            Json?
+  published            Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("plans")
+}
+
+// --------- ACTIVIDAD Y LOGS ---------
+model ActivityLog {
+  id          String   @id @default(cuid())
+  type        String
+  description String
+  userId      String?
+  userName    String?
+  metadata    Json?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  @@map("activity_log")
+}
+
+// --------- CONFIGURACIÓN ---------
+model NovaConfig {
+  id       String @id @default(cuid())
+  key      String @unique
+  value    Json
+  category String @default("general")
+  updatedAt DateTime @updatedAt
+
+  @@map("nova_config")
+}
+
+// --------- CONSTRUCTOR DE CONTENIDO (HEADLESS) ---------
+
+// Modelo para definir un tipo de contenido personalizado (ej: Blog Post, Producto, Evento)
+model ContentType {
+  id            String    @id @default(cuid())
+  name          String    // Nombre legible por humanos (ej: "Post de Blog")
+  apiIdentifier String    @unique // Identificador para la API (ej: "blogPost")
+  description   String?
+  fields        Field[]   // Lista de campos que define este tipo de contenido
+  entries       ContentEntry[] // Las entradas de contenido reales de este tipo
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("content_types")
+}
+
+// Modelo para definir un campo dentro de un tipo de contenido
+model Field {
+  id              String      @id @default(cuid())
+  label           String      // Etiqueta del campo en la UI (ej: "Título del Post")
+  apiIdentifier   String      // Identificador para la API (ej: "title")
+  type            FieldType   // El tipo de campo (Texto, Número, etc.)
+  isRequired      Boolean     @default(false)
+  
+  contentTypeId   String
+  contentType     ContentType @relation(fields: [contentTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([contentTypeId, apiIdentifier])
+  @@map("fields")
+}
+
+// Modelo para una entrada de contenido real (ej: un post de blog específico)
+model ContentEntry {
+  id              String      @id @default(cuid())
+  contentTypeId   String
+  contentType     ContentType @relation(fields: [contentTypeId], references: [id], onDelete: Cascade)
+  
+  // Los datos reales se guardan como un objeto JSON flexible.
+  // La estructura de este JSON será validada contra los Fields de su ContentType.
+  data            Json
+  
+  status          String      @default("draft") // draft, published, archived
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  @@map("content_entries")
+}
+
+// Enum para los diferentes tipos de campos que se pueden crear
+enum FieldType {
+  TEXT
+  RICH_TEXT
+  NUMBER
+  BOOLEAN
+  DATE
+  MEDIA
+} 
