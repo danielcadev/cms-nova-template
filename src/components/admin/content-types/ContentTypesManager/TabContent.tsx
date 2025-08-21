@@ -1,20 +1,20 @@
-﻿'use client';
+﻿'use client'
 
-import { Info, Eye, Settings2, Layers3, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { FieldCard, SortableFieldCard } from './FieldCard';
-import { NewFieldForm } from './NewFieldForm';
+import { Eye, Info, Layers3, Plus, Settings2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { SortableFieldCard } from './FieldCard'
+import { NewFieldForm } from './NewFieldForm'
 
 interface TabContentProps {
-  activeTab: string;
-  formData: any;
-  showNewFieldForm: boolean;
-  onShowNewFieldForm: () => void;
-  onHideNewFieldForm: () => void;
-  onAddField: (field: any) => void;
-  onDeleteField: (fieldId: string) => void;
-  onFieldsReorder: (fields: any[]) => void;
-  isDragOver: boolean;
+  activeTab: string
+  formData: any
+  showNewFieldForm: boolean
+  onShowNewFieldForm: () => void
+  onHideNewFieldForm: () => void
+  onAddField: (field: any) => void
+  onDeleteField: (fieldId: string) => void
+  onFieldsReorder: (fields: any[]) => void
+  isDragOver: boolean
 }
 
 export function TabContent({
@@ -25,8 +25,8 @@ export function TabContent({
   onHideNewFieldForm,
   onAddField,
   onDeleteField,
-  onFieldsReorder,
-  isDragOver
+  onFieldsReorder: _onFieldsReorder,
+  isDragOver,
 }: TabContentProps) {
   const renderFieldsTab = () => (
     <div className="space-y-6">
@@ -37,7 +37,9 @@ export function TabContent({
           </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Campos del Contenido</h3>
-            <p className="text-sm text-gray-600">Define qué información podrán agregar los usuarios</p>
+            <p className="text-sm text-gray-600">
+              Define qué información podrán agregar los usuarios
+            </p>
           </div>
         </div>
         <div>
@@ -54,10 +56,9 @@ export function TabContent({
 
       <div
         className={`border-2 border-dashed rounded-lg p-4 transition-all duration-300 ${
-          isDragOver 
-            ? 'border-blue-400 bg-blue-50/50 shadow-md' 
-            : 'border-gray-200 bg-gray-50/30'
-        }`}>
+          isDragOver ? 'border-blue-400 bg-blue-50/50 shadow-md' : 'border-gray-200 bg-gray-50/30'
+        }`}
+      >
         {formData?.fields?.length > 0 ? (
           <div className="space-y-3">
             {formData.fields.map((field: any, index: number) => (
@@ -74,9 +75,7 @@ export function TabContent({
             <div className="mx-auto w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
               <Layers3 className="h-10 w-10 text-gray-400" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              No hay campos definidos
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay campos definidos</h3>
             <p className="text-sm text-gray-500 mb-6 max-w-md mx-auto">
               Comienza añadiendo campos para definir la estructura de tu contenido
             </p>
@@ -97,7 +96,7 @@ export function TabContent({
         )}
       </div>
     </div>
-  );
+  )
 
   const renderInfoTab = () => (
     <div className="max-w-3xl mx-auto">
@@ -110,25 +109,23 @@ export function TabContent({
           <p className="text-sm text-gray-600">Detalles y configuración general</p>
         </div>
       </div>
-      
+
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Nombre del Tipo
-              </label>
+              <div className="block text-sm font-semibold text-gray-700 mb-2">Nombre del Tipo</div>
               <div className="bg-gray-50 rounded-lg p-3 border">
                 <p className="text-base font-medium text-gray-900">
                   {formData?.name || 'Sin nombre'}
                 </p>
               </div>
             </div>
-            
+
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <div className="block text-sm font-semibold text-gray-700 mb-2">
                 Identificador API
-              </label>
+              </div>
               <div className="bg-gray-50 rounded-lg p-3 border">
                 <p className="text-base font-medium text-gray-900 font-mono">
                   {formData?.apiIdentifier || 'sin_identificador'}
@@ -136,34 +133,28 @@ export function TabContent({
               </div>
             </div>
           </div>
-          
+
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Descripción
-              </label>
+              <div className="block text-sm font-semibold text-gray-700 mb-2">Descripción</div>
               <div className="bg-gray-50 rounded-lg p-3 border min-h-[80px]">
                 <p className="text-gray-900 text-sm">
                   {formData?.description || 'Sin descripción'}
                 </p>
               </div>
             </div>
-            
+
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Total de Campos
-              </label>
+              <div className="block text-sm font-semibold text-gray-700 mb-2">Total de Campos</div>
               <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
-                <p className="text-xl font-bold text-blue-600">
-                  {formData?.fields?.length || 0}
-                </p>
+                <p className="text-xl font-bold text-blue-600">{formData?.fields?.length || 0}</p>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 
   const renderPreviewTab = () => (
     <div className="max-w-3xl mx-auto">
@@ -176,7 +167,7 @@ export function TabContent({
           <p className="text-sm text-gray-600">Así se verá para los usuarios finales</p>
         </div>
       </div>
-      
+
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
         <div className="space-y-6">
           <div className="text-center border-b border-gray-100 pb-4">
@@ -187,55 +178,68 @@ export function TabContent({
               {formData?.description || 'Formulario de creación de contenido'}
             </p>
           </div>
-          
+
           {formData?.fields?.length > 0 ? (
             <div className="space-y-4">
-              {formData.fields.map((field: any, index: number) => (
+              {formData.fields.map((field: any, _index: number) => (
                 <div key={field.id} className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">
+                  <label
+                    htmlFor={`preview-field-${field.id}`}
+                    className="block text-sm font-semibold text-gray-700"
+                  >
                     {field.label}
                     {field.isRequired && <span className="text-red-500 ml-1">*</span>}
                   </label>
-                  
+
                   {field.type === 'TEXT' && (
-                    <input 
-                      type="text" 
+                    <input
+                      id={`preview-field-${field.id}`}
+                      type="text"
                       placeholder={`Ingresa ${field.label.toLowerCase()}`}
                       className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none"
                       disabled
                     />
                   )}
-                  
+
                   {field.type === 'RICH_TEXT' && (
-                    <div className="w-full min-h-[100px] p-3 border border-gray-200 rounded-lg bg-gray-50 flex items-center justify-center text-gray-500 text-sm">
+                    <div
+                      id={`preview-field-${field.id}`}
+                      className="w-full min-h-[100px] p-3 border border-gray-200 rounded-lg bg-gray-50 flex items-center justify-center text-gray-500 text-sm"
+                    >
                       Editor de texto enriquecido
                     </div>
                   )}
-                  
+
                   {field.type === 'NUMBER' && (
-                    <input 
-                      type="number" 
+                    <input
+                      id={`preview-field-${field.id}`}
+                      type="number"
                       placeholder="0"
                       className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none"
                       disabled
                     />
                   )}
-                  
+
                   {field.type === 'BOOLEAN' && (
                     <div className="flex items-center space-x-2">
-                      <input type="checkbox" className="rounded border-gray-300" disabled />
+                      <input
+                        id={`preview-field-${field.id}`}
+                        type="checkbox"
+                        className="rounded border-gray-300"
+                        disabled
+                      />
                       <span className="text-sm text-gray-600">Sí / No</span>
                     </div>
                   )}
-                  
+
                   {field.type === 'DATE' && (
-                    <input 
-                      type="date" 
+                    <input
+                      type="date"
                       className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none"
                       disabled
                     />
                   )}
-                  
+
                   {field.type === 'MEDIA' && (
                     <div className="w-full h-24 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-500 text-sm">
                       Arrastra archivos aquí o haz clic para seleccionar
@@ -243,9 +247,12 @@ export function TabContent({
                   )}
                 </div>
               ))}
-              
+
               <div className="pt-4 border-t border-gray-100">
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-6 py-2 text-sm" disabled>
+                <Button
+                  className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-6 py-2 text-sm"
+                  disabled
+                >
                   Guardar Contenido
                 </Button>
               </div>
@@ -266,7 +273,7 @@ export function TabContent({
         </div>
       </div>
     </div>
-  );
+  )
 
   const renderSettingsTab = () => (
     <div className="max-w-3xl mx-auto">
@@ -279,33 +286,31 @@ export function TabContent({
           <p className="text-sm text-gray-600">Opciones y permisos del tipo de contenido</p>
         </div>
       </div>
-      
+
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
         <div className="text-center py-8">
           <div className="mx-auto w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-3">
             <Settings2 className="h-6 w-6 text-gray-400" />
           </div>
-          <h3 className="text-base font-semibold text-gray-900 mb-1">
-            Configuración Próximamente
-          </h3>
+          <h3 className="text-base font-semibold text-gray-900 mb-1">Configuración Próximamente</h3>
           <p className="text-sm text-gray-500 max-w-md mx-auto">
             Aquí podrás configurar permisos, validaciones avanzadas y otras opciones
           </p>
         </div>
       </div>
     </div>
-  );
+  )
 
   switch (activeTab) {
     case 'fields':
-      return renderFieldsTab();
+      return renderFieldsTab()
     case 'info':
-      return renderInfoTab();
+      return renderInfoTab()
     case 'preview':
-      return renderPreviewTab();
+      return renderPreviewTab()
     case 'settings':
-      return renderSettingsTab();
+      return renderSettingsTab()
     default:
-      return renderFieldsTab();
+      return renderFieldsTab()
   }
 }

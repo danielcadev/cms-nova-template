@@ -92,6 +92,7 @@ model Plan {
   mainTitle            String
   articleAlias         String   @unique
   categoryAlias        String
+  section              String   @default("planes")
   promotionalText      String   @db.Text
   attractionsTitle     String
   attractionsText      String   @db.Text
@@ -141,6 +142,24 @@ model NovaConfig {
   updatedAt DateTime @updatedAt
 
   @@map("nova_config")
+}
+
+// --------- MEDIA / ASSETS ---------
+model Asset {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  url       String
+  mimeType  String
+  size      Int
+  width     Int?
+  height    Int?
+  title     String?
+  alt       String?
+  folder    String   @default("uploads")
+  createdBy String?
+  createdAt DateTime @default(now())
+
+  @@map("assets")
 }
 
 // --------- CONSTRUCTOR DE CONTENIDO (HEADLESS) ---------

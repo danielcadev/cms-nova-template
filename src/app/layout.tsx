@@ -1,38 +1,53 @@
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
-import { ErrorProvider } from "@/contexts/ErrorContext";
+import { GeistSans } from 'geist/font/sans'
+import { Inter } from 'next/font/google'
+import './globals.css'
+import { cookies } from 'next/headers'
+import { Toaster } from '@/components/ui/toaster'
+import { AuthProvider } from '@/contexts/AuthContext'
+import { ErrorProvider } from '@/contexts/ErrorContext'
+import { ThemeProvider } from '@/contexts/ThemeContext'
+import { isDarkThemeId, normalizeTheme, type Theme } from '@/lib/theme'
 
-const inter = Inter({ 
-  subsets: ["latin"],
+const inter = Inter({
+  subsets: ['latin'],
   display: 'swap',
   variable: '--font-inter',
-});
+})
 
 export const metadata = {
-  title: "Nova CMS - Modern Design",
-  description: "Sistema de administración modular con diseño moderno y fluido",
-};
+  title: 'Nova CMS - Modern Design',
+  description: 'Modular administration system with modern and fluid design',
+}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
+  // Read theme from cookie on the server for first paint
+  const cookieStore = await cookies()
+  const cookieTheme = (cookieStore.get('nova-theme')?.value ?? 'light') as string
+  const validTheme = normalizeTheme(cookieTheme) as Theme
+  const isDark = isDarkThemeId(validTheme)
+  const themeClass = `theme-${validTheme}`
+
   return (
-    <html lang="es" className={inter.variable}>
-      <body className="font-ios antialiased">
-        {/* Modern Glass Background Pattern */}
-        <div className="fixed inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-br from-ios-blue-50/30 via-white to-ios-gray-50" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(14,165,233,0.05),transparent_50%)]" />
-        </div>
-        
+    <html
+      lang="en"
+      className={`${inter.variable} ${GeistSans.variable} ${themeClass} ${isDark ? 'dark' : ''}`}
+      data-theme={validTheme}
+    >
+      <body className={`antialiased ${themeClass} ${isDark ? 'dark' : ''}`} data-theme={validTheme}>
         <ErrorProvider>
-          {children}
-          <Toaster />
+          {/* Pass initialTheme from server cookie to avoid hydration mismatch */}
+          <ThemeProvider initialTheme={validTheme}>
+            <AuthProvider>
+              {children}
+              <Toaster />
+            </AuthProvider>
+          </ThemeProvider>
         </ErrorProvider>
       </body>
     </html>
-  );
-} 
+  )
+}

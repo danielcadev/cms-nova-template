@@ -1,8 +1,8 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
 // Enums
-export const PlanStatus = z.enum(['draft', 'published']);
-export type PlanStatus = z.infer<typeof PlanStatus>;
+export const PlanStatus = z.enum(['draft', 'published'])
+export type PlanStatus = z.infer<typeof PlanStatus>
 
 // Plan Schema
 export const Plan = z.object({
@@ -18,9 +18,9 @@ export const Plan = z.object({
   publishedAt: z.date().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
-});
+})
 
-export type Plan = z.infer<typeof Plan>;
+export type Plan = z.infer<typeof Plan>
 
 // Form Schemas
 export const PlanFormSchema = z.object({
@@ -31,6 +31,6 @@ export const PlanFormSchema = z.object({
   promotionalText: z.string().optional(),
   allowGroundTransport: z.boolean().default(false),
   mainImage: z.string().optional(),
-});
+})
 
-export type PlanFormValues = z.infer<typeof PlanFormSchema>; 
+export type PlanFormValues = z.infer<typeof PlanFormSchema>

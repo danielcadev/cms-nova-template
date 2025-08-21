@@ -1,32 +1,31 @@
-﻿'use client';
+﻿'use client'
 
-import { Settings, Trash2, GripVertical, FileText } from 'lucide-react';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { FIELD_TYPES } from './constants';
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { FileText, GripVertical, Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { FIELD_TYPES } from './constants'
 
 interface FieldCardProps {
-  field: any;
-  onEdit?: (field: any) => void;
-  onDelete: (fieldId: string) => void;
-  isDragging?: boolean;
+  field: any
+  onEdit?: (field: any) => void
+  onDelete: (fieldId: string) => void
+  isDragging?: boolean
 }
 
 interface SortableFieldCardProps {
-  field: any;
-  index?: number;
-  onDelete: (fieldId: string) => void;
+  field: any
+  index?: number
+  onDelete: (fieldId: string) => void
 }
 
 export function FieldCard({ field, onDelete }: FieldCardProps) {
-  const onEdit = (field: any) => {
+  const _onEdit = (_field: any) => {
     // TODO: Implementar edición de campos
-    console.log('Editando campo:', field);
-  };
+    // tip: open a modal or inline editor here
+  }
 
-  return <SortableFieldCard field={field} onDelete={onDelete} />;
+  return <SortableFieldCard field={field} onDelete={onDelete} />
 }
 
 export function SortableFieldCard({ field, onDelete }: SortableFieldCardProps) {
@@ -37,22 +36,22 @@ export function SortableFieldCard({ field, onDelete }: SortableFieldCardProps) {
     transform,
     transition,
     isDragging: sortableIsDragging,
-  } = useSortable({ 
+  } = useSortable({
     id: field.id || field.apiIdentifier,
     data: {
       type: 'field',
-      field
-    }
-  });
+      field,
+    },
+  })
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    zIndex: sortableIsDragging ? 1000 : 1
-  };
+    zIndex: sortableIsDragging ? 1000 : 1,
+  }
 
-  const fieldType = FIELD_TYPES.find((t: any) => t.value === field.type);
-  const IconComponent = fieldType?.icon || FileText;
+  const fieldType = FIELD_TYPES.find((t: any) => t.value === field.type)
+  const IconComponent = fieldType?.icon || FileText
 
   return (
     <div
@@ -60,21 +59,24 @@ export function SortableFieldCard({ field, onDelete }: SortableFieldCardProps) {
       style={style}
       className={`group relative bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow ${
         sortableIsDragging ? 'shadow-lg scale-105 opacity-50' : ''
-      }`}>
+      }`}
+    >
       <div className="p-4">
         <div className="flex items-start gap-3">
-          <div 
+          <div
             {...attributes}
             {...listeners}
             className="cursor-grab active:cursor-grabbing p-1 hover:bg-gray-100 rounded-md mt-1"
           >
             <GripVertical className="h-4 w-4 text-gray-400" />
           </div>
-          
-          <div className={`p-3 rounded-lg bg-gradient-to-br ${fieldType?.color || 'from-gray-400 to-gray-500'} flex-shrink-0`}>
+
+          <div
+            className={`p-3 rounded-lg bg-gradient-to-br ${fieldType?.color || 'from-gray-400 to-gray-500'} flex-shrink-0`}
+          >
             <IconComponent className="h-5 w-5 text-white" />
           </div>
-          
+
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between mb-2">
               <div className="flex-1 min-w-0">
@@ -91,7 +93,7 @@ export function SortableFieldCard({ field, onDelete }: SortableFieldCardProps) {
                 </div>
                 <p className="text-sm text-gray-500 font-mono mb-2">{field.apiIdentifier}</p>
               </div>
-              
+
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
                 <Button
                   variant="ghost"
@@ -103,7 +105,7 @@ export function SortableFieldCard({ field, onDelete }: SortableFieldCardProps) {
                 </Button>
               </div>
             </div>
-            
+
             {fieldType && (
               <div className="space-y-1">
                 <p className="text-sm text-gray-600">{fieldType.description}</p>
@@ -118,5 +120,5 @@ export function SortableFieldCard({ field, onDelete }: SortableFieldCardProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }

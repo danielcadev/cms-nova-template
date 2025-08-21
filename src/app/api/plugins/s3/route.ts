@@ -1,103 +1,98 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { encrypt, decrypt } from '@/lib/encryption';
+import { NextResponse } from 'next/server'
+import { z } from 'zod'
+import { encrypt } from '@/lib/encryption'
+import { prisma } from '@/lib/prisma'
+import { rateLimit } from '@/lib/rate-limit'
+import { getAdminSession } from '@/lib/server-session'
+import { ApiResponseBuilder as R } from '@/utils/api-response'
+import logger from '@/utils/logger'
 
-// Usaremos una clave fija para la configuración de S3
-const S3_CONFIG_KEY = 's3-credentials';
+const S3_CONFIG_KEY = 's3-credentials'
 
-export async function GET() {
-    try {
-        console.log('=== DEBUG S3 CONFIG ===');
-        
-        // Primero intentar obtener de la base de datos
-        const s3Config = await prisma.novaConfig.findUnique({
-            where: { key: S3_CONFIG_KEY },
-        });
+export async function GET(request: Request) {
+  try {
+    const session = await getAdminSession()
+    if (!session) return R.error('Unauthorized', 401)
 
-        console.log('Configuración en BD:', s3Config);
+    const rl = rateLimit(request, { limit: 30, windowMs: 60_000, key: 'plugins:s3:GET' })
+    if (!rl.allowed) return R.error('Too many requests. Please try again later.', 429)
 
-        if (s3Config && typeof s3Config.value === 'object' && s3Config.value !== null) {
-            const config = s3Config.value as any;
-            console.log('Configuración encontrada en BD:', {
-                bucket: config.bucket,
-                region: config.region,
-                hasAccessKey: !!config.accessKeyId,
-                hasSecretKey: !!config.secretAccessKey
-            });
-            
-            // Desencriptamos la clave secreta antes de enviarla al cliente
-            if (config.secretAccessKey) {
-                config.secretAccessKey = decrypt(config.secretAccessKey);
-            }
-            return NextResponse.json({ success: true, config, source: 'database' });
-        } 
-        
-        // Si no hay configuración en BD, intentar leer desde variables de entorno
-        const envConfig = {
-            bucket: process.env.AWS_S3_BUCKET,
-            region: process.env.AWS_REGION || 'us-east-1',
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-        };
-
-        console.log('Variables de entorno:', {
-            bucket: envConfig.bucket,
-            region: envConfig.region,
-            hasAccessKey: !!envConfig.accessKeyId,
-            hasSecretKey: !!envConfig.secretAccessKey
-        });
-
-        // Verificar que todas las variables de entorno estén presentes
-        if (envConfig.bucket && envConfig.accessKeyId && envConfig.secretAccessKey) {
-            console.log('S3 configurado desde variables de entorno');
-            return NextResponse.json({ 
-                success: true, 
-                config: envConfig,
-                source: 'env'
-            });
-        }
-        
-        console.log('No se encontró configuración S3 ni en BD ni en .env');
-        // Si no hay configuración ni en BD ni en .env
-        return NextResponse.json({ success: true, config: null });
-
-    } catch (error) {
-        console.error('Error al obtener la configuración de S3:', error);
-        return new NextResponse(
-            JSON.stringify({ success: false, error: 'Error interno del servidor' }),
-            { status: 500 }
-        );
+    const s3Config = await prisma.novaConfig.findUnique({ where: { key: S3_CONFIG_KEY } })
+    if (s3Config && typeof s3Config.value === 'object' && s3Config.value !== null) {
+      const config = s3Config.value as any
+      const safeConfig = {
+        bucket: config.bucket,
+        region: config.region,
+        accessKeyId: config.accessKeyId,
+        secretAccessKey: config.secretAccessKey ? '••••••••' : undefined,
+      }
+      return NextResponse.json({ success: true, config: safeConfig, source: 'database' })
     }
+
+    const envConfig = {
+      bucket: process.env.AWS_S3_BUCKET,
+      region: process.env.AWS_REGION || 'us-east-1',
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    }
+
+    if (envConfig.bucket && envConfig.accessKeyId && envConfig.secretAccessKey) {
+      const safeEnvConfig = {
+        bucket: envConfig.bucket,
+        region: envConfig.region,
+        accessKeyId: envConfig.accessKeyId,
+        secretAccessKey: '••••••••',
+      }
+      return NextResponse.json({ success: true, config: safeEnvConfig, source: 'env' })
+    }
+
+    return NextResponse.json({ success: true, config: null })
+  } catch (error) {
+    logger.error('Error getting S3 configuration:', error)
+    return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+  }
 }
 
+const s3ConfigSchema = z.object({
+  bucket: z.string().min(1),
+  region: z.string().min(1),
+  accessKeyId: z.string().min(1),
+  secretAccessKey: z.string().min(1),
+})
+
 export async function POST(req: Request) {
-    try {
-        const body = await req.json();
+  try {
+    const session = await getAdminSession()
+    if (!session) return R.error('Unauthorized', 401)
 
-        // Encriptamos la clave secreta antes de guardarla
-        if (body.secretAccessKey) {
-            body.secretAccessKey = encrypt(body.secretAccessKey);
-        }
+    const rl = rateLimit(req, { limit: 10, windowMs: 60_000, key: 'plugins:s3:POST' })
+    if (!rl.allowed) return R.error('Too many requests. Please try again later.', 429)
 
-        const s3Config = await prisma.novaConfig.upsert({
-            where: { key: S3_CONFIG_KEY },
-            update: { value: body },
-            create: {
-                key: S3_CONFIG_KEY,
-                value: body,
-                category: 'plugin',
-            },
-        });
-
-        // No devolvemos la clave encriptada al cliente por seguridad
-        const responseData = { ...s3Config, value: { ...body, secretAccessKey: '••••••••' } };
-        return NextResponse.json({ success: true, config: responseData });
-
-    } catch (error) {
-        console.error('Error al guardar la configuración de S3:', error);
-        return new NextResponse(
-            JSON.stringify({ success: false, error: 'Error interno del servidor' }),
-            { status: 500 }
-        );
+    const body = await req.json().catch(() => ({}))
+    const parsed = s3ConfigSchema.safeParse(body)
+    if (!parsed.success) {
+      return R.validationError(
+        'Invalid data',
+        parsed.error.errors.map((e) => ({
+          field: e.path.join('.'),
+          message: e.message,
+          code: e.code,
+        })),
+      )
     }
-} 
+
+    const toStore = { ...parsed.data, secretAccessKey: encrypt(parsed.data.secretAccessKey) }
+
+    const s3Config = await prisma.novaConfig.upsert({
+      where: { key: S3_CONFIG_KEY },
+      update: { value: toStore },
+      create: { key: S3_CONFIG_KEY, value: toStore, category: 'plugin' },
+    })
+
+    const responseData = { ...s3Config, value: { ...parsed.data, secretAccessKey: '••••••••' } }
+    return NextResponse.json({ success: true, config: responseData })
+  } catch (error) {
+    logger.error('Error saving S3 configuration:', error)
+    return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+  }
+}

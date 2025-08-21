@@ -1,20 +1,21 @@
-'use client';
+'use client'
 
-import { useState, useEffect, useMemo } from 'react';
-import { Plugin } from '@/lib/plugins/config';
+import { useEffect, useMemo, useState } from 'react'
+import type { Plugin } from '@/lib/plugins/config'
 
 // Plugins disponibles en el sistema
 const availablePlugins: Plugin[] = [
   {
     id: 's3',
     name: 'Amazon S3 Storage',
-    description: 'Almacenamiento en la nube con Amazon S3. Sube y gestiona archivos de forma segura y escalable.',
+    description:
+      'Almacenamiento en la nube con Amazon S3. Sube y gestiona archivos de forma segura y escalable.',
     version: '1.0.0',
     category: 'utility',
     enabled: false,
     author: 'Nova CMS Team',
     icon: '☁️',
-    configurable: true
+    configurable: true,
   },
   {
     id: 'analytics',
@@ -25,7 +26,7 @@ const availablePlugins: Plugin[] = [
     enabled: false,
     author: 'Nova CMS Team',
     icon: '📊',
-    configurable: false
+    configurable: false,
   },
   {
     id: 'email',
@@ -36,7 +37,7 @@ const availablePlugins: Plugin[] = [
     enabled: false,
     author: 'Nova CMS Team',
     icon: '📧',
-    configurable: false
+    configurable: false,
   },
   {
     id: 'cdn',
@@ -47,7 +48,7 @@ const availablePlugins: Plugin[] = [
     enabled: false,
     author: 'Nova CMS Team',
     icon: '🌐',
-    configurable: false
+    configurable: false,
   },
   {
     id: 'backup',
@@ -58,7 +59,7 @@ const availablePlugins: Plugin[] = [
     enabled: false,
     author: 'Nova CMS Team',
     icon: '💾',
-    configurable: false
+    configurable: false,
   },
   {
     id: 'seo',
@@ -69,7 +70,7 @@ const availablePlugins: Plugin[] = [
     enabled: false,
     author: 'Nova CMS Team',
     icon: '🔍',
-    configurable: false
+    configurable: false,
   },
   {
     id: 'security',
@@ -80,7 +81,7 @@ const availablePlugins: Plugin[] = [
     enabled: false,
     author: 'Nova CMS Team',
     icon: '🛡️',
-    configurable: false
+    configurable: false,
   },
   {
     id: 'social',
@@ -91,78 +92,85 @@ const availablePlugins: Plugin[] = [
     enabled: false,
     author: 'Nova CMS Team',
     icon: '📱',
-    configurable: false
-  }
-];
+    configurable: false,
+  },
+]
 
 export function usePlugins() {
-  const [plugins, setPlugins] = useState<Plugin[]>(availablePlugins);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [plugins, setPlugins] = useState<Plugin[]>(availablePlugins)
+  const [loading, setLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('all')
 
   // Cargar estados reales de plugins desde la API
   useEffect(() => {
     const loadPluginStates = async () => {
-      setLoading(true);
+      setLoading(true)
       try {
         // Verificar el estado del plugin S3
-        const s3Response = await fetch('/api/plugins/s3');
-        const s3Data = await s3Response.json();
-        
-        setPlugins(prev => prev.map(plugin => {
-          if (plugin.id === 's3') {
-            return {
-              ...plugin,
-              enabled: s3Data.success && s3Data.config ? true : false,
-              installDate: s3Data.success && s3Data.config ? new Date().toISOString().split('T')[0] : undefined
-            };
-          }
-          return plugin;
-        }));
+        const s3Response = await fetch('/api/plugins/s3')
+        const s3Data = await s3Response.json()
+
+        setPlugins((prev) =>
+          prev.map((plugin) => {
+            if (plugin.id === 's3') {
+              return {
+                ...plugin,
+                enabled: !!(s3Data.success && s3Data.config),
+                installDate:
+                  s3Data.success && s3Data.config
+                    ? new Date().toISOString().split('T')[0]
+                    : undefined,
+              }
+            }
+            return plugin
+          }),
+        )
 
         // Aquí se pueden agregar más verificaciones para otros plugins cuando estén disponibles
         // Por ejemplo: verificar Google Analytics, Email Service, etc.
-        
       } catch (error) {
-        console.error('Error loading plugin states:', error);
+        console.error('Error loading plugin states:', error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    loadPluginStates();
-  }, []);
+    loadPluginStates()
+  }, [])
 
   // Filtrar plugins
   const filteredPlugins = useMemo(() => {
-    return plugins.filter(plugin => {
-      const matchesSearch = !searchTerm || 
+    return plugins.filter((plugin) => {
+      const matchesSearch =
+        !searchTerm ||
         plugin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         plugin.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        plugin.author.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = categoryFilter === 'all' || plugin.category === categoryFilter;
-      return matchesSearch && matchesCategory;
-    });
-  }, [plugins, searchTerm, categoryFilter]);
+        plugin.author.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesCategory = categoryFilter === 'all' || plugin.category === categoryFilter
+      return matchesSearch && matchesCategory
+    })
+  }, [plugins, searchTerm, categoryFilter])
 
   // Toggle plugin status
   const togglePlugin = async (pluginId: string) => {
-    const plugin = plugins.find(p => p.id === pluginId);
-    if (!plugin) return;
+    const plugin = plugins.find((p) => p.id === pluginId)
+    if (!plugin) return
 
-    const newEnabledState = !plugin.enabled;
+    const newEnabledState = !plugin.enabled
 
     // Actualizar estado local inmediatamente para mejor UX
-    setPlugins(prev => prev.map(p => 
-      p.id === pluginId 
-        ? { 
-            ...p, 
-            enabled: newEnabledState,
-            installDate: newEnabledState ? new Date().toISOString().split('T')[0] : undefined
-          } 
-        : p
-    ));
+    setPlugins((prev) =>
+      prev.map((p) =>
+        p.id === pluginId
+          ? {
+              ...p,
+              enabled: newEnabledState,
+              installDate: newEnabledState ? new Date().toISOString().split('T')[0] : undefined,
+            }
+          : p,
+      ),
+    )
 
     try {
       // Para el plugin S3, manejar la activación/desactivación
@@ -175,43 +183,45 @@ export function usePlugins() {
       }
 
       // Para otros plugins, implementar lógica específica aquí
-      
     } catch (error) {
-      console.error(`Error toggling plugin ${pluginId}:`, error);
-      
+      console.error(`Error toggling plugin ${pluginId}:`, error)
+
       // Revertir el cambio en caso de error
-      setPlugins(prev => prev.map(p => 
-        p.id === pluginId 
-          ? { ...p, enabled: !newEnabledState }
-          : p
-      ));
+      setPlugins((prev) =>
+        prev.map((p) => (p.id === pluginId ? { ...p, enabled: !newEnabledState } : p)),
+      )
     }
-  };
+  }
 
   // Refresh plugins
   const refreshPlugins = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
       // Recargar estados de plugins
-      const s3Response = await fetch('/api/plugins/s3');
-      const s3Data = await s3Response.json();
-      
-      setPlugins(prev => prev.map(plugin => {
-        if (plugin.id === 's3') {
-          return {
-            ...plugin,
-            enabled: s3Data.success && s3Data.config ? true : false,
-            installDate: s3Data.success && s3Data.config ? new Date().toISOString().split('T')[0] : undefined
-          };
-        }
-        return plugin;
-      }));
+      const s3Response = await fetch('/api/plugins/s3')
+      const s3Data = await s3Response.json()
+
+      setPlugins((prev) =>
+        prev.map((plugin) => {
+          if (plugin.id === 's3') {
+            return {
+              ...plugin,
+              enabled: !!(s3Data.success && s3Data.config),
+              installDate:
+                s3Data.success && s3Data.config
+                  ? new Date().toISOString().split('T')[0]
+                  : undefined,
+            }
+          }
+          return plugin
+        }),
+      )
     } catch (error) {
-      console.error('Error refreshing plugins:', error);
+      console.error('Error refreshing plugins:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return {
     plugins,
@@ -222,6 +232,6 @@ export function usePlugins() {
     setCategoryFilter,
     filteredPlugins,
     togglePlugin,
-    refreshPlugins
-  };
+    refreshPlugins,
+  }
 }

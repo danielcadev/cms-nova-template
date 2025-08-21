@@ -1,4 +1,4 @@
-import { NovaConfig } from '../types';
+import type { NovaConfig } from '../types'
 
 /**
  * NOVA CMS DEFAULT CONFIGURATION
@@ -27,7 +27,7 @@ export const defaultConfig: NovaConfig = {
   ui: {
     theme: 'light',
     title: 'Nova CMS',
-    description: 'Sistema de gestión de contenido modular',
+    description: 'Modular content management system',
     favicon: '/favicon.ico',
     logo: '/logo.png',
     primaryColor: '#3b82f6', // blue-500
@@ -85,5 +85,5 @@ export const defaultConfig: NovaConfig = {
     defaultMetaDescription: 'Sistema de gestión de contenido modular y profesional',
     enableOpenGraph: true,
     enableTwitterCards: true,
-  }
-}; 
+  },
+}

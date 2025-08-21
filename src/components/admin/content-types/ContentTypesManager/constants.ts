@@ -1,90 +1,89 @@
-import { 
-  Type, 
-  AlignLeft, 
-  Hash, 
-  ToggleLeft, 
-  Calendar, 
-  ImageIcon,
-  FileText,
+import {
+  AlignLeft,
+  Calendar,
   Clock,
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  Link as LinkIcon,
-  Star,
   DollarSign,
-  Palette
-} from 'lucide-react';
+  FileText,
+  Hash,
+  ImageIcon,
+  Link as LinkIcon,
+  Mail,
+  MapPin,
+  Palette,
+  Phone,
+  Star,
+  ToggleLeft,
+  Type,
+} from 'lucide-react'
 
 export interface FieldType {
-  value: string;
-  label: string;
-  icon: any;
-  description: string;
-  category: 'basic' | 'advanced' | 'media';
-  color: string;
+  value: string
+  label: string
+  icon: any
+  description: string
+  category: 'basic' | 'advanced' | 'media'
+  color: string
 }
 
 export const FIELD_TYPES: FieldType[] = [
   // Basic Fields
   {
     value: 'TEXT',
-    label: 'Texto Corto',
+    label: 'Short Text',
     icon: Type,
-    description: 'Campo de texto simple para títulos o nombres',
+    description: 'Simple text field for titles or names',
     category: 'basic',
-    color: 'bg-gradient-to-br from-blue-500 to-indigo-600'
+    color: 'bg-gradient-to-br from-blue-500 to-indigo-600',
   },
   {
     value: 'TEXTAREA',
-    label: 'Texto Largo',
+    label: 'Long Text',
     icon: AlignLeft,
-    description: 'Área de texto para descripciones extensas',
+    description: 'Text area for extensive descriptions',
     category: 'basic',
-    color: 'bg-gradient-to-br from-green-500 to-emerald-600'
+    color: 'bg-gradient-to-br from-green-500 to-emerald-600',
   },
   {
     value: 'RICH_TEXT',
-    label: 'Editor Rico',
+    label: 'Rich Editor',
     icon: FileText,
-    description: 'Editor con formato para contenido enriquecido',
+    description: 'Formatted editor for rich content',
     category: 'advanced',
-    color: 'bg-gradient-to-br from-purple-500 to-violet-600'
+    color: 'bg-gradient-to-br from-purple-500 to-violet-600',
   },
   {
     value: 'NUMBER',
-    label: 'Número',
+    label: 'Number',
     icon: Hash,
-    description: 'Campo numérico para precios o cantidades',
+    description: 'Numeric field for prices or quantities',
     category: 'basic',
-    color: 'bg-gradient-to-br from-orange-500 to-red-600'
+    color: 'bg-gradient-to-br from-orange-500 to-red-600',
   },
   {
     value: 'BOOLEAN',
-    label: 'Verdadero/Falso',
+    label: 'True/False',
     icon: ToggleLeft,
-    description: 'Switch para valores booleanos',
+    description: 'Switch for boolean values',
     category: 'basic',
-    color: 'bg-gradient-to-br from-teal-500 to-cyan-600'
+    color: 'bg-gradient-to-br from-teal-500 to-cyan-600',
   },
   {
     value: 'DATE',
-    label: 'Fecha',
+    label: 'Date',
     icon: Calendar,
-    description: 'Selector de fecha y hora',
+    description: 'Date and time picker',
     category: 'basic',
-    color: 'bg-gradient-to-br from-pink-500 to-rose-600'
+    color: 'bg-gradient-to-br from-pink-500 to-rose-600',
   },
   {
     value: 'DATETIME',
-    label: 'Fecha y Hora',
+    label: 'Date & Time',
     icon: Clock,
-    description: 'Selector con fecha y hora específica',
+    description: 'Picker with specific date and time',
     category: 'basic',
-    color: 'bg-gradient-to-br from-indigo-500 to-purple-600'
+    color: 'bg-gradient-to-br from-indigo-500 to-purple-600',
   },
-  
+
   // Advanced Fields
   {
     value: 'EMAIL',
@@ -92,7 +91,7 @@ export const FIELD_TYPES: FieldType[] = [
     icon: Mail,
     description: 'Campo de correo electrónico con validación',
     category: 'advanced',
-    color: 'bg-gradient-to-br from-blue-600 to-indigo-700'
+    color: 'bg-gradient-to-br from-blue-600 to-indigo-700',
   },
   {
     value: 'PHONE',
@@ -100,7 +99,7 @@ export const FIELD_TYPES: FieldType[] = [
     icon: Phone,
     description: 'Campo de número telefónico',
     category: 'advanced',
-    color: 'bg-gradient-to-br from-green-600 to-emerald-700'
+    color: 'bg-gradient-to-br from-green-600 to-emerald-700',
   },
   {
     value: 'URL',
@@ -108,7 +107,7 @@ export const FIELD_TYPES: FieldType[] = [
     icon: LinkIcon,
     description: 'Campo para URLs con validación',
     category: 'advanced',
-    color: 'bg-gradient-to-br from-cyan-500 to-blue-600'
+    color: 'bg-gradient-to-br from-cyan-500 to-blue-600',
   },
   {
     value: 'RATING',
@@ -116,7 +115,7 @@ export const FIELD_TYPES: FieldType[] = [
     icon: Star,
     description: 'Sistema de estrellas para valoraciones',
     category: 'advanced',
-    color: 'bg-gradient-to-br from-yellow-500 to-orange-600'
+    color: 'bg-gradient-to-br from-yellow-500 to-orange-600',
   },
   {
     value: 'PRICE',
@@ -124,7 +123,7 @@ export const FIELD_TYPES: FieldType[] = [
     icon: DollarSign,
     description: 'Campo monetario con formato de moneda',
     category: 'advanced',
-    color: 'bg-gradient-to-br from-emerald-500 to-green-600'
+    color: 'bg-gradient-to-br from-emerald-500 to-green-600',
   },
   {
     value: 'COLOR',
@@ -132,7 +131,7 @@ export const FIELD_TYPES: FieldType[] = [
     icon: Palette,
     description: 'Selector de color visual',
     category: 'advanced',
-    color: 'bg-gradient-to-br from-pink-500 to-purple-600'
+    color: 'bg-gradient-to-br from-pink-500 to-purple-600',
   },
   {
     value: 'LOCATION',
@@ -140,9 +139,9 @@ export const FIELD_TYPES: FieldType[] = [
     icon: MapPin,
     description: 'Campo de dirección o coordenadas GPS',
     category: 'advanced',
-    color: 'bg-gradient-to-br from-red-500 to-pink-600'
+    color: 'bg-gradient-to-br from-red-500 to-pink-600',
   },
-  
+
   // Media Fields
   {
     value: 'IMAGE',
@@ -150,7 +149,7 @@ export const FIELD_TYPES: FieldType[] = [
     icon: ImageIcon,
     description: 'Subida de imágenes con preview',
     category: 'media',
-    color: 'bg-gradient-to-br from-violet-500 to-purple-600'
+    color: 'bg-gradient-to-br from-violet-500 to-purple-600',
   },
   {
     value: 'GALLERY',
@@ -158,7 +157,7 @@ export const FIELD_TYPES: FieldType[] = [
     icon: ImageIcon,
     description: 'Múltiples imágenes organizadas',
     category: 'media',
-    color: 'bg-gradient-to-br from-purple-600 to-indigo-700'
+    color: 'bg-gradient-to-br from-purple-600 to-indigo-700',
   },
   {
     value: 'FILE',
@@ -166,27 +165,27 @@ export const FIELD_TYPES: FieldType[] = [
     icon: FileText,
     description: 'Subida de documentos y archivos',
     category: 'media',
-    color: 'bg-gradient-to-br from-gray-500 to-slate-600'
-  }
-];
+    color: 'bg-gradient-to-br from-gray-500 to-slate-600',
+  },
+]
 
 export const FIELD_CATEGORIES = {
   basic: {
-    label: 'Campos Básicos',
-    description: 'Campos fundamentales para cualquier contenido',
-    color: 'text-blue-600'
+    label: 'Basic Fields',
+    description: 'Fundamental fields for any content',
+    color: 'text-blue-600',
   },
   advanced: {
-    label: 'Campos Avanzados', 
-    description: 'Campos especializados con validaciones específicas',
-    color: 'text-purple-600'
+    label: 'Advanced Fields',
+    description: 'Specialized fields with specific validations',
+    color: 'text-purple-600',
   },
   media: {
-    label: 'Multimedia',
-    description: 'Campos para archivos, imágenes y contenido multimedia',
-    color: 'text-green-600'
-  }
-} as const;
+    label: 'Media',
+    description: 'Fields for files, images and multimedia content',
+    color: 'text-green-600',
+  },
+} as const
 
 export const DEFAULT_FIELD_CONFIG = {
   TEXT: { maxLength: 255, required: false },
@@ -205,8 +204,8 @@ export const DEFAULT_FIELD_CONFIG = {
   LOCATION: { type: 'address', required: false },
   IMAGE: { maxSize: '5MB', formats: ['jpg', 'png', 'webp'], required: false },
   GALLERY: { maxImages: 10, maxSize: '5MB', required: false },
-  FILE: { maxSize: '10MB', formats: ['pdf', 'doc', 'docx'], required: false }
-} as const;
+  FILE: { maxSize: '10MB', formats: ['pdf', 'doc', 'docx'], required: false },
+} as const
 
-export type FieldTypeValue = typeof FIELD_TYPES[number]['value'];
-export type FieldCategory = typeof FIELD_TYPES[number]['category'];
+export type FieldTypeValue = (typeof FIELD_TYPES)[number]['value']
+export type FieldCategory = (typeof FIELD_TYPES)[number]['category']

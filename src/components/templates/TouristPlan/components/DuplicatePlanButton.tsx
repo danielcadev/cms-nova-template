@@ -1,19 +1,19 @@
-'use client';
+'use client'
 
-import { Button } from '@/components/ui/button';
-import { Copy } from 'lucide-react';
+import { Copy } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface DuplicatePlanButtonProps {
-  planId: string;
-  planTitle?: string;
-  onDuplicate: (id: string) => Promise<any>;
-  disabled?: boolean;
+  planId: string
+  planTitle?: string
+  onDuplicate: (id: string) => Promise<any>
+  disabled?: boolean
 }
 
 export function DuplicatePlanButton({ planId, onDuplicate, disabled }: DuplicatePlanButtonProps) {
   const handleDuplicate = async () => {
-    await onDuplicate(planId);
-  };
+    await onDuplicate(planId)
+  }
 
   return (
     <Button
@@ -25,7 +25,7 @@ export function DuplicatePlanButton({ planId, onDuplicate, disabled }: Duplicate
     >
       <Copy className="h-4 w-4" />
     </Button>
-  );
+  )
 }
 
-export default DuplicatePlanButton;
+export default DuplicatePlanButton

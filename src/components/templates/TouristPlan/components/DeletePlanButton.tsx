@@ -1,21 +1,21 @@
-'use client';
+'use client'
 
-import { Button } from '@/components/ui/button';
-import { Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface DeletePlanButtonProps {
-  planId: string;
-  planTitle?: string;
-  onDelete: (id: string) => Promise<void>;
-  disabled?: boolean;
+  planId: string
+  planTitle?: string
+  onDelete: (id: string) => Promise<void>
+  disabled?: boolean
 }
 
 export function DeletePlanButton({ planId, onDelete, disabled }: DeletePlanButtonProps) {
   const handleDelete = async () => {
     if (window.confirm('¿Estás seguro de que quieres eliminar este plan?')) {
-      await onDelete(planId);
+      await onDelete(planId)
     }
-  };
+  }
 
   return (
     <Button
@@ -27,5 +27,5 @@ export function DeletePlanButton({ planId, onDelete, disabled }: DeletePlanButto
     >
       <Trash2 className="h-4 w-4" />
     </Button>
-  );
+  )
 }

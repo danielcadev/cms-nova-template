@@ -1,30 +1,27 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
+import { cva, type VariantProps } from 'class-variance-authority'
+import type * as React from 'react'
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-ios border px-2 py-1 ios-caption font-sf-text font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ios-primary/50",
+  'inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-900/10 dark:focus:ring-gray-100/10',
   {
     variants: {
       variant: {
-        default:
-          "border-transparent bg-ios-primary text-white shadow-ios hover:bg-ios-primary/90",
+        default: 'border-transparent bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900',
         secondary:
-          "border-transparent bg-ios-gray-2 text-ios-gray-6 hover:bg-ios-gray-3",
-        destructive:
-          "border-transparent bg-ios-danger text-white shadow-ios hover:bg-ios-danger/90",
-        outline: "text-ios-gray-6 border-ios-gray-3 hover:bg-ios-gray-2",
-        success:
-          "border-transparent bg-ios-success text-white shadow-ios hover:bg-ios-success/90",
-        warning:
-          "border-transparent bg-ios-warning text-white shadow-ios hover:bg-ios-warning/90",
+          'border-transparent bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-900 dark:text-gray-300',
+        destructive: 'border-transparent bg-red-600 text-white hover:bg-red-700',
+        outline:
+          'text-gray-700 border-gray-300 hover:bg-gray-100 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800',
+        success: 'border-transparent bg-emerald-600 text-white hover:bg-emerald-700',
+        warning: 'border-transparent bg-amber-500 text-white hover:bg-amber-600',
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: 'default',
     },
-  }
+  },
 )
 
 export interface BadgeProps
@@ -32,9 +29,7 @@ export interface BadgeProps
     VariantProps<typeof badgeVariants> {}
 
 function Badge({ className, variant, ...props }: BadgeProps) {
-  return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
-  )
+  return <div className={cn(badgeVariants({ variant }), className)} {...props} />
 }
 
 export { Badge, badgeVariants }

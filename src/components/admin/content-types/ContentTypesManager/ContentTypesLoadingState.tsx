@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import { Database } from 'lucide-react';
+import { Database } from 'lucide-react'
 
 export function ContentTypesLoadingState() {
   return (
@@ -13,7 +13,7 @@ export function ContentTypesLoadingState() {
           <div className="h-4 bg-gray-200 rounded-lg w-32 mx-auto mb-2"></div>
           <div className="h-3 bg-gray-200 rounded-lg w-24 mx-auto"></div>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
             <div key={i} className="bg-white rounded-2xl p-6 border border-gray-200">
@@ -33,5 +33,5 @@ export function ContentTypesLoadingState() {
         </div>
       </div>
     </div>
-  );
+  )
 }

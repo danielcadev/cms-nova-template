@@ -1,14 +1,14 @@
-'use server';
+'use server'
 
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
-import { PlanFormValues } from '@/schemas/plan';
-import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache'
+import slugify from 'slugify'
+import { prisma } from '@/lib/prisma'
+import type { PlanFormValues } from '@/schemas/plan'
 
 export async function createDraftPlanAction(data: PlanFormValues) {
   try {
     // Crear el plan borrador en la base de datos
-    const timestamp = Date.now();
+    const timestamp = Date.now()
     const newPlan = await prisma.plan.create({
       data: {
         mainTitle: data.mainTitle || 'Plan sin título',
@@ -16,6 +16,7 @@ export async function createDraftPlanAction(data: PlanFormValues) {
         allowGroundTransport: data.allowGroundTransport || false,
         articleAlias: data.articleAlias || `plan-${timestamp}`, // Generar alias único
         categoryAlias: data.categoryAlias || `categoria-${timestamp}`,
+        section: data.section || 'planes', // Default section
         promotionalText: data.promotionalText || '',
         attractionsTitle: data.attractionsTitle || '',
         attractionsText: data.attractionsText || '',
@@ -23,7 +24,8 @@ export async function createDraftPlanAction(data: PlanFormValues) {
         transfersText: data.transfersText || '',
         holidayTitle: data.holidayTitle || '',
         holidayText: data.holidayText || '',
-        includes: typeof data.includes === 'string' ? data.includes : JSON.stringify(data.includes) || '',
+        includes:
+          typeof data.includes === 'string' ? data.includes : JSON.stringify(data.includes) || '',
         notIncludes: data.notIncludes || '',
         itinerary: data.itinerary || [],
         priceOptions: data.priceOptions || [],
@@ -32,43 +34,96 @@ export async function createDraftPlanAction(data: PlanFormValues) {
         transportOptions: data.transportOptions || [],
         videoUrl: data.videoUrl || '',
       },
-    });
-    
-    console.log('✅ Created draft plan:', newPlan.id);
-    
+    })
+
+    // Debug removed
+
     // Revalidar la caché
-    revalidatePath('/admin/dashboard/plans');
-    
-    return { success: true, planId: newPlan.id };
+    revalidatePath('/admin/dashboard/plans')
+
+    return { success: true, planId: newPlan.id }
   } catch (error) {
-    console.error('❌ Error creating draft plan:', error);
-    return { success: false, error: 'Failed to create draft plan' };
+    console.error('❌ Error creating draft plan:', error)
+    return { success: false, error: 'Failed to create draft plan' }
   }
 }
 
-export async function updatePlanAction(prevState: any, formData: FormData) {
+export async function updatePlanAction(_prevState: any, formData: FormData) {
   try {
-    const planId = formData.get('planId') as string;
-    
+    const planId = formData.get('planId') as string
+
     if (!planId) {
-      return { success: false, error: 'Plan ID is required' };
+      return { success: false, error: 'Plan ID is required' }
     }
 
     // Extraer datos del FormData
-    const data: Partial<PlanFormValues> = {};
-    
-    // Convertir FormData a objeto
+    const data: Partial<PlanFormValues> = {}
+
+    // Convertir FormData a objeto (parseo seguro solo cuando parece JSON)
+    const looksLikeJson = (str: string) => {
+      const s = str?.trim()
+      return (
+        !!s && ((s.startsWith('{') && s.endsWith('}')) || (s.startsWith('[') && s.endsWith(']')))
+      )
+    }
+    // Debug removed: keys of formData
+
     for (const [key, value] of formData.entries()) {
-      if (key !== 'planId') {
+      if (key === 'planId') continue
+      const raw = value as string
+      if (typeof raw === 'string' && looksLikeJson(raw)) {
         try {
-          // Intentar parsear como JSON si es un objeto/array
-          data[key as keyof PlanFormValues] = JSON.parse(value as string);
+          data[key as keyof PlanFormValues] = JSON.parse(raw)
+          continue
         } catch {
-          // Si no es JSON, usar como string
-          data[key as keyof PlanFormValues] = value as any;
+          console.warn('[updatePlanAction] JSON.parse failed', {
+            key,
+            preview: (raw ?? '').slice(0, 80),
+          })
+          // fall through to assign raw
         }
       }
+      // Coerciones seguras por campo conocido
+      switch (key) {
+        case 'includes':
+        case 'priceOptions':
+        case 'itinerary':
+        case 'transportOptions': {
+          const v = value as string
+          if (looksLikeJson(v)) {
+            try {
+              data[key as keyof PlanFormValues] = JSON.parse(v) as any
+              break
+            } catch {}
+          }
+          // When UI sends an empty string or a transient non-JSON value, coerce to []
+          if (v === '' || v === undefined || v === null) {
+            data[key as keyof PlanFormValues] = [] as any
+          } else {
+            // If it's already an object/array (from client), trust it
+            // Otherwise fallback to [] to avoid JSON.parse errors downstream
+            data[key as keyof PlanFormValues] = Array.isArray(v) ? (v as any) : ([] as any)
+          }
+          break
+        }
+        case 'articleAlias':
+        case 'categoryAlias':
+        case 'section': {
+          const v = String(value || '').trim()
+          ;(data as any)[key] = slugify(v, { lower: true, strict: true })
+          break
+        }
+        case 'allowGroundTransport': {
+          const v = value as string
+          data[key as keyof PlanFormValues] = (v === 'true' || v === '1') as any
+          break
+        }
+        default:
+          data[key as keyof PlanFormValues] = value as any
+      }
     }
+
+    // Debug removed: parsed payload summary
 
     // Actualizar el plan en la base de datos
     await prisma.plan.update({
@@ -79,6 +134,7 @@ export async function updatePlanAction(prevState: any, formData: FormData) {
         allowGroundTransport: data.allowGroundTransport,
         articleAlias: data.articleAlias,
         categoryAlias: data.categoryAlias,
+        section: data.section || 'planes', // Add section field
         promotionalText: data.promotionalText,
         attractionsTitle: data.attractionsTitle,
         attractionsText: data.attractionsText,
@@ -95,58 +151,140 @@ export async function updatePlanAction(prevState: any, formData: FormData) {
         transportOptions: data.transportOptions,
         videoUrl: data.videoUrl,
       },
-    });
-    
-    console.log('✅ Updated plan:', planId);
-    
-    revalidatePath('/admin/dashboard/plans');
-    revalidatePath(`/admin/dashboard/plans/edit/${planId}`);
-    
-    return { success: true };
+    })
+
+    // Debug removed
+
+    revalidatePath('/admin/dashboard/plans')
+    revalidatePath(`/admin/dashboard/plans/edit/${planId}`)
+
+    return { success: true }
   } catch (error) {
-    console.error('❌ Error updating plan:', error);
-    return { success: false, error: 'Failed to update plan' };
+    console.error('❌ Error updating plan:', error)
+    return { success: false, error: 'Failed to update plan' }
   }
 }
 
 export async function deletePlanAction(planId: string) {
   try {
     if (!planId) {
-      return { success: false, error: 'ID del plan es requerido' };
+      return { success: false, error: 'ID del plan es requerido' }
     }
 
     // Verificar que el plan existe antes de eliminarlo
     const existingPlan = await prisma.plan.findUnique({
       where: { id: planId },
-      select: { id: true, mainTitle: true }
-    });
+      select: { id: true, mainTitle: true },
+    })
 
     if (!existingPlan) {
-      return { success: false, error: 'Plan no encontrado' };
+      return { success: false, error: 'Plan no encontrado' }
     }
 
     // Eliminar el plan de la base de datos
     await prisma.plan.delete({
-      where: { id: planId }
-    });
+      where: { id: planId },
+    })
 
-    console.log(`🗑️ Deleted plan: ${planId} - ${existingPlan.mainTitle}`);
+    // Debug removed
 
     // Revalidar las rutas para actualizar la caché
-    revalidatePath('/admin/dashboard/plans');
-    revalidatePath('/admin/dashboard/templates/tourism');
+    revalidatePath('/admin/dashboard/plans')
+    revalidatePath('/admin/dashboard/templates/tourism')
 
-    return { 
-      success: true, 
+    return {
+      success: true,
       message: 'Plan eliminado exitosamente',
-      deletedPlan: existingPlan 
-    };
-
+      deletedPlan: existingPlan,
+    }
   } catch (error) {
-    console.error('❌ Error deleting plan:', error);
-    return { 
-      success: false, 
-      error: 'Error al eliminar el plan. Inténtalo de nuevo.' 
-    };
+    console.error('❌ Error deleting plan:', error)
+    return {
+      success: false,
+      error: 'Error al eliminar el plan. Inténtalo de nuevo.',
+    }
+  }
+}
+
+/**
+ * Publish a plan and ensure public URL aliases are set
+ */
+export async function publishPlanAction(
+  planId: string,
+  opts?: { articleAlias?: string; categoryAlias?: string; section?: string },
+) {
+  try {
+    if (!planId) return { success: false, error: 'Plan ID is required' }
+
+    const existing = await prisma.plan.findUnique({ where: { id: planId } })
+    if (!existing) return { success: false, error: 'Plan not found' }
+
+    // Build aliases
+    const baseArticle =
+      opts?.articleAlias ||
+      existing.articleAlias ||
+      slugify(existing.mainTitle || 'plan', { lower: true, strict: true })
+    // Prefer destination name as first url segment
+    let baseCategory = opts?.categoryAlias || existing.categoryAlias
+    if (!baseCategory && existing.destinationId) {
+      const dest = await prisma.destination.findUnique({
+        where: { id: existing.destinationId },
+        select: { name: true },
+      })
+      if (dest?.name) baseCategory = slugify(dest.name, { lower: true, strict: true })
+    }
+    // Do not force 'planes' default; keep empty if missing to avoid wrong prefix
+
+    // Ensure unique articleAlias if constraint exists
+    let articleAlias = baseArticle
+    if (existing.articleAlias !== articleAlias) {
+      let suffix = 1
+      // If another plan has same articleAlias, append -n
+      // articleAlias is unique in schema
+      // Try until success
+      // We do a probe query; if occupied, increment
+      // To avoid race, final uniqueness is guaranteed by DB constraint
+      // but this reduces retries
+      // Intentional infinite loop for retry logic
+      while (true) {
+        const found = await prisma.plan.findUnique({ where: { articleAlias } })
+        if (!found || found.id === planId) break
+        articleAlias = `${baseArticle}-${++suffix}`
+      }
+    }
+
+    const categoryAlias = slugify(baseCategory, { lower: true, strict: true })
+
+    const section = slugify(opts?.section || existing.section || 'planes', {
+      lower: true,
+      strict: true,
+    })
+
+    const updated = await prisma.plan.update({
+      where: { id: planId },
+      data: {
+        articleAlias,
+        categoryAlias,
+        section,
+        published: true,
+      },
+      select: { id: true, articleAlias: true, categoryAlias: true, section: true },
+    })
+
+    const publicPath =
+      `/${updated.section}/${updated.categoryAlias || ''}/${updated.articleAlias}`.replace(
+        /\/+$/,
+        '',
+      )
+
+    // Revalidate admin and public paths
+    revalidatePath('/admin/dashboard/templates/tourism')
+    revalidatePath(`/admin/dashboard/templates/tourism/edit/${planId}`)
+    revalidatePath(publicPath)
+
+    return { success: true, publicPath }
+  } catch (error) {
+    console.error('❌ Error publishing plan:', error)
+    return { success: false, error: 'Failed to publish plan' }
   }
 }

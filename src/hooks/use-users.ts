@@ -1,122 +1,124 @@
 // hooks/useUsers.ts
-import { useState, useCallback, useEffect, useMemo } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import type { User, UserRole, UserStatus } from '@/types/user';
-import { adminService } from '@/services/admin/user/adminService';
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useToast } from '@/hooks/use-toast'
+import { adminService } from '@/services/admin/user/adminService'
+import type { User, UserRole, UserStatus } from '@/types/user'
 
 // Función de debounce para optimizar búsquedas
 function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+  const [debouncedValue, setDebouncedValue] = useState<T>(value)
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
+      setDebouncedValue(value)
+    }, delay)
 
     return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
+      clearTimeout(handler)
+    }
+  }, [value, delay])
 
-  return debouncedValue;
+  return debouncedValue
 }
 
 // Extender el tipo User para incluir la propiedad banned
 interface ExtendedUser extends User {
-  banned?: boolean;
+  banned?: boolean
 }
 
 export function useUsers() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [roleFilter, setRoleFilter] = useState<'all' | UserRole>('all');
-  const { toast } = useToast();
-  
+  const [users, setUsers] = useState<User[]>([])
+  const [loading, setLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [roleFilter, setRoleFilter] = useState<'all' | UserRole>('all')
+  const { toast } = useToast()
+
   // Aplicar debounce al término de búsqueda para evitar búsquedas excesivas
-  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  const debouncedSearchTerm = useDebounce(searchTerm, 300)
 
   // Cargar usuarios utilizando el servicio optimizado con manejo detallado de errores
   const loadUsers = useCallback(async () => {
     try {
-      setLoading(true);
+      setLoading(true)
 
-      const usersData = await adminService.listUsers();
+      const usersData = await adminService.listUsers()
 
-      
-      setUsers(usersData.map((user: ExtendedUser) => ({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role as UserRole || 'USER',
-        emailVerified: user.emailVerified,
-        createdAt: new Date(user.createdAt),
-        updatedAt: new Date(user.updatedAt),
-        status: user.banned ? 'inactive' as UserStatus : 'active' as UserStatus
-      })));
+      setUsers(
+        usersData.map((user: ExtendedUser) => ({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: (user.role as UserRole) || 'USER',
+          emailVerified: user.emailVerified,
+          createdAt: new Date(user.createdAt),
+          updatedAt: new Date(user.updatedAt),
+          status: user.banned ? ('inactive' as UserStatus) : ('active' as UserStatus),
+        })),
+      )
     } catch (error) {
-      console.error('Error en useUsers hook:', error);
-      let errorMessage = "No se pudieron cargar los usuarios";
-      
+      let errorMessage = 'No se pudieron cargar los usuarios'
+
       if (error instanceof Error) {
         // Errores específicos de permisos
         if (error.message.includes('not allowed') || error.message.includes('FORBIDDEN')) {
-          errorMessage = "No tienes permisos para ver la lista de usuarios. Contacta al administrador.";
+          errorMessage =
+            'No tienes permisos para ver la lista de usuarios. Contacta al administrador.'
         } else {
-          errorMessage = error.message;
+          errorMessage = error.message
         }
       }
-      
+
       toast({
-        title: "Error",
+        title: 'Error',
         description: errorMessage,
-        variant: "destructive"
-      });
+        variant: 'destructive',
+      })
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  }, [toast]);
+  }, [toast])
 
   // Actualizar rol de usuario con memoización
-  const updateUserRole = useCallback(async (userId: string, newRole: UserRole) => {
-    try {
-      await adminService.updateUserRole(userId, newRole);
+  const updateUserRole = useCallback(
+    async (userId: string, newRole: UserRole) => {
+      try {
+        await adminService.updateUserRole(userId, newRole)
 
-      setUsers(prevUsers => 
-        prevUsers.map(user =>
-          user.id === userId ? { ...user, role: newRole } : user
+        setUsers((prevUsers) =>
+          prevUsers.map((user) => (user.id === userId ? { ...user, role: newRole } : user)),
         )
-      );
 
-      toast({
-        title: "Éxito",
-        description: "Rol actualizado correctamente"
-      });
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "No se pudo actualizar el rol";
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    }
-  }, [toast]);
+        toast({
+          title: 'Éxito',
+          description: 'Rol actualizado correctamente',
+        })
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'No se pudo actualizar el rol'
+        toast({
+          title: 'Error',
+          description: errorMessage,
+          variant: 'destructive',
+        })
+      }
+    },
+    [toast],
+  )
 
   // Cargar usuarios al montar el componente
   useEffect(() => {
-    loadUsers();
-  }, [loadUsers]);
+    loadUsers()
+  }, [loadUsers])
 
   // Filtrar usuarios con useMemo para evitar recálculos innecesarios
   const filteredUsers = useMemo(() => {
-    return users.filter(user => {
-      const matchesSearch = 
+    return users.filter((user) => {
+      const matchesSearch =
         user.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
-      const matchesRole = roleFilter === 'all' || user.role === roleFilter;
-      return matchesSearch && matchesRole;
-    });
-  }, [users, debouncedSearchTerm, roleFilter]);
+        user.email.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+      const matchesRole = roleFilter === 'all' || user.role === roleFilter
+      return matchesSearch && matchesRole
+    })
+  }, [users, debouncedSearchTerm, roleFilter])
 
   return {
     users,
@@ -127,6 +129,6 @@ export function useUsers() {
     setRoleFilter,
     filteredUsers,
     updateUserRole,
-    refreshUsers: loadUsers
-  };
+    refreshUsers: loadUsers,
+  }
 }

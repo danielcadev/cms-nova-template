@@ -1,63 +1,66 @@
-import { PageLayout } from '@/components/admin/shared/PageLayout';
-import { HeroSection } from '@/components/admin/shared/HeroSection';
-import { FormContainer } from '@/components/admin/shared/FormContainer';
-import { DynamicContentForm } from '@/components/cms/HeadlessCMS/DynamicContentForm';
-import { PlusCircle, Sparkles, FileText } from 'lucide-react';
+import { FileText, PlusCircle, Sparkles } from 'lucide-react'
+import { FormContainer } from '@/components/admin/shared/FormContainer'
+import { HeroSection } from '@/components/admin/shared/HeroSection'
+import { PageLayout } from '@/components/admin/shared/PageLayout'
+import { DynamicContentForm } from '@/components/cms/HeadlessCMS/DynamicContentForm'
 
 interface ContentType {
-  id: string;
-  name: string;
-  apiIdentifier: string;
-  description?: string;
+  id: string
+  name: string
+  apiIdentifier: string
+  description?: string
   fields: Array<{
-    id: string;
-    label: string;
-    apiIdentifier: string;
-    type: 'TEXT' | 'RICH_TEXT' | 'NUMBER' | 'BOOLEAN' | 'DATE' | 'MEDIA';
-    isRequired: boolean;
-  }>;
+    id: string
+    label: string
+    apiIdentifier: string
+    type: 'TEXT' | 'RICH_TEXT' | 'NUMBER' | 'BOOLEAN' | 'DATE' | 'MEDIA'
+    isRequired: boolean
+  }>
 }
 
 interface CreateContentFormProps {
-  contentType: ContentType;
-  onSave: (data: Record<string, any>) => Promise<void>;
+  contentType: ContentType
+  onSave: (data: Record<string, any>) => Promise<void>
 }
 
 export function CreateContentForm({ contentType, onSave }: CreateContentFormProps) {
   return (
     <>
-      <PageLayout 
+      <PageLayout
         backgroundVariant="green"
         backLink={{
           href: `/admin/dashboard/content/${contentType.apiIdentifier}`,
-          label: `Volver a ${contentType.name}`
+          label: `Volver a ${contentType.name}`,
         }}
       >
         <HeroSection
           badge={{
             icon: PlusCircle,
-            title: "Crear Nuevo Contenido",
+            title: 'Crear Nuevo Contenido',
             subtitle: contentType.name,
-            color: "bg-gradient-to-r from-green-500/10 to-emerald-600/10"
+            color: 'bg-gradient-to-r from-green-500/10 to-emerald-600/10',
           }}
           title={`Nueva entrada de ${contentType.name}`}
-          description={contentType.description || `Crea una nueva entrada de ${contentType.name.toLowerCase()} completando los campos de forma conversacional y sencilla.`}
+          description={
+            contentType.description ||
+            `Crea una nueva entrada de ${contentType.name.toLowerCase()} completando los campos de forma conversacional y sencilla.`
+          }
           stats={[
             {
               value: contentType.fields.length,
-              label: "Campos totales",
-              color: "text-green-600"
+              label: 'Campos totales',
+              color: 'text-green-600',
             },
             {
-              value: contentType.fields.filter(f => f.isRequired).length,
-              label: "Requeridos", 
-              color: "text-emerald-600"
+              value: contentType.fields.filter((f) => f.isRequired).length,
+              label: 'Requeridos',
+              color: 'text-emerald-600',
             },
             {
-              value: contentType.fields.filter(f => !f.isRequired).length,
-              label: "Opcionales",
-              color: "text-green-700"
-            }
+              value: contentType.fields.filter((f) => !f.isRequired).length,
+              label: 'Opcionales',
+              color: 'text-green-700',
+            },
           ]}
         />
       </PageLayout>
@@ -69,15 +72,11 @@ export function CreateContentForm({ contentType, onSave }: CreateContentFormProp
         colorScheme="green"
       >
         <FieldsPreview fields={contentType.fields} />
-        
-        <DynamicContentForm
-          contentType={contentType}
-          mode="create"
-          onSave={onSave}
-        />
+
+        <DynamicContentForm contentType={contentType} mode="create" onSave={onSave} />
       </FormContainer>
     </>
-  );
+  )
 }
 
 function FieldsPreview({ fields }: { fields: ContentType['fields'] }) {
@@ -93,7 +92,7 @@ function FieldsPreview({ fields }: { fields: ContentType['fields'] }) {
         ))}
       </div>
     </div>
-  );
+  )
 }
 
 function FieldChip({ field, index }: { field: ContentType['fields'][0]; index: number }) {
@@ -109,5 +108,5 @@ function FieldChip({ field, index }: { field: ContentType['fields'][0]; index: n
         </span>
       )}
     </div>
-  );
+  )
 }

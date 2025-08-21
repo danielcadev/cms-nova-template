@@ -1,4 +1,4 @@
-import slugify from 'slugify';
+import slugify from 'slugify'
 
 /**
  * NOVA CMS - UTILITY FORMATTERS
@@ -12,22 +12,33 @@ import slugify from 'slugify';
  */
 export function formatDestinationForImage(destination: string): string {
   // Lista de imágenes disponibles en placeshero
-  const availableImages = ['amazonas', 'boyaca', 'capurgana', 'eje-cafetero', 'cartagena', 'bogota', 'medellin', 'cali'];
-  
+  const availableImages = [
+    'amazonas',
+    'boyaca',
+    'capurgana',
+    'eje-cafetero',
+    'cartagena',
+    'bogota',
+    'medellin',
+    'cali',
+  ]
+
   // Aplicar transformación estándar
-  const formattedName = destination.toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Eliminar acentos
+  const formattedName = destination
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos
     .replace(/\s+/g, '-') // Reemplazar espacios con guiones
-    .replace(/[^\w-]/g, ''); // Eliminar caracteres especiales
-  
+    .replace(/[^\w-]/g, '') // Eliminar caracteres especiales
+
   // Verificar si existe la imagen para este nombre formateado
   if (availableImages.includes(formattedName)) {
-    return formattedName;
+    return formattedName
   }
-  
+
   // Si no existe, devolver una imagen predeterminada basada en la primera letra
-  const index = destination.charCodeAt(0) % availableImages.length;
-  return availableImages[index];
+  const index = destination.charCodeAt(0) % availableImages.length
+  return availableImages[index]
 }
 
 /**
@@ -36,65 +47,65 @@ export function formatDestinationForImage(destination: string): string {
 export function formatName(slug: string): string {
   return slug
     .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ')
     .replace(/\ban\b/gi, 'Andrés') // Reemplazar casos específicos
-    .replace(/\beje\b/gi, 'Eje');
+    .replace(/\beje\b/gi, 'Eje')
 }
 
 /**
  * Obtiene el nombre formateado de un slug
  */
 export function getFormattedNameFromSlug(slug: string): string {
-  return formatName(slug);
+  return formatName(slug)
 }
 
 /**
  * Formatea nombre de destino
  */
 export function formatDestination(destination: string): string {
-  return destination; // Devolver tal como viene, ya que ahora es input libre
+  return destination // Devolver tal como viene, ya que ahora es input libre
 }
 
 /**
  * Extrae la duración de un título
  */
 export function formatDuration(title: string): string {
-  const match = title.match(/(\d+)\s*días\s*(\d+)\s*noches/i);
+  const match = title.match(/(\d+)\s*días\s*(\d+)\s*noches/i)
   if (match) {
-    return `${match[1]} días ${match[2]} noches`;
+    return `${match[1]} días ${match[2]} noches`
   }
-  return '';
+  return ''
 }
 
 /**
  * Formatea texto a camelCase
  */
 export const toCamelCase = (str: string) => {
-    if (!str) return '';
-    return slugify(str, { lower: false, strict: true })
-        .replace(/-(\w)/g, (_, c) => c.toUpperCase())
-        .replace(/^[A-Z]/, c => c.toLowerCase());
-};
+  if (!str) return ''
+  return slugify(str, { lower: false, strict: true })
+    .replace(/-(\w)/g, (_, c) => c.toUpperCase())
+    .replace(/^[A-Z]/, (c) => c.toLowerCase())
+}
 
 /**
  * Formatea moneda con locale específico
  */
 export function formatCurrency(
-  amount: number, 
+  amount: number,
   currencyCode: string = 'COP',
-  locale: string = 'es-CO'
+  locale: string = 'es-CO',
 ): string {
   try {
     return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: currencyCode,
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount);
-  } catch (error) {
+      maximumFractionDigits: 0,
+    }).format(amount)
+  } catch (_error) {
     // Fallback si el locale o moneda no es válido
-    return `${currencyCode} ${amount.toLocaleString()}`;
+    return `${currencyCode} ${amount.toLocaleString()}`
   }
 }
 
@@ -102,27 +113,27 @@ export function formatCurrency(
  * Formatea números grandes con abreviaciones (K, M, B)
  */
 export function formatCompactNumber(num: number): string {
-  if (num < 1000) return num.toString();
-  if (num < 1000000) return (num / 1000).toFixed(1) + 'K';
-  if (num < 1000000000) return (num / 1000000).toFixed(1) + 'M';
-  return (num / 1000000000).toFixed(1) + 'B';
+  if (num < 1000) return num.toString()
+  if (num < 1000000) return `${(num / 1000).toFixed(1)}K`
+  if (num < 1000000000) return `${(num / 1000000).toFixed(1)}M`
+  return `${(num / 1000000000).toFixed(1)}B`
 }
 
 /**
  * Formatea fechas de forma amigable
  */
 export function formatRelativeDate(date: Date | string): string {
-  const targetDate = typeof date === 'string' ? new Date(date) : date;
-  const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - targetDate.getTime()) / 1000);
+  const targetDate = typeof date === 'string' ? new Date(date) : date
+  const now = new Date()
+  const diffInSeconds = Math.floor((now.getTime() - targetDate.getTime()) / 1000)
 
-  if (diffInSeconds < 60) return 'Hace unos segundos';
-  if (diffInSeconds < 3600) return `Hace ${Math.floor(diffInSeconds / 60)} minutos`;
-  if (diffInSeconds < 86400) return `Hace ${Math.floor(diffInSeconds / 3600)} horas`;
-  if (diffInSeconds < 2592000) return `Hace ${Math.floor(diffInSeconds / 86400)} días`;
-  if (diffInSeconds < 31536000) return `Hace ${Math.floor(diffInSeconds / 2592000)} meses`;
-  
-  return `Hace ${Math.floor(diffInSeconds / 31536000)} años`;
+  if (diffInSeconds < 60) return 'Hace unos segundos'
+  if (diffInSeconds < 3600) return `Hace ${Math.floor(diffInSeconds / 60)} minutos`
+  if (diffInSeconds < 86400) return `Hace ${Math.floor(diffInSeconds / 3600)} horas`
+  if (diffInSeconds < 2592000) return `Hace ${Math.floor(diffInSeconds / 86400)} días`
+  if (diffInSeconds < 31536000) return `Hace ${Math.floor(diffInSeconds / 2592000)} meses`
+
+  return `Hace ${Math.floor(diffInSeconds / 31536000)} años`
 }
 
 /**
@@ -131,30 +142,30 @@ export function formatRelativeDate(date: Date | string): string {
 export function formatDate(
   date: Date | string,
   format: 'short' | 'medium' | 'long' | 'full' = 'medium',
-  locale: string = 'es-ES'
+  locale: string = 'es-ES',
 ): string {
-  const targetDate = typeof date === 'string' ? new Date(date) : date;
-  
-  let options: Intl.DateTimeFormatOptions;
-  
+  const targetDate = typeof date === 'string' ? new Date(date) : date
+
+  let options: Intl.DateTimeFormatOptions
+
   switch (format) {
     case 'short':
-      options = { year: 'numeric', month: 'numeric', day: 'numeric' };
-      break;
+      options = { year: 'numeric', month: 'numeric', day: 'numeric' }
+      break
     case 'medium':
-      options = { year: 'numeric', month: 'short', day: 'numeric' };
-      break;
+      options = { year: 'numeric', month: 'short', day: 'numeric' }
+      break
     case 'long':
-      options = { year: 'numeric', month: 'long', day: 'numeric' };
-      break;
+      options = { year: 'numeric', month: 'long', day: 'numeric' }
+      break
     case 'full':
-      options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      break;
+      options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+      break
     default:
-      options = { year: 'numeric', month: 'short', day: 'numeric' };
+      options = { year: 'numeric', month: 'short', day: 'numeric' }
   }
 
-  return new Intl.DateTimeFormat(locale, options).format(targetDate);
+  return new Intl.DateTimeFormat(locale, options).format(targetDate)
 }
 
 /**
@@ -164,36 +175,36 @@ export function createSlug(text: string): string {
   return slugify(text, {
     lower: true,
     strict: true,
-    remove: /[*+~.()'"!:@]/g
-  });
+    remove: /[*+~.()'"!:@]/g,
+  })
 }
 
 /**
  * Trunca texto con elipsis
  */
 export function truncateText(text: string, maxLength: number = 100): string {
-  if (text.length <= maxLength) return text;
-  return text.substring(0, maxLength).trim() + '...';
+  if (text.length <= maxLength) return text
+  return `${text.substring(0, maxLength).trim()}...`
 }
 
 /**
  * Formatea bytes a formato legible (KB, MB, GB)
  */
 export function formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 B';
-  
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  if (bytes === 0) return '0 B'
+
+  const k = 1024
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+  return `${parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`
 }
 
 /**
  * Capitaliza la primera letra de cada palabra
  */
 export function capitalizeWords(text: string): string {
-  return text.replace(/\b\w/g, char => char.toUpperCase());
+  return text.replace(/\b\w/g, (char) => char.toUpperCase())
 }
 
 /**
@@ -203,8 +214,8 @@ export function toSnakeCase(text: string): string {
   return text
     .replace(/\W+/g, ' ')
     .split(/ |\B(?=[A-Z])/)
-    .map(word => word.toLowerCase())
-    .join('_');
+    .map((word) => word.toLowerCase())
+    .join('_')
 }
 
 /**
@@ -213,8 +224,8 @@ export function toSnakeCase(text: string): string {
 export function getInitials(name: string): string {
   return name
     .split(' ')
-    .map(word => word.charAt(0))
+    .map((word) => word.charAt(0))
     .join('')
     .toUpperCase()
-    .substring(0, 2);
+    .substring(0, 2)
 }

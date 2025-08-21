@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { cn } from "@/lib/utils"
-import { LucideIcon } from "lucide-react"
+import type { LucideIcon } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface InfoCardProps {
   title: string
@@ -15,15 +15,15 @@ export function InfoCard({ title, description, icon: Icon, className }: InfoCard
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-3xl bg-white/80 backdrop-blur-sm",
-        "border border-emerald-100/50 shadow-lg shadow-emerald-900/5",
-        "transition-all duration-500 hover:shadow-xl hover:shadow-emerald-900/10 hover:-translate-y-1",
-        className
+        'group relative overflow-hidden rounded-3xl bg-white/80 backdrop-blur-sm',
+        'border border-emerald-100/50 shadow-lg shadow-emerald-900/5',
+        'transition-all duration-500 hover:shadow-xl hover:shadow-emerald-900/10 hover:-translate-y-1',
+        className,
       )}
     >
       {/* Efecto de gradiente en hover */}
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-      
+
       {/* Contenido */}
       <div className="relative p-8">
         {/* Icono con animación */}
@@ -40,9 +40,7 @@ export function InfoCard({ title, description, icon: Icon, className }: InfoCard
         </div>
 
         {/* Descripción */}
-        <p className="text-gray-600 leading-relaxed text-lg">
-          {description}
-        </p>
+        <p className="text-gray-600 leading-relaxed text-lg">{description}</p>
 
         {/* Línea decorativa inferior */}
         <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-200/50 to-transparent" />
@@ -52,4 +50,4 @@ export function InfoCard({ title, description, icon: Icon, className }: InfoCard
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-x-[-100%] group-hover:translate-x-[100%]" />
     </div>
   )
-} 
+}

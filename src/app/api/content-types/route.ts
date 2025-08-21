@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { ApiResponseBuilder } from '@/utils/api-response';
+import type { NextRequest } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { ApiResponseBuilder } from '@/utils/api-response'
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
-    console.log('🟢 GET /api/content-types - Fetching content types');
-    
+    // debug removed
+
     const contentTypes = await prisma.contentType.findMany({
       include: {
         fields: true,
@@ -13,12 +13,12 @@ export async function GET(request: NextRequest) {
       orderBy: {
         createdAt: 'desc',
       },
-    });
+    })
 
-    console.log(`🟢 Found ${contentTypes.length} content types`);
+    // debug removed
 
     return ApiResponseBuilder.success({
-      contentTypes: contentTypes.map(ct => ({
+      contentTypes: contentTypes.map((ct) => ({
         id: ct.id,
         name: ct.name,
         apiIdentifier: ct.apiIdentifier,
@@ -27,31 +27,33 @@ export async function GET(request: NextRequest) {
         createdAt: ct.createdAt.toISOString(),
         updatedAt: ct.updatedAt.toISOString(),
       })),
-    });
+    })
   } catch (error) {
-    console.error('🔴 Error fetching content types:', error);
-    return ApiResponseBuilder.error('Error al cargar tipos de contenido', 500);
+    console.error('🔴 Error fetching content types:', error)
+    return ApiResponseBuilder.error('Internal Server Error while fetching content types', 500)
   }
 }
 
+import { getAdminSession } from '@/lib/server-session'
 export async function POST(request: NextRequest) {
   try {
-    console.log('🟢 POST /api/content-types - Creating content type');
-    
-    const body = await request.json();
-    const { name, apiIdentifier, description, fields } = body;
+    const session = await getAdminSession()
+    if (!session) return ApiResponseBuilder.error('Unauthorized', 401)
+
+    const body = await request.json()
+    const { name, apiIdentifier, description, fields } = body
 
     if (!name || !apiIdentifier) {
-      return ApiResponseBuilder.error('Nombre e identificador API son requeridos', 400);
+      return ApiResponseBuilder.error('Name and API identifier are required', 400)
     }
 
-    // Verificar que el apiIdentifier sea único
+    // Ensure apiIdentifier uniqueness
     const existingContentType = await prisma.contentType.findUnique({
       where: { apiIdentifier },
-    });
+    })
 
     if (existingContentType) {
-      return ApiResponseBuilder.error('El identificador API ya existe', 400);
+      return ApiResponseBuilder.error('API identifier already exists', 400)
     }
 
     const contentType = await prisma.contentType.create({
@@ -60,20 +62,19 @@ export async function POST(request: NextRequest) {
         apiIdentifier,
         description,
         fields: {
-          create: fields?.map((field: any) => ({
-            label: field.label,
-            apiIdentifier: field.apiIdentifier,
-            type: field.type,
-            isRequired: field.isRequired || false,
-          })) || [],
+          create:
+            fields?.map((field: any) => ({
+              label: field.label,
+              apiIdentifier: field.apiIdentifier,
+              type: field.type,
+              isRequired: field.isRequired || false,
+            })) || [],
         },
       },
       include: {
         fields: true,
       },
-    });
-
-    console.log(`🟢 Content type created: ${contentType.id}`);
+    })
 
     return ApiResponseBuilder.success({
       contentType: {
@@ -85,9 +86,9 @@ export async function POST(request: NextRequest) {
         createdAt: contentType.createdAt.toISOString(),
         updatedAt: contentType.updatedAt.toISOString(),
       },
-    });
+    })
   } catch (error) {
-    console.error('🔴 Error creating content type:', error);
-    return ApiResponseBuilder.error('Error al crear tipo de contenido', 500);
+    console.error('🔴 Error creating content type:', error)
+    return ApiResponseBuilder.error('Internal Server Error while creating content type', 500)
   }
 }

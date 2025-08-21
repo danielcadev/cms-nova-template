@@ -1,33 +1,26 @@
-'use client';
+'use client'
 
-import { 
-  Plus, 
-  Settings,
-  RefreshCw,
-  Sparkles
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Plus, RefreshCw, Settings, Sparkles } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface PluginsHeaderProps {
-  onRefresh: () => void;
-  enabledCount: number;
-  totalCount: number;
+  onRefresh: () => void
+  enabledCount: number
+  totalCount: number
 }
 
-export function PluginsHeader({
-  onRefresh,
-  enabledCount,
-  totalCount
-}: PluginsHeaderProps) {
+export function PluginsHeader({ onRefresh, enabledCount, totalCount }: PluginsHeaderProps) {
   return (
     <div className="space-y-8">
       {/* Actions */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight">Plugins</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">Administra las extensiones de tu CMS</p>
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight">
+            Plugins
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Administra las extensiones de tu CMS
+          </p>
         </div>
 
         <div className="flex gap-3 items-center">
@@ -55,8 +48,12 @@ export function PluginsHeader({
               <div className="w-2 h-2 bg-emerald-600 rounded-full" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Plugins Activos</p>
-              <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{enabledCount}</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Plugins Activos
+              </p>
+              <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                {enabledCount}
+              </p>
             </div>
           </div>
         </div>
@@ -67,8 +64,12 @@ export function PluginsHeader({
               <Settings className="w-5 h-5 text-blue-600 dark:text-blue-400" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Instalados</p>
-              <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{totalCount}</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Total Instalados
+              </p>
+              <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                {totalCount}
+              </p>
             </div>
           </div>
         </div>
@@ -80,11 +81,13 @@ export function PluginsHeader({
             </div>
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">En Desarrollo</p>
-              <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{totalCount - 1}</p>
+              <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                {totalCount - 1}
+              </p>
             </div>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }

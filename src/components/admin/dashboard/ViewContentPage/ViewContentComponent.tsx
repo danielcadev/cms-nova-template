@@ -1,271 +1,294 @@
-import React from 'react';
-import Link from 'next/link';
-import { 
-  Plus, 
-  FileText, 
-  Database, 
-  Layout,
-  ArrowRight,
-  Calendar,
-  Users,
-  TrendingUp,
-  Eye,
-  Edit3,
-  Layers
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ArrowRight, Database, Edit3, Eye, FileText, Layout, Plus } from 'lucide-react'
+import Link from 'next/link'
+import { ThemedButton } from '@/components/ui/ThemedButton'
 
 export interface ContentType {
-  id: string;
-  name: string;
-  apiIdentifier: string;
-  description?: string | null;
+  id: string
+  name: string
+  apiIdentifier: string
+  description?: string | null
   _count: {
-    entries: number;
-  };
-  entries: any[];
+    entries: number
+  }
+  entries: any[]
 }
 
 export interface Plan {
-  id: string;
-  mainTitle: string;
-  createdAt: Date;
+  id: string
+  mainTitle: string
+  createdAt: Date
 }
 
 export interface ViewContentProps {
-  contentTypes: ContentType[];
-  plans: Plan[];
-  allContentEntries: any[];
+  contentTypes: ContentType[]
+  plans: Plan[]
+  allContentEntries: any[]
 }
-
-
-
-// Editorial content card component
-const ContentCard = ({ icon: Icon, title, description, count, action, href }: {
-  icon: React.ElementType;
-  title: string;
-  description: string;
-  count: number;
-  action: string;
-  href: string;
-}) => (
-  <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-700">
-    <div className="flex items-start justify-between mb-4">
-      <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-        <Icon className="h-5 w-5 text-gray-600 dark:text-gray-400" strokeWidth={1.5} />
-      </div>
-      <div className="text-right">
-        <span className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{count}</span>
-        <p className="text-xs text-gray-500 dark:text-gray-500">elementos</p>
-      </div>
-    </div>
-    
-    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 tracking-tight">
-      {title}
-    </h3>
-    <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
-      {description}
-    </p>
-    
-    <Link href={href}>
-      <Button className="w-full bg-gray-900 hover:bg-gray-800 dark:bg-gray-100 dark:hover:bg-gray-200 text-white dark:text-gray-900 transition-all duration-200 font-medium">
-        <span>{action}</span>
-        <ArrowRight className="h-4 w-4 ml-2" strokeWidth={1.5} />
-      </Button>
-    </Link>
-  </div>
-);
-
-// Editorial template card component
-const RecentTemplateCard = ({ template }: { template: Plan }) => (
-  <div className="bg-white dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-700">
-    <div className="flex items-start justify-between mb-3">
-      <div className="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-        <Layout className="h-4 w-4 text-gray-600 dark:text-gray-400" strokeWidth={1.5} />
-      </div>
-      <span className="px-2 py-1 text-xs font-medium rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400">
-        Activo
-      </span>
-    </div>
-    
-    <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2 tracking-tight">
-      {template.mainTitle}
-    </h4>
-    
-    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-500 mb-4">
-      <Calendar className="h-3 w-3" strokeWidth={1.5} />
-      <span>{new Date(template.createdAt).toLocaleDateString('es-ES')}</span>
-    </div>
-    
-    <div className="flex gap-2">
-      <Link href={`/admin/dashboard/templates/tourism/edit/${template.id}`} className="flex-1">
-        <Button variant="outline" size="sm" className="w-full border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 font-medium">
-          <Eye className="h-3 w-3 mr-2" strokeWidth={1.5} />
-          Ver
-        </Button>
-      </Link>
-      <Link href={`/admin/dashboard/templates/tourism/edit/${template.id}`}>
-        <Button variant="outline" size="sm" className="border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 font-medium">
-          <Edit3 className="h-3 w-3" strokeWidth={1.5} />
-        </Button>
-      </Link>
-    </div>
-  </div>
-);
 
 export function ViewContentComponent({ contentTypes, plans, allContentEntries }: ViewContentProps) {
   // Cálculos de métricas
-  const totalContent = allContentEntries?.length || 0;
-  const totalTemplates = plans?.length || 0;
-  const totalContentTypes = contentTypes?.length || 0;
-  
+  const _totalContent = allContentEntries?.length || 0
+  const _totalTemplates = plans?.length || 0
+  const _totalContentTypes = contentTypes?.length || 0
+
   // Plantillas recientes (últimas 3)
-  const recentTemplates = plans?.slice(0, 3) || [];
+  const _recentTemplates = plans?.slice(0, 3) || []
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 relative">
-      {/* Clean editorial background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-gray-100/50 dark:from-gray-950 dark:to-gray-900/50" />
-
-      <div className="relative z-10 p-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Editorial header */}
-          <div className="mb-16">
-            <div className="flex items-start justify-between mb-12">
-              <div className="space-y-4">
-                <h1 className="text-4xl lg:text-5xl font-medium text-gray-900 dark:text-gray-100 tracking-tight leading-tight">
-                  Contenido
-                </h1>
-                <p className="text-lg text-gray-600 dark:text-gray-400 font-light tracking-wide">
-                  Gestiona, crea y organiza todo tu contenido desde un solo lugar
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
+    <div className="min-h-screen theme-bg">
+      <div className="mx-auto max-w-6xl px-6 py-10">
+        {/* Cover */}
+        <div className="relative overflow-hidden rounded-2xl border theme-border theme-card mb-6">
+          <div className="absolute inset-0 theme-bg-secondary" />
+          <div className="relative p-8 md:p-10 flex items-start justify-between">
+            <div>
+              <p className="text-sm theme-text-muted mb-2">Content</p>
+              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight theme-text">
+                View content
+              </h1>
+              <p className="mt-2 theme-text-secondary max-w-xl">
+                Manage, create and organize all your content from one place.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <ThemedButton asChild>
+                <Link href="/admin/dashboard/content-types">
+                  <Database className="h-4 w-4 mr-2 theme-text" />
+                  Content types
+                </Link>
+              </ThemedButton>
+              <ThemedButton
+                asChild
+                className="theme-card theme-text border theme-border hover:theme-card-hover"
+              >
                 <Link href="/admin/dashboard/content-types/create">
-                  <Button className="bg-gray-900 hover:bg-gray-800 dark:bg-gray-100 dark:hover:bg-gray-200 text-white dark:text-gray-900 font-medium px-4 py-2.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center gap-2">
-                      <Plus className="h-4 w-4" strokeWidth={1.5} />
-                      Crear contenido
+                  <Plus className="h-4 w-4 mr-2 theme-text" />
+                  New type
+                </Link>
+              </ThemedButton>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Sections */}
+        <div className="space-y-8 mb-12">
+          {/* Content Types */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                Content Types
+              </h2>
+              <ThemedButton variantTone="ghost" size="sm" className="theme-text" asChild>
+                <Link href="/admin/dashboard/content-types">
+                  View all
+                  <ArrowRight className="h-4 w-4 ml-1 theme-text" />
+                </Link>
+              </ThemedButton>
+            </div>
+
+            {contentTypes.length === 0 ? (
+              <div className="text-center py-12 border theme-border rounded-lg">
+                <div className="w-12 h-12 mx-auto theme-bg-secondary rounded-lg flex items-center justify-center mb-4">
+                  <Database className="w-6 h-6 theme-text-secondary" />
+                </div>
+                <h3 className="text-lg font-medium theme-text mb-2">No content types yet</h3>
+                <p className="theme-text-secondary text-sm mb-6">
+                  Create your first content type to start managing content
+                </p>
+                <ThemedButton
+                  asChild
+                  className="theme-card theme-text border theme-border hover:theme-card-hover"
+                >
+                  <Link href="/admin/dashboard/content-types/create">
+                    <Plus className="h-4 w-4 mr-2 theme-text" />
+                    Create Content Type
+                  </Link>
+                </ThemedButton>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {contentTypes.slice(0, 5).map((contentType) => (
+                  <div
+                    key={contentType.id}
+                    className="flex items-center justify-between p-4 rounded-lg border theme-border hover:theme-card-hover transition-colors"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 theme-bg-secondary rounded-lg flex items-center justify-center">
+                        <Database className="h-5 w-5 theme-text-secondary" />
+                      </div>
+                      <div>
+                        <div className="font-medium theme-text">{contentType.name}</div>
+                        <div className="text-sm theme-text-secondary">
+                          {contentType._count.entries} entries
+                        </div>
+                      </div>
                     </div>
-                  </Button>
-                </Link>
+                    <div className="flex items-center gap-2">
+                      <ThemedButton variantTone="ghost" size="sm" className="theme-text" asChild>
+                        <Link
+                          href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content`}
+                        >
+                          Content
+                        </Link>
+                      </ThemedButton>
+                      <ThemedButton variantTone="ghost" size="sm" asChild>
+                        <Link href={`/admin/dashboard/content-types/edit/${contentType.id}`}>
+                          <Edit3 className="h-4 w-4 theme-text" />
+                        </Link>
+                      </ThemedButton>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
+            )}
           </div>
 
-          {/* Editorial Stats cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-            <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-200">
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2" />
-                <div className="text-right">
-                  <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight">{totalContent}</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400 font-medium">Total contenido</div>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-200">
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full mt-2" />
-                <div className="text-right">
-                  <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight">{totalTemplates}</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400 font-medium">Plantillas</div>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-200">
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-2 h-2 bg-amber-500 rounded-full mt-2" />
-                <div className="text-right">
-                  <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight">{totalContentTypes}</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400 font-medium">Tipos de contenido</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Secciones principales */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-16">
-            {/* CMS Flexible */}
-            <ContentCard
-              icon={Database}
-              title="CMS Flexible"
-              description="Crea y gestiona tipos de contenido personalizados con campos flexibles y dinámicos"
-              count={totalContentTypes}
-              action="Gestionar Contenido"
-              href="/admin/dashboard/content-types"
-            />
-
-            {/* Plantillas */}
-            <ContentCard
-              icon={Layout}
-              title="Plantillas"
-              description="Diseña y administra plantillas predefinidas para crear contenido de manera rápida y consistente"
-              count={totalTemplates}
-              action="Ver Plantillas"
-              href="/admin/dashboard/templates"
-            />
-          </div>
-
-          {/* Plantillas recientes */}
-          {recentTemplates.length > 0 && (
-            <div className="mb-16">
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight">
-                  Plantillas Recientes
+          {/* Recent Articles */}
+          {allContentEntries.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                  Recent Content Types
                 </h2>
-                <Link href="/admin/dashboard/templates">
-                  <Button variant="outline" className="border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 font-medium">
-                    Ver todas
-                    <ArrowRight className="h-4 w-4 ml-2" strokeWidth={1.5} />
-                  </Button>
-                </Link>
+                <ThemedButton variantTone="ghost" size="sm" className="theme-text" asChild>
+                  <Link href="/admin/dashboard/content-types">
+                    View all
+                    <ArrowRight className="h-4 w-4 ml-1 theme-text" />
+                  </Link>
+                </ThemedButton>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {recentTemplates.map((template) => (
-                  <RecentTemplateCard key={template.id} template={template} />
+
+              <div className="space-y-3">
+                {allContentEntries.slice(0, 5).map((entry) => (
+                  <div
+                    key={entry.id}
+                    className="flex items-center justify-between p-4 rounded-lg border theme-border hover:theme-card-hover transition-colors"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 theme-bg-secondary rounded-lg flex items-center justify-center">
+                        <FileText className="h-5 w-5 theme-text-secondary" />
+                      </div>
+                      <div>
+                        <div className="font-medium theme-text">
+                          {entry.contentType?.name || 'Article'}
+                        </div>
+                        <div className="text-sm theme-text-secondary">
+                          Content Type: {entry.contentType?.name || 'Unknown'} •{' '}
+                          {new Date(entry.createdAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <ThemedButton variantTone="ghost" size="sm" asChild>
+                        <Link
+                          href={`/admin/dashboard/content-types/${entry.contentType?.apiIdentifier || ''}/content`}
+                        >
+                          <Eye className="h-4 w-4 theme-text" />
+                        </Link>
+                      </ThemedButton>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
           )}
+        </div>
 
-          {/* Acciones rápidas */}
-          <div className="bg-white dark:bg-gray-900 rounded-xl p-8 border border-gray-200 dark:border-gray-800 shadow-sm">
-            <div className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2 tracking-tight">
-                Acciones Rápidas
+        {/* Recent Template Articles */}
+        {plans.length > 0 && (
+          <div className="mt-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                Recent Template Articles
               </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Accede rápidamente a las funciones más utilizadas
-              </p>
+              <ThemedButton variantTone="ghost" size="sm" className="theme-text" asChild>
+                <Link href="/admin/dashboard/templates/tourism">
+                  View all
+                  <ArrowRight className="h-4 w-4 ml-1 theme-text" />
+                </Link>
+              </ThemedButton>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+            <div className="space-y-3">
+              {plans.slice(0, 5).map((template) => (
+                <div
+                  key={template.id}
+                  className="flex items-center justify-between p-4 rounded-lg border theme-border hover:theme-card-hover transition-colors"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 theme-bg-secondary rounded-lg flex items-center justify-center">
+                      <Layout className="h-5 w-5 theme-text-secondary" />
+                    </div>
+                    <div>
+                      <div className="font-medium theme-text">{template.mainTitle}</div>
+                      <div className="text-sm theme-text-secondary">
+                        Template: Tourism •{' '}
+                        {new Date(template.createdAt).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ThemedButton variantTone="ghost" size="sm" asChild>
+                      <Link href={`/admin/dashboard/templates/tourism/edit/${template.id}`}>
+                        <Eye className="h-4 w-4 theme-text" />
+                      </Link>
+                    </ThemedButton>
+                    <ThemedButton variantTone="ghost" size="sm" asChild>
+                      <Link href={`/admin/dashboard/templates/tourism/edit/${template.id}`}>
+                        <Edit3 className="h-4 w-4 theme-text" />
+                      </Link>
+                    </ThemedButton>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Quick Actions */}
+        <div className="border-t border-gray-200 dark:border-gray-700 pt-8">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+            Quick Actions
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <ThemedButton
+              className="justify-start h-12 theme-card theme-text border theme-border hover:theme-card-hover"
+              asChild
+            >
               <Link href="/admin/dashboard/content-types/create">
-                <Button className="w-full h-16 bg-gray-900 hover:bg-gray-800 dark:bg-gray-100 dark:hover:bg-gray-200 text-white dark:text-gray-900 transition-all duration-200 font-medium">
-                  <Plus className="h-5 w-5 mr-3" strokeWidth={1.5} />
-                  <span>Crear Tipo</span>
-                </Button>
+                <Plus className="h-4 w-4 mr-3" />
+                Create Content Type
               </Link>
-              
+            </ThemedButton>
+            <ThemedButton
+              asChild
+              className="justify-start h-12 theme-card theme-text border theme-border hover:theme-card-hover"
+            >
               <Link href="/admin/dashboard/templates">
-                <Button variant="outline" className="w-full h-16 border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 font-medium">
-                  <Layout className="h-5 w-5 mr-3" strokeWidth={1.5} />
-                  <span>Ver Plantillas</span>
-                </Button>
+                <Layout className="h-4 w-4 mr-3 theme-text" />
+                Create via Template
               </Link>
-              
+            </ThemedButton>
+            <ThemedButton
+              asChild
+              className="justify-start h-12 theme-card theme-text border theme-border hover:theme-card-hover"
+            >
               <Link href="/admin/dashboard/content-types">
-                <Button variant="outline" className="w-full h-16 border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 font-medium">
-                  <Layers className="h-5 w-5 mr-3" strokeWidth={1.5} />
-                  <span>Gestionar Todo</span>
-                </Button>
+                <Database className="h-4 w-4 mr-3 theme-text" />
+                Create via Content Type
               </Link>
-            </div>
+            </ThemedButton>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }

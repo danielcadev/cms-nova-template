@@ -1,31 +1,25 @@
-import { ArrowLeft, Calendar } from 'lucide-react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { ReactNode } from 'react';
+import { ArrowLeft, Calendar } from 'lucide-react'
+import Link from 'next/link'
+import type { ReactNode } from 'react'
+import { Button } from '@/components/ui/button'
 
 interface PageHeaderProps {
   backLink?: {
-    href: string;
-    label: string;
-  };
-  showDate?: boolean;
-  children: ReactNode;
-  backgroundVariant?: 'blue' | 'green' | 'purple' | 'orange';
+    href: string
+    label: string
+  }
+  showDate?: boolean
+  children: ReactNode
+  backgroundVariant?: 'blue' | 'green' | 'purple' | 'orange'
 }
 
-export function PageLayout({ 
-  backLink, 
-  showDate = false, 
-  children, 
-  backgroundVariant = 'blue' 
-}: PageHeaderProps) {
-  
+export function PageLayout({ backLink, showDate = false, children }: PageHeaderProps) {
   const currentDate = new Date().toLocaleDateString('es-ES', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
-  });
+    day: 'numeric',
+  })
 
   return (
     <div className="min-h-screen bg-white relative">
@@ -36,8 +30,8 @@ export function PageLayout({
             <div className="flex items-center justify-between mb-2">
               {backLink && (
                 <Link href={backLink.href}>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="group rounded-2xl px-6 py-2 border-gray-200 hover:bg-gray-50 hover:shadow-lg transition-all duration-300"
                   >
                     <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" />
@@ -45,7 +39,7 @@ export function PageLayout({
                   </Button>
                 </Link>
               )}
-              
+
               {showDate && (
                 <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-200">
                   <Calendar className="h-3.5 w-3.5 text-gray-600" />
@@ -59,5 +53,5 @@ export function PageLayout({
         </div>
       </div>
     </div>
-  );
+  )
 }

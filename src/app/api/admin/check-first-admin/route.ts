@@ -1,24 +1,22 @@
-// api/admin/check-first-admin/route.ts - Verificar si ya existe un administrador
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+// api/admin/check-first-admin/route.ts - Check if an admin already exists
+import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { rateLimit } from '@/lib/rate-limit'
+import logger from '@/utils/logger'
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    // Verificar si existe al menos un usuario en la base de datos
-    const userCount = await prisma.user.count();
-    
-    return NextResponse.json({ 
-      hasAdmin: userCount > 0,
-      userCount 
-    });
+    const rl = rateLimit(request, {
+      limit: 30,
+      windowMs: 60_000,
+      key: 'admin:check-first-admin:GET',
+    })
+    if (!rl.allowed) return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+
+    const userCount = await prisma.user.count()
+    return NextResponse.json({ hasAdmin: userCount > 0, userCount })
   } catch (error) {
-    console.error('Error checking admin:', error);
-    
-    // En caso de error (ej: base de datos no configurada), permitir el registro
-    return NextResponse.json({ 
-      hasAdmin: false,
-      userCount: 0,
-      error: 'Database not configured'
-    });
+    logger.error('Error checking admin:', error)
+    return NextResponse.json({ hasAdmin: false, userCount: 0, error: 'Database not configured' })
   }
 }

@@ -1,198 +1,179 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import { prisma } from '@/lib/prisma';
-import { decrypt } from '@/lib/encryption';
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import { type NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
+import { decrypt } from '@/lib/encryption'
+import { prisma } from '@/lib/prisma'
+import { rateLimit } from '@/lib/rate-limit'
+import { getAdminSession } from '@/lib/server-session'
+import { ApiResponseBuilder as R } from '@/utils/api-response'
+import logger from '@/utils/logger'
 
-const S3_CONFIG_KEY = 's3-credentials';
+const S3_CONFIG_KEY = 's3-credentials'
+const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
+
+const deleteSchema = z.object({
+  key: z.string().min(1, 'Key requerida'),
+})
 
 async function getS3Config() {
   try {
-    // Intentar obtener de la base de datos
-    const s3Config = await prisma.novaConfig.findUnique({
-      where: { key: S3_CONFIG_KEY },
-    });
+    const s3Config = await prisma.novaConfig.findUnique({ where: { key: S3_CONFIG_KEY } })
 
     if (s3Config && typeof s3Config.value === 'object' && s3Config.value !== null) {
-      const config = s3Config.value as any;
-      // Desencriptar la clave secreta
+      const config = s3Config.value as any
       if (config.secretAccessKey) {
-        config.secretAccessKey = decrypt(config.secretAccessKey);
+        config.secretAccessKey = decrypt(config.secretAccessKey)
       }
-      return config;
+      return config
     }
 
-    // Fallback a variables de entorno
     const envConfig = {
       bucket: process.env.AWS_S3_BUCKET,
       region: process.env.AWS_REGION || 'us-east-1',
       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    };
-
-    if (envConfig.bucket && envConfig.accessKeyId && envConfig.secretAccessKey) {
-      return envConfig;
     }
 
-    return null;
+    if (envConfig.bucket && envConfig.accessKeyId && envConfig.secretAccessKey) {
+      return envConfig
+    }
+
+    return null
   } catch (error) {
-    console.error('Error getting S3 config:', error);
-    return null;
+    logger.error('Error getting S3 config:', error)
+    return null
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    // Obtener configuración de S3
-    const s3Config = await getS3Config();
+    const session = await getAdminSession()
+    if (!session) return R.error('Unauthorized', 401)
+
+    const rl = rateLimit(request as unknown as Request, {
+      limit: 10,
+      windowMs: 60_000,
+      key: 'upload:POST',
+    })
+    if (!rl.allowed) {
+      return R.error('Too many requests. Please try again later.', 429)
+    }
+
+    const s3Config = await getS3Config()
     if (!s3Config) {
-      return NextResponse.json(
-        { success: false, error: 'S3 no está configurado' },
-        { status: 400 }
-      );
+      return R.error('S3 is not configured', 400)
     }
 
-    // Obtener el archivo del FormData
-    const formData = await request.formData();
-    const file = formData.get('file') as File;
-    const folder = formData.get('folder') as string || 'uploads';
+    const formData = await request.formData()
+    const file = formData.get('file') as File | null
+    const folderRaw = (formData.get('folder') as string | null) ?? 'uploads'
+    const folder = String(folderRaw).replace(/^\/+/, '')
 
-    if (!file) {
-      return NextResponse.json(
-        { success: false, error: 'No se proporcionó ningún archivo' },
-        { status: 400 }
-      );
-    }
+    if (!file) return R.error('No file provided', 400)
 
-    // Validar tipo de archivo
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
     if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json(
-        { success: false, error: 'Tipo de archivo no permitido. Solo se permiten imágenes.' },
-        { status: 400 }
-      );
+      return R.error('Unsupported file type. Only images are allowed.', 400)
     }
 
-    // Validar tamaño (10MB máximo)
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    if (file.size > maxSize) {
+    if (file.size > MAX_FILE_SIZE) {
+      // 413 Payload Too Large
       return NextResponse.json(
-        { success: false, error: 'El archivo es demasiado grande. Máximo 10MB.' },
-        { status: 400 }
-      );
+        { success: false, error: 'File too large. Max 10MB.' },
+        { status: 413 },
+      )
     }
 
-    // Crear cliente S3
     const s3Client = new S3Client({
       region: s3Config.region,
       credentials: {
         accessKeyId: s3Config.accessKeyId,
         secretAccessKey: s3Config.secretAccessKey,
       },
-    });
+    })
 
-    // Generar nombre único para el archivo
-    const timestamp = Date.now();
-    const randomString = Math.random().toString(36).substring(2, 15);
-    const fileExtension = file.name.split('.').pop();
-    const fileName = `${timestamp}-${randomString}.${fileExtension}`;
-    const key = `${folder}/${fileName}`;
+    const timestamp = Date.now()
+    const randomString = Math.random().toString(36).substring(2, 15)
+    const fileExtension = file.name.includes('.') ? file.name.split('.').pop() : 'bin'
+    const fileName = `${timestamp}-${randomString}.${fileExtension}`
+    const key = `${folder}/${fileName}`
 
-    // Convertir archivo a buffer
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
 
-    // Subir archivo a S3
-    const uploadCommand = new PutObjectCommand({
-      Bucket: s3Config.bucket,
-      Key: key,
-      Body: buffer,
-      ContentType: file.type,
-      // No usar ACL, depender de la bucket policy para acceso público
-    });
+    await s3Client.send(
+      new PutObjectCommand({
+        Bucket: s3Config.bucket,
+        Key: key,
+        Body: buffer,
+        ContentType: file.type,
+      }),
+    )
 
-    await s3Client.send(uploadCommand);
+    const fileUrl = `https://${s3Config.bucket}.s3.${s3Config.region}.amazonaws.com/${key}`
 
-    // Construir URL del archivo
-    const fileUrl = `https://${s3Config.bucket}.s3.${s3Config.region}.amazonaws.com/${key}`;
+    try {
+      await prisma.asset.create({
+        data: { key, url: fileUrl, mimeType: file.type, size: file.size, folder },
+      })
+    } catch (_e) {
+      // Swallow metadata persistence errors; the file is already uploaded.
+    }
 
-    console.log('Archivo subido exitosamente:', {
-      fileName,
-      key,
-      url: fileUrl,
-      size: file.size,
-      type: file.type
-    });
-
-    return NextResponse.json({
-      success: true,
-      url: fileUrl,
-      key,
-      fileName,
-      size: file.size,
-      type: file.type
-    });
-
+    return R.success(
+      { url: fileUrl, key, fileName, size: file.size, type: file.type },
+      'File uploaded',
+    )
   } catch (error) {
-    console.error('Error uploading file to S3:', error);
-    return NextResponse.json(
-      { success: false, error: 'Error interno del servidor al subir el archivo' },
-      { status: 500 }
-    );
+    logger.error('Error uploading file to S3:', error)
+    return R.error('Internal server error while uploading file', 500)
   }
 }
 
 export async function DELETE(request: NextRequest) {
   try {
-    // Obtener configuración de S3
-    const s3Config = await getS3Config();
-    if (!s3Config) {
-      return NextResponse.json(
-        { success: false, error: 'S3 no está configurado' },
-        { status: 400 }
-      );
+    const session = await getAdminSession()
+    if (!session) return R.error('Unauthorized', 401)
+
+    const rl = rateLimit(request as unknown as Request, {
+      limit: 20,
+      windowMs: 60_000,
+      key: 'upload:DELETE',
+    })
+    if (!rl.allowed) {
+      return R.error('Too many requests. Please try again later.', 429)
     }
 
-    // Obtener la key del archivo a eliminar
-    const { key } = await request.json();
+    const s3Config = await getS3Config()
+    if (!s3Config) return R.error('S3 is not configured', 400)
 
-    if (!key) {
-      return NextResponse.json(
-        { success: false, error: 'No se proporcionó la key del archivo' },
-        { status: 400 }
-      );
+    const json = await request.json().catch(() => ({}))
+    const parsed = deleteSchema.safeParse(json)
+    if (!parsed.success) {
+      return R.validationError(
+        'Invalid data',
+        parsed.error.errors.map((e) => ({
+          field: e.path.join('.'),
+          message: e.message,
+          code: e.code,
+        })),
+      )
     }
 
-    // Crear cliente S3
     const s3Client = new S3Client({
       region: s3Config.region,
-      credentials: {
-        accessKeyId: s3Config.accessKeyId,
-        secretAccessKey: s3Config.secretAccessKey,
-      },
-    });
+      credentials: { accessKeyId: s3Config.accessKeyId, secretAccessKey: s3Config.secretAccessKey },
+    })
 
-    // Eliminar archivo de S3
-    const { DeleteObjectCommand } = await import('@aws-sdk/client-s3');
-    const deleteCommand = new DeleteObjectCommand({
-      Bucket: s3Config.bucket,
-      Key: key,
-    });
+    await s3Client.send(new DeleteObjectCommand({ Bucket: s3Config.bucket, Key: parsed.data.key }))
 
-    await s3Client.send(deleteCommand);
+    try {
+      await prisma.asset.delete({ where: { key: parsed.data.key } })
+    } catch {}
 
-    console.log('Archivo eliminado exitosamente:', key);
-
-    return NextResponse.json({
-      success: true,
-      message: 'Archivo eliminado correctamente',
-      key
-    });
-
+    return R.success({ key: parsed.data.key }, 'File deleted')
   } catch (error) {
-    console.error('Error deleting file from S3:', error);
-    return NextResponse.json(
-      { success: false, error: 'Error interno del servidor al eliminar el archivo' },
-      { status: 500 }
-    );
+    logger.error('Error deleting file from S3:', error)
+    return R.error('Internal server error while deleting file', 500)
   }
 }

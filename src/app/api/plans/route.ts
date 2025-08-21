@@ -1,66 +1,74 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { auth } from '@/lib/auth'; // Importamos nuestra instancia de auth
+import { NextResponse } from 'next/server'
+import { z } from 'zod'
+import { prisma } from '@/lib/prisma'
+import { rateLimit } from '@/lib/rate-limit'
+import { ApiResponseBuilder as R } from '@/utils/api-response'
+import logger from '@/utils/logger'
 
 export async function GET(req: Request) {
-    // La seguridad ya está manejada por el middleware de better-auth.
-    // Si el código llega aquí, el usuario está autenticado y autorizado.
-    
-    try {
-        const plans = await prisma.plan.findMany({
-            include: {
-                destination: true, // Incluir la información del destino
-            },
-            orderBy: {
-                createdAt: 'desc', // Ordenar por fecha de creación descendente
-            },
-        });
+  try {
+    const rl = rateLimit(req, { limit: 60, windowMs: 60_000, key: 'plans:GET' })
+    if (!rl.allowed) return R.error('Too many requests. Please try again later.', 429)
 
-        // Formatear los datos para que sean compatibles con la interfaz esperada
-        const formattedPlans = plans.map(plan => ({
-            id: plan.id,
-            mainTitle: plan.mainTitle,
-            destination: plan.destination?.name || plan.destination?.id || 'Sin destino',
-            published: plan.published,
-            createdAt: plan.createdAt,
-            // Incluir otros campos si son necesarios
-            articleAlias: plan.articleAlias,
-            promotionalText: plan.promotionalText,
-        }));
+    const plans = await prisma.plan.findMany({
+      include: { destination: true },
+      orderBy: { createdAt: 'desc' },
+    })
 
-        return NextResponse.json({ success: true, plans: formattedPlans });
+    const formattedPlans = plans.map((plan) => ({
+      id: plan.id,
+      mainTitle: plan.mainTitle,
+      destination: plan.destination?.name || plan.destination?.id || 'No destination',
+      published: plan.published,
+      createdAt: plan.createdAt,
+      articleAlias: plan.articleAlias,
+      promotionalText: plan.promotionalText,
+    }))
 
-    } catch (error) {
-        console.error('Error al obtener los planes:', error);
-        return new NextResponse(
-            JSON.stringify({ success: false, error: 'Error interno del servidor' }),
-            { status: 500, headers: { 'Content-Type': 'application/json' } }
-        );
-    }
+    // Maintain legacy shape compatibility: return { plans: [...] } as top-level when success true
+    return NextResponse.json({ success: true, plans: formattedPlans })
+  } catch (error) {
+    logger.error('Error getting plans:', error)
+    return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+  }
 }
 
+const planSchema = z
+  .object({
+    mainTitle: z.string().min(1),
+    articleAlias: z.string().optional(),
+    promotionalText: z.string().optional(),
+    destinationId: z.string().uuid().optional(),
+    published: z.boolean().optional(),
+  })
+  .passthrough() // permitir otros campos si los hay (JSON)
+
+import { getAdminSession } from '@/lib/server-session'
 export async function POST(req: Request) {
-    // La seguridad ya está manejada por el middleware.
-    try {
-        const data = await req.json();
+  try {
+    const session = await getAdminSession()
+    if (!session) return R.error('Unauthorized', 401)
 
-        // Aquí podrías añadir una validación con Zod si quieres más seguridad.
-        
-        const newPlan = await prisma.plan.create({
-            data: {
-                ...data,
-                // Asegúrate de que los campos JSON se guardan correctamente.
-                // Prisma se encarga de esto si el tipo de dato en el schema es Json.
-            },
-        });
+    const rl = rateLimit(req, { limit: 20, windowMs: 60_000, key: 'plans:POST' })
+    if (!rl.allowed) return R.error('Too many requests. Please try again later.', 429)
 
-        return NextResponse.json({ success: true, plan: newPlan });
-
-    } catch (error) {
-        console.error('Error al crear el plan:', error);
-        return new NextResponse(
-            JSON.stringify({ success: false, error: 'Error interno del servidor' }),
-            { status: 500, headers: { 'Content-Type': 'application/json' } }
-        );
+    const body = await req.json().catch(() => ({}))
+    const parsed = planSchema.safeParse(body)
+    if (!parsed.success) {
+      return R.validationError(
+        'Invalid data',
+        parsed.error.errors.map((e) => ({
+          field: e.path.join('.'),
+          message: e.message,
+          code: e.code,
+        })),
+      )
     }
-} 
+
+    const newPlan = await prisma.plan.create({ data: parsed.data })
+    return R.success({ plan: newPlan }, 'Plan created', 201)
+  } catch (error) {
+    logger.error('Error creating plan:', error)
+    return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
+  }
+}

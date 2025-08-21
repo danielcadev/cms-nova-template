@@ -1,5 +1,5 @@
-// Configuración de CMS Nova
-import { NovaConfig } from '../types';
+// Nova CMS Configuration
+import type { NovaConfig } from '../types'
 
 export function createNovaConfig(config: Partial<NovaConfig>): NovaConfig {
   return {
@@ -8,19 +8,19 @@ export function createNovaConfig(config: Partial<NovaConfig>): NovaConfig {
       adminRoles: ['ADMIN'],
       baseUrl: process.env.NEXT_PUBLIC_AUTH_URL || 'http://localhost:3000',
       requireEmailVerification: false,
-      sessionDuration: 24 * 60 * 60 * 1000, // 24 horas
-      ...config.auth
+      sessionDuration: 24 * 60 * 60 * 1000, // 24 hours
+      ...config.auth,
     },
     database: {
       url: process.env.DATABASE_URL || '',
       provider: 'postgresql',
-      ...config.database
+      ...config.database,
     },
     ui: {
       theme: 'light',
       title: 'CMS Nova',
       primaryColor: '#10b981',
-      ...config.ui
+      ...config.ui,
     },
     features: {
       users: true,
@@ -28,24 +28,23 @@ export function createNovaConfig(config: Partial<NovaConfig>): NovaConfig {
       analytics: false,
       fileManager: false,
       backup: false,
-      ...config.features
+      presignedUpload: true,
+      ...config.features,
     },
-    permissions: config.permissions
-  };
+    permissions: config.permissions,
+  }
 }
 
 export function validateConfig(config: NovaConfig): boolean {
   if (!config.auth.secret) {
-    console.error('❌ CMS Nova: AUTH_SECRET es requerido');
-    return false;
+    return false
   }
-  
+
   if (!config.database.url) {
-    console.error('❌ CMS Nova: DATABASE_URL es requerido');
-    return false;
+    return false
   }
-  
-  return true;
+
+  return true
 }
 
-export const defaultConfig: NovaConfig = createNovaConfig({}); 
+export const defaultConfig: NovaConfig = createNovaConfig({})

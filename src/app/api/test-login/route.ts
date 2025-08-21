@@ -1,55 +1,54 @@
-import { NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
+import { NextResponse } from 'next/server'
+import { auth } from '@/lib/auth'
 
 export async function POST(request: Request) {
   try {
-    const { email, password } = await request.json();
+    if (process.env.NODE_ENV === 'production' || process.env.ENABLE_ADMIN_TOOLS !== 'true') {
+      return new NextResponse('Not Found', { status: 404 })
+    }
+    const { email, password } = await request.json()
 
     if (!email || !password) {
-      return NextResponse.json(
-        { error: 'Email y contraseña son requeridos' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
     }
 
-    console.log(`🔐 Probando login para: ${email}`);
-
-    // Intentar login usando Better Auth directamente
+    // Try login using Better Auth directly
     try {
       const result = await auth.api.signInEmail({
-        body: { email, password }
-      });
-
-      console.log('✅ Login exitoso:', result);
+        body: { email, password },
+      })
 
       return NextResponse.json({
         success: true,
-        message: 'Login exitoso',
+        message: 'Login successful',
         user: result.user,
-        session: result.session
-      });
-
+        token: result.token,
+        url: result.url,
+        redirect: result.redirect,
+      })
     } catch (authError: any) {
-      console.error('❌ Error de autenticación:', authError);
-      
-      return NextResponse.json({
-        success: false,
-        error: 'Error de autenticación',
-        details: authError.message || 'Error desconocido',
-        code: authError.code || 'UNKNOWN_ERROR'
-      }, { status: 401 });
-    }
+      console.error('❌ Authentication error:', authError)
 
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Authentication error',
+          details: authError.message || 'Unknown error',
+          code: authError.code || 'UNKNOWN_ERROR',
+        },
+        { status: 401 },
+      )
+    }
   } catch (error) {
-    console.error('❌ Error en test-login:', error);
-    
+    console.error('❌ Error in test-login:', error)
+
     return NextResponse.json(
-      { 
+      {
         success: false,
-        error: 'Error interno del servidor',
-        details: error instanceof Error ? error.message : 'Error desconocido'
+        error: 'Internal Server Error',
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
-    );
+      { status: 500 },
+    )
   }
 }

@@ -2,185 +2,325 @@
 @tailwind components;
 @tailwind utilities;
 
-/* iOS 26 Design System - Global Styles */
+/* Base clean theme */
 @layer base {
   :root {
-    --ios-primary: #007AFF;
-    --ios-secondary: #5856D6;
-    --ios-success: #34C759;
-    --ios-warning: #FF9500;
-    --ios-danger: #FF3B30;
-    --ios-gray-1: #F2F2F7;
-    --ios-gray-2: #E5E5EA;
-    --ios-gray-3: #D1D1D6;
-    --ios-gray-4: #C7C7CC;
-    --ios-gray-5: #AEAEB2;
-    --ios-gray-6: #8E8E93;
-    --ios-surface: rgba(255, 255, 255, 0.92);
-    --ios-surface-secondary: rgba(242, 242, 247, 0.8);
+    --color-bg: #f8fafc;
+    --color-fg: #0f172a;
+    --color-muted: #64748b;
+    --color-border: #e5e7eb;
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
-    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+    font-family:
+      var(--font-geist-sans, var(--font-inter)),
+      system-ui,
+      -apple-system,
+      Segoe UI,
+      Roboto,
+      Helvetica,
+      Arial,
+      "Apple Color Emoji",
+      "Segoe UI Emoji";
+    color: var(--theme-text-primary, var(--color-fg));
+    background: var(--theme-bg-primary, var(--color-bg));
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: #F2F2F7;
   }
 
-  /* iOS-style Scrollbar */
+  /* Rutas de admin: usar colores de tema (redundante pero mantenido) */
+  body:has([data-theme]) {
+    background: var(--theme-bg-primary, var(--color-bg));
+    color: var(--theme-text-primary, var(--color-fg));
+  }
+
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
   }
-  
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  
   ::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    transition: all 0.2s ease;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
   }
-  
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.25);
+  }
+}
+
+/* Theme Classes */
+@layer base {
+  /* Light Theme (Minimal Light) */
+  .theme-light {
+    --theme-bg-primary: #ffffff;
+    --theme-bg-secondary: #f6f6f6;
+    --theme-bg-tertiary: #efefef;
+    --theme-text-primary: #0f172a;
+    --theme-text-secondary: #64748b;
+    --theme-text-muted: #94a3b8;
+    --theme-border: #e5e7eb;
+    --theme-border-light: #f3f4f6;
+    --theme-accent: #3b82f6;
+    --theme-accent-hover: #2563eb;
+    --theme-accent-light: #dbeafe;
+    --theme-card: #ffffff;
+    --theme-card-hover: #f8fafc;
+  }
+
+  /* Dark Theme (Ink Dark) */
+  .theme-dark {
+    --theme-bg-primary: #0b0f14;
+    --theme-bg-secondary: #0f1620;
+    --theme-bg-tertiary: #151b26;
+    --theme-text-primary: #e6e9ee;
+    --theme-text-secondary: #a6afbb;
+    --theme-text-muted: #7d8696;
+    --theme-border: #2a3441;
+    --theme-border-light: #1e2733;
+    --theme-accent: #6b778c;
+    --theme-accent-hover: #8792a2;
+    --theme-accent-light: #1d2430;
+    --theme-card: #11161f;
+    --theme-card-hover: #161d27;
+  }
+
+  /* Blue Theme (Slate) */
+  .theme-blue {
+    --theme-bg-primary: #0f141a;
+    --theme-bg-secondary: #121922;
+    --theme-bg-tertiary: #161f2b;
+    --theme-text-primary: #e6e9ee;
+    --theme-text-secondary: #a6afbb;
+    --theme-text-muted: #8b95a5;
+    --theme-border: #202733;
+    --theme-border-light: #171e28;
+    --theme-accent: #3b82f6;
+    --theme-accent-hover: #2563eb;
+    --theme-accent-light: #0b1730;
+    --theme-card: #0f141a;
+    --theme-card-hover: #121922;
+  }
+
+  /* Green Theme (Sage) */
+  .theme-green {
+    --theme-bg-primary: #0d1116;
+    --theme-bg-secondary: #11161c;
+    --theme-bg-tertiary: #151b22;
+    --theme-text-primary: #e6e9ee;
+    --theme-text-secondary: #a6afbb;
+    --theme-text-muted: #8b95a5;
+    --theme-border: #202733;
+    --theme-border-light: #171e28;
+    --theme-accent: #9db5a3;
+    --theme-accent-hover: #7fa78f;
+    --theme-accent-light: #1b2a22;
+    --theme-card: #11161c;
+    --theme-card-hover: #151b22;
+  }
+
+  /* Purple Theme (Iris) */
+  .theme-purple {
+    --theme-bg-primary: #0e1220;
+    --theme-bg-secondary: #141a2a;
+    --theme-bg-tertiary: #1a2240;
+    --theme-text-primary: #e8eaf2;
+    --theme-text-secondary: #aab1c5;
+    --theme-text-muted: #8e97ad;
+    --theme-border: #1f2740;
+    --theme-border-light: #171d30;
+    --theme-accent: #8b5cf6;
+    --theme-accent-hover: #7c3aed;
+    --theme-accent-light: #1e1535;
+    --theme-card: #0f1422;
+    --theme-card-hover: #141a2a;
+  }
+
+  /* Orange Theme (Amber) */
+  .theme-orange {
+    --theme-bg-primary: #12100e;
+    --theme-bg-secondary: #161310;
+    --theme-bg-tertiary: #1c1814;
+    --theme-text-primary: #ece7e2;
+    --theme-text-secondary: #b4aba4;
+    --theme-text-muted: #978e87;
+    --theme-border: #2a2622;
+    --theme-border-light: #1f1a16;
+    --theme-accent: #f59e0b;
+    --theme-accent-hover: #d97706;
+    --theme-accent-light: #2a1d0b;
+    --theme-card: #161310;
+    --theme-card-hover: #1c1814;
+  }
+
+  /* Beige Theme (Parchment) */
+  .theme-beige {
+    --theme-bg-primary: #f5f1e7;
+    --theme-bg-secondary: #eee7db;
+    --theme-bg-tertiary: #e7dece;
+    --theme-text-primary: #1e2227;
+    --theme-text-secondary: #585f66;
+    --theme-text-muted: #7a828a;
+    --theme-border: #e3dbcf;
+    --theme-border-light: #ece3d6;
+    --theme-accent: #2563eb;
+    --theme-accent-hover: #1d4ed8;
+    --theme-accent-light: #e7effe;
+    --theme-card: #faf6ee;
+    --theme-card-hover: #f3ede3;
+  }
+
+  /* Apply theme variables globally */
+  .theme-light,
+  .theme-dark,
+  .theme-blue,
+  .theme-green,
+  .theme-purple,
+  .theme-orange,
+  .theme-beige {
+    background-color: var(--theme-bg-primary);
+    color: var(--theme-text-primary);
+    /* Map theme variables to UI token variables used by components */
+    --background: var(--theme-bg-primary);
+    --foreground: var(--theme-text-primary);
+    --card: var(--theme-card);
+    --card-foreground: var(--theme-text-primary);
+    --muted: var(--theme-bg-secondary);
+    --muted-foreground: var(--theme-text-secondary);
+    --border: var(--theme-border);
+    --input: var(--theme-border);
+    --ring: var(--theme-accent);
+    --accent: var(--theme-accent);
+    --accent-foreground: var(--theme-text-primary);
+    --primary: var(--theme-accent);
+    --primary-foreground: var(--theme-text-primary);
   }
 }
 
 @layer components {
-  /* iOS 26 Glass Effects */
-  .ios-glass {
-    background: var(--ios-surface);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 0.5px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 
-      0 1px 3px rgba(0, 0, 0, 0.05),
-      0 4px 16px rgba(0, 0, 0, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  }
-
-  .ios-glass-secondary {
-    background: var(--ios-surface-secondary);
-    backdrop-filter: blur(30px) saturate(200%);
-    -webkit-backdrop-filter: blur(30px) saturate(200%);
-    border: 0.5px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 
-      0 2px 8px rgba(0, 0, 0, 0.04),
-      0 8px 32px rgba(0, 0, 0, 0.06),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  }
-
-  /* iOS Interactive Elements */
-  .ios-interactive {
-    transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    cursor: pointer;
-  }
-  
-  .ios-interactive:hover {
-    transform: scale(1.02) translateY(-1px);
-    box-shadow: 
-      0 4px 16px rgba(0, 0, 0, 0.08),
-      0 12px 48px rgba(0, 0, 0, 0.12),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  }
-  
-  .ios-interactive:active {
-    transform: scale(0.98) translateY(0px);
-    transition: all 0.1s ease;
-  }
-
-  /* iOS Interactive Elements - General */
-  .ios-interactive:hover {
-    transform: scale(1.02) translateY(-1px);
-    box-shadow: 
-      0 4px 16px rgba(0, 0, 0, 0.08),
-      0 12px 48px rgba(0, 0, 0, 0.12),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  }
-  
-  .ios-interactive:active {
-    transform: scale(0.98) translateY(0px);
-    transition: all 0.1s ease;
-  }
-
-  /* iOS Button Styles */
-  .ios-button-primary {
-    background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
-    border: none;
-    box-shadow: 
-      0 2px 8px rgba(0, 122, 255, 0.25),
-      0 8px 32px rgba(0, 122, 255, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  }
-
-  .ios-button-secondary {
-    background: var(--ios-surface);
-    border: 0.5px solid rgba(0, 0, 0, 0.08);
-    color: var(--ios-primary);
-    box-shadow: 
-      0 1px 3px rgba(0, 0, 0, 0.05),
+  .shadow-ios {
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.06),
       0 4px 16px rgba(0, 0, 0, 0.08);
   }
 
-  /* iOS Typography */
-  .ios-title-1 {
-    font-size: 34px;
-    font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
+  /* Global theme override - Apply to ALL admin content */
+  [class*="theme-"] .bg-white,
+  [class*="theme-"] .bg-white\/60,
+  [class*="theme-"] .bg-white\/70,
+  [class*="theme-"] .bg-white\/80,
+  [class*="theme-"] .bg-gray-50,
+  [class*="theme-"] .bg-gray-100 {
+    background-color: var(--theme-card);
   }
 
-  .ios-title-2 {
-    font-size: 28px;
-    font-weight: 700;
-    line-height: 1.25;
-    letter-spacing: -0.015em;
+  [class*="theme-"] .bg-gray-900,
+  [class*="theme-"] .bg-gray-950,
+  [class*="theme-"] .bg-gray-900\/60,
+  [class*="theme-"] .bg-gray-900\/70,
+  [class*="theme-"] .bg-gray-900\/80 {
+    background-color: var(--theme-bg-secondary);
   }
 
-  .ios-title-3 {
-    font-size: 22px;
-    font-weight: 600;
-    line-height: 1.3;
-    letter-spacing: -0.01em;
+  [class*="theme-"] .bg-gray-800 {
+    background-color: var(--theme-bg-tertiary);
   }
 
-  .ios-headline {
-    font-size: 17px;
-    font-weight: 600;
-    line-height: 1.35;
-    letter-spacing: -0.005em;
+  /* Text color overrides */
+  [class*="theme-"] .text-gray-900,
+  [class*="theme-"] .text-gray-100 {
+    color: var(--theme-text-primary);
   }
 
-  .ios-body {
-    font-size: 17px;
-    font-weight: 400;
-    line-height: 1.4;
+  [class*="theme-"] .text-gray-600,
+  [class*="theme-"] .text-gray-400,
+  [class*="theme-"] .text-gray-300,
+  [class*="theme-"] .text-gray-500 {
+    color: var(--theme-text-secondary);
   }
 
-  .ios-callout {
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 1.35;
+  /* Border overrides */
+  [class*="theme-"] .border-gray-200,
+  [class*="theme-"] .border-gray-800,
+  [class*="theme-"] .border-gray-700 {
+    border-color: var(--theme-border-light);
   }
 
-  .ios-subhead {
-    font-size: 15px;
-    font-weight: 400;
-    line-height: 1.35;
+  /* Gradient overrides */
+  [class*="theme-"] .bg-gradient-to-b,
+  [class*="theme-"] .bg-gradient-to-r {
+    background: var(--theme-bg-primary);
   }
 
-  .ios-footnote {
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.35;
+  /* Additional theme overrides */
+  [class*="theme-"] .bg-white\/50 {
+    background-color: var(--theme-card);
+  }
+  [class*="theme-"] .bg-gray-950 {
+    background-color: var(--theme-bg-secondary);
+  }
+  [class*="theme-"] .border-white\/30,
+  [class*="theme-"] .border-white\/20 {
+    border-color: var(--theme-border);
   }
 
-  .ios-caption {
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 1.35;
+  /* Ensure dark: utilities follow current theme variables */
+  [class*="theme-"].dark .dark\:bg-gray-900,
+  [class*="theme-"].dark .dark\:bg-gray-950,
+  [class*="theme-"].dark .dark\:bg-gray-800 {
+    background-color: var(--theme-bg-secondary);
   }
-} 
+
+  [class*="theme-"].dark .dark\:text-gray-100 {
+    color: var(--theme-text-primary);
+  }
+  [class*="theme-"].dark .dark\:text-gray-400,
+  [class*="theme-"].dark .dark\:text-gray-500,
+  [class*="theme-"].dark .dark\:text-gray-600 {
+    color: var(--theme-text-secondary);
+  }
+
+  [class*="theme-"].dark .dark\:border-gray-800,
+  [class*="theme-"].dark .dark\:border-gray-700 {
+    border-color: var(--theme-border-light);
+  }
+
+  /* Theme-aware utility classes */
+  .theme-bg {
+    background-color: var(--theme-bg-primary);
+  }
+  .theme-bg-secondary {
+    background-color: var(--theme-bg-secondary);
+  }
+  .theme-bg-tertiary {
+    background-color: var(--theme-bg-tertiary);
+  }
+  .theme-card {
+    background-color: var(--theme-card);
+  }
+  .theme-card-hover {
+    background-color: var(--theme-card-hover);
+  }
+  .theme-text {
+    color: var(--theme-text-primary);
+  }
+  .theme-text-secondary {
+    color: var(--theme-text-secondary);
+  }
+  .theme-text-muted {
+    color: var(--theme-text-muted);
+  }
+  .theme-border {
+    border-color: var(--theme-border);
+  }
+  .theme-border-light {
+    border-color: var(--theme-border-light);
+  }
+  .theme-accent {
+    color: var(--theme-accent);
+  }
+  .theme-accent-bg {
+    background-color: var(--theme-accent);
+  }
+  .theme-accent-hover {
+    background-color: var(--theme-accent-hover);
+  }
+}

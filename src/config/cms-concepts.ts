@@ -1,140 +1,141 @@
 /**
- * NOVA CMS - CONFIGURACIÓN DE TEXTOS Y CONCEPTOS
- * ==============================================
- * 
- * Centraliza todos los textos y conceptos del sistema para mantener
- * consistencia en la terminología de las dos arquitecturas.
+ * NOVA CMS - TEXT AND CONCEPTS CONFIGURATION
+ * ==========================================
+ *
+ * Centralizes all system texts and concepts to maintain
+ * consistency in terminology across both architectures.
  */
 
 export const CMS_CONCEPTS = {
-  // Template System - Formularios Predefinidos
+  // Template System - Predefined Forms
   TEMPLATES: {
-    name: 'Plantillas Predefinidas',
-    description: 'Formularios especializados con estructura fija',
-    explanation: 'Usa formularios diseñados específicamente para ciertos tipos de contenido',
-    examples: ['Planes Turísticos', 'Productos', 'Servicios'],
-    benefits: ['Estructura optimizada', 'Validaciones específicas', 'UX especializada'],
-    when_to_use: 'Para contenido con estructura compleja y lógica de negocio específica'
+    name: 'Predefined Templates',
+    description: 'Specialized forms with fixed structure',
+    explanation: 'Use forms designed specifically for certain types of content',
+    examples: ['Travel Plans', 'Products', 'Services'],
+    benefits: ['Optimized structure', 'Specific validations', 'Specialized UX'],
+    when_to_use: 'For content with complex structure and specific business logic',
   },
 
-  // Headless CMS - Sistema Flexible
+  // Headless CMS - Flexible System
   HEADLESS: {
-    name: 'CMS Flexible',
-    description: 'Contenido personalizable creado por ti',
-    explanation: 'Crea tipos de contenido personalizados definiendo tus propios campos',
-    examples: ['Blogs', 'Artículos', 'Noticias', 'Portfolio'],
-    benefits: ['Máxima flexibilidad', 'Estructura personalizable', 'Fácil de configurar'],
-    when_to_use: 'Para contenido dinámico que varía en estructura y necesidades'
-  }
-};
+    name: 'Flexible CMS',
+    description: 'Customizable content created by you',
+    explanation: 'Create custom content types by defining your own fields',
+    examples: ['Blogs', 'Articles', 'News', 'Portfolio'],
+    benefits: ['Maximum flexibility', 'Customizable structure', 'Easy to configure'],
+    when_to_use: 'For dynamic content that varies in structure and needs',
+  },
+}
 
 export const UI_TEXTS = {
-  // Navegación
+  // Navigation
   NAV: {
     dashboard: 'Dashboard',
-    templates: 'Plantillas Predefinidas',
-    headless: 'CMS Flexible',
-    content_created: 'Contenido Creado',
-    users: 'Usuarios',
+    templates: 'Predefined Templates',
+    headless: 'Flexible CMS',
+    content_created: 'Created Content',
+    users: 'Users',
     plugins: 'Plugins',
-    settings: 'Configuración'
+    settings: 'Settings',
   },
 
-  // Páginas principales
+  // Main Pages
   PAGES: {
     content_types: {
-      title: 'CMS Flexible',
-      subtitle: 'Crea tipos de contenido personalizados para tu sitio web',
+      title: 'Flexible CMS',
+      subtitle: 'Create custom content types for your website',
       empty_state: {
-        title: 'No tienes tipos de contenido flexibles',
-        description: 'El CMS flexible te permite crear estructuras de contenido personalizadas. Define campos, tipos de datos y crea contenido dinámico.',
-        cta: 'Crear Primer Tipo'
-      }
+        title: 'You have no flexible content types',
+        description:
+          'The flexible CMS allows you to create custom content structures. Define fields, data types and create dynamic content.',
+        cta: 'Create First Type',
+      },
     },
-    
+
     view_content: {
-      title: 'Contenido Creado',
-      subtitle: 'Ve y gestiona todo el contenido de tu sitio web',
+      title: 'Created Content',
+      subtitle: 'View and manage all your website content',
       sections: {
         headless: {
-          title: 'CMS Flexible',
-          description: 'Contenido creado con tipos personalizados'
+          title: 'Flexible CMS',
+          description: 'Content created with custom types',
         },
         templates: {
-          title: 'Plantillas Predefinidas', 
-          description: 'Contenido creado con formularios especializados'
-        }
-      }
+          title: 'Predefined Templates',
+          description: 'Content created with specialized forms',
+        },
+      },
     },
 
     content_type_editor: {
       create: {
-        title: 'Nuevo Tipo de Contenido',
-        subtitle: 'Diseña la estructura de tu contenido flexible'
+        title: 'New Content Type',
+        subtitle: 'Design the structure of your flexible content',
       },
       edit: {
-        title: 'Editar Tipo de Contenido',
-        subtitle: 'Modifica la estructura de tu contenido personalizado'
+        title: 'Edit Content Type',
+        subtitle: 'Modify the structure of your custom content',
       },
       basic_info: {
-        title: 'Información Básica',
-        subtitle: 'Define el nombre y propósito de tu tipo de contenido personalizado'
-      }
-    }
+        title: 'Basic Information',
+        subtitle: 'Define the name and purpose of your custom content type',
+      },
+    },
   },
 
-  // Ayudas y consejos
+  // Help and tips
   TIPS: {
     architecture_comparison: {
-      title: '🎯 CMS Flexible vs Plantillas Predefinidas',
+      title: '🎯 Flexible CMS vs Predefined Templates',
       content: {
-        flexible: 'Crea tipos de contenido personalizados (blogs, artículos, productos, etc.)',
-        templates: 'Usa formularios especializados como Planes Turísticos con estructura fija.'
-      }
-    }
-  }
-};
+        flexible: 'Create custom content types (blogs, articles, products, etc.)',
+        templates: 'Use specialized forms like Travel Plans with fixed structure.',
+      },
+    },
+  },
+}
 
 export const FIELD_HELP_TEXTS = {
   TEXT: {
-    label: 'Texto',
-    description: 'Campo de texto corto para títulos, nombres y frases',
-    example: 'Ej: Título del artículo, Nombre del producto',
-    maxLength: 'Hasta 255 caracteres'
+    label: 'Text',
+    description: 'Short text field for titles, names and phrases',
+    example: 'Ex: Article title, Product name',
+    maxLength: 'Up to 255 characters',
   },
-  
+
   RICH_TEXT: {
-    label: 'Texto Rico',
-    description: 'Texto largo con formato (negritas, cursivas, listas, enlaces)',
-    example: 'Ej: Contenido de blog, descripciones detalladas, artículos',
-    maxLength: 'Sin límite de caracteres'
+    label: 'Rich Text',
+    description: 'Long text with formatting (bold, italic, lists, links)',
+    example: 'Ex: Blog content, detailed descriptions, articles',
+    maxLength: 'No character limit',
   },
-  
+
   NUMBER: {
-    label: 'Número',
-    description: 'Valores numéricos para precios, cantidades, edades',
-    example: 'Ej: Precio: 99.99, Edad: 25, Cantidad: 10',
-    maxLength: 'Números enteros o decimales'
+    label: 'Number',
+    description: 'Numeric values for prices, quantities, ages',
+    example: 'Ex: Price: 99.99, Age: 25, Quantity: 10',
+    maxLength: 'Integer or decimal numbers',
   },
-  
+
   BOOLEAN: {
-    label: 'Verdadero/Falso',
-    description: 'Campo de selección para opciones de sí/no',
-    example: 'Ej: Producto destacado, Publicado, Activo',
-    maxLength: 'Valor booleano'
+    label: 'True/False',
+    description: 'Selection field for yes/no options',
+    example: 'Ex: Featured product, Published, Active',
+    maxLength: 'Boolean value',
   },
-  
+
   DATE: {
-    label: 'Fecha',
-    description: 'Selector de fecha y hora',
-    example: 'Ej: Fecha de publicación, Fecha de evento',
-    maxLength: 'Formato de fecha'
+    label: 'Date',
+    description: 'Date and time picker',
+    example: 'Ex: Publication date, Event date',
+    maxLength: 'Date format',
   },
-  
+
   MEDIA: {
-    label: 'Imágenes/Videos',
-    description: 'Sube y gestiona imágenes, videos o archivos',
-    example: 'Ej: Foto de portada, galería de imágenes, video promocional',
-    maxLength: 'Máximo 10MB por archivo'
-  }
-};
+    label: 'Images/Videos',
+    description: 'Upload and manage images, videos or files',
+    example: 'Ex: Cover photo, image gallery, promotional video',
+    maxLength: 'Maximum 10MB per file',
+  },
+}

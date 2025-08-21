@@ -1,17 +1,37 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
       // iOS 26 Design System
       fontFamily: {
-        'sf': ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'SF Pro Text', 'system-ui', 'sans-serif'],
-        'sf-display': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
-        'sf-text': ['SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+        sf: [
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'SF Pro Display',
+          'SF Pro Text',
+          'system-ui',
+          'sans-serif',
+        ],
+        'sf-display': [
+          'SF Pro Display',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'system-ui',
+          'sans-serif',
+        ],
+        'sf-text': [
+          'SF Pro Text',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'system-ui',
+          'sans-serif',
+        ],
       },
       colors: {
         // iOS System Colors
@@ -34,29 +54,43 @@ module.exports = {
           blue: '#007AFF',
           gray: {
             1: '#F2F2F7',
-            2: '#E5E5EA', 
+            2: '#E5E5EA',
             3: '#D1D1D6',
             4: '#C7C7CC',
             5: '#AEAEB2',
             6: '#8E8E93',
-          }
+          },
         },
         // Surface colors
         surface: {
           primary: 'rgba(255, 255, 255, 0.92)',
           secondary: 'rgba(242, 242, 247, 0.8)',
           tertiary: 'rgba(255, 255, 255, 0.7)',
-        }
+        },
+        // Theme token colors for components (mapped to CSS variables in globals.css)
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
+        card: 'var(--card)',
+        'card-foreground': 'var(--card-foreground)',
+        muted: 'var(--muted)',
+        'muted-foreground': 'var(--muted-foreground)',
+        border: 'var(--border)',
+        input: 'var(--input)',
+        ring: 'var(--ring)',
+        primary: 'var(--primary)',
+        'primary-foreground': 'var(--primary-foreground)',
+        accent: 'var(--accent)',
+        'accent-foreground': 'var(--accent-foreground)',
       },
       borderRadius: {
-        'ios': '12px',
-        'ios-lg': '16px', 
+        ios: '12px',
+        'ios-lg': '16px',
         'ios-xl': '20px',
         'ios-2xl': '24px',
         'ios-3xl': '28px',
       },
       boxShadow: {
-        'ios': '0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 16px rgba(0, 0, 0, 0.08)',
+        ios: '0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 16px rgba(0, 0, 0, 0.08)',
         'ios-lg': '0 2px 8px rgba(0, 0, 0, 0.04), 0 8px 32px rgba(0, 0, 0, 0.06)',
         'ios-xl': '0 4px 16px rgba(0, 0, 0, 0.08), 0 12px 48px rgba(0, 0, 0, 0.12)',
         'ios-button': '0 2px 8px rgba(0, 122, 255, 0.25), 0 8px 32px rgba(0, 122, 255, 0.15)',
@@ -87,62 +121,68 @@ module.exports = {
         },
       },
       spacing: {
-        'ios': '16px',
-        'ios-lg': '24px', 
+        ios: '16px',
+        'ios-lg': '24px',
         'ios-xl': '32px',
         'ios-2xl': '40px',
         'ios-3xl': '48px',
       },
       fontSize: {
         'ios-title-1': ['34px', { lineHeight: '1.2', letterSpacing: '-0.02em', fontWeight: '700' }],
-        'ios-title-2': ['28px', { lineHeight: '1.25', letterSpacing: '-0.015em', fontWeight: '700' }],
+        'ios-title-2': [
+          '28px',
+          { lineHeight: '1.25', letterSpacing: '-0.015em', fontWeight: '700' },
+        ],
         'ios-title-3': ['22px', { lineHeight: '1.3', letterSpacing: '-0.01em', fontWeight: '600' }],
-        'ios-headline': ['17px', { lineHeight: '1.35', letterSpacing: '-0.005em', fontWeight: '600' }],
+        'ios-headline': [
+          '17px',
+          { lineHeight: '1.35', letterSpacing: '-0.005em', fontWeight: '600' },
+        ],
         'ios-body': ['17px', { lineHeight: '1.4', fontWeight: '400' }],
         'ios-callout': ['16px', { lineHeight: '1.35', fontWeight: '400' }],
         'ios-subhead': ['15px', { lineHeight: '1.35', fontWeight: '400' }],
         'ios-footnote': ['13px', { lineHeight: '1.35', fontWeight: '400' }],
         'ios-caption': ['12px', { lineHeight: '1.35', fontWeight: '400' }],
-      }
+      },
     },
   },
   plugins: [
     require('tailwindcss-animate'),
-    function({ addComponents }) {
+    ({ addComponents }) => {
       addComponents({
         '.ios-menu-item': {
           'border-radius': '12px',
-          'transition': 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           '&:hover': {
             'border-radius': '12px !important',
-            'background': 'var(--ios-surface-secondary)',
-            'transform': 'scale(1.02) translateY(-1px)',
+            background: 'var(--ios-surface-secondary)',
+            transform: 'scale(1.02) translateY(-1px)',
           },
           '&:focus': {
             'border-radius': '12px !important',
           },
           '&:active': {
             'border-radius': '12px !important',
-            'transform': 'scale(0.98)',
-          }
+            transform: 'scale(0.98)',
+          },
         },
         '.ios-section-header': {
           'border-radius': '20px',
-          'transition': 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           '&:hover': {
             'border-radius': '20px !important',
-            'background': 'var(--ios-surface-secondary)',
-            'transform': 'scale(1.01) translateY(-1px)',
+            background: 'var(--ios-surface-secondary)',
+            transform: 'scale(1.01) translateY(-1px)',
           },
           '&:focus': {
             'border-radius': '20px !important',
           },
           '&:active': {
             'border-radius': '20px !important',
-            'transform': 'scale(0.99)',
-          }
-        }
+            transform: 'scale(0.99)',
+          },
+        },
       })
-    }
+    },
   ],
-}; 
+}

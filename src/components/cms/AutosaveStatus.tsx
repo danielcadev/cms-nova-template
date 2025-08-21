@@ -1,48 +1,72 @@
-'use client';
+'use client'
 
-import { Check, Loader2, Edit } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { AlertCircle, Check, Clock } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
-type Status = 'idle' | 'dirty' | 'saving';
+export type AutosaveState = 'idle' | 'saving' | 'saved' | 'error'
 
 interface AutosaveStatusProps {
-  isDirty: boolean;
-  isSaving: boolean;
-  className?: string;
+  status: AutosaveState
+  lastSaved?: Date
+  className?: string
 }
 
-export function AutosaveStatus({ isDirty, isSaving, className }: AutosaveStatusProps) {
-  let status: Status = 'idle';
-  if (isSaving) {
-    status = 'saving';
-  } else if (isDirty) {
-    status = 'dirty';
+export function AutosaveStatus({ status, lastSaved, className = '' }: AutosaveStatusProps) {
+  const [showStatus, setShowStatus] = useState(false)
+
+  useEffect(() => {
+    if (status === 'saving' || status === 'saved' || status === 'error') {
+      setShowStatus(true)
+
+      if (status === 'saved') {
+        const timer = setTimeout(() => {
+          setShowStatus(false)
+        }, 3000)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [status])
+
+  if (!showStatus && status === 'idle') {
+    return null
   }
 
-  const messages = {
-    idle: {
-      text: 'Guardado',
-      icon: <Check className="h-4 w-4 text-green-600" />,
-      className: 'text-green-600',
-    },
-    dirty: {
-      text: 'Cambios pendientes',
-      icon: <Edit className="h-4 w-4 text-slate-500" />,
-      className: 'text-slate-500',
-    },
-    saving: {
-      text: 'Guardando...',
-      icon: <Loader2 className="h-4 w-4 animate-spin text-blue-600" />,
-      className: 'text-blue-600',
-    },
-  };
+  const getStatusConfig = () => {
+    switch (status) {
+      case 'saving':
+        return {
+          icon: Clock,
+          text: 'Saving...',
+          className: 'text-blue-600 bg-blue-50 border-blue-200',
+        }
+      case 'saved':
+        return {
+          icon: Check,
+          text: lastSaved ? `Saved at ${lastSaved.toLocaleTimeString()}` : 'Saved',
+          className: 'text-green-600 bg-green-50 border-green-200',
+        }
+      case 'error':
+        return {
+          icon: AlertCircle,
+          text: 'Save failed',
+          className: 'text-red-600 bg-red-50 border-red-200',
+        }
+      default:
+        return null
+    }
+  }
 
-  const currentStatus = messages[status];
+  const config = getStatusConfig()
+  if (!config) return null
+
+  const Icon = config.icon
 
   return (
-    <div className={cn("flex items-center gap-2 text-sm font-medium transition-all duration-300", currentStatus.className, className)}>
-      {currentStatus.icon}
-      <span>{currentStatus.text}</span>
+    <div
+      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-all duration-200 ${config.className} ${className}`}
+    >
+      <Icon className="w-4 h-4" />
+      <span>{config.text}</span>
     </div>
-  );
-} 
+  )
+}

@@ -1,9 +1,9 @@
-'use client';
+'use client'
 
-import { Database } from 'lucide-react';
+import { Database } from 'lucide-react'
 
 interface ContentTypesErrorStateProps {
-  error: string;
+  error: string
 }
 
 export function ContentTypesErrorState({ error }: ContentTypesErrorStateProps) {
@@ -12,8 +12,8 @@ export function ContentTypesErrorState({ error }: ContentTypesErrorStateProps) {
       <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
         <Database className="h-8 w-8 text-red-600" />
       </div>
-      <h3 className="text-lg font-semibold text-red-900 mb-2">Error al cargar tipos de contenido</h3>
+      <h3 className="text-lg font-semibold text-red-900 mb-2">Error loading content types</h3>
       <p className="text-red-700">{error}</p>
     </div>
-  );
+  )
 }

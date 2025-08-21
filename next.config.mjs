@@ -1,30 +1,30 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images: {
-        remotePatterns: [
-            {
-                protocol: 'https',
-                hostname: '*.s3.*.amazonaws.com',
-                port: '',
-                pathname: '/**',
-            },
-            {
-                protocol: 'https',
-                hostname: '*.s3.amazonaws.com',
-                port: '',
-                pathname: '/**',
-            },
-        ],
-    },
-    // Configuración para deployment
-    output: 'standalone',
-    serverExternalPackages: ['@prisma/client', 'bcrypt'],
-    eslint: {
-        ignoreDuringBuilds: true,
-    },
-    typescript: {
-        ignoreBuildErrors: true,
-    }
-};
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.s3.*.amazonaws.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.s3.amazonaws.com',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  },
+  // Configuration for deployment
+  output: 'standalone',
+  serverExternalPackages: ['@prisma/client'],
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  compiler: {
+    removeConsole: true,
+  },
+}
 
-export default nextConfig;
+export default nextConfig

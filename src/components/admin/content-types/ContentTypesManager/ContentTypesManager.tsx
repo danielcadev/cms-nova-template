@@ -1,8 +1,8 @@
-'use client';
+'use client'
 
-import { AdminLayout } from '../../AdminLayout';
-import { ContentTypesPageContent } from './ContentTypesPageContent';
-import { useContentTypes } from './useContentTypes';
+import { AdminLayout } from '../../AdminLayout'
+import { ContentTypesPageContent } from './ContentTypesPageContent'
+import { useContentTypes } from './useContentTypes'
 
 export default function ContentTypesManager() {
   const {
@@ -12,12 +12,12 @@ export default function ContentTypesManager() {
     searchTerm,
     setSearchTerm,
     filteredContentTypes,
-    refreshContentTypes
-  } = useContentTypes();
+    refreshContentTypes,
+  } = useContentTypes()
 
   return (
     <AdminLayout>
-      <ContentTypesPageContent 
+      <ContentTypesPageContent
         contentTypes={contentTypes}
         loading={loading}
         error={error}
@@ -27,5 +27,5 @@ export default function ContentTypesManager() {
         onRefresh={refreshContentTypes}
       />
     </AdminLayout>
-  );
+  )
 }

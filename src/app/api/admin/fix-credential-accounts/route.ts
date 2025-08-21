@@ -1,47 +1,37 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { rateLimit } from '@/lib/rate-limit'
+import { ApiResponseBuilder as R } from '@/utils/api-response'
+import logger from '@/utils/logger'
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
-    console.log('🔍 Verificando usuarios sin cuenta credential...');
+    if (process.env.NODE_ENV === 'production' || process.env.ENABLE_ADMIN_TOOLS !== 'true') {
+      return new NextResponse('Not Found', { status: 404 })
+    }
+    const rl = rateLimit(request, {
+      limit: 5,
+      windowMs: 60_000,
+      key: 'admin:fix-credential-accounts:POST',
+    })
+    if (!rl.allowed) return R.error('Too many requests. Please try again later.', 429)
 
-    // Buscar usuarios que no tienen cuenta credential
     const usersWithoutCredentialAccount = await prisma.user.findMany({
       where: {
-        accounts: {
-          none: {
-            providerId: 'credential'
-          }
-        },
-        // Solo usuarios que tienen password (fueron creados para email/password)
-        password: {
-          not: null
-        }
+        accounts: { none: { providerId: 'credential' } },
+        password: { not: null },
       },
-      include: {
-        accounts: true
-      }
-    });
-
-    console.log(`📊 Encontrados ${usersWithoutCredentialAccount.length} usuarios sin cuenta credential`);
+      include: { accounts: true },
+    })
 
     if (usersWithoutCredentialAccount.length === 0) {
-      return NextResponse.json({
-        success: true,
-        message: 'Todos los usuarios ya tienen sus cuentas credential',
-        fixed: 0
-      });
+      return R.success({ fixed: 0, users: [] }, 'All users already have credential accounts')
     }
 
-    const fixedUsers = [];
+    const fixedUsers: Array<{ id: string; email: string | null; name: string | null }> = []
 
-    // Crear cuentas credential para cada usuario
     for (const user of usersWithoutCredentialAccount) {
-      console.log(`🔧 Creando cuenta credential para: ${user.email}`);
-      
-      // Usar la contraseña ya hasheada del usuario
-      const hashedPassword = user.password;
-
+      const hashedPassword = user.password!
       await prisma.account.create({
         data: {
           userId: user.id,
@@ -50,35 +40,17 @@ export async function POST() {
           password: hashedPassword,
           createdAt: new Date(),
           updatedAt: new Date(),
-        }
-      });
-
-      fixedUsers.push({
-        id: user.id,
-        email: user.email,
-        name: user.name
-      });
-
-      console.log(`✅ Cuenta credential creada para: ${user.email}`);
+        },
+      })
+      fixedUsers.push({ id: user.id, email: user.email, name: user.name })
     }
 
-    return NextResponse.json({
-      success: true,
-      message: `Se crearon ${fixedUsers.length} cuentas credential`,
-      fixed: fixedUsers.length,
-      users: fixedUsers
-    });
-
+    return R.success(
+      { fixed: fixedUsers.length, users: fixedUsers },
+      `${fixedUsers.length} credential accounts created`,
+    )
   } catch (error) {
-    console.error('❌ Error al arreglar cuentas credential:', error);
-    
-    return NextResponse.json(
-      { 
-        success: false,
-        error: 'Error interno del servidor',
-        details: error instanceof Error ? error.message : 'Error desconocido'
-      },
-      { status: 500 }
-    );
+    logger.error('Error fixing credential accounts:', error)
+    return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
   }
 }

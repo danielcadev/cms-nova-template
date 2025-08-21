@@ -1,22 +1,23 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { rateLimit } from '@/lib/rate-limit'
+import { getAdminSession } from '@/lib/server-session'
+import { ApiResponseBuilder as R } from '@/utils/api-response'
+import logger from '@/utils/logger'
+export async function GET(request: Request) {
+  try {
+    const session = await getAdminSession()
+    if (!session) return R.error('Unauthorized', 401)
 
-export async function GET() {
-    try {
-        // La seguridad la maneja better-auth antes de llegar aquí.
-        // Si el código llega a este punto, significa que el usuario está autorizado.
-        const users = await prisma.user.findMany();
+    const rl = rateLimit(request, { limit: 30, windowMs: 60_000, key: 'admin:users:GET' })
+    if (!rl.allowed) return R.error('Too many requests. Please try again later.', 429)
 
-        // LOG DE DEPURACIÓN: ¿Qué nos devuelve Prisma realmente?
-        console.log('USUARIOS OBTENIDOS DIRECTAMENTE DE PRISMA:', JSON.stringify(users, null, 2));
+    const users = await prisma.user.findMany()
 
-        return NextResponse.json({ users });
-
-    } catch (error) {
-        console.error('Error en /api/admin/users:', error);
-        return new NextResponse(
-            JSON.stringify({ message: 'Error interno del servidor' }),
-            { status: 500 }
-        );
-    }
-} 
+    // Legacy shape expected by UI: top-level users array
+    return NextResponse.json({ success: true, users })
+  } catch (error) {
+    logger.error('Error in /api/admin/users:', error)
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 })
+  }
+}

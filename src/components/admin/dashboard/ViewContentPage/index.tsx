@@ -1,21 +1,20 @@
-import React from 'react';
-import { ViewContentComponent } from './ViewContentComponent';
+import { ViewContentComponent } from './ViewContentComponent'
 
 // Mock data
 const mockData = {
   contentTypes: [],
   plans: [],
-  allContentEntries: []
-};
+  allContentEntries: [],
+}
 
 export default function ViewContentPage() {
   return (
-    <ViewContentComponent 
+    <ViewContentComponent
       contentTypes={mockData.contentTypes}
       plans={mockData.plans}
       allContentEntries={mockData.allContentEntries}
     />
-  );
+  )
 }
 
-export { ViewContentComponent };
+export { ViewContentComponent }

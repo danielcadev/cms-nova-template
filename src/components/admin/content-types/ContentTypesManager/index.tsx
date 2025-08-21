@@ -1,1 +1,1 @@
-export { default } from './ContentTypesManager';
+export { default } from './ContentTypesManager'

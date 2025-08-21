@@ -1,11 +1,11 @@
 // src/components/admin/plans/PlanManager/components/SearchBar.tsx
-'use client';
+'use client'
 
-import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react'
+import { Input } from '@/components/ui/input'
 
 interface SearchBarProps {
-  onSearch: (term: string) => void;
+  onSearch: (term: string) => void
 }
 
 export function SearchBar({ onSearch }: SearchBarProps) {
@@ -19,5 +19,5 @@ export function SearchBar({ onSearch }: SearchBarProps) {
         className="w-full pl-10 py-6 rounded-xl border-gray-200 bg-white/70 backdrop-blur-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-300"
       />
     </div>
-  );
+  )
 }

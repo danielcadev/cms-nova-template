@@ -1,12 +1,12 @@
-'use client';
+'use client'
 
-import { Users, Filter, UserPlus, Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Filter, Search, UserPlus, Users } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 interface UsersHeaderProps {
-  searchTerm: string;
-  onSearchChange: (value: string) => void;
+  searchTerm: string
+  onSearchChange: (value: string) => void
 }
 
 export function UsersHeader({ searchTerm, onSearchChange }: UsersHeaderProps) {
@@ -21,10 +21,12 @@ export function UsersHeader({ searchTerm, onSearchChange }: UsersHeaderProps) {
             </div>
             <div>
               <h1 className="ios-title-3 font-sf-display text-black">Gestión de Usuarios</h1>
-              <p className="ios-caption font-sf-text text-ios-gray-6">Administra usuarios y permisos</p>
+              <p className="ios-caption font-sf-text text-ios-gray-6">
+                Administra usuarios y permisos
+              </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-3">
             <Button variant="ghost" className="ios-callout font-sf-text text-ios-primary">
               <Filter className="w-4 h-4 mr-2" />
@@ -52,5 +54,5 @@ export function UsersHeader({ searchTerm, onSearchChange }: UsersHeaderProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }

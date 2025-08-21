@@ -1,15 +1,10 @@
-'use client';
+'use client'
 
-import { PluginsPageContent } from './PluginsPageContent';
-import { usePlugins } from './usePlugins';
+import { PluginsPageContent } from './PluginsPageContent'
+import { usePlugins } from './usePlugins'
 
 export default function PluginsManager() {
-  const {
-    plugins,
-    loading,
-    togglePlugin,
-    refreshPlugins
-  } = usePlugins();
+  const { plugins, loading, togglePlugin, refreshPlugins } = usePlugins()
 
   return (
     <PluginsPageContent
@@ -18,5 +13,5 @@ export default function PluginsManager() {
       handleTogglePlugin={togglePlugin}
       handleRefresh={refreshPlugins}
     />
-  );
+  )
 }

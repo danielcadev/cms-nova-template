@@ -1,42 +1,41 @@
-import { useState, useEffect } from 'react';
-import { authClient } from '@/lib/auth-client';
-import type { GetSessionResponse, BetterAuthUser } from '@/types/user';
+import { useEffect, useState } from 'react'
+import { authClient } from '@/lib/auth-client'
+import type { BetterAuthUser, GetSessionResponse } from '@/types/user'
 
 export function useCurrentUser() {
-  const [user, setUser] = useState<BetterAuthUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<BetterAuthUser | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    let mounted = true;
+    let mounted = true
 
     const fetchUser = async () => {
       try {
-        const session = await authClient.getSession() as GetSessionResponse;
-        
+        const session = (await authClient.getSession()) as GetSessionResponse
+
         if (mounted) {
-          setUser(session?.data?.user || null);
-          setIsLoading(false);
+          setUser(session?.data?.user || null)
+          setIsLoading(false)
         }
-      } catch (error) {
-        console.error('Error obteniendo usuario:', error);
+      } catch (_error) {
         if (mounted) {
-          setUser(null);
-          setIsLoading(false);
+          setUser(null)
+          setIsLoading(false)
         }
       }
-    };
-    
-    fetchUser();
-    
+    }
+
+    fetchUser()
+
     return () => {
-      mounted = false;
-    };
-  }, []);
+      mounted = false
+    }
+  }, [])
 
   return {
     user,
     isLoading,
     isAdmin: user?.role === 'ADMIN',
-    userName: user?.name || 'Administrador'
-  };
-} 
+    userName: user?.name || 'Administrador',
+  }
+}

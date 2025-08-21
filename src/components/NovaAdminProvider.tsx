@@ -1,12 +1,12 @@
-'use client';
+'use client'
 
-import React, { ReactNode } from 'react';
-import { NovaConfig } from '../types';
-import { AuthProvider } from '../contexts/AuthContext';
+import type { ReactNode } from 'react'
+import { AuthProvider } from '../contexts/AuthContext'
+import type { NovaConfig } from '../types'
 
 interface NovaAdminProviderProps {
-  children: ReactNode;
-  config: NovaConfig;
+  children: ReactNode
+  config: NovaConfig
 }
 
 export function NovaAdminProvider({ children, config }: NovaAdminProviderProps) {
@@ -16,5 +16,5 @@ export function NovaAdminProvider({ children, config }: NovaAdminProviderProps) 
         {children}
       </div>
     </AuthProvider>
-  );
-} 
+  )
+}

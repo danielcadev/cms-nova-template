@@ -1,6 +1,7 @@
-﻿'use client';
+﻿'use client'
 
-import { Skeleton } from "@/components/ui/skeleton";
+import { Package } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -8,17 +9,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@/components/ui/table'
 
-import { Package } from 'lucide-react';
-
-const skeletonVariants = {
+const _skeletonVariants = {
   initial: { opacity: 0 },
-  animate: { 
+  animate: {
     opacity: 1,
-    transition: { staggerChildren: 0.1 }
-  }
-};
+    transition: { staggerChildren: 0.1 },
+  },
+}
 
 // Componente simple para una fila del skeleton
 function SkeletonRow() {
@@ -43,7 +42,7 @@ function SkeletonRow() {
         </div>
       </TableCell>
     </TableRow>
-  );
+  )
 }
 
 export function PlanManagerSkeleton() {
@@ -74,12 +73,12 @@ export function PlanManagerSkeleton() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {Array.from({ length: 5 }).map((_, index) => (
-              <SkeletonRow key={`skeleton-row-${index}`} />
+            {Array.from({ length: 5 }, () => (
+              <SkeletonRow key={crypto.randomUUID()} />
             ))}
           </TableBody>
         </Table>
       </div>
     </div>
-  );
+  )
 }

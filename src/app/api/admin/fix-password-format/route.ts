@@ -1,91 +1,68 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { auth } from '@/lib/auth';
+import { NextResponse } from 'next/server'
+import { z } from 'zod'
+import { auth } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+import { rateLimit } from '@/lib/rate-limit'
+import { ApiResponseBuilder as R } from '@/utils/api-response'
+import logger from '@/utils/logger'
+
+const schema = z.object({
+  email: z.string().email(),
+  newPassword: z.string().min(8),
+})
 
 export async function POST(request: Request) {
   try {
-    const { email, newPassword } = await request.json();
+    if (process.env.NODE_ENV === 'production' || process.env.ENABLE_ADMIN_TOOLS !== 'true') {
+      return new NextResponse('Not Found', { status: 404 })
+    }
+    const rl = rateLimit(request, {
+      limit: 5,
+      windowMs: 60_000,
+      key: 'admin:fix-password-format:POST',
+    })
+    if (!rl.allowed) return R.error('Too many requests. Please try again later.', 429)
 
-    if (!email || !newPassword) {
-      return NextResponse.json(
-        { error: 'Email y nueva contraseña son requeridos' },
-        { status: 400 }
-      );
+    const body = await request.json().catch(() => ({}))
+    const parsed = schema.safeParse(body)
+    if (!parsed.success) {
+      return R.validationError(
+        'Invalid data',
+        parsed.error.errors.map((e) => ({
+          field: e.path.join('.'),
+          message: e.message,
+          code: e.code,
+        })),
+      )
     }
 
-    console.log(`🔧 Arreglando formato de contraseña para: ${email}`);
+    const { email, newPassword } = parsed.data
 
-    // Buscar el usuario
     const user = await prisma.user.findUnique({
       where: { email },
-      include: {
-        accounts: {
-          where: {
-            providerId: 'credential'
-          }
-        }
-      }
-    });
+      include: { accounts: { where: { providerId: 'credential' } } },
+    })
 
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Usuario no encontrado' },
-        { status: 404 }
-      );
-    }
+    if (!user) return R.error('User not found', 404)
+    if (!user.accounts[0]) return R.error('Credential account not found', 404)
 
-    if (!user.accounts[0]) {
-      return NextResponse.json(
-        { error: 'Cuenta credential no encontrada' },
-        { status: 404 }
-      );
-    }
+    const authContext = await auth.$context
+    const hashedPassword = await authContext.password.hash(newPassword)
 
-    // Obtener el contexto de Better Auth para usar su hasher
-    const authContext = await auth.$context;
-    
-    // Hashear la nueva contraseña usando Better Auth (scrypt)
-    const hashedPassword = await authContext.password.hash(newPassword);
-
-    console.log('🔐 Nueva contraseña hasheada con Better Auth');
-
-    // Actualizar tanto el usuario como la cuenta
     await prisma.$transaction(async (tx) => {
-      // Actualizar la contraseña en el usuario
-      await tx.user.update({
-        where: { id: user.id },
-        data: { password: hashedPassword }
-      });
-
-      // Actualizar la contraseña en la cuenta credential
+      await tx.user.update({ where: { id: user.id }, data: { password: hashedPassword } })
       await tx.account.update({
         where: { id: user.accounts[0].id },
-        data: { password: hashedPassword }
-      });
-    });
+        data: { password: hashedPassword },
+      })
+    })
 
-    console.log('✅ Contraseña actualizada correctamente');
-
-    return NextResponse.json({
-      success: true,
-      message: 'Contraseña actualizada con formato correcto',
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name
-      }
-    });
-
+    return R.success(
+      { id: user.id, email: user.email, name: user.name },
+      'Password updated with correct format',
+    )
   } catch (error) {
-    console.error('❌ Error arreglando formato de contraseña:', error);
-    
-    return NextResponse.json(
-      { 
-        success: false,
-        error: 'Error interno del servidor',
-        details: error instanceof Error ? error.message : 'Error desconocido'
-      },
-      { status: 500 }
-    );
+    logger.error('Error fixing password format:', error)
+    return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
   }
 }

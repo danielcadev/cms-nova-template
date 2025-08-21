@@ -1,266 +1,343 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { Plus, Search, Filter, MoreHorizontal, Edit, Trash2, Eye } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { ArrowLeft, Calendar, Edit, FileText, Plus, Search, Trash2 } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { Input } from '@/components/ui/input'
+import { ThemedButton } from '@/components/ui/ThemedButton'
 
 interface ContentType {
-  id: string;
-  name: string;
-  apiIdentifier: string;
-  description?: string | null;
-  fields: Field[];
-  entries: ContentEntry[];
+  id: string
+  name: string
+  apiIdentifier: string
+  description?: string | null
+  fields: Field[]
+  entries: ContentEntry[]
 }
 
 interface Field {
-  id: string;
-  label: string;
-  apiIdentifier: string;
-  type: string;
-  isRequired: boolean;
+  id: string
+  label: string
+  apiIdentifier: string
+  type: string
+  isRequired: boolean
 }
 
 interface ContentEntry {
-  id: string;
-  data: any;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
+  id: string
+  data: any
+  status: string
+  createdAt: string
+  updatedAt: string
 }
 
 interface ContentEntriesPageProps {
-  contentType: ContentType;
+  contentType: ContentType
 }
 
 export function ContentEntriesPage({ contentType }: ContentEntriesPageProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState('')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const router = useRouter()
 
-  const filteredEntries = contentType.entries.filter(entry => {
-    const matchesSearch = searchTerm === '' || 
-      Object.values(entry.data).some(value => 
-        String(value).toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    
-    const matchesStatus = statusFilter === 'all' || entry.status === statusFilter;
-    
-    return matchesSearch && matchesStatus;
-  });
+  const filteredEntries = contentType.entries.filter((entry) => {
+    const matchesSearch =
+      searchTerm === '' ||
+      Object.values(entry.data).some((value) => {
+        // Handle different value types for search
+        if (typeof value === 'string') {
+          return value.toLowerCase().includes(searchTerm.toLowerCase())
+        }
+        if (typeof value === 'number') {
+          return String(value).includes(searchTerm)
+        }
+        if (typeof value === 'object' && value !== null) {
+          // Search in object properties
+          if (value.title)
+            return String(value.title).toLowerCase().includes(searchTerm.toLowerCase())
+          if (value.name) return String(value.name).toLowerCase().includes(searchTerm.toLowerCase())
+          if (value.label)
+            return String(value.label).toLowerCase().includes(searchTerm.toLowerCase())
+        }
+        return false
+      })
 
-  const getDisplayValue = (entry: ContentEntry, field: Field) => {
-    const value = entry.data[field.apiIdentifier];
-    if (!value) return '-';
-    
+    const matchesStatus = statusFilter === 'all' || entry.status === statusFilter
+
+    return matchesSearch && matchesStatus
+  })
+
+  const _getDisplayValue = (entry: ContentEntry, field: Field) => {
+    const value = entry.data[field.apiIdentifier]
+    if (!value) return '-'
+
+    // Handle different field types
     if (field.type === 'RICH_TEXT') {
-      // Extraer texto plano del HTML
-      const div = document.createElement('div');
-      div.innerHTML = value;
-      return div.textContent?.slice(0, 100) + '...' || '-';
+      if (typeof value === 'string') {
+        // Extract plain text from HTML
+        const div = document.createElement('div')
+        div.innerHTML = value
+        return `${div.textContent?.slice(0, 100)}...` || '-'
+      }
+      return '-'
     }
-    
+
     if (field.type === 'MEDIA') {
-      return value.url ? '📷 Imagen' : '-';
+      // Handle media objects
+      if (typeof value === 'object' && value !== null) {
+        return value.url ? '📷 Image' : '-'
+      }
+      return '-'
     }
-    
+
     if (field.type === 'BOOLEAN') {
-      return value ? '✅' : '❌';
+      return value ? '✅' : '❌'
     }
-    
+
     if (field.type === 'DATE') {
-      return new Date(value).toLocaleDateString();
+      try {
+        return new Date(value).toLocaleDateString()
+      } catch {
+        return '-'
+      }
     }
-    
-    return String(value).slice(0, 50) + (String(value).length > 50 ? '...' : '');
-  };
+
+    // Handle arrays and objects
+    if (Array.isArray(value)) {
+      return `${value.length} items`
+    }
+
+    if (typeof value === 'object' && value !== null) {
+      // For objects, try to find a meaningful display value
+      if (value.title) return String(value.title)
+      if (value.name) return String(value.name)
+      if (value.label) return String(value.label)
+      return '[Object]'
+    }
+
+    // Handle primitive values
+    const stringValue = String(value)
+    return stringValue.slice(0, 50) + (stringValue.length > 50 ? '...' : '')
+  }
 
   const handleDelete = async (entryId: string) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar esta entrada?')) return;
-    
+    if (!confirm('Are you sure you want to delete this entry?')) return
+
     try {
-      const response = await fetch(`/api/content-types/${contentType.apiIdentifier}/entries/${entryId}`, {
-        method: 'DELETE'
-      });
-      
+      const response = await fetch(
+        `/api/content-types/${contentType.apiIdentifier}/entries/${entryId}`,
+        {
+          method: 'DELETE',
+        },
+      )
+
       if (response.ok) {
-        router.refresh();
+        router.refresh()
       }
     } catch (error) {
-      console.error('Error deleting entry:', error);
+      console.error('Error deleting entry:', error)
     }
-  };
+  }
+
+  // Get the first field as title field
+  const getTitleField = () => {
+    return (
+      contentType.fields.find(
+        (f) =>
+          f.apiIdentifier.toLowerCase().includes('title') ||
+          f.apiIdentifier.toLowerCase().includes('name') ||
+          f.type === 'TEXT',
+      ) || contentType.fields[0]
+    )
+  }
+
+  const getEntryTitle = (entry: ContentEntry) => {
+    const titleField = getTitleField()
+    if (!titleField) return `Entry #${entry.id.slice(-6)}`
+
+    const value = entry.data[titleField.apiIdentifier]
+
+    // Handle different value types
+    if (!value) return `Untitled ${contentType.name}`
+
+    if (typeof value === 'string') return value
+
+    if (typeof value === 'object' && value !== null) {
+      // For objects, try to find a meaningful display value
+      if (value.title) return String(value.title)
+      if (value.name) return String(value.name)
+      if (value.label) return String(value.label)
+      return `Untitled ${contentType.name}`
+    }
+
+    return String(value) || `Untitled ${contentType.name}`
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      <div className="p-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight">
-                  {contentType.name}
-                </h1>
-                <p className="text-gray-600 dark:text-gray-400 mt-1">
-                  {contentType.description || `Gestiona las entradas de ${contentType.name}`}
-                </p>
-              </div>
-              
-              <Link href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/create`}>
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Crear {contentType.name}
-                </Button>
-              </Link>
+    <div className="min-h-screen theme-bg">
+      <div className="max-w-4xl mx-auto px-6 py-12">
+        {/* Breadcrumb */}
+        <div className="mb-6">
+          <Link
+            href="/admin/dashboard/content-types"
+            className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            Content Types
+          </Link>
+        </div>
+
+        {/* Header */}
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                {contentType.name}
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400 text-base">
+                {contentType.description || `Manage ${contentType.name} entries`}
+              </p>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-800">
-                <div className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-                  {contentType.entries.length}
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Total</div>
-              </div>
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-800">
-                <div className="text-2xl font-semibold text-emerald-600">
-                  {contentType.entries.filter(e => e.status === 'published').length}
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Publicadas</div>
-              </div>
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-800">
-                <div className="text-2xl font-semibold text-yellow-600">
-                  {contentType.entries.filter(e => e.status === 'draft').length}
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Borradores</div>
-              </div>
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-800">
-                <div className="text-2xl font-semibold text-gray-600">
-                  {contentType.entries.filter(e => e.status === 'archived').length}
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Archivadas</div>
-              </div>
-            </div>
-
-            {/* Filters */}
-            <div className="flex items-center gap-4 mb-6">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Buscar entradas..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-                />
-              </div>
-              
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            <ThemedButton
+              asChild
+              className="theme-card theme-text border theme-border hover:theme-card-hover"
+            >
+              <Link
+                href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/create`}
               >
-                <option value="all">Todos los estados</option>
-                <option value="published">Publicadas</option>
-                <option value="draft">Borradores</option>
-                <option value="archived">Archivadas</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Content Table */}
-          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden">
-            {filteredEntries.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="text-gray-400 mb-4">
-                  <Plus className="h-12 w-12 mx-auto" />
-                </div>
-                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-                  No hay entradas
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  Comienza creando tu primera entrada de {contentType.name}
-                </p>
-                <Link href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/create`}>
-                  <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Crear {contentType.name}
-                  </Button>
-                </Link>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 dark:bg-gray-800">
-                    <tr>
-                      {contentType.fields.slice(0, 3).map(field => (
-                        <th key={field.id} className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          {field.label}
-                        </th>
-                      ))}
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        Estado
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        Actualizado
-                      </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        Acciones
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                    {filteredEntries.map(entry => (
-                      <tr key={entry.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
-                        {contentType.fields.slice(0, 3).map(field => (
-                          <td key={field.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                            {getDisplayValue(entry, field)}
-                          </td>
-                        ))}
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                            entry.status === 'published' 
-                              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-400'
-                              : entry.status === 'draft'
-                              ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
-                              : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
-                          }`}>
-                            {entry.status === 'published' ? 'Publicada' : 
-                             entry.status === 'draft' ? 'Borrador' : 'Archivada'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                          {new Date(entry.updatedAt).toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <div className="flex items-center justify-end gap-2">
-                            <Link href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/edit/${entry.id}`}>
-                              <Button variant="outline" size="sm">
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                            </Link>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleDelete(entry.id)}
-                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                <Plus className="h-4 w-4 mr-2" />
+                New {contentType.name}
+              </Link>
+            </ThemedButton>
           </div>
         </div>
+
+        {/* Search and Filter */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex-1 max-w-md">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Search entries..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 border-gray-200 dark:border-gray-700 focus:border-gray-400 dark:focus:border-gray-500 rounded-lg"
+              />
+            </div>
+          </div>
+
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="ml-4 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
+          >
+            <option value="all">All statuses</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+            <option value="archived">Archived</option>
+          </select>
+        </div>
+
+        {/* Content List */}
+        {filteredEntries.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="w-12 h-12 mx-auto bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center mb-4">
+              <FileText className="w-6 h-6 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+              No entries found
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+              {searchTerm
+                ? `No entries match "${searchTerm}"`
+                : `Start by creating your first ${contentType.name} entry`}
+            </p>
+            {!searchTerm && (
+              <ThemedButton
+                asChild
+                className="theme-card theme-text border theme-border hover:theme-card-hover"
+              >
+                <Link
+                  href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/create`}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create {contentType.name}
+                </Link>
+              </ThemedButton>
+            )}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {filteredEntries.map((entry) => (
+              <div key={entry.id} className="group">
+                <div className="flex items-center justify-between p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors">
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-center">
+                      <FileText className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900 dark:text-gray-100">
+                        {getEntryTitle(entry)}
+                      </div>
+                      <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          <span>
+                            {new Date(entry.updatedAt).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric',
+                            })}
+                          </span>
+                        </div>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            entry.status === 'published'
+                              ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
+                              : entry.status === 'draft'
+                                ? 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400'
+                                : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
+                          }`}
+                        >
+                          {entry.status === 'published'
+                            ? 'Published'
+                            : entry.status === 'draft'
+                              ? 'Draft'
+                              : 'Archived'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ThemedButton
+                      variantTone="ghost"
+                      size="sm"
+                      asChild
+                      className="theme-text-secondary hover:theme-text"
+                    >
+                      <Link
+                        href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/edit/${entry.id}`}
+                      >
+                        <Edit className="h-4 w-4 mr-1 theme-text-secondary" /> Edit entry
+                      </Link>
+                    </ThemedButton>
+                    <ThemedButton
+                      variantTone="ghost"
+                      size="sm"
+                      onClick={() => handleDelete(entry.id)}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </ThemedButton>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
-  );
+  )
 }

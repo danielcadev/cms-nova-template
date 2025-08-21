@@ -1,31 +1,32 @@
-﻿'use client';
+﻿'use client'
 
-import { 
-  Database, 
-  Plus,
-  Settings
-} from 'lucide-react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { AppleSearchBar } from '../../shared/AppleSearchBar';
+import { Plus, Settings } from 'lucide-react'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { AppleSearchBar } from '../../shared/AppleSearchBar'
 
 interface ContentTypesHeaderProps {
-  searchTerm: string;
-  onSearchChange: (term: string) => void;
-  onRefresh: () => void;
-  totalCount: number;
+  searchTerm: string
+  onSearchChange: (term: string) => void
+  onRefresh: () => void
+  totalCount: number
 }
 
 export function ContentTypesHeader({
   searchTerm,
   onSearchChange,
   onRefresh,
-  totalCount
+  totalCount,
 }: ContentTypesHeaderProps) {
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl border border-white/50 p-8 mb-8">
       <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between">
         <div className="flex-1">
+          <div className="mb-2">
+            <p className="text-sm text-gray-600">
+              {totalCount} tipo{totalCount !== 1 ? 's' : ''} de contenido
+            </p>
+          </div>
           <AppleSearchBar
             value={searchTerm}
             onChange={onSearchChange}
@@ -33,10 +34,10 @@ export function ContentTypesHeader({
             className="w-full"
           />
         </div>
-        
+
         <div className="flex gap-4 items-center">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={onRefresh}
             className="rounded-2xl border-gray-200 bg-white/80 backdrop-blur-sm hover:bg-gray-50"
           >
@@ -53,5 +54,5 @@ export function ContentTypesHeader({
         </div>
       </div>
     </div>
-  );
+  )
 }
