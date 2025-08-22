@@ -1,10 +1,12 @@
-// components/admin/auth/SignUp.tsx - Diseño idéntico al SignIn con verificación de primer admin
+// components/admin/auth/SignUp.tsx - Notion-style design identical to SignIn with first admin verification
 'use client'
 
-// Componentes básicos sin dependencias externas
+// Basic components without external dependencies
 import { ArrowLeft, CheckCircle, Loader2, Lock, Mail, Package, Shield, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 export default function SignUp() {
   const router = useRouter()
@@ -25,7 +27,7 @@ export default function SignUp() {
   const [isCheckingAdmin, setIsCheckingAdmin] = useState(true)
   const [hasAdmin, setHasAdmin] = useState(false)
 
-  // Verificar si ya existe un administrador
+  // Check if admin already exists
   useEffect(() => {
     const checkExistingAdmin = async () => {
       try {
@@ -34,7 +36,7 @@ export default function SignUp() {
         setHasAdmin(data.hasAdmin)
       } catch (error) {
         console.error('Error checking admin:', error)
-        // En caso de error, permitir el registro
+        // In case of error, allow registration
         setHasAdmin(false)
       } finally {
         setIsCheckingAdmin(false)
@@ -77,17 +79,17 @@ export default function SignUp() {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target
+    const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
-      [id]: value,
+      [name]: value,
     }))
 
-    // Limpiar error al cambiar el valor
-    if (errors[id as keyof typeof errors]) {
+    // Clear error when value changes
+    if (errors[name as keyof typeof errors]) {
       setErrors((prev) => ({
         ...prev,
-        [id]: '',
+        [name]: '',
       }))
     }
   }
@@ -117,76 +119,73 @@ export default function SignUp() {
         alert('Administrator created successfully! You can now sign in.')
         router.push('/admin/login')
       } else {
-        // Error del servidor
-        alert(data.error || 'Error al crear el administrador')
+        // Server error
+        alert(data.error || 'Error creating administrator')
       }
     } catch (error) {
       console.error('Error:', error)
-      alert('Error de conexión. Inténtalo de nuevo.')
+      alert('Connection error. Please try again.')
     } finally {
       setIsLoading(false)
     }
   }
 
-  // Mostrar loading mientras verifica si hay admin
+  // Show loading while checking if admin exists
   if (isCheckingAdmin) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-gray-600" />
-          <p className="text-gray-600 dark:text-gray-400">Verificando configuración...</p>
+          <p className="text-gray-600">Checking configuration...</p>
         </div>
       </div>
     )
   }
 
-  // Si ya existe un admin, mostrar mensaje de que el registro está deshabilitado
+  // If admin already exists, show message that registration is disabled
   if (hasAdmin) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 relative">
-        {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-gray-100/50 dark:from-gray-950 dark:to-gray-900/50" />
-
+      <div className="min-h-screen bg-white relative">
         {/* Back to home button */}
         <div className="absolute top-8 left-8 z-20">
           <a
             href="/"
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to home
           </a>
         </div>
 
-        <div className="relative z-10 flex min-h-screen items-center justify-center p-8">
+        <div className="flex min-h-screen items-center justify-center p-8">
           <div className="w-full max-w-md">
             <div className="text-center mb-8">
               <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400">
-                  <CheckCircle className="h-6 w-6" strokeWidth={2} />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 text-green-600">
+                  <CheckCircle className="h-5 w-5" strokeWidth={2} />
                 </div>
                 <div className="text-left">
-                  <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight">
-                    CMS Nova
+                  <h1 className="text-xl font-bold text-gray-900 tracking-tight">
+                    Nova CMS
                   </h1>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
-                    Sistema Configurado
+                  <p className="text-sm text-gray-500">
+                    System Configured
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-900 rounded-xl p-8 border border-gray-200 dark:border-gray-800 shadow-sm">
+            <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
               <div className="text-center">
-                <div className="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Shield className="h-8 w-8 text-green-600 dark:text-green-400" />
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Shield className="h-6 w-6 text-green-600" />
                 </div>
 
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                <h2 className="text-lg font-bold text-gray-900 mb-2">
                   Registration Disabled
                 </h2>
 
-                <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
+                <p className="text-gray-600 mb-6 text-sm leading-relaxed">
                   The main administrator has already been created. Registration of new users is
                   disabled for security.
                 </p>
@@ -194,12 +193,12 @@ export default function SignUp() {
                 <div className="space-y-3">
                   <a
                     href="/admin/login"
-                    className="w-full inline-flex items-center justify-center px-6 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors font-medium"
+                    className="w-full inline-flex items-center justify-center px-4 py-2.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors font-medium"
                   >
                     Sign In
                   </a>
 
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-gray-500">
                     Need to create more users? Do it from the admin panel.
                   </p>
                 </div>
@@ -211,9 +210,9 @@ export default function SignUp() {
     )
   }
 
-  // Formulario de registro (solo si no hay admin) - DISEÑO IDÉNTICO AL LOGIN
+  // Registration form (only if no admin exists) - NOTION-STYLE DESIGN
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 relative">
+    <div className="min-h-screen theme-bg relative">
       {/* Clean editorial background */}
       <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-gray-100/50 dark:from-gray-950 dark:to-gray-900/50" />
 
@@ -228,7 +227,7 @@ export default function SignUp() {
       <div className="absolute top-8 left-8 z-20">
         <a
           href="/"
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm theme-text-secondary hover:theme-text transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to home
@@ -240,31 +239,31 @@ export default function SignUp() {
           {/* Header */}
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl theme-accent-bg theme-text">
                 <Package className="h-6 w-6" strokeWidth={2} />
               </div>
               <div className="text-left">
-                <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight">
-                  CMS Nova
+                <h1 className="text-2xl font-semibold theme-text tracking-tight">
+                  Nova CMS
                 </h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                <p className="text-sm theme-text-secondary font-medium">
                   Create First Administrator
                 </p>
               </div>
             </div>
-            <p className="text-lg text-gray-600 dark:text-gray-400 font-light">
+            <p className="text-lg theme-text-secondary font-light">
               Set up your administrator account
             </p>
           </div>
 
           {/* Form Card */}
-          <div className="bg-white dark:bg-gray-900 rounded-xl p-8 border border-gray-200 dark:border-gray-800 shadow-sm">
+          <div className="theme-card rounded-xl p-8 theme-border shadow-sm">
             <form onSubmit={signUp} className="space-y-6">
               {/* Name Field */}
               <div className="space-y-3">
                 <label
                   htmlFor={nameId}
-                  className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  className="text-sm font-medium theme-text"
                 >
                   Full name
                 </label>
@@ -272,23 +271,22 @@ export default function SignUp() {
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <User className="h-4 w-4 text-gray-400" strokeWidth={1.5} />
                   </div>
-                  <input
+                  <Input
                     id={nameId}
+                    name="name"
                     type="text"
                     placeholder="Your full name"
                     value={formData.name}
                     onChange={handleChange}
-                    className={`w-full pl-10 pr-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 ${
-                      errors.name
-                        ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
-                        : 'border-gray-200 dark:border-gray-700 focus:border-gray-400 dark:focus:border-gray-500 focus:ring-gray-400 dark:focus:ring-gray-500'
+                    className={`pl-10 rounded-lg theme-border focus:theme-border-focus focus:ring-theme-accent ${
+                      errors.name ? 'border-red-300 focus:border-red-400 focus:ring-red-400' : ''
                     }`}
                     autoComplete="name"
                     disabled={isLoading}
                   />
                 </div>
                 {errors.name && (
-                  <p className="text-sm text-red-500 dark:text-red-400">{errors.name}</p>
+                  <p className="text-sm text-red-500">{errors.name}</p>
                 )}
               </div>
 
@@ -296,7 +294,7 @@ export default function SignUp() {
               <div className="space-y-3">
                 <label
                   htmlFor={emailId}
-                  className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  className="text-sm font-medium theme-text"
                 >
                   Email address
                 </label>
@@ -304,23 +302,22 @@ export default function SignUp() {
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Mail className="h-4 w-4 text-gray-400" strokeWidth={1.5} />
                   </div>
-                  <input
+                  <Input
                     id={emailId}
+                    name="email"
                     type="email"
                     placeholder="admin@example.com"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`w-full pl-10 pr-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 ${
-                      errors.email
-                        ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
-                        : 'border-gray-200 dark:border-gray-700 focus:border-gray-400 dark:focus:border-gray-500 focus:ring-gray-400 dark:focus:ring-gray-500'
+                    className={`pl-10 rounded-lg theme-border focus:theme-border-focus focus:ring-theme-accent ${
+                      errors.email ? 'border-red-300 focus:border-red-400 focus:ring-red-400' : ''
                     }`}
                     autoComplete="email"
                     disabled={isLoading}
                   />
                 </div>
                 {errors.email && (
-                  <p className="text-sm text-red-500 dark:text-red-400">{errors.email}</p>
+                  <p className="text-sm text-red-500">{errors.email}</p>
                 )}
               </div>
 
@@ -328,7 +325,7 @@ export default function SignUp() {
               <div className="space-y-3">
                 <label
                   htmlFor={passwordId}
-                  className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  className="text-sm font-medium theme-text"
                 >
                   Password
                 </label>
@@ -336,30 +333,31 @@ export default function SignUp() {
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Lock className="h-4 w-4 text-gray-400" strokeWidth={1.5} />
                   </div>
-                  <input
+                  <Input
                     id={passwordId}
+                    name="password"
                     type="password"
                     placeholder="••••••••"
                     value={formData.password}
                     onChange={handleChange}
-                    className={`w-full pl-10 pr-3 py-2 rounded-lg border bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 ${
-                      errors.password
-                        ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
-                        : 'border-gray-200 dark:border-gray-700 focus:border-gray-400 dark:focus:border-gray-500 focus:ring-gray-400 dark:focus:ring-gray-500'
+                    className={`pl-10 rounded-lg theme-border focus:theme-border-focus focus:ring-theme-accent ${
+                      errors.password ? 'border-red-300 focus:border-red-400 focus:ring-red-400' : ''
                     }`}
                     autoComplete="new-password"
                     disabled={isLoading}
                   />
                 </div>
                 {errors.password && (
-                  <p className="text-sm text-red-500 dark:text-red-400">{errors.password}</p>
+                  <p className="text-sm text-red-500">{errors.password}</p>
                 )}
               </div>
 
               {/* Submit Button */}
-              <button
+              <Button
                 type="submit"
-                className="w-full bg-gray-900 hover:bg-gray-800 dark:bg-gray-100 dark:hover:bg-gray-200 text-white dark:text-gray-900 font-medium py-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                variant="default"
+                size="lg"
+                className="w-full font-medium py-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -370,18 +368,18 @@ export default function SignUp() {
                 ) : (
                   'Create administrator account'
                 )}
-              </button>
+              </Button>
             </form>
           </div>
 
           {/* Footer */}
           <div className="text-center mt-8">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm theme-text-secondary">
               Already have an account?{' '}
               <button
                 type="button"
                 onClick={() => router.push('/admin/login')}
-                className="text-gray-900 dark:text-gray-100 hover:underline font-medium"
+                className="theme-accent hover:theme-accent-hover font-medium"
               >
                 Sign in
               </button>

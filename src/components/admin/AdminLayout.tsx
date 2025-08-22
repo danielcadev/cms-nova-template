@@ -164,17 +164,33 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <div
-      className={`min-h-screen flex relative overflow-hidden theme-bg ${themeClass} ${isDarkTheme ? 'dark' : ''}`}
-      style={{ backgroundColor: 'var(--theme-bg-primary)' }}
+      className={`min-h-screen flex relative overflow-hidden ${themeClass} ${isDarkTheme ? 'dark' : ''}`}
+      style={{ 
+        backgroundColor: effectiveTheme === 'light' ? '#ffffff' : 'var(--theme-bg-primary)',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+      }}
     >
-      {/* Background Effects */}
+      {/* Clean Notion-like background */}
       <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 theme-bg" />
-        <div className="absolute top-20 left-20 w-64 h-64 rounded-full blur-3xl animate-pulse opacity-20 theme-bg-secondary" />
-        <div
-          className="absolute bottom-20 right-20 w-80 h-80 rounded-full blur-3xl animate-pulse opacity-20 theme-bg-tertiary"
-          style={{ animationDelay: '2s' }}
+        <div 
+          className="absolute inset-0" 
+          style={{ 
+            backgroundColor: effectiveTheme === 'light' ? '#ffffff' : 'var(--theme-bg-primary)' 
+          }} 
         />
+        {/* Subtle grid pattern for light theme */}
+        {effectiveTheme === 'light' && (
+          <div 
+            className="absolute inset-0 opacity-[0.02]"
+            style={{
+              backgroundImage: `
+                linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)
+              `,
+              backgroundSize: '20px 20px'
+            }}
+          />
+        )}
       </div>
 
       <Sidebar
@@ -186,7 +202,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <div className="flex-1 flex flex-col min-h-screen relative">
         <main className="flex-1 relative">
           <div className="h-full">
-            <div className="transition-all duration-300 ease-out">{children}</div>
+            <div className="transition-all duration-200 ease-out p-6 md:p-8 lg:p-12">
+              <div className="max-w-7xl mx-auto">
+                {children}
+              </div>
+            </div>
           </div>
         </main>
       </div>

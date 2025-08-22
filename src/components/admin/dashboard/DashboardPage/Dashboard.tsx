@@ -30,7 +30,7 @@ export function Dashboard() {
         setStats(userStats)
       } catch (error) {
         const errorMessage =
-          error instanceof Error ? error.message : 'No se pudieron cargar las estadísticas'
+          error instanceof Error ? error.message : 'Could not load statistics'
         toast({
           title: 'Error',
           description: errorMessage,
@@ -72,31 +72,29 @@ export function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-950">
-      <div className="mx-auto max-w-6xl px-6 py-10 space-y-10">
-        {/* Cover */}
-        <div className="relative overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70">
-          <div className="absolute inset-0 bg-gradient-to-r from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-950 dark:to-gray-950" />
-          <div className="relative p-8 md:p-10 flex items-start justify-between">
+    <div className="min-h-screen bg-white">
+      <div className="mx-auto max-w-5xl space-y-8">
+        {/* Header */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Workspace</p>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">
+              <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
                 {greeting}, {userName}
               </h1>
-              <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-xl">
-                Curate, organize and publish your content with a clean, minimal workspace.
+              <p className="mt-1 text-gray-600">
+                Manage your content with a clean, minimal workspace.
               </p>
             </div>
-            <Link href="/admin/dashboard/templates/tourism/create" className="shrink-0">
-              <ThemedButton className="theme-card theme-text border theme-border hover:theme-card-hover">
+            <Link href="/admin/dashboard/templates/tourism/create">
+              <button className="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors">
                 <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
-                Create content
-              </ThemedButton>
+                New content
+              </button>
             </Link>
           </div>
         </div>
 
-        {/* Stats - minimal */}
+        {/* Stats */}
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {[
             { label: 'Total users', value: stats.total },
@@ -106,65 +104,65 @@ export function Dashboard() {
           ].map(({ label, value }) => (
             <div
               key={label}
-              className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70 p-4"
+              className="rounded-lg border border-gray-200 bg-white p-4 hover:shadow-sm transition-shadow"
             >
-              <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</div>
-              <div className="mt-1 text-2xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">
+              <div className="text-sm font-medium text-gray-500">{label}</div>
+              <div className="mt-1 text-2xl font-bold text-gray-900">
                 {value}
               </div>
             </div>
           ))}
         </div>
 
-        {/* Quick actions - editorial list */}
+        {/* Quick actions */}
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight">
+          <h2 className="text-xl font-bold text-gray-900">
             Quick actions
           </h2>
-          <div className="divide-y divide-gray-100 dark:divide-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden bg-white/60 dark:bg-gray-900/60">
+          <div className="divide-y divide-gray-100 rounded-lg border border-gray-200 overflow-hidden bg-white shadow-sm">
             <Link href="/admin/dashboard/users" className="group block">
-              <div className="flex items-center justify-between p-4 md:p-5 hover:bg-gray-50 dark:hover:bg-gray-900/60 transition-colors">
+              <div className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                    <Users className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                  <div className="h-8 w-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                    <Users className="h-4 w-4 text-blue-600" />
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <div className="text-sm font-medium text-gray-900">
                       User management
                     </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                    <div className="text-xs text-gray-500">
                       Manage users and permissions
                     </div>
                   </div>
                 </div>
-                <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300" />
+                <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600" />
               </div>
             </Link>
 
             <Link href="/admin/dashboard/view-content" className="group block">
-              <div className="flex items-center justify-between p-4 md:p-5 hover:bg-gray-50 dark:hover:bg-gray-900/60 transition-colors">
+              <div className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                    <FileText className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                  <div className="h-8 w-8 rounded-lg bg-green-50 flex items-center justify-center">
+                    <FileText className="h-4 w-4 text-green-600" />
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <div className="text-sm font-medium text-gray-900">
                       View content
                     </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                    <div className="text-xs text-gray-500">
                       Review and manage content
                     </div>
                   </div>
                 </div>
-                <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300" />
+                <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600" />
               </div>
             </Link>
 
             <Link href="/admin/dashboard/templates" className="group block">
               <div className="flex items-center justify-between p-4 md:p-5 hover:bg-gray-50 dark:hover:bg-gray-900/60 transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                    <Layout className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                  <div className="h-8 w-8 rounded-lg bg-purple-50 flex items-center justify-center">
+                    <Layout className="h-4 w-4 text-purple-600" />
                   </div>
                   <div>
                     <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -182,8 +180,8 @@ export function Dashboard() {
             <Link href="/admin/dashboard/content-types" className="group block">
               <div className="flex items-center justify-between p-4 md:p-5 hover:bg-gray-50 dark:hover:bg-gray-900/60 transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                    <Database className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                  <div className="h-8 w-8 rounded-lg bg-orange-50 flex items-center justify-center">
+                    <Database className="h-4 w-4 text-orange-600" />
                   </div>
                   <div>
                     <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -201,8 +199,8 @@ export function Dashboard() {
             <Link href="/admin/dashboard/plugins" className="group block">
               <div className="flex items-center justify-between p-4 md:p-5 hover:bg-gray-50 dark:hover:bg-gray-900/60 transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                    <Plus className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                  <div className="h-8 w-8 rounded-lg bg-indigo-50 flex items-center justify-center">
+                    <Plus className="h-4 w-4 text-indigo-600" />
                   </div>
                   <div>
                     <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -218,8 +216,8 @@ export function Dashboard() {
             <Link href="/admin/dashboard/settings" className="group block">
               <div className="flex items-center justify-between p-4 md:p-5 hover:bg-gray-50 dark:hover:bg-gray-900/60 transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                    <Settings className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                  <div className="h-8 w-8 rounded-lg bg-gray-50 flex items-center justify-center">
+                    <Settings className="h-4 w-4 text-gray-600" />
                   </div>
                   <div>
                     <div className="text-sm font-medium text-gray-900 dark:text-gray-100">

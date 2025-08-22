@@ -138,10 +138,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   if (isLoading && !isAuthPage) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-4">
-          <Loader2 className="h-8 w-8 animate-spin text-teal-600" />
-          <p className="text-gray-600 font-medium">Verificando autenticación...</p>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-6">
+          <div className="relative">
+            <div className="w-12 h-12 border-2 border-gray-200 rounded-full"></div>
+            <div className="w-12 h-12 border-2 border-blue-500 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
+          </div>
+          <div className="text-center space-y-2">
+            <p className="text-gray-900 font-medium text-lg">Loading workspace...</p>
+            <p className="text-gray-500 text-sm">Please wait while we set things up</p>
+          </div>
         </div>
       </div>
     )
@@ -152,6 +158,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuthContext() {
   const context = useContext(AuthContext)
-  if (context === undefined) throw new Error('useAuthContext debe usarse dentro de un AuthProvider')
+  if (context === undefined) throw new Error('useAuthContext must be used within an AuthProvider')
   return context
 }

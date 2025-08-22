@@ -30,72 +30,98 @@ export const VideoSection = memo(function VideoSection() {
   const isValid = isValidYoutubeUrl(videoUrl)
 
   return (
-    <Card className="shadow-none border border-slate-200 bg-white rounded-xl">
-      <CardHeader>
-        <div className="space-y-1">
-          <CardTitle>Video Promocional</CardTitle>
-          <p className="text-sm text-slate-500">
-            Añade un video de YouTube para mostrar lo mejor de tu plan.
-          </p>
-        </div>
-      </CardHeader>
-      <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-        <div className="space-y-4">
-          <FormField
-            control={control}
-            name="videoUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>URL del Video de YouTube</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <Youtube className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-                    <Input
-                      {...field}
-                      placeholder="https://youtube.com/watch?v=..."
-                      className={cn(
-                        'pl-10',
-                        videoUrl && (isValid ? 'border-green-500' : 'border-red-500'),
-                      )}
-                    />
-                    {videoUrl && (
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                        {isValid ? (
-                          <CheckCircle2 className="h-5 w-5 text-green-500" />
-                        ) : (
-                          <XCircle className="h-5 w-5 text-red-500" />
+    <div className="space-y-8">
+      <div className="text-center">
+        <h3 className="text-2xl font-bold theme-text mb-3">
+          Promotional Video
+        </h3>
+        <p className="text-sm theme-text-secondary max-w-2xl mx-auto leading-relaxed">
+          Add a YouTube video to showcase the best of your plan. Videos significantly increase conversions.
+        </p>
+      </div>
+
+      <div className="theme-card rounded-xl p-8 theme-border">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
+                <Youtube className="h-5 w-5 text-red-600 dark:text-red-400" />
+              </div>
+              <h4 className="text-xl font-semibold theme-text">Video Configuration</h4>
+            </div>
+            
+            <FormField
+              control={control}
+              name="videoUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-lg font-semibold theme-text">YouTube Video URL</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Youtube className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 theme-text-secondary" />
+                      <Input
+                        {...field}
+                        placeholder="https://youtube.com/watch?v=..."
+                        className={cn(
+                          'pl-12 text-base py-3',
+                          videoUrl && (isValid ? 'border-green-500 focus:border-green-500' : 'border-red-500 focus:border-red-500'),
                         )}
-                      </div>
-                    )}
+                      />
+                      {videoUrl && (
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                          {isValid ? (
+                            <CheckCircle2 className="h-5 w-5 text-green-500" />
+                          ) : (
+                            <XCircle className="h-5 w-5 text-red-500" />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <div className="theme-bg-secondary/50 rounded-lg p-4">
+              <p className="text-sm theme-text-secondary leading-relaxed">
+                <strong>Video tips:</strong><br />
+                • Ideal duration: 1-3 minutes<br />
+                • Show the best moments of the destination<br />
+                • Include customer testimonials if possible<br />
+                • Make sure it has good image quality
+              </p>
+            </div>
+          </div>
+          
+          <div className="w-full">
+            <div className="space-y-4">
+              <h4 className="text-lg font-semibold theme-text">Preview</h4>
+              {embedUrl && isValid ? (
+                <div className="aspect-video w-full rounded-xl overflow-hidden theme-border shadow-lg">
+                  <iframe
+                    src={embedUrl}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    title="Promotional video"
+                  />
+                </div>
+              ) : (
+                <div className="aspect-video w-full rounded-xl theme-bg-secondary flex items-center justify-center theme-border">
+                  <div className="text-center">
+                    <Youtube className="h-12 w-12 theme-text-secondary mx-auto mb-3" />
+                    <p className="theme-text-secondary font-medium">Video preview</p>
+                    <p className="text-sm theme-text-secondary mt-1">
+                      Paste a valid YouTube URL to see the video here
+                    </p>
                   </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <p className="text-xs text-slate-500">
-            Pega la URL completa de un video de YouTube. El reproductor aparecerá a la derecha para
-            que puedas previsualizarlo.
-          </p>
-        </div>
-        <div className="w-full">
-          {embedUrl && isValid ? (
-            <div className="aspect-video w-full rounded-lg overflow-hidden border">
-              <iframe
-                src={embedUrl}
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                title="Video promocional"
-              />
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="aspect-video w-full rounded-lg bg-slate-100 flex items-center justify-center">
-              <p className="text-slate-500">Previsualización del video</p>
-            </div>
-          )}
+          </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 })

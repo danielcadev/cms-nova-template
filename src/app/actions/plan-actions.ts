@@ -5,16 +5,100 @@ import slugify from 'slugify'
 import { prisma } from '@/lib/prisma'
 import type { PlanFormValues } from '@/schemas/plan'
 
+// Función para actualizar plan con objeto JavaScript (para auto-save)
+export async function updatePlanDataAction(planId: string, data: PlanFormValues) {
+  try {
+    if (!planId) {
+      return { success: false, error: 'Plan ID is required' }
+    }
+
+    // Verificar que el plan existe
+    const existingPlan = await prisma.plan.findUnique({
+      where: { id: planId },
+      select: { id: true }
+    })
+
+    if (!existingPlan) {
+      return { success: false, error: 'Plan not found' }
+    }
+
+    // Actualizar el plan en la base de datos
+    await prisma.plan.update({
+      where: { id: planId },
+      data: {
+        mainTitle: data.mainTitle,
+        destinationId: data.destinationId,
+        allowGroundTransport: data.allowGroundTransport,
+        articleAlias: data.articleAlias,
+        categoryAlias: data.categoryAlias,
+        section: data.section || 'planes',
+        promotionalText: data.promotionalText,
+        attractionsTitle: data.attractionsTitle,
+        attractionsText: data.attractionsText,
+        transfersTitle: data.transfersTitle,
+        transfersText: data.transfersText,
+        holidayTitle: data.holidayTitle,
+        holidayText: data.holidayText,
+        includes: typeof data.includes === 'string' ? data.includes : JSON.stringify(data.includes || []),
+        notIncludes: data.notIncludes,
+        itinerary: data.itinerary || [],
+        priceOptions: data.priceOptions || [],
+        mainImage: data.mainImage,
+        generalPolicies: data.generalPolicies,
+        transportOptions: data.transportOptions || [],
+        videoUrl: data.videoUrl,
+      },
+    })
+
+    revalidatePath('/admin/dashboard/plans')
+    revalidatePath(`/admin/dashboard/plans/edit/${planId}`)
+
+    return { success: true }
+  } catch (error) {
+    console.error('❌ Error updating plan data:', error)
+    
+    // Manejo específico de errores de Prisma
+    if (error instanceof Error) {
+      if (error.message.includes('Unique constraint')) {
+        return { success: false, error: 'A plan with this alias already exists. Please use a different alias.' }
+      }
+      if (error.message.includes('Foreign key constraint')) {
+        return { success: false, error: 'Invalid destination selected. Please choose a valid destination.' }
+      }
+      if (error.message.includes('Record to update not found')) {
+        return { success: false, error: 'Plan not found. It may have been deleted.' }
+      }
+      return { success: false, error: `Database error: ${error.message}` }
+    }
+    
+    return { success: false, error: 'Failed to update plan' }
+  }
+}
+
 export async function createDraftPlanAction(data: PlanFormValues) {
   try {
     // Crear el plan borrador en la base de datos
     const timestamp = Date.now()
+    const randomSuffix = Math.random().toString(36).substring(2, 8)
+    
+    // Generar un articleAlias único
+    let articleAlias = data.articleAlias || `plan-${timestamp}-${randomSuffix}`
+    
+    // Verificar si ya existe y generar uno nuevo si es necesario
+    const existingPlan = await prisma.plan.findUnique({
+      where: { articleAlias }
+    })
+    
+    if (existingPlan) {
+      articleAlias = `plan-${timestamp}-${randomSuffix}-${Math.random().toString(36).substring(2, 4)}`
+    }
+    
     const newPlan = await prisma.plan.create({
       data: {
         mainTitle: data.mainTitle || 'Plan sin título',
         destinationId: data.destinationId || null,
         allowGroundTransport: data.allowGroundTransport || false,
-        articleAlias: data.articleAlias || `plan-${timestamp}`, // Generar alias único
+        articleAlias,
         categoryAlias: data.categoryAlias || `categoria-${timestamp}`,
         section: data.section || 'planes', // Default section
         promotionalText: data.promotionalText || '',
@@ -44,6 +128,18 @@ export async function createDraftPlanAction(data: PlanFormValues) {
     return { success: true, planId: newPlan.id }
   } catch (error) {
     console.error('❌ Error creating draft plan:', error)
+    
+    // Manejo específico de errores de Prisma
+    if (error instanceof Error) {
+      if (error.message.includes('Unique constraint')) {
+        return { success: false, error: 'A plan with this alias already exists. Please try again.' }
+      }
+      if (error.message.includes('Foreign key constraint')) {
+        return { success: false, error: 'Invalid destination selected. Please choose a valid destination.' }
+      }
+      return { success: false, error: `Database error: ${error.message}` }
+    }
+    
     return { success: false, error: 'Failed to create draft plan' }
   }
 }
@@ -161,6 +257,21 @@ export async function updatePlanAction(_prevState: any, formData: FormData) {
     return { success: true }
   } catch (error) {
     console.error('❌ Error updating plan:', error)
+    
+    // Manejo específico de errores de Prisma
+    if (error instanceof Error) {
+      if (error.message.includes('Unique constraint')) {
+        return { success: false, error: 'A plan with this alias already exists. Please use a different alias.' }
+      }
+      if (error.message.includes('Foreign key constraint')) {
+        return { success: false, error: 'Invalid destination selected. Please choose a valid destination.' }
+      }
+      if (error.message.includes('Record to update not found')) {
+        return { success: false, error: 'Plan not found. It may have been deleted.' }
+      }
+      return { success: false, error: `Database error: ${error.message}` }
+    }
+    
     return { success: false, error: 'Failed to update plan' }
   }
 }
@@ -286,5 +397,32 @@ export async function publishPlanAction(
   } catch (error) {
     console.error('❌ Error publishing plan:', error)
     return { success: false, error: 'Failed to publish plan' }
+  }
+}
+
+// Función para despublicar un plan
+export async function unpublishPlanAction(planId: string) {
+  try {
+    if (!planId) return { success: false, error: 'Plan ID is required' }
+
+    const existing = await prisma.plan.findUnique({ where: { id: planId } })
+    if (!existing) return { success: false, error: 'Plan not found' }
+
+    await prisma.plan.update({
+      where: { id: planId },
+      data: { published: false },
+    })
+
+    // Revalidate admin paths
+    revalidatePath('/admin/dashboard/templates/tourism')
+    revalidatePath(`/admin/dashboard/templates/tourism/edit/${planId}`)
+    
+    // Revalidate public paths
+    revalidatePath('/planes')
+
+    return { success: true, message: 'Plan unpublished successfully!' }
+  } catch (error) {
+    console.error('❌ Error unpublishing plan:', error)
+    return { success: false, error: 'Failed to unpublish plan' }
   }
 }

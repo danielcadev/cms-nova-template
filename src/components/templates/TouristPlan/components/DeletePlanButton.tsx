@@ -12,7 +12,7 @@ interface DeletePlanButtonProps {
 
 export function DeletePlanButton({ planId, onDelete, disabled }: DeletePlanButtonProps) {
   const handleDelete = async () => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar este plan?')) {
+    if (window.confirm('Are you sure you want to delete this plan?')) {
       await onDelete(planId)
     }
   }

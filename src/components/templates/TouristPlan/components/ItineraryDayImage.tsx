@@ -68,14 +68,14 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
       const result = await response.json()
 
       if (!response.ok || !result.success) {
-        throw new Error(result.error || 'Error al subir la imagen')
+        throw new Error(result.error || 'Error uploading image')
       }
 
       const newImageUrl = result.url
       setValue(fieldName, newImageUrl, { shouldDirty: true })
       setImageUrl(newImageUrl)
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error desconocido'
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error'
       setError(errorMessage)
     } finally {
       setIsUploading(false)
@@ -104,13 +104,13 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
       <Card className="bg-amber-50 border-amber-200">
         <CardContent className="p-4 text-center text-amber-800 space-y-3">
           <Settings className="h-8 w-8 mx-auto" />
-          <h4 className="font-semibold">Plugin S3 no configurado</h4>
+          <h4 className="font-semibold">S3 Plugin not configured</h4>
           <p className="text-sm">
-            Para subir imágenes, primero debes configurar tus credenciales de S3.
+            To upload images, you must first configure your S3 credentials.
           </p>
           <Link href="/admin/dashboard/plugins">
             <Button variant="link" className="text-amber-800 h-auto p-0">
-              Ir a configurar <ExternalLink className="ml-2 h-4 w-4" />
+              Go to configure <ExternalLink className="ml-2 h-4 w-4" />
             </Button>
           </Link>
         </CardContent>

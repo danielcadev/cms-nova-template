@@ -175,18 +175,17 @@ export function ContentEntriesPage({ contentType }: ContentEntriesPageProps) {
   }
 
   return (
-    <div className="min-h-screen theme-bg">
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        {/* Breadcrumb */}
-        <div className="mb-6">
-          <Link
-            href="/admin/dashboard/content-types"
-            className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4 mr-1" />
-            Content Types
-          </Link>
-        </div>
+      <div className="space-y-6">
+      {/* Breadcrumb */}
+      <div className="mb-6">
+        <Link
+          href="/admin/dashboard/content-types"
+          className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4 mr-1" />
+          Content Types
+        </Link>
+      </div>
 
         {/* Header */}
         <div className="mb-12">
@@ -318,7 +317,7 @@ export function ContentEntriesPage({ contentType }: ContentEntriesPageProps) {
                       className="theme-text-secondary hover:theme-text"
                     >
                       <Link
-                        href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/edit/${entry.id}`}
+                        href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/${entry.id}`}
                       >
                         <Edit className="h-4 w-4 mr-1 theme-text-secondary" /> Edit entry
                       </Link>
@@ -338,6 +337,5 @@ export function ContentEntriesPage({ contentType }: ContentEntriesPageProps) {
           </div>
         )}
       </div>
-    </div>
   )
 }

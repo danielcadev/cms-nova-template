@@ -46,3 +46,9 @@ export function ContentTypesPage({ initialContentTypes }: ContentTypesPageProps)
     />
   )
 }
+
+// Export new components
+export { ContentTypeDetail } from './ContentTypeDetail'
+export { ContentEntriesPage } from './ContentEntriesPage'
+export { CreateContentEntry } from './CreateContentEntry'
+export { EditContentEntry } from './EditContentEntry'

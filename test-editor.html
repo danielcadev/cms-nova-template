@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Editor</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .toolbar { display: flex; gap: 10px; margin-bottom: 10px; }
+        .toolbar button { padding: 8px 12px; }
+        .editor { border: 1px solid #ccc; min-height: 200px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Test Rich Text Editor</h1>
+    
+    <div class="toolbar">
+        <button onclick="document.execCommand('bold')">Bold</button>
+        <button onclick="document.execCommand('italic')">Italic</button>
+        <button onclick="document.execCommand('underline')">Underline</button>
+        <button onclick="document.execCommand('insertOrderedList')">OL</button>
+        <button onclick="document.execCommand('insertUnorderedList')">UL</button>
+    </div>
+    
+    <div class="editor" contenteditable="true">
+        Start typing here...
+    </div>
+    
+    <script>
+        // Test if execCommand works
+        console.log('Bold supported:', document.queryCommandSupported('bold'));
+        console.log('Italic supported:', document.queryCommandSupported('italic'));
+    </script>
+</body>
+</html>

@@ -383,3 +383,6 @@ export function TemplatesPage() {
     </div>
   )
 }
+
+// Export additional components
+export { EditTourismTemplate } from './EditTourismTemplate'

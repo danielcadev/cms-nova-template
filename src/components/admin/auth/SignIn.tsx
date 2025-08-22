@@ -55,23 +55,23 @@ export default function LoginForm() {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target
+    const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
-      [id]: value,
+      [name]: value,
     }))
 
-    // Limpiar error al cambiar el valor
-    if (errors[id as keyof typeof errors]) {
+    // Clear error when value changes
+    if (errors[name as keyof typeof errors]) {
       setErrors((prev) => ({
         ...prev,
-        [id]: '',
+        [name]: '',
       }))
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 relative">
+    <div className="min-h-screen theme-bg relative">
       {/* Clean editorial background */}
       <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-gray-100/50 dark:from-gray-950 dark:to-gray-900/50" />
 
@@ -87,21 +87,24 @@ export default function LoginForm() {
           {/* Header */}
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl theme-accent-bg theme-text">
                 <Package className="h-6 w-6" strokeWidth={2} />
               </div>
               <div className="text-left">
-                <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight">
+                <h1 className="text-2xl font-semibold theme-text tracking-tight">
                   Nova CMS
                 </h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Admin Panel</p>
+                <p className="text-sm theme-text-secondary font-medium">Admin Panel</p>
               </div>
             </div>
-            <p className="text-lg text-gray-600 dark:text-gray-400 font-light">
-              If this is your first time, you need to create an administrator first.
+            <p className="text-lg theme-text-secondary font-light">
+              Sign in to your workspace
+            </p>
+            <p className="text-sm theme-text-secondary mt-2">
+              First time? 
               <a
                 href="/admin/signup"
-                className="underline hover:text-gray-800 dark:hover:text-gray-200 ml-1"
+                className="theme-accent hover:theme-accent-hover ml-1 font-medium"
               >
                 Create administrator
               </a>
@@ -109,13 +112,13 @@ export default function LoginForm() {
           </div>
 
           {/* Form Card */}
-          <div className="bg-white dark:bg-gray-900 rounded-xl p-8 border border-gray-200 dark:border-gray-800 shadow-sm">
+          <div className="theme-card rounded-xl p-8 theme-border shadow-sm">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email Field */}
               <div className="space-y-3">
                 <label
                   htmlFor={emailId}
-                  className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  className="text-sm font-medium theme-text"
                 >
                   Email address
                 </label>
@@ -125,11 +128,12 @@ export default function LoginForm() {
                   </div>
                   <Input
                     id={emailId}
+                    name="email"
                     type="email"
                     placeholder="admin@example.com"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`pl-10 rounded-lg border-gray-200 dark:border-gray-700 focus:border-gray-400 dark:focus:border-gray-500 focus:ring-gray-400 dark:focus:ring-gray-500 ${
+                    className={`pl-10 rounded-lg theme-border focus:theme-border-focus focus:ring-theme-accent ${
                       errors.email ? 'border-red-300 focus:border-red-400 focus:ring-red-400' : ''
                     }`}
                     autoComplete="email"
@@ -137,7 +141,7 @@ export default function LoginForm() {
                   />
                 </div>
                 {errors.email && (
-                  <p className="text-sm text-red-500 dark:text-red-400">{errors.email}</p>
+                  <p className="text-sm text-red-500">{errors.email}</p>
                 )}
               </div>
 
@@ -145,7 +149,7 @@ export default function LoginForm() {
               <div className="space-y-3">
                 <label
                   htmlFor={passwordId}
-                  className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  className="text-sm font-medium theme-text"
                 >
                   Password
                 </label>
@@ -155,11 +159,12 @@ export default function LoginForm() {
                   </div>
                   <Input
                     id={passwordId}
+                    name="password"
                     type="password"
                     placeholder="••••••••"
                     value={formData.password}
                     onChange={handleChange}
-                    className={`pl-10 rounded-lg border-gray-200 dark:border-gray-700 focus:border-gray-400 dark:focus:border-gray-500 focus:ring-gray-400 dark:focus:ring-gray-500 ${
+                    className={`pl-10 rounded-lg theme-border focus:theme-border-focus focus:ring-theme-accent ${
                       errors.password
                         ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
                         : ''
@@ -169,7 +174,7 @@ export default function LoginForm() {
                   />
                 </div>
                 {errors.password && (
-                  <p className="text-sm text-red-500 dark:text-red-400">{errors.password}</p>
+                  <p className="text-sm text-red-500">{errors.password}</p>
                 )}
               </div>
 
@@ -195,7 +200,7 @@ export default function LoginForm() {
 
           {/* Footer */}
           <div className="text-center mt-8">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm theme-text-secondary">
               Exclusive access for administrators
             </p>
           </div>

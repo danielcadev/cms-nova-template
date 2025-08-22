@@ -89,11 +89,11 @@ export function CreateContentEntryPage({ contentType }: CreateContentEntryPagePr
         // Keep user in editor after save to avoid unintentional navigation
         // router.push(`/admin/dashboard/content-types/${contentType.apiIdentifier}/content`);
       } else {
-        throw new Error('Error al guardar la entrada')
+        throw new Error('Error saving entry')
       }
     } catch (error) {
       console.error('Error saving entry:', error)
-      alert('Error al guardar la entrada')
+      alert('Error saving entry')
     } finally {
       setIsSaving(false)
     }
@@ -122,19 +122,18 @@ export function CreateContentEntryPage({ contentType }: CreateContentEntryPagePr
         const target = `/${typePath || contentType.apiIdentifier}/${slug}`
         router.push(target)
       } else {
-        throw new Error('Error al publicar la entrada')
+        throw new Error('Error publishing entry')
       }
     } catch (error) {
       console.error('Error publishing entry:', error)
-      alert('Error al publicar la entrada')
+      alert('Error publishing entry')
     } finally {
       setIsSaving(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-950">
-      <div className="mx-auto max-w-6xl px-6 py-10">
+      <div className="space-y-6">
         {/* Cover */}
         <div className="relative overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70 mb-6">
           <div className="absolute inset-0 bg-gradient-to-r from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-950 dark:to-gray-950" />
@@ -146,16 +145,16 @@ export function CreateContentEntryPage({ contentType }: CreateContentEntryPagePr
                   size="sm"
                   className="border border-gray-200 dark:border-gray-800"
                 >
-                  <ArrowLeft className="h-4 w-4 mr-2" /> Volver
+                  <ArrowLeft className="h-4 w-4 mr-2" /> Back
                 </Button>
               </Link>
               <div className="min-w-0">
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Create entry</p>
                 <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">
-                  Crear {contentType.name}
+                  Create {contentType.name}
                 </h1>
                 <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-xl">
-                  Completa los campos para crear una nueva entrada.
+                  Fill in the fields to create a new entry.
                 </p>
               </div>
             </div>
@@ -165,7 +164,7 @@ export function CreateContentEntryPage({ contentType }: CreateContentEntryPagePr
                   htmlFor={statusId}
                   className="text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
-                  Estado:
+                  Status:
                 </label>
                 <select
                   id={statusId}
@@ -173,20 +172,20 @@ export function CreateContentEntryPage({ contentType }: CreateContentEntryPagePr
                   onChange={(e) => setStatus(e.target.value)}
                   className="px-3 py-1.5 border border-gray-200 dark:border-gray-800 rounded-lg bg-white/80 dark:bg-gray-900/80 text-gray-900 dark:text-gray-100 text-sm"
                 >
-                  <option value="draft">Borrador</option>
-                  <option value="published">Publicada</option>
-                  <option value="archived">Archivada</option>
+                  <option value="draft">Draft</option>
+                  <option value="published">Published</option>
+                  <option value="archived">Archived</option>
                 </select>
               </div>
               <div className="flex items-center gap-2 justify-end">
                 <Button variant="outline" onClick={() => handleSave('draft')} disabled={isSaving}>
-                  Guardar como borrador
+                  Save as draft
                 </Button>
                 <Button onClick={() => handleSave('published')} disabled={isSaving || !isFormValid}>
-                  <Save className="h-4 w-4 mr-2" /> {isSaving ? 'Guardando...' : 'Publicar'}
+                  <Save className="h-4 w-4 mr-2" /> {isSaving ? 'Saving...' : 'Publish'}
                 </Button>
                 <Button onClick={handlePublishAndView} disabled={isSaving || !isFormValid || !slug}>
-                  <Eye className="h-4 w-4 mr-2" /> {isSaving ? 'Publicando...' : 'Publicar y ver'}
+                  <Eye className="h-4 w-4 mr-2" /> {isSaving ? 'Publishing...' : 'Publish & view'}
                 </Button>
               </div>
             </div>
@@ -367,13 +366,12 @@ export function CreateContentEntryPage({ contentType }: CreateContentEntryPagePr
                     <div className="h-10 bg-gray-100 dark:bg-gray-800 rounded" />
                   )}
                   {field.isRequired && !formData[field.apiIdentifier] && (
-                    <p className="text-red-500 text-xs mt-1">Este campo es obligatorio</p>
+                    <p className="text-red-500 text-xs mt-1">This field is required</p>
                   )}
                 </div>
               ))}
           </div>
         </div>
       </div>
-    </div>
   )
 }

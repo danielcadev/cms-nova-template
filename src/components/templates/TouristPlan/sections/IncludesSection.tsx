@@ -9,37 +9,44 @@ export function IncludesSection() {
   const { control } = useFormContext()
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 tracking-tight">
-          Incluye / No Incluye
+    <div className="space-y-8">
+      <div className="text-center">
+        <h3 className="text-2xl font-bold theme-text mb-3">
+          Includes / Not Included
         </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          Especifica detalladamente qué servicios y productos están cubiertos por el precio del
-          plan.
+        <p className="text-sm theme-text-secondary max-w-2xl mx-auto leading-relaxed">
+          Specify in detail which services and products are covered by the plan price. This helps customers understand exactly what they are buying.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-3">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="theme-card rounded-xl p-8 theme-border">
           <FormField
             control={control}
             name="includes"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                  <CheckCircle2
-                    className="h-4 w-4 text-emerald-600 dark:text-emerald-400"
-                    strokeWidth={1.5}
-                  />
-                  <span>¿Qué incluye el plan?</span>
+                <FormLabel className="flex items-center gap-3 text-xl font-semibold theme-text mb-6">
+                  <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center">
+                    <CheckCircle2
+                      className="h-5 w-5 text-emerald-600 dark:text-emerald-400"
+                      strokeWidth={2}
+                    />
+                  </div>
+                  <span>What does the plan include?</span>
                 </FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
-                    placeholder="Ej: Alojamiento 3 noches, Tiquetes aéreos, Desayunos y cenas..."
-                    rows={8}
-                    className="rounded-lg border-gray-200 dark:border-gray-700 resize-none"
+                    placeholder="e.g.: 
+• 3-night accommodation in 4-star hotel
+• Round-trip airfare
+• Breakfast and dinner included
+• Ground transportation
+• Specialized tour guide
+• Basic travel insurance"
+                    rows={12}
+                    className="resize-none text-base leading-relaxed"
                   />
                 </FormControl>
                 <FormMessage />
@@ -47,22 +54,31 @@ export function IncludesSection() {
             )}
           />
         </div>
-        <div className="space-y-3">
+        
+        <div className="theme-card rounded-xl p-8 theme-border">
           <FormField
             control={control}
             name="notIncludes"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                  <XCircle className="h-4 w-4 text-red-600 dark:text-red-400" strokeWidth={1.5} />
-                  <span>¿Qué NO incluye el plan?</span>
+                <FormLabel className="flex items-center gap-3 text-xl font-semibold theme-text mb-6">
+                  <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
+                    <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" strokeWidth={2} />
+                  </div>
+                  <span>What is NOT included in the plan?</span>
                 </FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
-                    placeholder="Ej: Gastos no especificados, Tarjeta de asistencia médica, Propinas..."
-                    rows={8}
-                    className="rounded-lg border-gray-200 dark:border-gray-700 resize-none"
+                    placeholder="e.g.: 
+• Unspecified personal expenses
+• International medical assistance card
+• Tips for guides and drivers
+• Lunches during the tour
+• Optional activities not mentioned
+• Alcoholic beverages"
+                    rows={12}
+                    className="resize-none text-base leading-relaxed"
                   />
                 </FormControl>
                 <FormMessage />

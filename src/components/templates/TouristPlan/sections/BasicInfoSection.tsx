@@ -17,22 +17,22 @@ import { MainImage } from '../components/MainImage'
 
 const URLPreview = memo(
   ({
+    section,
     categoryAlias,
-    destinationSlug,
     articleAlias,
   }: {
+    section: string
     categoryAlias: string
-    destinationSlug: string
     articleAlias: string
   }) => (
-    <div className="text-sm font-mono text-gray-800 dark:text-gray-200 break-all bg-gray-100 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-      <span className="text-gray-500 dark:text-gray-400">tudominio.com</span>
-      <span className="text-gray-600 dark:text-gray-300 font-medium">/</span>
-      <span className="text-gray-700 dark:text-gray-200">{categoryAlias || 'categoria'}</span>
-      <span className="text-gray-600 dark:text-gray-300 font-medium">/</span>
-      <span className="text-gray-700 dark:text-gray-200">{destinationSlug || 'destino'}</span>
-      <span className="text-gray-600 dark:text-gray-300 font-medium">/</span>
-      <span className="text-gray-700 dark:text-gray-200">{articleAlias || 'mi-plan'}</span>
+    <div className="text-sm font-mono theme-text break-all theme-bg-secondary p-4 rounded-lg theme-border">
+      <span className="theme-text-secondary">tudominio.com</span>
+      <span className="theme-text-secondary font-medium">/</span>
+      <span className="theme-text">{section || 'planes'}</span>
+      <span className="theme-text-secondary font-medium">/</span>
+      <span className="theme-text">{categoryAlias || 'destino'}</span>
+      <span className="theme-text-secondary font-medium">/</span>
+      <span className="theme-accent font-medium">{articleAlias || 'mi-plan'}</span>
     </div>
   ),
 )
@@ -50,6 +50,7 @@ export function BasicInfoSection() {
   const mainTitle = watch('mainTitle')
   const destinationId = watch('destinationId')
   const articleAlias = watch('articleAlias')
+  const section = watch('section')
 
   const destinationSlug = useMemo(() => {
     const selected = destinations.find((d) => d.value === destinationId)
@@ -102,16 +103,24 @@ export function BasicInfoSection() {
   }, [])
 
   useEffect(() => {
-    if (mainTitle) {
-      const suggestions = generateSmartSlug(mainTitle, 7)
-      setPlanSlugOptions(suggestions.map((s) => ({ label: s, value: s })))
-      if (suggestions.length > 0 && !watch('articleAlias')) {
-        setValue('articleAlias', suggestions[0])
-      }
-    } else {
-      setPlanSlugOptions([])
+    const currentArticleAlias = watch('articleAlias')
+    const suggestions = mainTitle ? generateSmartSlug(mainTitle, 7) : []
+    
+    // Crear opciones incluyendo el valor actual si existe
+    const options = suggestions.map((s) => ({ label: s, value: s }))
+    
+    // Si hay un articleAlias actual y no está en las sugerencias, agregarlo al inicio
+    if (currentArticleAlias && !suggestions.includes(currentArticleAlias)) {
+      options.unshift({ label: currentArticleAlias, value: currentArticleAlias })
     }
-  }, [mainTitle, setValue, watch, generateSmartSlug])
+    
+    setPlanSlugOptions(options)
+    
+    // Solo establecer un valor por defecto si no hay articleAlias actual
+    if (suggestions.length > 0 && !currentArticleAlias) {
+      setValue('articleAlias', suggestions[0])
+    }
+  }, [mainTitle, setValue, watch, generateSmartSlug, articleAlias])
 
   useEffect(() => {
     const fetchDests = async () => {
@@ -154,7 +163,7 @@ export function BasicInfoSection() {
         const newOption = { label: inputValue, value: newValue }
         setCategoryOptions((prev: ComboboxOption[]) => [newOption, ...prev])
         setValue('categoryAlias', newValue)
-        toast({ title: 'Opción Añadida', description: `Se usará "${inputValue}".` })
+        toast({ title: 'Option Added', description: `"${inputValue}" will be used.` })
       }
     },
     [categoryOptions, setValue, toast],
@@ -167,7 +176,7 @@ export function BasicInfoSection() {
         const newOption = { label: inputValue, value: newValue }
         setPlanSlugOptions((prev: ComboboxOption[]) => [newOption, ...prev])
         setValue('articleAlias', newValue)
-        toast({ title: 'Opción Añadida', description: `Se usará "${inputValue}".` })
+        toast({ title: 'Option Added', description: `"${inputValue}" will be used.` })
       }
     },
     [planSlugOptions, setValue, toast],
@@ -182,8 +191,8 @@ export function BasicInfoSection() {
         // Verificar si ya existe por nombre
         if (destinations.some((d) => d.label.toLowerCase() === trimmedValue.toLowerCase())) {
           toast({
-            title: 'Destino ya existe',
-            description: `"${trimmedValue}" ya está en la lista.`,
+            title: 'Destination already exists',
+            description: `"${trimmedValue}" is already in the list.`,
             variant: 'destructive',
           })
           return
@@ -224,152 +233,190 @@ export function BasicInfoSection() {
   )
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {/* Sección de Imagen */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-        <div className="md:col-span-1">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 tracking-tight">
-            Imagen de Portada
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            Esta será la primera impresión de tu plan. Elige una imagen horizontal y de alta
-            calidad.
-          </p>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+        <div className="lg:col-span-1">
+          <div className="sticky top-8">
+            <h3 className="text-xl font-bold theme-text mb-3">
+              Cover Image
+            </h3>
+            <p className="text-sm theme-text-secondary leading-relaxed">
+              This will be the first impression of your plan. Choose a high-quality horizontal image that represents the destination.
+            </p>
+          </div>
         </div>
-        <div className="md:col-span-2">
-          <MainImage form={useFormContext<PlanFormValues>()} />
+        <div className="lg:col-span-3">
+          <div className="theme-card rounded-xl p-6 theme-border">
+            <MainImage form={useFormContext<PlanFormValues>()} />
+          </div>
         </div>
       </div>
 
       {/* Sección de Destino y Transporte */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-        <div className="md:col-span-1">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 tracking-tight">
-            Detalles del Destino
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            Selecciona el destino principal de tu base de datos y especifica sus características.
-          </p>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+        <div className="lg:col-span-1">
+          <div className="sticky top-8">
+            <h3 className="text-xl font-bold theme-text mb-3">
+              Destination Details
+            </h3>
+            <p className="text-sm theme-text-secondary leading-relaxed">
+              Select the main destination from your database and specify its transportation characteristics.
+            </p>
+          </div>
         </div>
-        <div className="md:col-span-2 space-y-6">
-          <FormField
-            control={control}
-            name="destinationId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-gray-700 dark:text-gray-300">
-                  Destino Principal
-                </FormLabel>
-                <FormControl>
-                  <OriginalCombobox
-                    value={field.value}
-                    onChange={field.onChange}
-                    options={destinations}
-                    onCreate={handleCreateDestination}
-                    placeholder={
-                      isLoadingDest ? 'Cargando destinos...' : 'Busca un destino o crea uno nuevo'
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-            <div className="space-y-1">
-              <FormLabel className="font-medium text-gray-800 dark:text-gray-200">
-                ¿Es un plan terrestre?
-              </FormLabel>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Actívalo si el principal medio de transporte para llegar es por tierra.
-              </p>
-            </div>
+        <div className="lg:col-span-3 space-y-6">
+          <div className="theme-card rounded-xl p-6 theme-border">
             <FormField
               control={control}
-              name="allowGroundTransport"
+              name="destinationId"
               render={({ field }) => (
-                <FormControl>
-                  <Switch checked={field.value} onCheckedChange={field.onChange} />
-                </FormControl>
+                <FormItem>
+                  <FormLabel className="text-lg font-semibold theme-text mb-3 block">
+                    Main Destination
+                  </FormLabel>
+                  <FormControl>
+                    <OriginalCombobox
+                      value={field.value}
+                      onChange={field.onChange}
+                      options={destinations}
+                      onCreate={handleCreateDestination}
+                      placeholder={
+                        isLoadingDest ? 'Loading destinations...' : 'Search for a destination or create a new one'
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
             />
+          </div>
+          
+          <div className="theme-card rounded-xl p-6 theme-border">
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <FormLabel className="text-lg font-semibold theme-text">
+                  Is this a ground transport plan?
+                </FormLabel>
+                <p className="text-sm theme-text-secondary">
+                  Enable this if the main means of transportation to reach the destination is by land (bus, car, etc.).
+                </p>
+              </div>
+              <FormField
+                control={control}
+                name="allowGroundTransport"
+                render={({ field }) => (
+                  <FormControl>
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+                )}
+              />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Sección de Título y URLs */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-        <div className="md:col-span-1">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 tracking-tight">
-            Título y Dirección Web
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            El nombre de tu plan y cómo se verá en la barra de direcciones del navegador. Clave para
-            el SEO.
-          </p>
-        </div>
-        <div className="md:col-span-2 space-y-6">
-          <FormField
-            control={control}
-            name="mainTitle"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-gray-700 dark:text-gray-300">
-                  Título Principal del Plan
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="Ej: Circuito Mágico por la Riviera Maya"
-                    className="rounded-lg border-gray-200 dark:border-gray-700"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 space-y-4">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Nuestras sugerencias inteligentes para la URL se basan en el título que escribas.
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+        <div className="lg:col-span-1">
+          <div className="sticky top-8">
+            <h3 className="text-xl font-bold theme-text mb-3">
+              Title and Web Address
+            </h3>
+            <p className="text-sm theme-text-secondary leading-relaxed">
+              The name of your plan and how it will appear in the browser's address bar. Essential for SEO.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          </div>
+        </div>
+        <div className="lg:col-span-3 space-y-6">
+          <div className="theme-card rounded-xl p-6 theme-border">
+            <FormField
+              control={control}
+              name="mainTitle"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-lg font-semibold theme-text mb-3 block">
+                    Main Plan Title
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="e.g., Magical Circuit through the Riviera Maya"
+                      className="text-lg py-3"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          
+          <div className="theme-card rounded-xl p-6 theme-border space-y-6">
+            <div>
+              <h4 className="text-lg font-semibold theme-text mb-2">URL Configuration</h4>
+              <p className="text-sm theme-text-secondary">
+                Configure how your plan will appear in the URL structure.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <FormField
                 control={control}
-                name="categoryAlias"
+                name="section"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 dark:text-gray-300">Categoría</FormLabel>
+                    <FormLabel className="font-medium theme-text">
+                      Section
+                      <span className="text-xs theme-text-secondary block font-normal">
+                        Main category (planes, circuitos)
+                      </span>
+                    </FormLabel>
                     <FormControl>
                       <OriginalCombobox
-                        value={field.value}
+                        value={field.value || 'planes'}
                         onChange={field.onChange}
-                        options={categoryOptions}
-                        onCreate={handleCreateCategory}
-                        placeholder="Elige..."
+                        options={[
+                          { label: 'Planes', value: 'planes' },
+                          { label: 'Circuitos', value: 'circuitos' }
+                        ]}
+                        placeholder="Choose section..."
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <FormItem>
-                <FormLabel className="text-gray-700 dark:text-gray-300">Destino</FormLabel>
-                <FormControl>
-                  <Input
-                    value={destinationSlug}
-                    readOnly
-                    placeholder="Automático"
-                    className="bg-gray-200 dark:bg-gray-700 rounded-lg"
-                  />
-                </FormControl>
-              </FormItem>
+              <FormField
+                control={control}
+                name="categoryAlias"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-medium theme-text">
+                      Destination
+                      <span className="text-xs theme-text-secondary block font-normal">
+                        Specific destination (panama, costa-rica)
+                      </span>
+                    </FormLabel>
+                    <FormControl>
+                      <OriginalCombobox
+                        value={field.value}
+                        onChange={field.onChange}
+                        options={categoryOptions}
+                        onCreate={handleCreateCategory}
+                        placeholder="Choose destination..."
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={control}
                 name="articleAlias"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 dark:text-gray-300">
-                      Slug del Plan
+                    <FormLabel className="font-medium theme-text">
+                      Plan Slug
                     </FormLabel>
                     <FormControl>
                       <OriginalCombobox
@@ -377,7 +424,7 @@ export function BasicInfoSection() {
                         onChange={field.onChange}
                         options={planSlugOptions}
                         onCreate={handleCreatePlanSlug}
-                        placeholder="Elige o crea..."
+                        placeholder="Choose or create..."
                       />
                     </FormControl>
                     <FormMessage />
@@ -385,11 +432,15 @@ export function BasicInfoSection() {
                 )}
               />
             </div>
-            <URLPreview
-              categoryAlias={watch('categoryAlias') || ''}
-              destinationSlug={destinationSlug}
-              articleAlias={articleAlias || ''}
-            />
+            
+            <div>
+              <FormLabel className="font-medium theme-text mb-3 block">URL Preview</FormLabel>
+              <URLPreview
+                section={watch('section') || 'planes'}
+                categoryAlias={watch('categoryAlias') || ''}
+                articleAlias={articleAlias || ''}
+              />
+            </div>
           </div>
         </div>
       </div>

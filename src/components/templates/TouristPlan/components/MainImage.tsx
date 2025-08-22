@@ -265,10 +265,10 @@ export function MainImage({ form }: MainImageProps) {
                     <div className="space-y-6">
                       <div className="space-y-2">
                         <FormLabel className="text-sm font-medium text-gray-700">
-                          Texto Alternativo (Alt)
+                          Alternative Text (Alt)
                         </FormLabel>
                         <Input
-                          placeholder="Describe la imagen para SEO y accesibilidad"
+                          placeholder="Describe the image for SEO and accessibility"
                           value={mainImage.alt || ''}
                           onChange={(e) => {
                             if (mainImage && typeof mainImage === 'object' && mainImage.url) {
@@ -284,10 +284,10 @@ export function MainImage({ form }: MainImageProps) {
 
                       <div className="space-y-2">
                         <FormLabel className="text-sm font-medium text-gray-700">
-                          Pie de Foto (Opcional)
+                          Caption (Optional)
                         </FormLabel>
                         <Textarea
-                          placeholder="Añade un pie de foto descriptivo"
+                          placeholder="Add a descriptive caption"
                           value={mainImage.caption || ''}
                           onChange={(e) => {
                             if (mainImage && typeof mainImage === 'object' && mainImage.url) {
