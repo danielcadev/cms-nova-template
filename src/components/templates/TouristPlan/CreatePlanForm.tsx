@@ -32,14 +32,16 @@ export function CreatePlanForm() {
     },
   })
 
-  const { formState: { isDirty } } = form
+  const {
+    formState: { isDirty },
+  } = form
 
   const handleGoBack = () => {
     router.push('/admin/dashboard/templates/tourism')
   }
 
   const toggleSection = (sectionId: string) => {
-    setExpandedSections(prev => {
+    setExpandedSections((prev) => {
       const newSet = new Set(prev)
       if (newSet.has(sectionId)) {
         newSet.delete(sectionId)
@@ -110,28 +112,28 @@ export function CreatePlanForm() {
     {
       id: 'basic',
       title: 'Basic Information',
-      component: <BasicInfoSection />
+      component: <BasicInfoSection />,
     },
     {
       id: 'includes',
-      title: 'What\'s Included',
-      component: <IncludesSection />
+      title: "What's Included",
+      component: <IncludesSection />,
     },
     {
       id: 'itinerary',
       title: 'Itinerary',
-      component: <ItinerarySection />
+      component: <ItinerarySection />,
     },
     {
       id: 'pricing',
       title: 'Pricing',
-      component: <PricingSection />
+      component: <PricingSection />,
     },
     {
       id: 'video',
       title: 'Video',
-      component: <VideoSection />
-    }
+      component: <VideoSection />,
+    },
   ]
 
   return (
@@ -155,9 +157,7 @@ export function CreatePlanForm() {
                     </Button>
                     <div className="w-px h-8 theme-border"></div>
                     <div>
-                      <h1 className="text-2xl font-bold theme-text">
-                        Create New Tourism Plan
-                      </h1>
+                      <h1 className="text-2xl font-bold theme-text">Create New Tourism Plan</h1>
                       <p className="text-sm theme-text-secondary mt-1">
                         Start typing to activate autosave
                       </p>
@@ -184,11 +184,13 @@ export function CreatePlanForm() {
                         className="flex items-center justify-between w-full p-6 text-left theme-hover rounded-xl transition-all duration-200 group"
                       >
                         <div className="flex items-center gap-4">
-                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${
-                            isExpanded 
-                              ? 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200' 
-                              : 'theme-bg-secondary group-hover:bg-gray-200 dark:group-hover:bg-gray-700'
-                          }`}>
+                          <div
+                            className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${
+                              isExpanded
+                                ? 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200'
+                                : 'theme-bg-secondary group-hover:bg-gray-200 dark:group-hover:bg-gray-700'
+                            }`}
+                          >
                             {isExpanded ? (
                               <ChevronDown className="h-5 w-5 transition-transform duration-200" />
                             ) : (
@@ -201,9 +203,11 @@ export function CreatePlanForm() {
                             </h2>
                             <p className="text-sm theme-text-secondary mt-1">
                               {section.id === 'basic' && 'Title, destination, and main details'}
-                              {section.id === 'includes' && 'What\'s included and excluded in the plan'}
+                              {section.id === 'includes' &&
+                                "What's included and excluded in the plan"}
                               {section.id === 'itinerary' && 'Day by day activities and schedule'}
-                              {section.id === 'pricing' && 'Price options for different group sizes'}
+                              {section.id === 'pricing' &&
+                                'Price options for different group sizes'}
                               {section.id === 'video' && 'Promotional video content'}
                             </p>
                           </div>
@@ -212,11 +216,13 @@ export function CreatePlanForm() {
                           <span className="text-sm theme-text-secondary group-hover:theme-text transition-colors">
                             {isExpanded ? 'Collapse' : 'Expand'}
                           </span>
-                          <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${
-                            isExpanded 
-                              ? 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200' 
-                              : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 group-hover:bg-gray-200 dark:group-hover:bg-gray-600'
-                          }`}>
+                          <div
+                            className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${
+                              isExpanded
+                                ? 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200'
+                                : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 group-hover:bg-gray-200 dark:group-hover:bg-gray-600'
+                            }`}
+                          >
                             {isExpanded ? (
                               <ChevronDown className="h-3 w-3 transition-transform duration-200" />
                             ) : (

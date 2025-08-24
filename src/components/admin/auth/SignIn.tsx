@@ -91,17 +91,13 @@ export default function LoginForm() {
                 <Package className="h-6 w-6" strokeWidth={2} />
               </div>
               <div className="text-left">
-                <h1 className="text-2xl font-semibold theme-text tracking-tight">
-                  Nova CMS
-                </h1>
+                <h1 className="text-2xl font-semibold theme-text tracking-tight">Nova CMS</h1>
                 <p className="text-sm theme-text-secondary font-medium">Admin Panel</p>
               </div>
             </div>
-            <p className="text-lg theme-text-secondary font-light">
-              Sign in to your workspace
-            </p>
+            <p className="text-lg theme-text-secondary font-light">Sign in to your workspace</p>
             <p className="text-sm theme-text-secondary mt-2">
-              First time? 
+              First time?
               <a
                 href="/admin/signup"
                 className="theme-accent hover:theme-accent-hover ml-1 font-medium"
@@ -116,10 +112,7 @@ export default function LoginForm() {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email Field */}
               <div className="space-y-3">
-                <label
-                  htmlFor={emailId}
-                  className="text-sm font-medium theme-text"
-                >
+                <label htmlFor={emailId} className="text-sm font-medium theme-text">
                   Email address
                 </label>
                 <div className="relative">
@@ -140,17 +133,12 @@ export default function LoginForm() {
                     disabled={isLoading}
                   />
                 </div>
-                {errors.email && (
-                  <p className="text-sm text-red-500">{errors.email}</p>
-                )}
+                {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
               </div>
 
               {/* Password Field */}
               <div className="space-y-3">
-                <label
-                  htmlFor={passwordId}
-                  className="text-sm font-medium theme-text"
-                >
+                <label htmlFor={passwordId} className="text-sm font-medium theme-text">
                   Password
                 </label>
                 <div className="relative">
@@ -173,9 +161,7 @@ export default function LoginForm() {
                     disabled={isLoading}
                   />
                 </div>
-                {errors.password && (
-                  <p className="text-sm text-red-500">{errors.password}</p>
-                )}
+                {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
               </div>
 
               {/* Submit Button */}
@@ -200,9 +186,7 @@ export default function LoginForm() {
 
           {/* Footer */}
           <div className="text-center mt-8">
-            <p className="text-sm theme-text-secondary">
-              Exclusive access for administrators
-            </p>
+            <p className="text-sm theme-text-secondary">Exclusive access for administrators</p>
           </div>
         </div>
       </div>

@@ -1,7 +1,8 @@
+import Image from 'next/image'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import { PublicNavbar } from '@/components/layout/PublicNavbar'
 import { prisma } from '@/lib/prisma'
-import { notFound } from 'next/navigation'
 
 export const revalidate = 60
 
@@ -15,11 +16,11 @@ interface PlanDetailPageProps {
 async function getPlan(categoria: string, slug: string) {
   try {
     const plan = await prisma.plan.findFirst({
-      where: { 
-        published: true, 
+      where: {
+        published: true,
         section: 'planes',
         categoryAlias: categoria,
-        articleAlias: slug
+        articleAlias: slug,
       },
       select: {
         id: true,
@@ -44,12 +45,12 @@ async function getPlan(categoria: string, slug: string) {
         categoryAlias: true,
         destination: {
           select: {
-            name: true
-          }
+            name: true,
+          },
         },
         createdAt: true,
-        updatedAt: true
-      }
+        updatedAt: true,
+      },
     })
 
     if (!plan) {
@@ -59,7 +60,7 @@ async function getPlan(categoria: string, slug: string) {
     return {
       ...plan,
       createdAt: plan.createdAt.toISOString(),
-      updatedAt: plan.updatedAt.toISOString()
+      updatedAt: plan.updatedAt.toISOString(),
     }
   } catch (error) {
     console.error('Error fetching plan:', error)
@@ -81,14 +82,11 @@ export default async function PlanDetailPage({ params }: PlanDetailPageProps) {
       <PublicNavbar />
       <div className="mx-auto max-w-4xl px-6 py-12">
         <div className="mb-6 flex items-center space-x-2 text-sm text-gray-500">
-          <Link 
-            href="/planes" 
-            className="hover:text-gray-700 dark:hover:text-gray-300"
-          >
+          <Link href="/planes" className="hover:text-gray-700 dark:hover:text-gray-300">
             planes
           </Link>
           <span>/</span>
-          <Link 
+          <Link
             href={`/planes/${categoria}`}
             className="hover:text-gray-700 dark:hover:text-gray-300"
           >
@@ -103,7 +101,7 @@ export default async function PlanDetailPage({ params }: PlanDetailPageProps) {
             <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-gray-900 dark:text-gray-100 mb-4">
               {plan.mainTitle}
             </h1>
-            
+
             {plan.promotionalText && (
               <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
                 {plan.promotionalText}
@@ -126,10 +124,17 @@ export default async function PlanDetailPage({ params }: PlanDetailPageProps) {
           {/* Main Image */}
           {plan.mainImage && (
             <div className="mb-8 rounded-xl overflow-hidden">
-              <img 
-                src={typeof plan.mainImage === 'string' ? plan.mainImage : (plan.mainImage as any)?.url || ''} 
+              <Image
+                src={
+                  typeof plan.mainImage === 'string'
+                    ? (plan.mainImage as string)
+                    : (plan.mainImage as any)?.url || ''
+                }
                 alt={plan.mainTitle}
+                width={1600}
+                height={900}
                 className="w-full h-64 md:h-96 object-cover"
+                priority
               />
             </div>
           )}
@@ -219,52 +224,66 @@ export default async function PlanDetailPage({ params }: PlanDetailPageProps) {
                     Itinerary
                   </h2>
                   <div className="space-y-4">
-                    {plan.itinerary.map((day: any, index: number) => (
-                      <div key={index} className="border-l-4 border-gray-300 dark:border-gray-600 pl-4">
-                        <h4 className="font-semibold text-gray-900 dark:text-gray-100">
-                          Day {index + 1}: {day.title || `Day ${index + 1}`}
-                        </h4>
-                        {day.description && (
-                          <p className="text-gray-600 dark:text-gray-400 mt-1">
-                            {day.description}
-                          </p>
-                        )}
-                      </div>
-                    ))}
+                    {plan.itinerary.map((day: any, index: number) => {
+                      const key = `${day?.day ?? index}-${day?.title ?? 'day'}`
+                      return (
+                        <div
+                          key={key}
+                          className="border-l-4 border-gray-300 dark:border-gray-600 pl-4"
+                        >
+                          <h4 className="font-semibold text-gray-900 dark:text-gray-100">
+                            Day {index + 1}: {day.title || `Day ${index + 1}`}
+                          </h4>
+                          {day.description && (
+                            <p className="text-gray-600 dark:text-gray-400 mt-1">
+                              {day.description}
+                            </p>
+                          )}
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
               </div>
             )}
 
             {/* Price Options */}
-            {plan.priceOptions && Array.isArray(plan.priceOptions) && plan.priceOptions.length > 0 && (
-              <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70">
-                <div className="p-6">
-                  <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
-                    Pricing Options
-                  </h2>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {plan.priceOptions.map((option: any, index: number) => (
-                      <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                        <h4 className="font-semibold text-gray-900 dark:text-gray-100">
-                          {option.title || `Option ${index + 1}`}
-                        </h4>
-                        {option.price && (
-                          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-2">
-                            ${option.price}
-                          </p>
-                        )}
-                        {option.description && (
-                          <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">
-                            {option.description}
-                          </p>
-                        )}
-                      </div>
-                    ))}
+            {plan.priceOptions &&
+              Array.isArray(plan.priceOptions) &&
+              plan.priceOptions.length > 0 && (
+                <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70">
+                  <div className="p-6">
+                    <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
+                      Pricing Options
+                    </h2>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {plan.priceOptions.map((option: any, index: number) => {
+                        const key = `${option?.id ?? index}-${option?.title ?? 'opt'}`
+                        return (
+                          <div
+                            key={key}
+                            className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
+                          >
+                            <h4 className="font-semibold text-gray-900 dark:text-gray-100">
+                              {option.title || `Option ${index + 1}`}
+                            </h4>
+                            {option.price && (
+                              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-2">
+                                ${option.price}
+                              </p>
+                            )}
+                            {option.description && (
+                              <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">
+                                {option.description}
+                              </p>
+                            )}
+                          </div>
+                        )
+                      })}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Video */}
             {plan.videoUrl && (
@@ -277,6 +296,7 @@ export default async function PlanDetailPage({ params }: PlanDetailPageProps) {
                     <iframe
                       src={plan.videoUrl}
                       className="w-full h-full rounded-lg"
+                      title={`Video preview: ${plan.mainTitle}`}
                       allowFullScreen
                     />
                   </div>

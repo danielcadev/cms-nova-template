@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ContentTypesPageContent } from '@/components/admin/content-types/ContentTypesManager/ContentTypesPageContent'
 
 interface ContentTypeData {
@@ -18,10 +18,16 @@ interface ContentTypesPageProps {
 }
 
 export function ContentTypesPage({ initialContentTypes }: ContentTypesPageProps) {
-  const [loading, _setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, _setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [contentTypes] = useState(initialContentTypes)
+
+  // Short themed splash on client-side navigation (keeps parity with Templates)
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 300)
+    return () => clearTimeout(t)
+  }, [])
 
   // Filtrar content types
   const filteredContentTypes = contentTypes.filter(
@@ -47,8 +53,8 @@ export function ContentTypesPage({ initialContentTypes }: ContentTypesPageProps)
   )
 }
 
+export { ContentEntriesPage } from './ContentEntriesPage'
 // Export new components
 export { ContentTypeDetail } from './ContentTypeDetail'
-export { ContentEntriesPage } from './ContentEntriesPage'
 export { CreateContentEntry } from './CreateContentEntry'
 export { EditContentEntry } from './EditContentEntry'

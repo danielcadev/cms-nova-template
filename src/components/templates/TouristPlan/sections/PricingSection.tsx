@@ -92,11 +92,10 @@ export const PricingSection = memo(function PricingSection() {
   return (
     <div className="space-y-8">
       <div className="text-center">
-        <h3 className="text-2xl font-bold theme-text mb-3">
-          Pricing Options
-        </h3>
+        <h3 className="text-2xl font-bold theme-text mb-3">Pricing Options</h3>
         <p className="text-sm theme-text-secondary max-w-2xl mx-auto leading-relaxed">
-          Define different prices based on the number of people. You can create options in different currencies to attract more customers.
+          Define different prices based on the number of people. You can create options in different
+          currencies to attract more customers.
         </p>
       </div>
 
@@ -116,11 +115,10 @@ export const PricingSection = memo(function PricingSection() {
             <div className="w-20 h-20 theme-bg-secondary rounded-full flex items-center justify-center mx-auto mb-6">
               <DollarSign className="h-10 w-10 theme-text-secondary" />
             </div>
-            <h4 className="text-xl font-semibold theme-text mb-3">
-              No pricing options yet
-            </h4>
+            <h4 className="text-xl font-semibold theme-text mb-3">No pricing options yet</h4>
             <p className="theme-text-secondary max-w-md mx-auto">
-              Use the form below to start adding different pricing options based on the number of people.
+              Use the form below to start adding different pricing options based on the number of
+              people.
             </p>
           </div>
         )}
@@ -133,7 +131,7 @@ export const PricingSection = memo(function PricingSection() {
           </div>
           <h4 className="text-xl font-semibold theme-text">Add new pricing option</h4>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
           <div className="space-y-3">
             <label
@@ -152,7 +150,7 @@ export const PricingSection = memo(function PricingSection() {
               className="text-lg py-3"
             />
           </div>
-          
+
           <div className="space-y-3">
             <label
               htmlFor="currency"
@@ -174,7 +172,7 @@ export const PricingSection = memo(function PricingSection() {
               </SelectContent>
             </Select>
           </div>
-          
+
           <Button
             onClick={handleAddPriceOption}
             className="theme-accent hover:theme-accent-hover text-white py-3 px-6 text-base font-medium rounded-lg"

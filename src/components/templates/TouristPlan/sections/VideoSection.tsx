@@ -3,7 +3,6 @@
 import { CheckCircle2, XCircle, Youtube } from 'lucide-react'
 import { memo } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
@@ -32,11 +31,10 @@ export const VideoSection = memo(function VideoSection() {
   return (
     <div className="space-y-8">
       <div className="text-center">
-        <h3 className="text-2xl font-bold theme-text mb-3">
-          Promotional Video
-        </h3>
+        <h3 className="text-2xl font-bold theme-text mb-3">Promotional Video</h3>
         <p className="text-sm theme-text-secondary max-w-2xl mx-auto leading-relaxed">
-          Add a YouTube video to showcase the best of your plan. Videos significantly increase conversions.
+          Add a YouTube video to showcase the best of your plan. Videos significantly increase
+          conversions.
         </p>
       </div>
 
@@ -49,13 +47,15 @@ export const VideoSection = memo(function VideoSection() {
               </div>
               <h4 className="text-xl font-semibold theme-text">Video Configuration</h4>
             </div>
-            
+
             <FormField
               control={control}
               name="videoUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-lg font-semibold theme-text">YouTube Video URL</FormLabel>
+                  <FormLabel className="text-lg font-semibold theme-text">
+                    YouTube Video URL
+                  </FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Youtube className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 theme-text-secondary" />
@@ -64,7 +64,10 @@ export const VideoSection = memo(function VideoSection() {
                         placeholder="https://youtube.com/watch?v=..."
                         className={cn(
                           'pl-12 text-base py-3',
-                          videoUrl && (isValid ? 'border-green-500 focus:border-green-500' : 'border-red-500 focus:border-red-500'),
+                          videoUrl &&
+                            (isValid
+                              ? 'border-green-500 focus:border-green-500'
+                              : 'border-red-500 focus:border-red-500'),
                         )}
                       />
                       {videoUrl && (
@@ -82,18 +85,18 @@ export const VideoSection = memo(function VideoSection() {
                 </FormItem>
               )}
             />
-            
+
             <div className="theme-bg-secondary/50 rounded-lg p-4">
               <p className="text-sm theme-text-secondary leading-relaxed">
-                <strong>Video tips:</strong><br />
-                • Ideal duration: 1-3 minutes<br />
-                • Show the best moments of the destination<br />
-                • Include customer testimonials if possible<br />
-                • Make sure it has good image quality
+                <strong>Video tips:</strong>
+                <br />• Ideal duration: 1-3 minutes
+                <br />• Show the best moments of the destination
+                <br />• Include customer testimonials if possible
+                <br />• Make sure it has good image quality
               </p>
             </div>
           </div>
-          
+
           <div className="w-full">
             <div className="space-y-4">
               <h4 className="text-lg font-semibold theme-text">Preview</h4>

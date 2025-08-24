@@ -1,8 +1,8 @@
 'use client'
 
-import { Loader2 } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from 'react'
+import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
 import { useToast } from '@/hooks/use-toast'
 import { authClient } from '@/lib/auth-client'
 import { isAdminUser } from '@/lib/auth-utils'
@@ -137,20 +137,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value = { isLoading, isAuthenticated, user, handleAuth, handleLogout }
 
   if (isLoading && !isAuthPage) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-6">
-          <div className="relative">
-            <div className="w-12 h-12 border-2 border-gray-200 rounded-full"></div>
-            <div className="w-12 h-12 border-2 border-blue-500 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
-          </div>
-          <div className="text-center space-y-2">
-            <p className="text-gray-900 font-medium text-lg">Loading workspace...</p>
-            <p className="text-gray-500 text-sm">Please wait while we set things up</p>
-          </div>
+    const isAdminRoute = pathname?.startsWith('/admin')
+    if (isAdminRoute) {
+      return (
+        <div className="relative">
+          <AdminLoading
+            title="Dashboard"
+            message="Loading your workspace..."
+            variant="content"
+            fullScreen
+          />
         </div>
-      </div>
-    )
+      )
+    }
+    // Public routes: don't show admin-themed loader
+    return <>{children}</>
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

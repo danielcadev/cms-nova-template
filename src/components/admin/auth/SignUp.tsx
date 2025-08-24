@@ -165,12 +165,8 @@ export default function SignUp() {
                   <CheckCircle className="h-5 w-5" strokeWidth={2} />
                 </div>
                 <div className="text-left">
-                  <h1 className="text-xl font-bold text-gray-900 tracking-tight">
-                    Nova CMS
-                  </h1>
-                  <p className="text-sm text-gray-500">
-                    System Configured
-                  </p>
+                  <h1 className="text-xl font-bold text-gray-900 tracking-tight">Nova CMS</h1>
+                  <p className="text-sm text-gray-500">System Configured</p>
                 </div>
               </div>
             </div>
@@ -181,9 +177,7 @@ export default function SignUp() {
                   <Shield className="h-6 w-6 text-green-600" />
                 </div>
 
-                <h2 className="text-lg font-bold text-gray-900 mb-2">
-                  Registration Disabled
-                </h2>
+                <h2 className="text-lg font-bold text-gray-900 mb-2">Registration Disabled</h2>
 
                 <p className="text-gray-600 mb-6 text-sm leading-relaxed">
                   The main administrator has already been created. Registration of new users is
@@ -243,9 +237,7 @@ export default function SignUp() {
                 <Package className="h-6 w-6" strokeWidth={2} />
               </div>
               <div className="text-left">
-                <h1 className="text-2xl font-semibold theme-text tracking-tight">
-                  Nova CMS
-                </h1>
+                <h1 className="text-2xl font-semibold theme-text tracking-tight">Nova CMS</h1>
                 <p className="text-sm theme-text-secondary font-medium">
                   Create First Administrator
                 </p>
@@ -261,10 +253,7 @@ export default function SignUp() {
             <form onSubmit={signUp} className="space-y-6">
               {/* Name Field */}
               <div className="space-y-3">
-                <label
-                  htmlFor={nameId}
-                  className="text-sm font-medium theme-text"
-                >
+                <label htmlFor={nameId} className="text-sm font-medium theme-text">
                   Full name
                 </label>
                 <div className="relative">
@@ -285,17 +274,12 @@ export default function SignUp() {
                     disabled={isLoading}
                   />
                 </div>
-                {errors.name && (
-                  <p className="text-sm text-red-500">{errors.name}</p>
-                )}
+                {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
               </div>
 
               {/* Email Field */}
               <div className="space-y-3">
-                <label
-                  htmlFor={emailId}
-                  className="text-sm font-medium theme-text"
-                >
+                <label htmlFor={emailId} className="text-sm font-medium theme-text">
                   Email address
                 </label>
                 <div className="relative">
@@ -316,17 +300,12 @@ export default function SignUp() {
                     disabled={isLoading}
                   />
                 </div>
-                {errors.email && (
-                  <p className="text-sm text-red-500">{errors.email}</p>
-                )}
+                {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
               </div>
 
               {/* Password Field */}
               <div className="space-y-3">
-                <label
-                  htmlFor={passwordId}
-                  className="text-sm font-medium theme-text"
-                >
+                <label htmlFor={passwordId} className="text-sm font-medium theme-text">
                   Password
                 </label>
                 <div className="relative">
@@ -341,15 +320,15 @@ export default function SignUp() {
                     value={formData.password}
                     onChange={handleChange}
                     className={`pl-10 rounded-lg theme-border focus:theme-border-focus focus:ring-theme-accent ${
-                      errors.password ? 'border-red-300 focus:border-red-400 focus:ring-red-400' : ''
+                      errors.password
+                        ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
+                        : ''
                     }`}
                     autoComplete="new-password"
                     disabled={isLoading}
                   />
                 </div>
-                {errors.password && (
-                  <p className="text-sm text-red-500">{errors.password}</p>
-                )}
+                {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
               </div>
 
               {/* Submit Button */}

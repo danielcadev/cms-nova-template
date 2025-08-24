@@ -50,9 +50,9 @@ export function BasicInfoSection() {
   const mainTitle = watch('mainTitle')
   const destinationId = watch('destinationId')
   const articleAlias = watch('articleAlias')
-  const section = watch('section')
+  const _section = watch('section')
 
-  const destinationSlug = useMemo(() => {
+  const _destinationSlug = useMemo(() => {
     const selected = destinations.find((d) => d.value === destinationId)
     return selected ? slugify(selected.label, { lower: true, strict: true }) : ''
   }, [destinations, destinationId])
@@ -105,22 +105,22 @@ export function BasicInfoSection() {
   useEffect(() => {
     const currentArticleAlias = watch('articleAlias')
     const suggestions = mainTitle ? generateSmartSlug(mainTitle, 7) : []
-    
+
     // Crear opciones incluyendo el valor actual si existe
     const options = suggestions.map((s) => ({ label: s, value: s }))
-    
+
     // Si hay un articleAlias actual y no está en las sugerencias, agregarlo al inicio
     if (currentArticleAlias && !suggestions.includes(currentArticleAlias)) {
       options.unshift({ label: currentArticleAlias, value: currentArticleAlias })
     }
-    
+
     setPlanSlugOptions(options)
-    
+
     // Solo establecer un valor por defecto si no hay articleAlias actual
     if (suggestions.length > 0 && !currentArticleAlias) {
       setValue('articleAlias', suggestions[0])
     }
-  }, [mainTitle, setValue, watch, generateSmartSlug, articleAlias])
+  }, [mainTitle, setValue, watch, generateSmartSlug])
 
   useEffect(() => {
     const fetchDests = async () => {
@@ -238,11 +238,10 @@ export function BasicInfoSection() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
         <div className="lg:col-span-1">
           <div className="sticky top-8">
-            <h3 className="text-xl font-bold theme-text mb-3">
-              Cover Image
-            </h3>
+            <h3 className="text-xl font-bold theme-text mb-3">Cover Image</h3>
             <p className="text-sm theme-text-secondary leading-relaxed">
-              This will be the first impression of your plan. Choose a high-quality horizontal image that represents the destination.
+              This will be the first impression of your plan. Choose a high-quality horizontal image
+              that represents the destination.
             </p>
           </div>
         </div>
@@ -257,11 +256,10 @@ export function BasicInfoSection() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
         <div className="lg:col-span-1">
           <div className="sticky top-8">
-            <h3 className="text-xl font-bold theme-text mb-3">
-              Destination Details
-            </h3>
+            <h3 className="text-xl font-bold theme-text mb-3">Destination Details</h3>
             <p className="text-sm theme-text-secondary leading-relaxed">
-              Select the main destination from your database and specify its transportation characteristics.
+              Select the main destination from your database and specify its transportation
+              characteristics.
             </p>
           </div>
         </div>
@@ -282,7 +280,9 @@ export function BasicInfoSection() {
                       options={destinations}
                       onCreate={handleCreateDestination}
                       placeholder={
-                        isLoadingDest ? 'Loading destinations...' : 'Search for a destination or create a new one'
+                        isLoadingDest
+                          ? 'Loading destinations...'
+                          : 'Search for a destination or create a new one'
                       }
                     />
                   </FormControl>
@@ -291,7 +291,7 @@ export function BasicInfoSection() {
               )}
             />
           </div>
-          
+
           <div className="theme-card rounded-xl p-6 theme-border">
             <div className="flex items-center justify-between">
               <div className="space-y-2">
@@ -299,7 +299,8 @@ export function BasicInfoSection() {
                   Is this a ground transport plan?
                 </FormLabel>
                 <p className="text-sm theme-text-secondary">
-                  Enable this if the main means of transportation to reach the destination is by land (bus, car, etc.).
+                  Enable this if the main means of transportation to reach the destination is by
+                  land (bus, car, etc.).
                 </p>
               </div>
               <FormField
@@ -320,11 +321,10 @@ export function BasicInfoSection() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
         <div className="lg:col-span-1">
           <div className="sticky top-8">
-            <h3 className="text-xl font-bold theme-text mb-3">
-              Title and Web Address
-            </h3>
+            <h3 className="text-xl font-bold theme-text mb-3">Title and Web Address</h3>
             <p className="text-sm theme-text-secondary leading-relaxed">
-              The name of your plan and how it will appear in the browser's address bar. Essential for SEO.
+              The name of your plan and how it will appear in the browser's address bar. Essential
+              for SEO.
             </p>
           </div>
         </div>
@@ -350,7 +350,7 @@ export function BasicInfoSection() {
               )}
             />
           </div>
-          
+
           <div className="theme-card rounded-xl p-6 theme-border space-y-6">
             <div>
               <h4 className="text-lg font-semibold theme-text mb-2">URL Configuration</h4>
@@ -358,7 +358,7 @@ export function BasicInfoSection() {
                 Configure how your plan will appear in the URL structure.
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <FormField
                 control={control}
@@ -377,7 +377,7 @@ export function BasicInfoSection() {
                         onChange={field.onChange}
                         options={[
                           { label: 'Planes', value: 'planes' },
-                          { label: 'Circuitos', value: 'circuitos' }
+                          { label: 'Circuitos', value: 'circuitos' },
                         ]}
                         placeholder="Choose section..."
                       />
@@ -415,9 +415,7 @@ export function BasicInfoSection() {
                 name="articleAlias"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-medium theme-text">
-                      Plan Slug
-                    </FormLabel>
+                    <FormLabel className="font-medium theme-text">Plan Slug</FormLabel>
                     <FormControl>
                       <OriginalCombobox
                         value={field.value}
@@ -432,7 +430,7 @@ export function BasicInfoSection() {
                 )}
               />
             </div>
-            
+
             <div>
               <FormLabel className="font-medium theme-text mb-3 block">URL Preview</FormLabel>
               <URLPreview

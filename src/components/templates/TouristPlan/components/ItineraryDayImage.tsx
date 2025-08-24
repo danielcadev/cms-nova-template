@@ -105,9 +105,7 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
         <CardContent className="p-4 text-center text-amber-800 space-y-3">
           <Settings className="h-8 w-8 mx-auto" />
           <h4 className="font-semibold">S3 Plugin not configured</h4>
-          <p className="text-sm">
-            To upload images, you must first configure your S3 credentials.
-          </p>
+          <p className="text-sm">To upload images, you must first configure your S3 credentials.</p>
           <Link href="/admin/dashboard/plugins">
             <Button variant="link" className="text-amber-800 h-auto p-0">
               Go to configure <ExternalLink className="ml-2 h-4 w-4" />

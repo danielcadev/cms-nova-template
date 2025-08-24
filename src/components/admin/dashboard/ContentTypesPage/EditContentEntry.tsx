@@ -1,14 +1,20 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { ArrowLeft, Save, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useId, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ArrowLeft, Save, Trash2 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 
 interface ContentEntry {
@@ -45,24 +51,20 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
   const router = useRouter()
   const { toast } = useToast()
 
-  useEffect(() => {
-    loadEntry()
-  }, [contentTypeSlug, entryId])
-
-  const loadEntry = async () => {
+  const loadEntry = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/content-types/${contentTypeSlug}/entries/${entryId}`)
       if (response.ok) {
         const data = await response.json()
         setEntry(data)
-        
+
         // Initialize form data
         setFormData({
           title: data.title,
           slug: data.slug,
           status: data.status,
-          ...data.data
+          ...data.data,
         })
       } else {
         toast({
@@ -82,37 +84,41 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
     } finally {
       setLoading(false)
     }
-  }
+  }, [contentTypeSlug, entryId, router, toast])
+
+  useEffect(() => {
+    loadEntry()
+  }, [loadEntry])
 
   const handleInputChange = (name: string, value: any) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!entry) return
 
     // Validate required fields
     const errors: string[] = []
-    
+
     if (!formData.title?.trim()) {
       errors.push('Title is required')
     }
-    
+
     if (!formData.slug?.trim()) {
       errors.push('Slug is required')
     }
-    
-    entry.contentType.fields.forEach(field => {
+
+    entry.contentType.fields.forEach((field) => {
       if (field.required && !formData[field.name]) {
         errors.push(`${field.name} is required`)
       }
     })
-    
+
     if (errors.length > 0) {
       toast({
         title: 'Validation Error',
@@ -194,9 +200,12 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
     }
   }
 
+  const titleInputId = useId()
+  const slugInputId = useId()
+
   const renderField = (field: any) => {
     const value = formData[field.name] || ''
-    
+
     switch (field.type) {
       case 'text':
         return (
@@ -206,7 +215,7 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
             placeholder={`Enter ${field.name}`}
           />
         )
-      
+
       case 'textarea':
         return (
           <Textarea
@@ -216,13 +225,10 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
             rows={4}
           />
         )
-      
+
       case 'select':
         return (
-          <Select
-            value={value}
-            onValueChange={(val) => handleInputChange(field.name, val)}
-          >
+          <Select value={value} onValueChange={(val) => handleInputChange(field.name, val)}>
             <SelectTrigger>
               <SelectValue placeholder={`Select ${field.name}`} />
             </SelectTrigger>
@@ -235,7 +241,7 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
             </SelectContent>
           </Select>
         )
-      
+
       case 'boolean':
         return (
           <Select
@@ -251,7 +257,7 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
             </SelectContent>
           </Select>
         )
-      
+
       default:
         return (
           <Input
@@ -299,9 +305,7 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
             <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               Edit {entry?.title || 'Entry'}
             </h1>
-            <p className="text-gray-500 dark:text-gray-400">
-              Edit {contentTypeSlug} content entry
-            </p>
+            <p className="text-gray-500 dark:text-gray-400">Edit {contentTypeSlug} content entry</p>
           </div>
         </div>
         {/* Delete Button */}
@@ -321,27 +325,25 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
         <Card>
           <CardHeader>
             <CardTitle>Basic Information</CardTitle>
-            <CardDescription>
-              Basic details for your content entry
-            </CardDescription>
+            <CardDescription>Basic details for your content entry</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="title">Title *</Label>
+                <Label htmlFor={titleInputId}>Title *</Label>
                 <Input
-                  id="title"
+                  id={titleInputId}
                   value={formData.title || ''}
                   onChange={(e) => handleInputChange('title', e.target.value)}
                   placeholder="Enter title"
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
-                <Label htmlFor="slug">Slug *</Label>
+                <Label htmlFor={slugInputId}>Slug *</Label>
                 <Input
-                  id="slug"
+                  id={slugInputId}
                   value={formData.slug || ''}
                   onChange={(e) => handleInputChange('slug', e.target.value)}
                   placeholder="enter-slug"
@@ -349,7 +351,7 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="status">Status</Label>
               <Select
@@ -373,9 +375,7 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
           <Card>
             <CardHeader>
               <CardTitle>Content Fields</CardTitle>
-              <CardDescription>
-                Custom fields for this content type
-              </CardDescription>
+              <CardDescription>Custom fields for this content type</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {entry.contentType.fields.map((field) => (
@@ -396,11 +396,7 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
             <Save className="h-4 w-4" />
             {saving ? 'Saving...' : 'Save Changes'}
           </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.back()}
-          >
+          <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancel
           </Button>
         </div>

@@ -28,16 +28,12 @@ export default async function RootLayout({
   const cookieStore = await cookies()
   const cookieTheme = (cookieStore.get('nova-theme')?.value ?? 'light') as string
   const validTheme = normalizeTheme(cookieTheme) as Theme
-  const isDark = isDarkThemeId(validTheme)
-  const themeClass = `theme-${validTheme}`
+  const _isDark = isDarkThemeId(validTheme)
+  const _themeClass = `theme-${validTheme}`
 
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} ${GeistSans.variable} ${themeClass} ${isDark ? 'dark' : ''}`}
-      data-theme={validTheme}
-    >
-      <body className={`antialiased ${themeClass} ${isDark ? 'dark' : ''}`} data-theme={validTheme}>
+    <html lang="en" className={`${inter.variable} ${GeistSans.variable}`}>
+      <body className="antialiased">
         <ErrorProvider>
           {/* Pass initialTheme from server cookie to avoid hydration mismatch */}
           <ThemeProvider initialTheme={validTheme}>

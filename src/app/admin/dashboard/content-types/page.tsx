@@ -1,5 +1,5 @@
-import { ContentTypesPage } from '@/components/admin/dashboard/ContentTypesPage';
-import { prisma } from '@/lib/prisma';
+import { ContentTypesPage } from '@/components/admin/dashboard/ContentTypesPage'
+import { prisma } from '@/lib/prisma'
 
 async function getContentTypes() {
   try {
@@ -7,24 +7,24 @@ async function getContentTypes() {
       include: {
         fields: true,
         _count: {
-          select: { entries: true }
-        }
+          select: { entries: true },
+        },
       },
-      orderBy: { createdAt: 'desc' }
-    });
+      orderBy: { createdAt: 'desc' },
+    })
     // Serializar las fechas para evitar problemas de hidratación
-    return contentTypes.map(ct => ({
+    return contentTypes.map((ct) => ({
       ...ct,
       createdAt: ct.createdAt.toISOString(),
       updatedAt: ct.updatedAt.toISOString(),
-    }));
+    }))
   } catch (error) {
-    console.error('Error fetching content types:', error);
-    return [];
+    console.error('Error fetching content types:', error)
+    return []
   }
 }
 
 export default async function ContentTypesPageRoute() {
-  const contentTypes = await getContentTypes();
+  const contentTypes = await getContentTypes()
   return <ContentTypesPage initialContentTypes={contentTypes} />
 }

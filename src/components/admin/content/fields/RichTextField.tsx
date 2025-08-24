@@ -1,4 +1,4 @@
-import SimpleRichEditor from './SimpleRichEditor'
+import CustomRichEditor from './CustomRichEditor'
 
 interface RichTextFieldProps {
   value: string
@@ -7,9 +7,14 @@ interface RichTextFieldProps {
   className?: string
 }
 
-export default function RichTextField({ value, onChange, placeholder, className }: RichTextFieldProps) {
+export default function RichTextField({
+  value,
+  onChange,
+  placeholder,
+  className,
+}: RichTextFieldProps) {
   return (
-    <SimpleRichEditor
+    <CustomRichEditor
       value={value}
       onChange={onChange}
       placeholder={placeholder}

@@ -1,14 +1,20 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { MapPin, Save, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useId, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Save, Trash2, MapPin } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 
 interface TourismTemplate {
@@ -46,11 +52,7 @@ export function EditTourismTemplate({ templateId }: EditTourismTemplateProps) {
   const router = useRouter()
   const { toast } = useToast()
 
-  useEffect(() => {
-    loadTemplate()
-  }, [templateId])
-
-  const loadTemplate = async () => {
+  const loadTemplate = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/templates/tourism/${templateId}`)
@@ -76,68 +78,81 @@ export function EditTourismTemplate({ templateId }: EditTourismTemplateProps) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [router, templateId, toast])
+
+  useEffect(() => {
+    loadTemplate()
+  }, [loadTemplate])
+
+  // Generate stable IDs for inputs (must be before any early returns)
+  const titleId = useId()
+  const slugId = useId()
+  const descId = useId()
+  const destId = useId()
+  const durationId = useId()
+  const priceId = useId()
+  const categoryId = useId()
 
   const handleInputChange = (name: string, value: any) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }))
   }
 
   const handleArrayChange = (name: string, index: number, value: string) => {
-    setFormData(prev => {
-      const array = [...(prev[name as keyof TourismTemplate] as string[] || [])]
+    setFormData((prev) => {
+      const array = [...((prev[name as keyof TourismTemplate] as string[]) || [])]
       array[index] = value
       return {
         ...prev,
-        [name]: array
+        [name]: array,
       }
     })
   }
 
   const addArrayItem = (name: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: [...(prev[name as keyof TourismTemplate] as string[] || []), '']
+      [name]: [...((prev[name as keyof TourismTemplate] as string[]) || []), ''],
     }))
   }
 
   const removeArrayItem = (name: string, index: number) => {
-    setFormData(prev => {
-      const array = [...(prev[name as keyof TourismTemplate] as string[] || [])]
+    setFormData((prev) => {
+      const array = [...((prev[name as keyof TourismTemplate] as string[]) || [])]
       array.splice(index, 1)
       return {
         ...prev,
-        [name]: array
+        [name]: array,
       }
     })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!template) return
 
     // Validate required fields
     const errors: string[] = []
-    
+
     if (!formData.title?.trim()) {
       errors.push('Title is required')
     }
-    
+
     if (!formData.slug?.trim()) {
       errors.push('Slug is required')
     }
-    
+
     if (!formData.destination?.trim()) {
       errors.push('Destination is required')
     }
-    
+
     if (!formData.price || formData.price <= 0) {
       errors.push('Valid price is required')
     }
-    
+
     if (errors.length > 0) {
       toast({
         title: 'Validation Error',
@@ -259,27 +274,25 @@ export function EditTourismTemplate({ templateId }: EditTourismTemplateProps) {
         <Card>
           <CardHeader>
             <CardTitle>Basic Information</CardTitle>
-            <CardDescription>
-              Basic details for your tourism template
-            </CardDescription>
+            <CardDescription>Basic details for your tourism template</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="title">Title *</Label>
+                <Label htmlFor={titleId}>Title *</Label>
                 <Input
-                  id="title"
+                  id={titleId}
                   value={formData.title || ''}
                   onChange={(e) => handleInputChange('title', e.target.value)}
                   placeholder="Enter title"
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
-                <Label htmlFor="slug">Slug *</Label>
+                <Label htmlFor={slugId}>Slug *</Label>
                 <Input
-                  id="slug"
+                  id={slugId}
                   value={formData.slug || ''}
                   onChange={(e) => handleInputChange('slug', e.target.value)}
                   placeholder="enter-slug"
@@ -287,18 +300,18 @@ export function EditTourismTemplate({ templateId }: EditTourismTemplateProps) {
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor={descId}>Description</Label>
               <Textarea
-                id="description"
+                id={descId}
                 value={formData.description || ''}
                 onChange={(e) => handleInputChange('description', e.target.value)}
                 placeholder="Enter description"
                 rows={3}
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="status">Status</Label>
               <Select
@@ -324,37 +337,35 @@ export function EditTourismTemplate({ templateId }: EditTourismTemplateProps) {
               <MapPin className="h-5 w-5" />
               Tourism Details
             </CardTitle>
-            <CardDescription>
-              Specific details for the tourism package
-            </CardDescription>
+            <CardDescription>Specific details for the tourism package</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="destination">Destination *</Label>
+                <Label htmlFor={destId}>Destination *</Label>
                 <Input
-                  id="destination"
+                  id={destId}
                   value={formData.destination || ''}
                   onChange={(e) => handleInputChange('destination', e.target.value)}
                   placeholder="Enter destination"
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
-                <Label htmlFor="duration">Duration</Label>
+                <Label htmlFor={durationId}>Duration</Label>
                 <Input
-                  id="duration"
+                  id={durationId}
                   value={formData.duration || ''}
                   onChange={(e) => handleInputChange('duration', e.target.value)}
                   placeholder="e.g., 7 days 6 nights"
                 />
               </div>
-              
+
               <div className="space-y-2">
-                <Label htmlFor="price">Price *</Label>
+                <Label htmlFor={priceId}>Price *</Label>
                 <Input
-                  id="price"
+                  id={priceId}
                   type="number"
                   value={formData.price || ''}
                   onChange={(e) => handleInputChange('price', parseFloat(e.target.value))}
@@ -363,14 +374,14 @@ export function EditTourismTemplate({ templateId }: EditTourismTemplateProps) {
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor={categoryId}>Category</Label>
               <Select
                 value={formData.category || ''}
                 onValueChange={(val) => handleInputChange('category', val)}
               >
-                <SelectTrigger>
+                <SelectTrigger id={categoryId}>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -390,13 +401,11 @@ export function EditTourismTemplate({ templateId }: EditTourismTemplateProps) {
         <Card>
           <CardHeader>
             <CardTitle>Features</CardTitle>
-            <CardDescription>
-              Key features and highlights of this tourism package
-            </CardDescription>
+            <CardDescription>Key features and highlights of this tourism package</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {(formData.features || []).map((feature, index) => (
-              <div key={index} className="flex items-center gap-2">
+              <div key={feature} className="flex items-center gap-2">
                 <Input
                   value={feature}
                   onChange={(e) => handleArrayChange('features', index, e.target.value)}
@@ -412,11 +421,7 @@ export function EditTourismTemplate({ templateId }: EditTourismTemplateProps) {
                 </Button>
               </div>
             ))}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => addArrayItem('features')}
-            >
+            <Button type="button" variant="outline" onClick={() => addArrayItem('features')}>
               Add Feature
             </Button>
           </CardContent>
@@ -428,11 +433,7 @@ export function EditTourismTemplate({ templateId }: EditTourismTemplateProps) {
             <Save className="h-4 w-4" />
             {saving ? 'Saving...' : 'Save Changes'}
           </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.back()}
-          >
+          <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancel
           </Button>
         </div>

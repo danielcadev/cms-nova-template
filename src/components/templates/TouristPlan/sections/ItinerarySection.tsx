@@ -29,29 +29,23 @@ export function ItinerarySection() {
   return (
     <div className="space-y-8">
       <div className="text-center">
-        <h3 className="text-2xl font-bold theme-text mb-3">
-          Day-by-Day Itinerary
-        </h3>
+        <h3 className="text-2xl font-bold theme-text mb-3">Day-by-Day Itinerary</h3>
         <p className="text-sm theme-text-secondary max-w-2xl mx-auto leading-relaxed">
-          Create a detailed itinerary that shows your customers exactly what they can expect each day of the trip.
+          Create a detailed itinerary that shows your customers exactly what they can expect each
+          day of the trip.
         </p>
       </div>
 
       <div className="space-y-6">
         {fields.map((item, index) => (
-          <div
-            key={item.id}
-            className="theme-card rounded-xl p-8 theme-border shadow-sm"
-          >
+          <div key={item.id} className="theme-card rounded-xl p-8 theme-border shadow-sm">
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 theme-accent rounded-xl flex items-center justify-center text-white font-bold text-lg">
                   {index + 1}
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold theme-text">
-                    Day {index + 1}
-                  </h4>
+                  <h4 className="text-xl font-bold theme-text">Day {index + 1}</h4>
                   <p className="text-sm theme-text-secondary">
                     Configure the activities and experiences for this day
                   </p>
@@ -82,13 +76,12 @@ export function ItinerarySection() {
                       </AlertDialogTitle>
                     </div>
                     <AlertDialogDescription className="pl-15 pt-2 theme-text-secondary">
-                      This action cannot be undone. Day {index + 1} and all its associated information will be permanently deleted.
+                      This action cannot be undone. Day {index + 1} and all its associated
+                      information will be permanently deleted.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter className="pt-4">
-                    <AlertDialogCancel className="theme-border">
-                      Cancel
-                    </AlertDialogCancel>
+                    <AlertDialogCancel className="theme-border">Cancel</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={() => remove(index)}
                       className="bg-red-600 hover:bg-red-700 text-white"
@@ -99,7 +92,7 @@ export function ItinerarySection() {
                 </AlertDialogContent>
               </AlertDialog>
             </div>
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="space-y-6">
                 <FormField
@@ -107,9 +100,7 @@ export function ItinerarySection() {
                   name={`itinerary.${index}.title`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-lg font-semibold theme-text">
-                        Day Title
-                      </FormLabel>
+                      <FormLabel className="text-lg font-semibold theme-text">Day Title</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -155,9 +146,7 @@ export function ItinerarySection() {
             <div className="w-20 h-20 theme-bg-secondary rounded-full flex items-center justify-center mx-auto mb-6">
               <PlusCircle className="h-10 w-10 theme-text-secondary" />
             </div>
-            <h4 className="text-xl font-semibold theme-text mb-3">
-              Start your itinerary
-            </h4>
+            <h4 className="text-xl font-semibold theme-text mb-3">Start your itinerary</h4>
             <p className="theme-text-secondary max-w-md mx-auto mb-6">
               Add the first day of your tourist plan. You can add as many days as you need.
             </p>

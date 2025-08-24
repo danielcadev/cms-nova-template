@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { slug: string; id: string } }
+  _request: NextRequest,
+  { params }: { params: { slug: string; id: string } },
 ) {
   try {
     const { slug, id } = params
@@ -13,194 +13,157 @@ export async function GET(
       where: { apiIdentifier: slug },
       include: {
         fields: {
-          orderBy: { order: 'asc' }
-        }
-      }
+          orderBy: { order: 'asc' },
+        },
+      },
     })
 
     if (!contentType) {
-      return NextResponse.json(
-        { error: 'Content type not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Content type not found' }, { status: 404 })
     }
 
     // Get the specific entry
     const entry = await prisma.contentEntry.findFirst({
       where: {
         id,
-        contentTypeId: contentType.id
+        contentTypeId: contentType.id,
       },
       include: {
         author: {
           select: {
             name: true,
-            email: true
-          }
-        }
-      }
+            email: true,
+          },
+        },
+      },
     })
 
     if (!entry) {
-      return NextResponse.json(
-        { error: 'Content entry not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Content entry not found' }, { status: 404 })
     }
 
     // Include content type info in response
     const response = {
       ...entry,
-      contentType
+      contentType,
     }
 
     return NextResponse.json(response)
   } catch (error) {
     console.error('Error fetching content entry:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { slug: string; id: string } }
+  { params }: { params: { slug: string; id: string } },
 ) {
   try {
     const { slug, id } = params
     const body = await request.json()
 
-    // Find the content type
+    // Find the content type with fields (needed to infer title)
     const contentType = await prisma.contentType.findUnique({
-      where: { apiIdentifier: slug }
+      where: { apiIdentifier: slug },
+      include: { fields: true },
     })
 
     if (!contentType) {
-      return NextResponse.json(
-        { error: 'Content type not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Content type not found' }, { status: 404 })
     }
 
-    // Check if entry exists
-    const existingEntry = await prisma.contentEntry.findFirst({
-      where: {
-        id,
-        contentTypeId: contentType.id
-      }
-    })
-
+    // Check if entry exists (by id only to avoid false 404)
+    const existingEntry = await prisma.contentEntry.findUnique({ where: { id } })
     if (!existingEntry) {
-      return NextResponse.json(
-        { error: 'Content entry not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Content entry not found' }, { status: 404 })
     }
 
-    // Extract basic fields
-    const { title, slug: entrySlug, status, ...fieldData } = body
+    // Support both shapes: { data, status } and top-level fields
+    const hasDataEnvelope = body && typeof body === 'object' && 'data' in body
+    const rawData = hasDataEnvelope ? (body.data ?? {}) : (body ?? {})
+    const newStatus = hasDataEnvelope ? body.status : body.status
 
-    // Validate required fields
-    if (!title || !entrySlug) {
-      return NextResponse.json(
-        { error: 'Title and slug are required' },
-        { status: 400 }
-      )
+    // Expect slug to live in JSON data
+    const entrySlug = rawData?.slug
+
+    // Validate
+    if (!entrySlug) {
+      return NextResponse.json({ error: 'Slug is required' }, { status: 400 })
     }
 
-    // Check if slug already exists (excluding current entry)
+    // Unique slug check within this content type (excluding current entry)
     const slugExists = await prisma.contentEntry.findFirst({
       where: {
-        slug: entrySlug,
+        id: { not: id },
         contentTypeId: contentType.id,
-        NOT: { id }
-      }
+        // JSON path filter for slug
+        data: {
+          path: ['slug'],
+          equals: entrySlug,
+        } as any,
+      },
     })
-
     if (slugExists) {
-      return NextResponse.json(
-        { error: 'Slug already exists' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Slug already exists' }, { status: 400 })
     }
 
-    // Update the entry
+    // Clean data: remove typePath from stored JSON if you don't want it persisted
+    const { typePath: _typePath, ...dataToStore } = rawData || {}
+
+    // Update only JSON data and status (schema doesn't have top-level slug/title)
     const updatedEntry = await prisma.contentEntry.update({
       where: { id },
       data: {
-        title,
-        slug: entrySlug,
-        status: status || 'draft',
-        data: fieldData,
-        updatedAt: new Date()
+        status: newStatus || 'draft',
+        data: dataToStore,
+        updatedAt: new Date(),
       },
-      include: {
-        author: {
-          select: {
-            name: true,
-            email: true
-          }
-        }
-      }
     })
 
     return NextResponse.json(updatedEntry)
   } catch (error) {
     console.error('Error updating content entry:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { slug: string; id: string } }
+  _request: NextRequest,
+  { params }: { params: { slug: string; id: string } },
 ) {
   try {
     const { slug, id } = params
 
     // Find the content type
     const contentType = await prisma.contentType.findUnique({
-      where: { apiIdentifier: slug }
+      where: { apiIdentifier: slug },
     })
 
     if (!contentType) {
-      return NextResponse.json(
-        { error: 'Content type not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Content type not found' }, { status: 404 })
     }
 
     // Check if entry exists
     const existingEntry = await prisma.contentEntry.findFirst({
       where: {
         id,
-        contentTypeId: contentType.id
-      }
+        contentTypeId: contentType.id,
+      },
     })
 
     if (!existingEntry) {
-      return NextResponse.json(
-        { error: 'Content entry not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Content entry not found' }, { status: 404 })
     }
 
     // Delete the entry
     await prisma.contentEntry.delete({
-      where: { id }
+      where: { id },
     })
 
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Error deleting content entry:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

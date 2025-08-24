@@ -9,15 +9,23 @@ interface SimpleRichEditorProps {
   className?: string
 }
 
-export default function SimpleRichEditor({ value, onChange, placeholder, className }: SimpleRichEditorProps) {
+export default function SimpleRichEditor({
+  value,
+  onChange,
+  placeholder,
+  className,
+}: SimpleRichEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
 
-  const execCommand = useCallback((command: string, value?: string) => {
-    document.execCommand(command, false, value)
-    if (editorRef.current) {
-      onChange(editorRef.current.innerHTML)
-    }
-  }, [onChange])
+  const execCommand = useCallback(
+    (command: string, value?: string) => {
+      document.execCommand(command, false, value)
+      if (editorRef.current) {
+        onChange(editorRef.current.innerHTML)
+      }
+    },
+    [onChange],
+  )
 
   const handleContentChange = useCallback(() => {
     if (editorRef.current) {
@@ -79,23 +87,55 @@ export default function SimpleRichEditor({ value, onChange, placeholder, classNa
           color: #9ca3af;
         }
       `}</style>
-      
+
       <div className="toolbar">
-        <button onClick={() => execCommand('bold')} title="Bold">B</button>
-        <button onClick={() => execCommand('italic')} title="Italic">I</button>
-        <button onClick={() => execCommand('underline')} title="Underline">U</button>
-        <button onClick={() => execCommand('insertOrderedList')} title="Numbered List">1.</button>
-        <button onClick={() => execCommand('insertUnorderedList')} title="Bullet List">•</button>
-        <button onClick={() => execCommand('justifyLeft')} title="Align Left">←</button>
-        <button onClick={() => execCommand('justifyCenter')} title="Align Center">↔</button>
-        <button onClick={() => execCommand('justifyRight')} title="Align Right">→</button>
-        <button onClick={() => {
-          const url = prompt('Enter URL:')
-          if (url) execCommand('createLink', url)
-        }} title="Link">🔗</button>
-        <button onClick={() => execCommand('removeFormat')} title="Clear">✕</button>
+        <button type="button" onClick={() => execCommand('bold')} title="Bold">
+          B
+        </button>
+        <button type="button" onClick={() => execCommand('italic')} title="Italic">
+          I
+        </button>
+        <button type="button" onClick={() => execCommand('underline')} title="Underline">
+          U
+        </button>
+        <button
+          type="button"
+          onClick={() => execCommand('insertOrderedList')}
+          title="Numbered List"
+        >
+          1.
+        </button>
+        <button
+          type="button"
+          onClick={() => execCommand('insertUnorderedList')}
+          title="Bullet List"
+        >
+          •
+        </button>
+        <button type="button" onClick={() => execCommand('justifyLeft')} title="Align Left">
+          ←
+        </button>
+        <button type="button" onClick={() => execCommand('justifyCenter')} title="Align Center">
+          ↔
+        </button>
+        <button type="button" onClick={() => execCommand('justifyRight')} title="Align Right">
+          →
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            const url = prompt('Enter URL:')
+            if (url) execCommand('createLink', url)
+          }}
+          title="Link"
+        >
+          🔗
+        </button>
+        <button type="button" onClick={() => execCommand('removeFormat')} title="Clear">
+          ✕
+        </button>
       </div>
-      
+
       <div
         ref={editorRef}
         className="editor"

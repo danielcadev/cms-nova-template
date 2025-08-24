@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { PublicNavbar } from '@/components/layout/PublicNavbar'
 import { prisma } from '@/lib/prisma'
-import { notFound } from 'next/navigation'
 
 export const revalidate = 60
 
@@ -15,28 +14,32 @@ async function getPlansByCategory(categoria: string) {
   try {
     console.log('Searching for plans with category:', categoria)
     const plans = await prisma.plan.findMany({
-      where: { 
-        published: true, 
+      where: {
+        published: true,
         section: 'planes',
-        categoryAlias: categoria
+        categoryAlias: categoria,
       },
       select: {
         id: true,
-        title: true,
-        slug: true,
-        description: true,
+        mainTitle: true,
+        articleAlias: true,
+        promotionalText: true,
         categoryAlias: true,
         createdAt: true,
-        updatedAt: true
+        updatedAt: true,
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     })
 
     console.log('Found plans:', plans.length)
-    return plans.map(plan => ({
-      ...plan,
+    return plans.map((plan) => ({
+      id: plan.id,
+      title: plan.mainTitle,
+      slug: plan.articleAlias,
+      description: plan.promotionalText,
+      categoryAlias: plan.categoryAlias,
       createdAt: plan.createdAt.toISOString(),
-      updatedAt: plan.updatedAt.toISOString()
+      updatedAt: plan.updatedAt.toISOString(),
     }))
   } catch (error) {
     console.error('Error fetching plans by category:', error)
@@ -53,8 +56,8 @@ export default async function PlansByCategoryPage({ params }: PlansByCategoryPag
       <PublicNavbar />
       <div className="mx-auto max-w-5xl px-6 py-12">
         <div className="mb-6">
-          <Link 
-            href="/planes" 
+          <Link
+            href="/planes"
             className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
           >
             ← Back to all categories
@@ -78,7 +81,8 @@ export default async function PlansByCategoryPage({ params }: PlansByCategoryPag
         {plans.length === 0 ? (
           <div className="mt-8 rounded-xl border border-gray-200 dark:border-gray-800 p-8 text-center bg-white/70 dark:bg-gray-900/70">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              No published plans found for "{categoria}". Check back soon for new travel itineraries.
+              No published plans found for "{categoria}". Check back soon for new travel
+              itineraries.
             </p>
           </div>
         ) : (

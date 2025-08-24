@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation'
 import type React from 'react'
 import { createContext, useContext, useEffect, useLayoutEffect, useState } from 'react'
-import { isDarkThemeId, normalizeTheme, type Theme, themes as themeList } from '@/lib/theme'
+import { normalizeTheme, type Theme, themes as themeList } from '@/lib/theme'
 
 // Helper function to set cookies safely
 function setCookie(name: string, value: string, days: number) {
@@ -38,7 +38,7 @@ export function ThemeProvider({
     return normalizeTheme(saved)
   })
   const [isInitialized, setIsInitialized] = useState(false)
-  const pathname = usePathname()
+  const _pathname = usePathname()
 
   useLayoutEffect(() => {
     try {
@@ -52,55 +52,16 @@ export function ThemeProvider({
   useEffect(() => {
     if (!isInitialized) return
 
-    const root = document.documentElement
-    const body = document.body
-    const isAdminRoute = pathname ? pathname.includes('/admin') : false
-
-    if (isAdminRoute) {
-      themeList.forEach((t) => {
-        root.classList.remove(`theme-${t.id}`)
-        body.classList.remove(`theme-${t.id}`)
-      })
-      const currentThemeClass = `theme-${theme}`
-      root.classList.add(currentThemeClass)
-      body.classList.add(currentThemeClass)
-      const dark = isDarkThemeId(theme)
-      if (dark) {
-        root.classList.add('dark')
-        body.classList.add('dark')
-      } else {
-        root.classList.remove('dark')
-        body.classList.remove('dark')
-      }
-      root.setAttribute('data-theme', theme)
-      body.setAttribute('data-theme', theme)
-    } else {
-      root.classList.remove('dark')
-      body.classList.remove('dark')
-      root.removeAttribute('data-theme')
-      body.removeAttribute('data-theme')
-      themeList.forEach((t) => {
-        root.classList.remove(`theme-${t.id}`)
-        body.classList.remove(`theme-${t.id}`)
-      })
-    }
-
-    const themeConfig = themeList.find((t) => t.id === theme)
-    if (themeConfig) {
-      root.style.setProperty('--theme-primary', themeConfig.colors.primary)
-      root.style.setProperty('--theme-secondary', themeConfig.colors.secondary)
-      body.style.setProperty('--theme-primary', themeConfig.colors.primary)
-      body.style.setProperty('--theme-secondary', themeConfig.colors.secondary)
-    }
+    // Do not mutate root/body classes or attributes.
+    // Admin theming is fully scoped inside AdminLayout container.
 
     try {
       localStorage.setItem('nova-theme', theme)
       if (typeof document !== 'undefined') {
-        // Using a helper function to avoid direct cookie assignment
         setCookie('nova-theme', theme, 365)
       }
     } catch {}
-  }, [theme, pathname, isInitialized])
+  }, [theme, isInitialized])
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(normalizeTheme(newTheme))

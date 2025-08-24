@@ -112,7 +112,7 @@ export function UsersPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-950">
-      <div className="mx-auto max-w-6xl px-6 py-10">
+      <div className="mx-auto max-w-6xl px-8 py-10">
         {/* Cover */}
         <div className="relative overflow-hidden rounded-2xl border theme-border theme-card mb-6">
           <div className="absolute inset-0 theme-bg-secondary" />

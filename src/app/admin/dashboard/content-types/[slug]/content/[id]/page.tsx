@@ -1,6 +1,6 @@
+import { notFound } from 'next/navigation'
 import { EditContentEntryPage } from '@/components/admin/content/EditContentEntryPage'
 import { prisma } from '@/lib/prisma'
-import { notFound } from 'next/navigation'
 
 async function getContentEntry(slug: string, entryId: string) {
   try {
@@ -8,22 +8,22 @@ async function getContentEntry(slug: string, entryId: string) {
       where: {
         id: entryId,
         contentType: {
-          apiIdentifier: slug
-        }
+          apiIdentifier: slug,
+        },
       },
       include: {
         contentType: {
           include: {
-            fields: true
-          }
-        }
-      }
+            fields: true,
+          },
+        },
+      },
     })
-    
+
     if (!entry) {
       return null
     }
-    
+
     return {
       ...entry,
       createdAt: entry.createdAt.toISOString(),
@@ -31,8 +31,8 @@ async function getContentEntry(slug: string, entryId: string) {
       contentType: {
         ...entry.contentType,
         createdAt: entry.contentType.createdAt.toISOString(),
-        updatedAt: entry.contentType.updatedAt.toISOString()
-      }
+        updatedAt: entry.contentType.updatedAt.toISOString(),
+      },
     }
   } catch (error) {
     console.error('Error fetching content entry:', error)
@@ -47,7 +47,9 @@ interface EditContentEntryPageRouteProps {
   }
 }
 
-export default async function EditContentEntryPageRoute({ params }: EditContentEntryPageRouteProps) {
+export default async function EditContentEntryPageRoute({
+  params,
+}: EditContentEntryPageRouteProps) {
   const { slug, id } = params
   const entry = await getContentEntry(slug, id)
 

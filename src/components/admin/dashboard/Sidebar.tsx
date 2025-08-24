@@ -59,7 +59,7 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
         <Link
           href={href}
           className={cn(
-            'group relative flex items-center justify-between px-3 py-2.5 rounded-lg transition-all duration-150 ease-out',
+            'group relative flex items-center justify-between px-5 py-3.5 rounded-2xl transition-all duration-150 ease-out',
             isActive
               ? 'theme-accent-bg theme-text shadow-sm'
               : 'theme-text-secondary hover:theme-card-hover hover:theme-text',
@@ -70,7 +70,7 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
             }
           }}
         >
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             <Icon
               className={cn(
                 'transition-colors duration-150',
@@ -83,7 +83,7 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
 
             <span
               className={cn(
-                'flex-1 text-sm font-medium transition-colors duration-150',
+                'flex-1 text-[15px] font-medium transition-colors duration-150',
                 isActive ? 'theme-text' : 'theme-text-secondary group-hover:theme-text',
               )}
             >
@@ -96,7 +96,9 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
               <ChevronRight
                 className={cn(
                   'h-4 w-4 transition-colors duration-150',
-                  isActive ? 'theme-text-secondary' : 'theme-text-muted group-hover:theme-text-secondary',
+                  isActive
+                    ? 'theme-text-secondary'
+                    : 'theme-text-muted group-hover:theme-text-secondary',
                 )}
                 strokeWidth={1.5}
               />
@@ -168,18 +170,19 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
           'md:translate-x-0 md:static md:inset-0',
         )}
         style={{
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+          fontFamily:
+            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
         }}
       >
-        {/* Header */}
-        <div className="relative p-4 theme-border-b">
-          <Link href="/admin/dashboard" className="flex items-center gap-3 group" onClick={onClose}>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl theme-accent-bg shadow-sm">
-              <Package className="h-5 w-5 theme-text" strokeWidth={2} />
+        {/* Header (revamped) */}
+        <div className="relative p-5 theme-border-b">
+          <Link href="/admin/dashboard" className="flex items-center gap-4 group" onClick={onClose}>
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl theme-card shadow-ios border theme-border">
+              <Package className="h-7 w-7 theme-text" strokeWidth={1.75} />
             </div>
-            <div className="flex flex-col">
-              <h1 className="text-base font-semibold theme-text tracking-tight">Nova CMS</h1>
-              <p className="text-sm theme-text-secondary">Workspace</p>
+            <div className="flex flex-col min-w-0">
+              <h1 className="text-2xl font-bold theme-text tracking-tight">Nova CMS</h1>
+              <p className="text-base theme-text-secondary">Workspace</p>
             </div>
           </Link>
           <Button
@@ -192,19 +195,19 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
           </Button>
         </div>
 
-        {/* Navigation */}
-        <nav className="relative flex-1 overflow-y-auto px-3 py-4 space-y-4">
+        {/* Navigation (revamped) */}
+        <nav className="relative flex-1 overflow-y-auto px-4 py-6 space-y-5">
           {navigationSections.map((section, _sectionIndex) => (
-            <div key={section.title} className="space-y-1">
+            <div key={section.title} className="space-y-2">
               {/* Notion-style Section Header */}
-              <div className="px-3 py-2">
-                <h3 className="text-xs font-medium theme-text-muted uppercase tracking-wide">
+              <div className="px-2">
+                <h3 className="text-xs font-semibold theme-text-muted uppercase tracking-wide">
                   {section.title}
                 </h3>
               </div>
 
               {/* Section Items */}
-              <div className="space-y-0.5">
+              <div className="space-y-1.5">
                 {section.items.map((item, itemIndex) => {
                   const isActive = pathname === item.href
                   return (
@@ -237,10 +240,10 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
                 </div>
               ) : (
                 <>
-                  <span className="text-sm font-medium theme-text truncate">
+                  <span className="text-base font-medium theme-text truncate">
                     {user?.name || 'Administrator'}
                   </span>
-                  <span className="text-xs theme-text-secondary">Administrator</span>
+                  <span className="text-sm theme-text-secondary">Administrator</span>
                 </>
               )}
             </div>

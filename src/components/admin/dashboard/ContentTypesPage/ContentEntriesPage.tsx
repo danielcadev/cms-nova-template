@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { ArrowLeft, Edit, Eye, Plus, Search, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { ArrowLeft, Plus, Search, Edit, Trash2, Eye } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 
 interface ContentEntry {
@@ -33,11 +33,7 @@ export function ContentEntriesPage({ contentTypeSlug }: ContentEntriesPageProps)
   const router = useRouter()
   const { toast } = useToast()
 
-  useEffect(() => {
-    loadEntries()
-  }, [contentTypeSlug])
-
-  const loadEntries = async () => {
+  const loadEntries = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/content-types/${contentTypeSlug}/entries`)
@@ -61,7 +57,11 @@ export function ContentEntriesPage({ contentTypeSlug }: ContentEntriesPageProps)
     } finally {
       setLoading(false)
     }
-  }
+  }, [contentTypeSlug, toast])
+
+  useEffect(() => {
+    loadEntries()
+  }, [loadEntries])
 
   const handleDeleteEntry = async (entryId: string) => {
     if (!confirm('Are you sure you want to delete this entry?')) return
@@ -94,9 +94,10 @@ export function ContentEntriesPage({ contentTypeSlug }: ContentEntriesPageProps)
     }
   }
 
-  const filteredEntries = entries.filter(entry =>
-    entry.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    entry.slug.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredEntries = entries.filter(
+    (entry) =>
+      entry.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      entry.slug.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
   if (loading) {
@@ -106,7 +107,10 @@ export function ContentEntriesPage({ contentTypeSlug }: ContentEntriesPageProps)
         <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
         <div className="space-y-4">
           {Array.from({ length: 5 }, () => (
-            <div key={crypto.randomUUID()} className="h-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+            <div
+              key={crypto.randomUUID()}
+              className="h-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"
+            />
           ))}
         </div>
       </div>
@@ -136,7 +140,9 @@ export function ContentEntriesPage({ contentTypeSlug }: ContentEntriesPageProps)
           </div>
         </div>
         <Button
-          onClick={() => router.push(`/admin/dashboard/content-types/${contentTypeSlug}/content/create`)}
+          onClick={() =>
+            router.push(`/admin/dashboard/content-types/${contentTypeSlug}/content/create`)
+          }
           className="flex items-center gap-2"
         >
           <Plus className="h-4 w-4" />
@@ -165,41 +171,45 @@ export function ContentEntriesPage({ contentTypeSlug }: ContentEntriesPageProps)
             <div className="text-2xl font-bold">{entries.length}</div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Published</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {entries.filter(e => e.status === 'published').length}
+              {entries.filter((e) => e.status === 'published').length}
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Drafts</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600">
-              {entries.filter(e => e.status === 'draft').length}
+              {entries.filter((e) => e.status === 'draft').length}
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">This Month</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">
-              {entries.filter(e => {
-                const entryDate = new Date(e.createdAt)
-                const now = new Date()
-                return entryDate.getMonth() === now.getMonth() && 
-                       entryDate.getFullYear() === now.getFullYear()
-              }).length}
+              {
+                entries.filter((e) => {
+                  const entryDate = new Date(e.createdAt)
+                  const now = new Date()
+                  return (
+                    entryDate.getMonth() === now.getMonth() &&
+                    entryDate.getFullYear() === now.getFullYear()
+                  )
+                }).length
+              }
             </div>
           </CardContent>
         </Card>
@@ -222,12 +232,8 @@ export function ContentEntriesPage({ contentTypeSlug }: ContentEntriesPageProps)
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
-                    <h3 className="font-medium text-gray-900 dark:text-gray-100">
-                      {entry.title}
-                    </h3>
-                    <Badge 
-                      variant={entry.status === 'published' ? 'default' : 'secondary'}
-                    >
+                    <h3 className="font-medium text-gray-900 dark:text-gray-100">{entry.title}</h3>
+                    <Badge variant={entry.status === 'published' ? 'default' : 'secondary'}>
                       {entry.status}
                     </Badge>
                   </div>
@@ -237,12 +243,16 @@ export function ContentEntriesPage({ contentTypeSlug }: ContentEntriesPageProps)
                     <span>Updated: {new Date(entry.updatedAt).toLocaleDateString()}</span>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => router.push(`/admin/dashboard/content-types/${contentTypeSlug}/content/${entry.id}`)}
+                    onClick={() =>
+                      router.push(
+                        `/admin/dashboard/content-types/${contentTypeSlug}/content/${entry.id}`,
+                      )
+                    }
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
@@ -264,21 +274,24 @@ export function ContentEntriesPage({ contentTypeSlug }: ContentEntriesPageProps)
                 </div>
               </div>
             ))}
-            
+
             {filteredEntries.length === 0 && (
               <div className="text-center py-12">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                   {searchTerm ? 'No entries found' : 'No entries yet'}
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400 mt-2">
-                  {searchTerm 
+                  {searchTerm
                     ? 'Try adjusting your search terms'
-                    : 'Create your first content entry to get started'
-                  }
+                    : 'Create your first content entry to get started'}
                 </p>
                 {!searchTerm && (
                   <Button
-                    onClick={() => router.push(`/admin/dashboard/content-types/${contentTypeSlug}/content/create`)}
+                    onClick={() =>
+                      router.push(
+                        `/admin/dashboard/content-types/${contentTypeSlug}/content/create`,
+                      )
+                    }
                     className="mt-4"
                   >
                     <Plus className="h-4 w-4 mr-2" />

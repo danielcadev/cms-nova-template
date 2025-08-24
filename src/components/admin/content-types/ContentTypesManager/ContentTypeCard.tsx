@@ -103,7 +103,10 @@ export function ContentTypeCard({ contentType, index }: ContentTypeCardProps) {
 
           {/* Botones flotantes */}
           <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-            <Link href={`/admin/dashboard/content-types/edit/${contentType.id}`} className="flex-1">
+            <Link
+              href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/edit`}
+              className="flex-1"
+            >
               <button
                 type="button"
                 className="w-full px-4 py-2.5 bg-[#0A84FF]/10 backdrop-blur-sm text-[#0A84FF] rounded-2xl hover:bg-[#0A84FF]/20 transition-all font-medium text-sm border border-[#0A84FF]/20 hover:border-[#0A84FF]/30 shadow-sm hover:shadow-md"

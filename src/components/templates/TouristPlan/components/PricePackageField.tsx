@@ -1,7 +1,6 @@
 import { DollarSign, Trash2, Users } from 'lucide-react'
 import { memo, useCallback, useId } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -126,13 +125,16 @@ export default memo(function PricePackageField({
           </div>
         )}
       </div>
-      
+
       {pkg.perPersonPrice && (
         <div className="mt-4 pt-4 theme-border-t">
           <div className="flex items-center justify-between">
-            <span className="text-sm theme-text-secondary">Total for {pkg.numPersons} person{pkg.numPersons > 1 ? 's' : ''}:</span>
+            <span className="text-sm theme-text-secondary">
+              Total for {pkg.numPersons} person{pkg.numPersons > 1 ? 's' : ''}:
+            </span>
             <span className="text-xl font-bold theme-accent">
-              {currencySymbol}{(pkg.perPersonPrice * pkg.numPersons).toLocaleString()}
+              {currencySymbol}
+              {(pkg.perPersonPrice * pkg.numPersons).toLocaleString()}
             </span>
           </div>
         </div>

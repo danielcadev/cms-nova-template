@@ -1,10 +1,9 @@
 'use client'
 
-import { ArrowRight, Database, Plus, Search, Settings } from 'lucide-react'
+import { ArrowRight, Database, Plus, Settings } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
-import { Input } from '@/components/ui/input'
 import { ThemedButton } from '@/components/ui/ThemedButton'
 
 interface ContentType {
@@ -35,17 +34,17 @@ export function ContentTypesPageContent({
 }: ContentTypesPageContentProps) {
   const [searchValue, setSearchValue] = useState(searchTerm)
 
-  const handleSearchChange = (value: string) => {
+  const _handleSearchChange = (value: string) => {
     setSearchValue(value)
     onSearchChange(value)
   }
 
   if (loading) {
     return (
-      <div className="relative">
+      <div className="px-6 pt-6 relative">
         <AdminLoading
           title="Content Types"
-          message="Setting up your content types..."
+          message="Loading your content types..."
           variant="content"
           fullScreen
         />
@@ -71,7 +70,7 @@ export function ContentTypesPageContent({
 
   return (
     <div className="min-h-screen theme-bg">
-      <div className="mx-auto max-w-6xl px-6 py-10">
+      <div className="mx-auto max-w-6xl px-8 py-10">
         {/* Cover */}
         <div className="relative overflow-hidden rounded-2xl border theme-border theme-card mb-6">
           <div className="absolute inset-0 theme-bg-secondary" />
@@ -105,18 +104,7 @@ export function ContentTypesPageContent({
           </div>
         </div>
 
-        {/* Search */}
-        <div className="mb-8">
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 theme-text-muted" />
-            <Input
-              placeholder="Search content types..."
-              value={searchValue}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              className="pl-10 rounded-lg border theme-border theme-card backdrop-blur-sm focus:theme-border-light"
-            />
-          </div>
-        </div>
+        {/* Search removed by request */}
 
         {/* Content Types List */}
         {displayContentTypes.length > 0 && (
@@ -157,7 +145,9 @@ export function ContentTypesPageContent({
                       className="theme-card theme-text border theme-border hover:theme-card-hover"
                       asChild
                     >
-                      <Link href={`/admin/dashboard/content-types/edit/${contentType.id}`}>
+                      <Link
+                        href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/edit`}
+                      >
                         <Settings className="h-4 w-4 mr-1" />
                         Edit type
                       </Link>

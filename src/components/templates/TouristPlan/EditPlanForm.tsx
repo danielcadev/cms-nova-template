@@ -1,13 +1,11 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, ChevronDown, ChevronRight, Save, Eye, EyeOff, Trash2 } from 'lucide-react'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import slugify from 'slugify'
-import { updatePlanDataAction, publishPlanAction, unpublishPlanAction } from '@/app/actions/plan-actions'
-import { Button } from '@/components/ui/button'
+import { publishPlanAction, updatePlanDataAction } from '@/app/actions/plan-actions'
 import { ContentHeader } from '@/components/admin/shared/ContentHeader'
 import { useToast } from '@/hooks/use-toast'
 import { type PlanFormValues, planSchema } from '@/schemas/plan'
@@ -17,14 +15,12 @@ import { ItinerarySection } from './sections/ItinerarySection'
 import { PricingSection } from './sections/PricingSection'
 import { VideoSection } from './sections/VideoSection'
 
-import { type PlanFormValues } from '@/schemas/plan'
-
 interface EditPlanFormProps {
   planId: string
   initialData: PlanFormValues
 }
 
-const AutosaveStatus = ({ isDirty, isSaving }: { isDirty: boolean; isSaving: boolean }) => {
+const _AutosaveStatus = ({ isDirty, isSaving }: { isDirty: boolean; isSaving: boolean }) => {
   if (isSaving) {
     return (
       <div className="flex items-center gap-2">
@@ -49,15 +45,15 @@ const AutosaveStatus = ({ isDirty, isSaving }: { isDirty: boolean; isSaving: boo
   )
 }
 
-const FORM_STORAGE_KEY_PREFIX = 'planForm-edit-'
+const _FORM_STORAGE_KEY_PREFIX = 'planForm-edit-'
 
 export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [isSubmitting, startTransition] = useTransition()
-  const [isPublishing, startPublishTransition] = useTransition()
+  const [_isPublishing, _startPublishTransition] = useTransition()
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['basic']))
-  
+
   // Header states
   const [status, setStatus] = useState(initialData.published ? 'published' : 'draft')
 
@@ -66,31 +62,41 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
     defaultValues: initialData,
   })
 
-  const { watch, formState: { isDirty }, reset } = form
+  const {
+    watch,
+    formState: { isDirty },
+    reset,
+  } = form
 
   // Resetear el formulario cuando cambien los initialData
   useEffect(() => {
     console.log('Resetting form with initialData:', {
       mainTitle: initialData.mainTitle,
       articleAlias: initialData.articleAlias,
-      categoryAlias: initialData.categoryAlias
-    });
-    reset(initialData);
+      categoryAlias: initialData.categoryAlias,
+    })
+    reset(initialData)
   }, [initialData, reset])
 
   // Auto-save functionality
-  const saveForm = useCallback(async (data: PlanFormValues) => {
-    try {
-      console.log('Auto-saving data:', { articleAlias: data.articleAlias, mainTitle: data.mainTitle })
-      const result = await updatePlanDataAction(planId, data)
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to save')
+  const saveForm = useCallback(
+    async (data: PlanFormValues) => {
+      try {
+        console.log('Auto-saving data:', {
+          articleAlias: data.articleAlias,
+          mainTitle: data.mainTitle,
+        })
+        const result = await updatePlanDataAction(planId, data)
+        if (!result.success) {
+          throw new Error(result.error || 'Failed to save')
+        }
+        console.log('Auto-save successful')
+      } catch (error) {
+        console.error('Auto-save failed:', error)
       }
-      console.log('Auto-save successful')
-    } catch (error) {
-      console.error('Auto-save failed:', error)
-    }
-  }, [planId])
+    },
+    [planId],
+  )
 
   // Watch for changes and auto-save
   useEffect(() => {
@@ -109,12 +115,15 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
     startTransition(async () => {
       try {
         const formData = form.getValues()
-        console.log('Manual save - Form data:', { articleAlias: formData.articleAlias, mainTitle: formData.mainTitle })
+        console.log('Manual save - Form data:', {
+          articleAlias: formData.articleAlias,
+          mainTitle: formData.mainTitle,
+        })
         const dataToSave = {
           ...formData,
-          published: saveStatus === 'published'
+          published: saveStatus === 'published',
         }
-        
+
         const result = await updatePlanDataAction(planId, dataToSave)
         console.log('Save result:', result)
         if (result.success) {
@@ -123,18 +132,20 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
             const publishResult = await publishPlanAction(planId, {
               articleAlias: formData.articleAlias,
               categoryAlias: formData.categoryAlias,
-              section: formData.section
+              section: formData.section,
             })
             if (publishResult.success) {
-              toast({ 
+              toast({
                 title: 'Plan published successfully!',
-                description: publishResult.publicPath ? `Available at: ${publishResult.publicPath}` : undefined
+                description: publishResult.publicPath
+                  ? `Available at: ${publishResult.publicPath}`
+                  : undefined,
               })
             }
           } else {
-            toast({ 
+            toast({
               title: 'Plan saved successfully!',
-              description: `Article alias: ${formData.articleAlias || 'Not set'}`
+              description: `Article alias: ${formData.articleAlias || 'Not set'}`,
             })
           }
           setStatus(saveStatus)
@@ -151,7 +162,7 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
     })
   }
 
-  const handleFinalSubmit = async (data: PlanFormValues) => {
+  const handleFinalSubmit = async (_data: PlanFormValues) => {
     await handleSave(status)
   }
 
@@ -161,9 +172,9 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
         const formData = form.getValues()
         const dataToSave = {
           ...formData,
-          published: true
+          published: true,
         }
-        
+
         const result = await updatePlanDataAction(planId, dataToSave)
         if (!result.success) {
           throw new Error(result.error || 'Failed to save plan before publishing')
@@ -172,9 +183,9 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
         const publishResult = await publishPlanAction(planId, {
           articleAlias: formData.articleAlias,
           categoryAlias: formData.categoryAlias,
-          section: formData.section
+          section: formData.section,
         })
-        
+
         if (publishResult.success && publishResult.publicPath) {
           router.push(publishResult.publicPath)
         } else {
@@ -196,12 +207,12 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
     return !!(formData.mainTitle && formData.articleAlias)
   }
 
-  const handleGoBack = () => {
+  const _handleGoBack = () => {
     router.push('/admin/dashboard/templates/tourism')
   }
 
   const toggleSection = (sectionId: string) => {
-    setExpandedSections(prev => {
+    setExpandedSections((prev) => {
       const newSet = new Set(prev)
       if (newSet.has(sectionId)) {
         newSet.delete(sectionId)
@@ -216,28 +227,28 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
     {
       id: 'basic',
       title: 'Basic Information',
-      component: <BasicInfoSection />
+      component: <BasicInfoSection />,
     },
     {
       id: 'includes',
-      title: 'What\'s Included',
-      component: <IncludesSection />
+      title: "What's Included",
+      component: <IncludesSection />,
     },
     {
       id: 'itinerary',
       title: 'Itinerary',
-      component: <ItinerarySection />
+      component: <ItinerarySection />,
     },
     {
       id: 'pricing',
       title: 'Pricing',
-      component: <PricingSection />
+      component: <PricingSection />,
     },
     {
       id: 'video',
       title: 'Video',
-      component: <VideoSection />
-    }
+      component: <VideoSection />,
+    },
   ]
 
   return (
@@ -265,18 +276,23 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
               {sections.map((section) => {
                 const isExpanded = expandedSections.has(section.id)
                 return (
-                  <div key={section.id} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
+                  <div
+                    key={section.id}
+                    className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm"
+                  >
                     <button
                       type="button"
                       onClick={() => toggleSection(section.id)}
                       className="flex items-center justify-between w-full p-6 text-left hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-all duration-200 group"
                     >
                       <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${
-                          isExpanded 
-                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200' 
-                            : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 group-hover:bg-gray-200 dark:group-hover:bg-gray-700'
-                        }`}>
+                        <div
+                          className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${
+                            isExpanded
+                              ? 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200'
+                              : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 group-hover:bg-gray-200 dark:group-hover:bg-gray-700'
+                          }`}
+                        >
                           {isExpanded ? (
                             <ChevronDown className="h-5 w-5 transition-transform duration-200" />
                           ) : (
@@ -289,7 +305,8 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
                           </h2>
                           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                             {section.id === 'basic' && 'Title, destination, and main details'}
-                            {section.id === 'includes' && 'What\'s included and excluded in the plan'}
+                            {section.id === 'includes' &&
+                              "What's included and excluded in the plan"}
                             {section.id === 'itinerary' && 'Day by day activities and schedule'}
                             {section.id === 'pricing' && 'Price options for different group sizes'}
                             {section.id === 'video' && 'Promotional video content'}
@@ -300,11 +317,13 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
                         <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-100 transition-colors">
                           {isExpanded ? 'Collapse' : 'Expand'}
                         </span>
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${
-                          isExpanded 
-                            ? 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200' 
-                            : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 group-hover:bg-gray-200 dark:group-hover:bg-gray-600'
-                        }`}>
+                        <div
+                          className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${
+                            isExpanded
+                              ? 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200'
+                              : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 group-hover:bg-gray-200 dark:group-hover:bg-gray-600'
+                          }`}
+                        >
                           {isExpanded ? (
                             <ChevronDown className="h-3 w-3 transition-transform duration-200" />
                           ) : (

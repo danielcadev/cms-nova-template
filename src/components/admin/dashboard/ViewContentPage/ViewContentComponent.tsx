@@ -132,7 +132,9 @@ export function ViewContentComponent({ contentTypes, plans, allContentEntries }:
                         </Link>
                       </ThemedButton>
                       <ThemedButton variantTone="ghost" size="sm" asChild>
-                        <Link href={`/admin/dashboard/content-types/edit/${contentType.id}`}>
+                        <Link
+                          href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/edit`}
+                        >
                           <Edit3 className="h-4 w-4 theme-text" />
                         </Link>
                       </ThemedButton>

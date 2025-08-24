@@ -6,16 +6,24 @@ import { Button } from '@/components/ui/button'
 interface PageHeaderProps {
   title?: string
   description?: string
-  backLink?: string | {
-    href: string
-    label: string
-  }
+  backLink?:
+    | string
+    | {
+        href: string
+        label: string
+      }
   showDate?: boolean
   children?: ReactNode
   backgroundVariant?: 'blue' | 'green' | 'purple' | 'orange'
 }
 
-export function PageLayout({ title, description, backLink, showDate = false, children }: PageHeaderProps) {
+export function PageLayout({
+  title,
+  description,
+  backLink,
+  showDate = false,
+  children,
+}: PageHeaderProps) {
   const currentDate = new Date().toLocaleDateString('es-ES', {
     weekday: 'long',
     year: 'numeric',
@@ -57,16 +65,8 @@ export function PageLayout({ title, description, backLink, showDate = false, chi
             {/* Title and description */}
             {(title || description) && (
               <div className="mb-4">
-                {title && (
-                  <h1 className="text-2xl font-bold text-gray-900 mb-1">
-                    {title}
-                  </h1>
-                )}
-                {description && (
-                  <p className="text-gray-600">
-                    {description}
-                  </p>
-                )}
+                {title && <h1 className="text-2xl font-bold text-gray-900 mb-1">{title}</h1>}
+                {description && <p className="text-gray-600">{description}</p>}
               </div>
             )}
 

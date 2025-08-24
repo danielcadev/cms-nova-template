@@ -175,7 +175,7 @@ export function ContentEntriesPage({ contentType }: ContentEntriesPageProps) {
   }
 
   return (
-      <div className="space-y-6">
+    <div className="space-y-6">
       {/* Breadcrumb */}
       <div className="mb-6">
         <Link
@@ -187,18 +187,73 @@ export function ContentEntriesPage({ contentType }: ContentEntriesPageProps) {
         </Link>
       </div>
 
-        {/* Header */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                {contentType.name}
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400 text-base">
-                {contentType.description || `Manage ${contentType.name} entries`}
-              </p>
-            </div>
+      {/* Header */}
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              {contentType.name}
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 text-base">
+              {contentType.description || `Manage ${contentType.name} entries`}
+            </p>
+          </div>
 
+          <ThemedButton
+            asChild
+            className="theme-card theme-text border theme-border hover:theme-card-hover"
+          >
+            <Link
+              href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/create`}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              New {contentType.name}
+            </Link>
+          </ThemedButton>
+        </div>
+      </div>
+
+      {/* Search and Filter */}
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex-1 max-w-md">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search entries..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 border-gray-200 dark:border-gray-700 focus:border-gray-400 dark:focus:border-gray-500 rounded-lg"
+            />
+          </div>
+        </div>
+
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="ml-4 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
+        >
+          <option value="all">All statuses</option>
+          <option value="published">Published</option>
+          <option value="draft">Draft</option>
+          <option value="archived">Archived</option>
+        </select>
+      </div>
+
+      {/* Content List */}
+      {filteredEntries.length === 0 ? (
+        <div className="text-center py-16">
+          <div className="w-12 h-12 mx-auto bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center mb-4">
+            <FileText className="w-6 h-6 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+            No entries found
+          </h3>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+            {searchTerm
+              ? `No entries match "${searchTerm}"`
+              : `Start by creating your first ${contentType.name} entry`}
+          </p>
+          {!searchTerm && (
             <ThemedButton
               asChild
               className="theme-card theme-text border theme-border hover:theme-card-hover"
@@ -207,135 +262,80 @@ export function ContentEntriesPage({ contentType }: ContentEntriesPageProps) {
                 href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/create`}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                New {contentType.name}
+                Create {contentType.name}
               </Link>
             </ThemedButton>
-          </div>
+          )}
         </div>
-
-        {/* Search and Filter */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex-1 max-w-md">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search entries..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 border-gray-200 dark:border-gray-700 focus:border-gray-400 dark:focus:border-gray-500 rounded-lg"
-              />
-            </div>
-          </div>
-
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="ml-4 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
-          >
-            <option value="all">All statuses</option>
-            <option value="published">Published</option>
-            <option value="draft">Draft</option>
-            <option value="archived">Archived</option>
-          </select>
-        </div>
-
-        {/* Content List */}
-        {filteredEntries.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-12 h-12 mx-auto bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center mb-4">
-              <FileText className="w-6 h-6 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-              No entries found
-            </h3>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-              {searchTerm
-                ? `No entries match "${searchTerm}"`
-                : `Start by creating your first ${contentType.name} entry`}
-            </p>
-            {!searchTerm && (
-              <ThemedButton
-                asChild
-                className="theme-card theme-text border theme-border hover:theme-card-hover"
-              >
-                <Link
-                  href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/create`}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create {contentType.name}
-                </Link>
-              </ThemedButton>
-            )}
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {filteredEntries.map((entry) => (
-              <div key={entry.id} className="group">
-                <div className="flex items-center justify-between p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors">
-                  <div className="flex items-center gap-4 flex-1">
-                    <div className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-                      <FileText className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+      ) : (
+        <div className="space-y-3">
+          {filteredEntries.map((entry) => (
+            <div key={entry.id} className="group">
+              <div className="flex items-center justify-between p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors">
+                <div className="flex items-center gap-4 flex-1">
+                  <div className="w-10 h-10 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-center">
+                    <FileText className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium text-gray-900 dark:text-gray-100">
+                      {getEntryTitle(entry)}
                     </div>
-                    <div className="flex-1">
-                      <div className="font-medium text-gray-900 dark:text-gray-100">
-                        {getEntryTitle(entry)}
-                      </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          <span>
-                            {new Date(entry.updatedAt).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                            })}
-                          </span>
-                        </div>
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            entry.status === 'published'
-                              ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
-                              : entry.status === 'draft'
-                                ? 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400'
-                                : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
-                          }`}
-                        >
-                          {entry.status === 'published'
-                            ? 'Published'
-                            : entry.status === 'draft'
-                              ? 'Draft'
-                              : 'Archived'}
+                    <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        <span>
+                          {new Date(entry.updatedAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
                         </span>
                       </div>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          entry.status === 'published'
+                            ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
+                            : entry.status === 'draft'
+                              ? 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400'
+                              : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
+                        }`}
+                      >
+                        {entry.status === 'published'
+                          ? 'Published'
+                          : entry.status === 'draft'
+                            ? 'Draft'
+                            : 'Archived'}
+                      </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <ThemedButton
-                      variantTone="ghost"
-                      size="sm"
-                      asChild
-                      className="theme-text-secondary hover:theme-text"
+                </div>
+                <div className="flex items-center gap-2">
+                  <ThemedButton
+                    variantTone="ghost"
+                    size="sm"
+                    asChild
+                    className="theme-text-secondary hover:theme-text"
+                  >
+                    <Link
+                      href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/${entry.id}`}
                     >
-                      <Link
-                        href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/${entry.id}`}
-                      >
-                        <Edit className="h-4 w-4 mr-1 theme-text-secondary" /> Edit entry
-                      </Link>
-                    </ThemedButton>
-                    <ThemedButton
-                      variantTone="ghost"
-                      size="sm"
-                      onClick={() => handleDelete(entry.id)}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </ThemedButton>
-                  </div>
+                      <Edit className="h-4 w-4 mr-1 theme-text-secondary" /> Edit entry
+                    </Link>
+                  </ThemedButton>
+                  <ThemedButton
+                    variantTone="ghost"
+                    size="sm"
+                    onClick={() => handleDelete(entry.id)}
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </ThemedButton>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   )
 }

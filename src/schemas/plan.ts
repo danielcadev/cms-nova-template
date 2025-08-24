@@ -46,10 +46,7 @@ const ItineraryDaySchema = z.object({
     .number()
     .min(1, 'Day must be greater than 0')
     .max(30, 'Itineraries of more than 30 days are not allowed'),
-  title: z
-    .string()
-    .min(1, 'Day title is required')
-    .max(150, 'Title cannot exceed 150 characters'),
+  title: z.string().min(1, 'Day title is required').max(150, 'Title cannot exceed 150 characters'),
   description: z.string().max(2000, 'Description cannot exceed 2000 characters').optional(),
   image: z.string().url('Must be a valid image URL').optional().or(z.literal('')),
 })
@@ -102,10 +99,7 @@ export const planSchema = z.object({
   // Top-level section for public URL (e.g., "planes", "circuitos"). Not persisted in DB, used at publish-time
   section: z.string().max(50).optional(),
   articleAlias: z.string().max(100, 'Alias cannot exceed 100 characters').optional(),
-  categoryAlias: z
-    .string()
-    .max(100, 'Category alias cannot exceed 100 characters')
-    .optional(),
+  categoryAlias: z.string().max(100, 'Category alias cannot exceed 100 characters').optional(),
 
   // Texto promocional
   promotionalText: z
@@ -123,23 +117,11 @@ export const planSchema = z.object({
     .max(2000, 'Attractions text cannot exceed 2000 characters')
     .optional(),
 
-  transfersTitle: z
-    .string()
-    .max(150, 'Transfers title cannot exceed 150 characters')
-    .optional(),
-  transfersText: z
-    .string()
-    .max(2000, 'Transfers text cannot exceed 2000 characters')
-    .optional(),
+  transfersTitle: z.string().max(150, 'Transfers title cannot exceed 150 characters').optional(),
+  transfersText: z.string().max(2000, 'Transfers text cannot exceed 2000 characters').optional(),
 
-  holidayTitle: z
-    .string()
-    .max(150, 'Holiday title cannot exceed 150 characters')
-    .optional(),
-  holidayText: z
-    .string()
-    .max(2000, 'Holiday text cannot exceed 2000 characters')
-    .optional(),
+  holidayTitle: z.string().max(150, 'Holiday title cannot exceed 150 characters').optional(),
+  holidayText: z.string().max(2000, 'Holiday text cannot exceed 2000 characters').optional(),
 
   // Arrays de datos estructurados
   itinerary: z

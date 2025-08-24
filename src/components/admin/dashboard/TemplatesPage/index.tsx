@@ -8,12 +8,11 @@ import {
   Plus,
   PlusCircle,
   RefreshCw,
-  Search,
   UtensilsCrossed,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { Input } from '@/components/ui/input'
+
 import { ThemedButton } from '@/components/ui/ThemedButton'
 import { AdminLoading } from '../AdminLoading'
 
@@ -40,7 +39,7 @@ interface RecentContent {
 
 export function TemplatesPage() {
   const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, _setSearchTerm] = useState('')
   const [recentContent, setRecentContent] = useState<RecentContent[]>([])
   const [isRefreshing, setIsRefreshing] = useState(false)
 
@@ -185,7 +184,7 @@ export function TemplatesPage() {
 
   return (
     <div className="min-h-screen theme-bg">
-      <div className="mx-auto max-w-6xl px-6 py-10">
+      <div className="mx-auto max-w-6xl px-8 py-10">
         {/* Cover */}
         <div className="relative overflow-hidden rounded-2xl border theme-border theme-card mb-6">
           <div className="absolute inset-0 theme-bg-secondary" />
@@ -219,18 +218,7 @@ export function TemplatesPage() {
           </div>
         </div>
 
-        {/* Search */}
-        <div className="mb-8">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 theme-text-muted" />
-            <Input
-              placeholder="Search templates..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 rounded-lg border theme-border theme-card backdrop-blur-sm focus:theme-border-light"
-            />
-          </div>
-        </div>
+        {/* Search removed by request */}
 
         {/* Recent Content */}
         {recentContent.length > 0 && (

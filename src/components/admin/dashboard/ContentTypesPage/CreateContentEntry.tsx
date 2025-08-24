@@ -1,14 +1,20 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Save } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useId, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Save } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 
 interface ContentType {
@@ -33,36 +39,36 @@ export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps)
   const [formData, setFormData] = useState<Record<string, any>>({
     title: '',
     slug: '',
-    status: 'draft'
+    status: 'draft',
   })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
 
-  useEffect(() => {
-    loadContentType()
-  }, [contentTypeSlug])
+  // Unique IDs for inputs
+  const titleInputId = useId()
+  const slugInputId = useId()
 
-  const loadContentType = async () => {
+  const loadContentType = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/content-types/${contentTypeSlug}`)
       if (response.ok) {
         const data = await response.json()
         setContentType(data)
-        
+
         // Initialize form data with default values
         const initialData: Record<string, any> = {
           title: '',
           slug: '',
-          status: 'draft'
+          status: 'draft',
         }
-        
+
         data.fields.forEach((field: any) => {
           initialData[field.name] = field.type === 'boolean' ? false : ''
         })
-        
+
         setFormData(initialData)
       } else {
         toast({
@@ -82,49 +88,53 @@ export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps)
     } finally {
       setLoading(false)
     }
-  }
+  }, [contentTypeSlug, router, toast])
 
-  const handleInputChange = (name: string, value: any) => {
-    setFormData(prev => ({
+  useEffect(() => {
+    loadContentType()
+  }, [loadContentType])
+
+  const handleInputChange = useCallback((name: string, value: any) => {
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }))
-    
+
     // Auto-generate slug from title
     if (name === 'title' && typeof value === 'string') {
       const slug = value
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '')
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        slug
+        slug,
       }))
     }
-  }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!contentType) return
 
     // Validate required fields
     const errors: string[] = []
-    
+
     if (!formData.title.trim()) {
       errors.push('Title is required')
     }
-    
+
     if (!formData.slug.trim()) {
       errors.push('Slug is required')
     }
-    
-    contentType.fields.forEach(field => {
+
+    contentType.fields.forEach((field) => {
       if (field.required && !formData[field.name]) {
         errors.push(`${field.name} is required`)
       }
     })
-    
+
     if (errors.length > 0) {
       toast({
         title: 'Validation Error',
@@ -172,7 +182,7 @@ export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps)
 
   const renderField = (field: any) => {
     const value = formData[field.name] || ''
-    
+
     switch (field.type) {
       case 'text':
         return (
@@ -182,7 +192,7 @@ export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps)
             placeholder={`Enter ${field.name}`}
           />
         )
-      
+
       case 'textarea':
         return (
           <Textarea
@@ -192,13 +202,10 @@ export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps)
             rows={4}
           />
         )
-      
+
       case 'select':
         return (
-          <Select
-            value={value}
-            onValueChange={(val) => handleInputChange(field.name, val)}
-          >
+          <Select value={value} onValueChange={(val) => handleInputChange(field.name, val)}>
             <SelectTrigger>
               <SelectValue placeholder={`Select ${field.name}`} />
             </SelectTrigger>
@@ -211,7 +218,7 @@ export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps)
             </SelectContent>
           </Select>
         )
-      
+
       case 'boolean':
         return (
           <Select
@@ -227,7 +234,7 @@ export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps)
             </SelectContent>
           </Select>
         )
-      
+
       default:
         return (
           <Input
@@ -265,27 +272,25 @@ export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps)
         <Card>
           <CardHeader>
             <CardTitle>Basic Information</CardTitle>
-            <CardDescription>
-              Basic details for your content entry
-            </CardDescription>
+            <CardDescription>Basic details for your content entry</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="title">Title *</Label>
+                <Label htmlFor={titleInputId}>Title *</Label>
                 <Input
-                  id="title"
+                  id={titleInputId}
                   value={formData.title}
                   onChange={(e) => handleInputChange('title', e.target.value)}
                   placeholder="Enter title"
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
-                <Label htmlFor="slug">Slug *</Label>
+                <Label htmlFor={slugInputId}>Slug *</Label>
                 <Input
-                  id="slug"
+                  id={slugInputId}
                   value={formData.slug}
                   onChange={(e) => handleInputChange('slug', e.target.value)}
                   placeholder="enter-slug"
@@ -293,7 +298,7 @@ export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps)
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="status">Status</Label>
               <Select
@@ -317,9 +322,7 @@ export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps)
           <Card>
             <CardHeader>
               <CardTitle>Content Fields</CardTitle>
-              <CardDescription>
-                Custom fields for this content type
-              </CardDescription>
+              <CardDescription>Custom fields for this content type</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {contentType.fields.map((field) => (
@@ -340,11 +343,7 @@ export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps)
             <Save className="h-4 w-4" />
             {saving ? 'Creating...' : 'Create Entry'}
           </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.back()}
-          >
+          <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancel
           </Button>
         </div>

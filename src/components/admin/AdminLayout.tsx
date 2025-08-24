@@ -35,6 +35,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     effectiveTheme as string,
   )
 
+  // Prevent any theme leakage to <html>/<body> by scoping everything here
+  // Ensure container sets data-theme for descendant selectors
+
   const _getThemeVariables = (t: string) => {
     const map: Record<string, any> = {
       light: {
@@ -164,30 +167,33 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <div
-      className={`min-h-screen flex relative overflow-hidden ${themeClass} ${isDarkTheme ? 'dark' : ''}`}
-      style={{ 
+      className={`min-h-screen flex relative overflow-hidden admin-scope ${themeClass} ${isDarkTheme ? 'dark' : ''}`}
+      data-theme={effectiveTheme}
+      style={{
+        ..._getThemeVariables(effectiveTheme as string),
         backgroundColor: effectiveTheme === 'light' ? '#ffffff' : 'var(--theme-bg-primary)',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+        fontFamily:
+          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
       }}
     >
       {/* Clean Notion-like background */}
       <div className="fixed inset-0 -z-10">
-        <div 
-          className="absolute inset-0" 
-          style={{ 
-            backgroundColor: effectiveTheme === 'light' ? '#ffffff' : 'var(--theme-bg-primary)' 
-          }} 
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundColor: effectiveTheme === 'light' ? '#ffffff' : 'var(--theme-bg-primary)',
+          }}
         />
         {/* Subtle grid pattern for light theme */}
         {effectiveTheme === 'light' && (
-          <div 
+          <div
             className="absolute inset-0 opacity-[0.02]"
             style={{
               backgroundImage: `
                 linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)
               `,
-              backgroundSize: '20px 20px'
+              backgroundSize: '20px 20px',
             }}
           />
         )}
@@ -203,9 +209,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         <main className="flex-1 relative">
           <div className="h-full">
             <div className="transition-all duration-200 ease-out p-6 md:p-8 lg:p-12">
-              <div className="max-w-7xl mx-auto">
-                {children}
-              </div>
+              <div className="max-w-6xl mx-auto">{children}</div>
             </div>
           </div>
         </main>

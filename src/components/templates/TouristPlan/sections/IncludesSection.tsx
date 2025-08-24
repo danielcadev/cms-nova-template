@@ -11,11 +11,10 @@ export function IncludesSection() {
   return (
     <div className="space-y-8">
       <div className="text-center">
-        <h3 className="text-2xl font-bold theme-text mb-3">
-          Includes / Not Included
-        </h3>
+        <h3 className="text-2xl font-bold theme-text mb-3">Includes / Not Included</h3>
         <p className="text-sm theme-text-secondary max-w-2xl mx-auto leading-relaxed">
-          Specify in detail which services and products are covered by the plan price. This helps customers understand exactly what they are buying.
+          Specify in detail which services and products are covered by the plan price. This helps
+          customers understand exactly what they are buying.
         </p>
       </div>
 
@@ -54,7 +53,7 @@ export function IncludesSection() {
             )}
           />
         </div>
-        
+
         <div className="theme-card rounded-xl p-8 theme-border">
           <FormField
             control={control}

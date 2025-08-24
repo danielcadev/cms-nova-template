@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Edit, Eye, Plus, Settings, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Plus, Settings, Eye, Edit, Trash2 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 
 interface ContentType {
@@ -15,9 +15,9 @@ interface ContentType {
   description?: string
   fields: Array<{
     id: string
-    name: string
+    label: string
     type: string
-    required: boolean
+    isRequired: boolean
   }>
   _count: {
     entries: number
@@ -34,11 +34,7 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
   const router = useRouter()
   const { toast } = useToast()
 
-  useEffect(() => {
-    loadContentType()
-  }, [slug])
-
-  const loadContentType = async () => {
+  const loadContentType = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/content-types/${slug}`)
@@ -63,7 +59,11 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [router, slug, toast])
+
+  useEffect(() => {
+    loadContentType()
+  }, [loadContentType])
 
   if (loading) {
     return (
@@ -128,7 +128,7 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
             <div className="text-2xl font-bold">{contentType._count.entries}</div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader>
             <CardTitle className="text-sm font-medium">Fields</CardTitle>
@@ -137,7 +137,7 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
             <div className="text-2xl font-bold">{contentType.fields.length}</div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader>
             <CardTitle className="text-sm font-medium">Slug</CardTitle>
@@ -154,9 +154,7 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
       <Card>
         <CardHeader>
           <CardTitle>Fields</CardTitle>
-          <CardDescription>
-            Fields defined for this content type
-          </CardDescription>
+          <CardDescription>Fields defined for this content type</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -167,16 +165,12 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
               >
                 <div className="flex items-center gap-3">
                   <div>
-                    <h4 className="font-medium">{field.name}</h4>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Type: {field.type}
-                    </p>
+                    <h4 className="font-medium">{field.label}</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Type: {field.type}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  {field.required && (
-                    <Badge variant="secondary">Required</Badge>
-                  )}
+                  {field.required && <Badge variant="secondary">Required</Badge>}
                   <Button variant="ghost" size="sm">
                     <Edit className="h-4 w-4" />
                   </Button>
@@ -186,7 +180,7 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
                 </div>
               </div>
             ))}
-            
+
             {contentType.fields.length === 0 && (
               <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                 No fields defined yet
@@ -202,7 +196,10 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
           <Settings className="h-4 w-4" />
           Edit Content Type
         </Button>
-        <Button variant="outline" className="flex items-center gap-2 text-red-600 hover:text-red-700">
+        <Button
+          variant="outline"
+          className="flex items-center gap-2 text-red-600 hover:text-red-700"
+        >
           <Trash2 className="h-4 w-4" />
           Delete Content Type
         </Button>

@@ -2,33 +2,31 @@
 
 import { ArrowLeft, Copy, Eye, Save } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useId } from 'react'
-import slugify from 'slugify'
 import { Button } from '@/components/ui/button'
 
 interface ContentHeaderProps {
   // Navigation
   backUrl: string
   backLabel: string
-  
+
   // Content info
   title: string
   description: string
-  
+
   // Status management
   status: string
   onStatusChange: (status: string) => void
-  
+
   // Optional URL preview (read-only)
   currentUrl?: string
-  
+
   // Actions
   onSave: (status?: string) => void
   onPublishAndView?: () => void
   isSaving: boolean
   isFormValid: boolean
-  
+
   // Optional customization
   showPublishAndView?: boolean
   showUrlPreview?: boolean
@@ -47,7 +45,7 @@ export function ContentHeader({
   isSaving,
   isFormValid,
   showPublishAndView = true,
-  showUrlPreview = false
+  showUrlPreview = false,
 }: ContentHeaderProps) {
   const statusId = useId()
 
@@ -72,9 +70,7 @@ export function ContentHeader({
               <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">
                 {title}
               </h1>
-              <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-xl">
-                {description}
-              </p>
+              <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-xl">{description}</p>
             </div>
           </div>
           <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4 ml-auto">
@@ -118,7 +114,9 @@ export function ContentHeader({
         <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70 mb-6">
           <div className="p-4 md:p-5 flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">Current URL</h3>
+              <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">
+                Current URL
+              </h3>
               <div className="font-mono text-xs text-gray-600 dark:text-gray-400 break-all">
                 {currentUrl}
               </div>

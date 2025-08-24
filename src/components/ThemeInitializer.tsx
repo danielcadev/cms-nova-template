@@ -10,21 +10,8 @@ export function ThemeInitializer() {
         __html: `
           (function() {
             try {
-              var path = window.location.pathname || '';
-              if (path.indexOf('/admin') === -1) return;
-              var savedTheme = localStorage.getItem('nova-theme') || 'light';
-              var themeClasses = ['theme-light', 'theme-dark', 'theme-blue', 'theme-green', 'theme-purple', 'theme-orange', 'theme-beige'];
-              var darkThemes = ['dark', 'blue', 'green', 'purple', 'orange'];
-              var root = document.documentElement;
-              var body = document.body;
-
-              themeClasses.forEach(function(cls){ root.classList.remove(cls); body.classList.remove(cls); });
-              root.classList.add('theme-' + savedTheme);
-              body.classList.add('theme-' + savedTheme);
-
-              if (darkThemes.indexOf(savedTheme) !== -1) { root.classList.add('dark'); body.classList.add('dark'); } else { root.classList.remove('dark'); body.classList.remove('dark'); }
-              root.setAttribute('data-theme', savedTheme);
-              body.setAttribute('data-theme', savedTheme);
+              // No-op: theming is applied inside AdminLayout container, not on <html>/<body>.
+              // Keeping script to avoid breaking order, but it intentionally does nothing now.
             } catch (_) {}
           })();
         `,
