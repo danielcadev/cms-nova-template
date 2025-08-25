@@ -173,57 +173,7 @@ export function SettingsPage() {
             </CardContent>
           </Card>
 
-          {/* Additional Settings Card */}
-          <Card className="theme-card theme-border border">
-            <CardHeader>
-              <CardTitle className="theme-text flex items-center gap-2">
-                <Settings className="h-5 w-5 theme-text-secondary" />
-                System Preferences
-              </CardTitle>
-              <CardDescription className="theme-text-secondary">
-                Additional system settings and preferences
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium theme-text">Auto-save drafts</p>
-                    <p className="text-sm theme-text-secondary">
-                      Automatically save content as you type
-                    </p>
-                  </div>
-                  <ThemedButton variantTone="outline" className="text-sm">
-                    Enabled
-                  </ThemedButton>
-                </div>
 
-                <div className="flex items-center justify-between pt-4 border-t theme-border">
-                  <div>
-                    <p className="font-medium theme-text">Rich text editor</p>
-                    <p className="text-sm theme-text-secondary">
-                      Enhanced editing experience with formatting tools
-                    </p>
-                  </div>
-                  <ThemedButton variantTone="outline" className="text-sm">
-                    Advanced
-                  </ThemedButton>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t theme-border">
-                  <div>
-                    <p className="font-medium theme-text">Media optimization</p>
-                    <p className="text-sm theme-text-secondary">
-                      Automatically optimize uploaded images
-                    </p>
-                  </div>
-                  <ThemedButton variantTone="outline" className="text-sm">
-                    Enabled
-                  </ThemedButton>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>
