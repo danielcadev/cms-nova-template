@@ -11,11 +11,22 @@ function DynamicTypePathItems({ isActive }: { isActive: (href: string) => boolea
 
   useEffect(() => {
     let mounted = true
-    getDynamicTypePathNav().then((list) => {
-      if (mounted) setItems(list)
-    })
+    const load = () => {
+      getDynamicTypePathNav().then((list) => {
+        if (mounted) setItems(list)
+      })
+    }
+    load()
+
+    const onChange = (e: Event) => {
+      const detail = (e as CustomEvent<{ id: string; config?: any }>).detail
+      if (detail?.id === 'dynamic-nav') load()
+    }
+    window.addEventListener('nova-plugin-config-changed', onChange as EventListener)
+
     return () => {
       mounted = false
+      window.removeEventListener('nova-plugin-config-changed', onChange as EventListener)
     }
   }, [])
 
@@ -73,17 +84,8 @@ export function HomeTopNav() {
 
         {/* Primary nav (centered) */}
         <div className="hidden sm:flex items-center justify-center gap-2.5">
-          <Link
-            href="/planes"
-            className={`px-4 py-2.5 rounded-xl text-[15px] transition-colors ${
-              isActive('/planes')
-                ? 'bg-gray-100/90 dark:bg-gray-800/60 text-gray-900 dark:text-gray-100 ring-1 ring-gray-200 dark:ring-gray-700'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100/70 dark:hover:bg-gray-800/50'
-            }`}
-          >
-            Plans
-          </Link>
-          {/* Dynamic typePath items injected here */}
+          {/* Only show templates and dynamic items if plugins allow */}
+          {/* Plans link is also controlled by dynamic-nav templates in PublicNavbar; here keep minimal */}
           <DynamicTypePathItems isActive={isActive} />
         </div>
 

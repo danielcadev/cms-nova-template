@@ -35,8 +35,9 @@ async function writeStore(data: { configs: Record<string, any>; states: Record<s
   await writeFile(STORE_PATH, JSON.stringify(data, null, 2), 'utf-8')
 }
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params
+export async function GET(req: NextRequest) {
+  const url = new URL(req.url)
+  const id = url.pathname.split('/').pop() || ''
   try {
     const store = await readStore()
     const plugin = AVAILABLE_PLUGINS.find((p) => p.id === id)
@@ -54,8 +55,9 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   }
 }
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params
+export async function POST(req: NextRequest) {
+  const url = new URL(req.url)
+  const id = url.pathname.split('/').pop() || ''
   try {
     const incoming = (await req.json()) as Record<string, any>
     const store = await readStore()

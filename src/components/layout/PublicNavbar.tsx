@@ -23,13 +23,8 @@ function DynamicTypePathItems({ isActive }: { isActive: (href: string) => boolea
     // Live update when plugin config changes
     const onChange = (e: Event) => {
       const detail = (e as CustomEvent<{ id: string; config?: any }>).detail
-      if (detail?.id === 'dynamic-nav' && detail.config) {
-        setItems(
-          Array.isArray(detail.config?.include)
-            ? detail.config.include.map((t: string) => ({ href: `/${t}`, label: t }))
-            : [],
-        )
-      } else if (detail?.id === 'dynamic-nav') {
+      // Always reload from API to respect plugin enabled states
+      if (detail?.id === 'dynamic-nav') {
         load()
       }
     }
@@ -94,7 +89,7 @@ export function PublicNavbar() {
         const p = await fetch('/api/plugins/public-typepaths', { cache: 'no-store' })
         if (p.ok) {
           const data = await p.json()
-          setPublicTypePathsEnabled(!!data?.success)
+          setPublicTypePathsEnabled(!!data?.enabled)
         } else {
           setPublicTypePathsEnabled(false)
         }
@@ -140,7 +135,7 @@ export function PublicNavbar() {
 
         <div className="hidden sm:flex items-center justify-center gap-2.5">
           {/* Templates visible only if dynamic-nav is enabled (server) */}
-          {mounted && dynamicNavEnabled && (
+          {mounted && publicTypePathsEnabled && dynamicNavEnabled && (
             <>
               {templates.planes && (
                 <Link

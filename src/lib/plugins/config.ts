@@ -64,7 +64,7 @@ export const AVAILABLE_PLUGINS: Plugin[] = [
       'Expone públicamente las rutas headless `/{typePath}` y `/{typePath}/{slug}` basadas en Content Types',
     version: '1.0.0',
     category: 'utility',
-    enabled: true,
+    enabled: false,
     author: 'CMS Team',
     icon: '🌐',
     configurable: false,

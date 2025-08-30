@@ -1,15 +1,26 @@
+import { readFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import { NextResponse } from 'next/server'
-import { getAllPlugins } from '@/lib/plugins/service'
+import { AVAILABLE_PLUGINS } from '@/lib/plugins/config'
 
-// Returns success: true if the plugin 'public-typepaths' is enabled
+// Avoid recursion by reading the persisted store directly instead of calling getAllPlugins
 export async function GET() {
   try {
-    const plugins = await getAllPlugins()
-    const found = plugins.find((p) => p.id === 'public-typepaths')
-    const enabled = !!found?.enabled
-    return NextResponse.json({ success: enabled })
+    const STORE_PATH = join(process.cwd(), 'src', 'lib', 'plugins', 'store.json')
+    let states: Record<string, boolean> = {}
+    try {
+      const raw = JSON.parse(await readFile(STORE_PATH, 'utf-8')) as {
+        states?: Record<string, boolean>
+      }
+      states = raw.states || {}
+    } catch {
+      states = {}
+    }
+
+    const def = AVAILABLE_PLUGINS.find((p) => p.id === 'public-typepaths')
+    const enabled = states['public-typepaths'] ?? def?.enabled ?? false
+    return NextResponse.json({ success: true, enabled })
   } catch (_e) {
-    // On error, be conservative and return disabled
-    return NextResponse.json({ success: false })
+    return NextResponse.json({ success: false, enabled: false })
   }
 }

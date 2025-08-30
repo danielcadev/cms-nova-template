@@ -1,9 +1,10 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function GET(_request: NextRequest, { params }: { params: { slug: string } }) {
+export async function GET(request: NextRequest) {
   try {
-    const { slug } = params
+    const url = new URL(request.url)
+    const slug = url.pathname.split('/').pop() || ''
 
     const contentType = await prisma.contentType.findUnique({
       where: { apiIdentifier: slug },

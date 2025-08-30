@@ -37,7 +37,7 @@ export async function getDynamicTypePathNav(): Promise<NavItem[]> {
     const res = await fetch('/api/plugins/public-typepaths', { cache: 'no-store' })
     if (!res.ok) return []
     const data = await res.json()
-    if (!data?.success) return []
+    if (!data?.enabled) return []
   } catch {
     return []
   }
