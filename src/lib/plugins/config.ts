@@ -35,6 +35,40 @@ export const AVAILABLE_PLUGINS: Plugin[] = [
       cdnEnabled: true,
     },
   },
+  {
+    id: 'dynamic-nav',
+    name: 'Dynamic TypePath Nav',
+    description: 'Adds navigation items based on content types (typePath)',
+    version: '1.0.0',
+    category: 'ui',
+    enabled: false,
+    author: 'CMS Team',
+    icon: '🧭',
+    configurable: true,
+    settings: {
+      // 'auto' usa /api/content-types para descubrir typePaths
+      // 'include' usa una lista manual en settings.include
+      mode: 'auto', // 'auto' | 'include'
+      include: [], // lista de typePaths si mode = 'include'
+      exclude: [], // typePaths a omitir
+      titleCase: true,
+      // Controla templates de turismo (rutas normales), separado del headless typePath
+      // Mapa dinámico: { [templateName: string]: boolean }
+      templates: {},
+    },
+  },
+  {
+    id: 'public-typepaths',
+    name: 'Public Type Paths',
+    description:
+      'Expone públicamente las rutas headless `/{typePath}` y `/{typePath}/{slug}` basadas en Content Types',
+    version: '1.0.0',
+    category: 'utility',
+    enabled: true,
+    author: 'CMS Team',
+    icon: '🌐',
+    configurable: false,
+  },
 ]
 
 // Función para obtener plugins habilitados

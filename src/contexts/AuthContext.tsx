@@ -2,7 +2,6 @@
 
 import { usePathname, useRouter } from 'next/navigation'
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from 'react'
-import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
 import { useToast } from '@/hooks/use-toast'
 import { authClient } from '@/lib/auth-client'
 import { isAdminUser } from '@/lib/auth-utils'
@@ -139,18 +138,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   if (isLoading && !isAuthPage) {
     const isAdminRoute = pathname?.startsWith('/admin')
     if (isAdminRoute) {
-      return (
-        <div className="relative">
-          <AdminLoading
-            title="Dashboard"
-            message="Loading your workspace..."
-            variant="content"
-            fullScreen
-          />
-        </div>
-      )
+      // Avoid double loaders on admin routes; let route-level loaders handle it
+      return null
     }
-    // Public routes: don't show admin-themed loader
+    // Public routes: render children without admin-themed loader
     return <>{children}</>
   }
 

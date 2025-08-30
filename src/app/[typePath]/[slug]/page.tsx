@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { PublicNavbar } from '@/components/layout/PublicNavbar'
+import { defaultConfig } from '@/lib/config'
 import { prisma } from '@/lib/prisma'
 
 export const revalidate = 60
@@ -20,7 +21,7 @@ async function getEntry(typePath: string, slug: string) {
   const entry = await prisma.contentEntry.findFirst({
     where: {
       contentTypeId: contentType.id,
-      status: 'published', 
+      status: 'published',
       data: { path: ['slug'], equals: slug },
     },
   })
@@ -30,6 +31,25 @@ async function getEntry(typePath: string, slug: string) {
 }
 
 export default async function PublicEntryPage({ params }: PageProps) {
+  // Gate public headless routes via plugin (fallback to config flag)
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_APP_URL || ''}/api/plugins/public-typepaths`,
+      { cache: 'no-store' },
+    )
+    if (res.ok) {
+      const data = await res.json()
+      const enabled = !!data?.success
+      if (!enabled) notFound()
+    } else if (!defaultConfig.features?.publicTypePaths) {
+      notFound()
+    }
+  } catch {
+    if (!defaultConfig.features?.publicTypePaths) {
+      notFound()
+    }
+  }
+
   const { typePath, slug } = params
   const result = await getEntry(typePath, slug)
   if (!result) notFound()

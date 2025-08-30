@@ -18,7 +18,14 @@ export function createNovaConfig(config: any) {
     auth: { secret: '', adminRoles: ['ADMIN'], ...config.auth },
     database: { url: '', provider: 'postgresql', ...config.database },
     ui: { theme: 'light', title: 'CMS Nova', ...config.ui },
-    features: { users: true, plans: true, contentTypes: true, ...config.features },
+    features: {
+      users: true,
+      plans: true,
+      blog: false,
+      circuitos: false,
+      contentTypes: true,
+      ...config.features,
+    },
   }
 }
 

@@ -24,11 +24,14 @@ export function createNovaConfig(config: Partial<NovaConfig>): NovaConfig {
     },
     features: {
       users: true,
-      plans: true,
+      plans: true, // enable plans so /planes is available when plugin allows
+      circuitos: true, // enable circuits
       analytics: false,
       fileManager: false,
       backup: false,
       presignedUpload: true,
+      // Control public headless routes /{typePath} and /{typePath}/{slug}
+      publicTypePaths: true,
       ...config.features,
     },
     permissions: config.permissions,

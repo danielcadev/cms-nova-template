@@ -19,7 +19,8 @@ export default function SignUp() {
     if (typeof window === 'undefined') return theme
     try {
       const saved = localStorage.getItem('nova-theme')
-      return saved && ['light', 'dark', 'blue', 'green', 'purple', 'orange', 'beige'].includes(saved)
+      return saved &&
+        ['light', 'dark', 'blue', 'green', 'purple', 'orange', 'beige'].includes(saved)
         ? (saved as any)
         : theme
     } catch {

@@ -4,6 +4,40 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useCurrentUser } from '@/hooks/use-current-user'
+import { getDynamicTypePathNav } from '@/lib/plugins/nav'
+
+function DynamicTypePathItems({ isActive }: { isActive: (href: string) => boolean }) {
+  const [items, setItems] = useState<{ href: string; label: string }[]>([])
+
+  useEffect(() => {
+    let mounted = true
+    getDynamicTypePathNav().then((list) => {
+      if (mounted) setItems(list)
+    })
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  if (!items.length) return null
+  return (
+    <>
+      {items.map((item) => (
+        <Link
+          key={item.href}
+          href={item.href}
+          className={`px-4 py-2.5 rounded-xl text-[15px] transition-colors ${
+            isActive(item.href)
+              ? 'bg-gray-100/90 dark:bg-gray-800/60 text-gray-900 dark:text-gray-100 ring-1 ring-gray-200 dark:ring-gray-700'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100/70 dark:hover:bg-gray-800/50'
+          }`}
+        >
+          {item.label}
+        </Link>
+      ))}
+    </>
+  )
+}
 
 export function HomeTopNav() {
   const { user } = useCurrentUser()
@@ -40,16 +74,6 @@ export function HomeTopNav() {
         {/* Primary nav (centered) */}
         <div className="hidden sm:flex items-center justify-center gap-2.5">
           <Link
-            href="/blog"
-            className={`px-4 py-2.5 rounded-xl text-[15px] transition-colors ${
-              isActive('/blog')
-                ? 'bg-gray-100/90 dark:bg-gray-800/60 text-gray-900 dark:text-gray-100 ring-1 ring-gray-200 dark:ring-gray-700'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100/70 dark:hover:bg-gray-800/50'
-            }`}
-          >
-            Blog
-          </Link>
-          <Link
             href="/planes"
             className={`px-4 py-2.5 rounded-xl text-[15px] transition-colors ${
               isActive('/planes')
@@ -59,6 +83,8 @@ export function HomeTopNav() {
           >
             Plans
           </Link>
+          {/* Dynamic typePath items injected here */}
+          <DynamicTypePathItems isActive={isActive} />
         </div>
 
         {/* Right actions */}
@@ -91,7 +117,7 @@ export function HomeTopNav() {
           <form
             onSubmit={(e) => {
               e.preventDefault()
-              const targetType = pathname?.split('/')[1] ? `/${pathname.split('/')[1]}` : '/blog'
+              const targetType = pathname?.split('/')[1] ? `/${pathname.split('/')[1]}` : '/'
               const q = query.trim()
               router.push(q ? `${targetType}?q=${encodeURIComponent(q)}` : targetType)
             }}
@@ -142,13 +168,6 @@ export function HomeTopNav() {
         <div className="sm:hidden border-t border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-950/95">
           <div className="mx-auto max-w-6xl px-4 py-3 flex flex-col gap-1">
             <Link
-              href="/blog"
-              onClick={() => setMenuOpen(false)}
-              className={`px-3 py-2 rounded-md text-sm ${isActive('/blog') ? 'bg-gray-100 dark:bg-gray-800/60 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-300'}`}
-            >
-              Blog
-            </Link>
-            <Link
               href="/planes"
               onClick={() => setMenuOpen(false)}
               className={`px-3 py-2 rounded-md text-sm ${isActive('/planes') ? 'bg-gray-100 dark:bg-gray-800/60 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-300'}`}
@@ -158,7 +177,7 @@ export function HomeTopNav() {
             <form
               onSubmit={(e) => {
                 e.preventDefault()
-                const targetType = pathname?.split('/')[1] ? `/${pathname.split('/')[1]}` : '/blog'
+                const targetType = pathname?.split('/')[1] ? `/${pathname.split('/')[1]}` : '/'
                 const q = query.trim()
                 setMenuOpen(false)
                 router.push(q ? `${targetType}?q=${encodeURIComponent(q)}` : targetType)

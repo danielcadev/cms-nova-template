@@ -4,6 +4,62 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useCurrentUser } from '@/hooks/use-current-user'
+import { getDynamicTypePathNav } from '@/lib/plugins/nav'
+
+function DynamicTypePathItems({ isActive }: { isActive: (href: string) => boolean }) {
+  const [items, setItems] = useState<{ href: string; label: string }[]>([])
+
+  useEffect(() => {
+    let mounted = true
+
+    const load = () => {
+      getDynamicTypePathNav().then((list) => {
+        if (mounted) setItems(list)
+      })
+    }
+
+    load()
+
+    // Live update when plugin config changes
+    const onChange = (e: Event) => {
+      const detail = (e as CustomEvent<{ id: string; config?: any }>).detail
+      if (detail?.id === 'dynamic-nav' && detail.config) {
+        setItems(
+          Array.isArray(detail.config?.include)
+            ? detail.config.include.map((t: string) => ({ href: `/${t}`, label: t }))
+            : [],
+        )
+      } else if (detail?.id === 'dynamic-nav') {
+        load()
+      }
+    }
+    window.addEventListener('nova-plugin-config-changed', onChange as EventListener)
+
+    return () => {
+      mounted = false
+      window.removeEventListener('nova-plugin-config-changed', onChange as EventListener)
+    }
+  }, [])
+
+  if (!items.length) return null
+  return (
+    <>
+      {items.map((item) => (
+        <Link
+          key={item.href}
+          href={item.href}
+          className={`px-4 py-2.5 rounded-xl text-[15px] transition-colors ${
+            isActive(item.href)
+              ? 'bg-gray-100/90 dark:bg-gray-800/60 text-gray-900 dark:text-gray-100 ring-1 ring-gray-200 dark:ring-gray-700'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100/70 dark:hover:bg-gray-800/50'
+          }`}
+        >
+          {item.label}
+        </Link>
+      ))}
+    </>
+  )
+}
 
 export function PublicNavbar() {
   const { user } = useCurrentUser()
@@ -12,12 +68,54 @@ export function PublicNavbar() {
   const [query, setQuery] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
   const [hasShadow, setHasShadow] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const [_templatesVersion, _setTemplatesVersion] = useState(0)
+
+  // Plugin-driven visibility
+  const [publicTypePathsEnabled, setPublicTypePathsEnabled] = useState<boolean | null>(null)
+  const [dynamicNavEnabled, setDynamicNavEnabled] = useState<boolean | null>(null)
+  const [templates, setTemplates] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     const onScroll = () => setHasShadow(window.scrollY > 4)
     onScroll()
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    // Load plugin states from API (authoritative)
+    const load = async () => {
+      try {
+        const p = await fetch('/api/plugins/public-typepaths', { cache: 'no-store' })
+        if (p.ok) {
+          const data = await p.json()
+          setPublicTypePathsEnabled(!!data?.success)
+        } else {
+          setPublicTypePathsEnabled(false)
+        }
+      } catch {
+        setPublicTypePathsEnabled(false)
+      }
+
+      try {
+        const d = await fetch('/api/plugins/dynamic-nav', { cache: 'no-store' })
+        if (d.ok) {
+          const data = await d.json()
+          setDynamicNavEnabled(!!data?.enabled)
+          setTemplates((data?.config?.templates || {}) as Record<string, boolean>)
+        } else {
+          setDynamicNavEnabled(false)
+        }
+      } catch {
+        setDynamicNavEnabled(false)
+      }
+    }
+    load()
   }, [])
 
   const isActive = (href: string) => pathname === href || pathname?.startsWith(`${href}/`)
@@ -41,37 +139,40 @@ export function PublicNavbar() {
         </Link>
 
         <div className="hidden sm:flex items-center justify-center gap-2.5">
-          <Link
-            href="/blog"
-            className={`px-4 py-2.5 rounded-xl text-[15px] transition-colors ${
-              isActive('/blog')
-                ? 'bg-gray-100/90 dark:bg-gray-800/60 text-gray-900 dark:text-gray-100 ring-1 ring-gray-200 dark:ring-gray-700'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100/70 dark:hover:bg-gray-800/50'
-            }`}
-          >
-            Blog
-          </Link>
-          <Link
-            href="/planes"
-            className={`px-4 py-2.5 rounded-xl text-[15px] transition-colors ${
-              isActive('/planes')
-                ? 'bg-gray-100/90 dark:bg-gray-800/60 text-gray-900 dark:text-gray-100 ring-1 ring-gray-200 dark:ring-gray-700'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100/70 dark:hover:bg-gray-800/50'
-            }`}
-          >
-            Plans
-          </Link>
-          <Link
-            href="/circuitos"
-            className={`px-4 py-2.5 rounded-xl text-[15px] transition-colors ${
-              isActive('/circuitos')
-                ? 'bg-gray-100/90 dark:bg-gray-800/60 text-gray-900 dark:text-gray-100 ring-1 ring-gray-200 dark:ring-gray-700'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100/70 dark:hover:bg-gray-800/50'
-            }`}
-          >
-            Circuits
-          </Link>
-          {/* category pill removed */}
+          {/* Templates visible only if dynamic-nav is enabled (server) */}
+          {mounted && dynamicNavEnabled && (
+            <>
+              {templates.planes && (
+                <Link
+                  href="/planes"
+                  className={`px-4 py-2.5 rounded-xl text-[15px] transition-colors ${
+                    isActive('/planes')
+                      ? 'bg-gray-100/90 dark:bg-gray-800/60 text-gray-900 dark:text-gray-100 ring-1 ring-gray-200 dark:ring-gray-700'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100/70 dark:hover:bg-gray-800/50'
+                  }`}
+                >
+                  Plans
+                </Link>
+              )}
+              {templates.circuitos && (
+                <Link
+                  href="/circuitos"
+                  className={`px-4 py-2.5 rounded-xl text-[15px] transition-colors ${
+                    isActive('/circuitos')
+                      ? 'bg-gray-100/90 dark:bg-gray-800/60 text-gray-900 dark:text-gray-100 ring-1 ring-gray-200 dark:ring-gray-700'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100/70 dark:hover:bg-gray-800/50'
+                  }`}
+                >
+                  Circuits
+                </Link>
+              )}
+            </>
+          )}
+
+          {/* Dynamic typePath items only if both plugins allow it */}
+          {publicTypePathsEnabled && dynamicNavEnabled && (
+            <DynamicTypePathItems isActive={isActive} />
+          )}
         </div>
 
         <div className="flex items-center justify-end gap-3">
@@ -101,7 +202,7 @@ export function PublicNavbar() {
           <form
             onSubmit={(e) => {
               e.preventDefault()
-              const targetType = pathname?.split('/')[1] ? `/${pathname.split('/')[1]}` : '/blog'
+              const targetType = pathname?.split('/')[1] ? `/${pathname.split('/')[1]}` : '/'
               const q = query.trim()
               router.push(q ? `${targetType}?q=${encodeURIComponent(q)}` : targetType)
             }}
@@ -142,27 +243,24 @@ export function PublicNavbar() {
       {menuOpen && (
         <div className="sm:hidden border-t border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-950/95">
           <div className="mx-auto max-w-7xl px-6 py-3 flex flex-col gap-1">
-            <Link
-              href="/blog"
-              onClick={() => setMenuOpen(false)}
-              className={`px-3 py-2 rounded-md text-sm ${isActive('/blog') ? 'bg-gray-100 dark:bg-gray-800/60 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-300'}`}
-            >
-              Blog
-            </Link>
-            <Link
-              href="/planes"
-              onClick={() => setMenuOpen(false)}
-              className={`px-3 py-2 rounded-md text-sm ${isActive('/planes') ? 'bg-gray-100 dark:bg-gray-800/60 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-300'}`}
-            >
-              Plans
-            </Link>
-            <Link
-              href="/circuitos"
-              onClick={() => setMenuOpen(false)}
-              className={`px-3 py-2 rounded-md text-sm ${isActive('/circuitos') ? 'bg-gray-100 dark:bg-gray-800/60 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-300'}`}
-            >
-              Circuits
-            </Link>
+            {dynamicNavEnabled && templates.planes && (
+              <Link
+                href="/planes"
+                onClick={() => setMenuOpen(false)}
+                className={`px-3 py-2 rounded-md text-sm ${isActive('/planes') ? 'bg-gray-100 dark:bg-gray-800/60 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-300'}`}
+              >
+                Plans
+              </Link>
+            )}
+            {dynamicNavEnabled && templates.circuitos && (
+              <Link
+                href="/circuitos"
+                onClick={() => setMenuOpen(false)}
+                className={`px-3 py-2 rounded-md text-sm ${isActive('/circuitos') ? 'bg-gray-100 dark:bg-gray-800/60 text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-300'}`}
+              >
+                Circuits
+              </Link>
+            )}
             {user ? (
               <Link
                 href="/admin/dashboard"
@@ -188,7 +286,7 @@ export function PublicNavbar() {
             <form
               onSubmit={(e) => {
                 e.preventDefault()
-                const targetType = pathname?.split('/')[1] ? `/${pathname.split('/')[1]}` : '/blog'
+                const targetType = pathname?.split('/')[1] ? `/${pathname.split('/')[1]}` : '/'
                 const q = query.trim()
                 setMenuOpen(false)
                 router.push(q ? `${targetType}?q=${encodeURIComponent(q)}` : targetType)

@@ -1,7 +1,12 @@
 import Link from 'next/link'
 import { PublicNavbar } from '@/components/layout/PublicNavbar'
+import { defaultConfig } from '@/lib/config'
 
 export default function HomePage() {
+  const { features } = defaultConfig
+  const showPlans = !!features.plans
+  const showCircuitos = !!features.circuitos
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <PublicNavbar />
@@ -19,22 +24,25 @@ export default function HomePage() {
               A Notion‑style publishing starter
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Publish content types and tourist plans with clean URLs like{' '}
-              <span className="font-mono">/blog/my-post</span>.
+              Publish content types and optional templates with clean URLs.
             </p>
             <div className="flex items-center justify-center gap-4">
-              <Link
-                href="/blog"
-                className="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-800 hover:bg-white/70 dark:hover:bg-gray-900/50 text-sm"
-              >
-                Explore Blog
-              </Link>
-              <Link
-                href="/planes"
-                className="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-800 hover:bg-white/70 dark:hover:bg-gray-900/50 text-sm"
-              >
-                Explore Plans
-              </Link>
+              {showPlans && (
+                <Link
+                  href="/planes"
+                  className="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-800 hover:bg-white/70 dark:hover:bg-gray-900/50 text-sm"
+                >
+                  Explore Plans
+                </Link>
+              )}
+              {showCircuitos && (
+                <Link
+                  href="/circuitos"
+                  className="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-800 hover:bg-white/70 dark:hover:bg-gray-900/50 text-sm"
+                >
+                  Explore Circuits
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -43,50 +51,30 @@ export default function HomePage() {
       {/* Collections */}
       <main className="mx-auto max-w-5xl px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 place-items-center">
-          <Link
-            href="/blog"
-            className="group w-full rounded-3xl border border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/70 p-8 transition-all hover:shadow-md"
-          >
-            <div className="flex items-start gap-5">
-              <div className="h-12 w-12 rounded-2xl bg-blue-500/10 text-blue-600 flex items-center justify-center text-lg font-semibold">
-                /
-              </div>
-              <div className="min-w-0">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 group-hover:opacity-90">
-                  Blog
-                </h2>
-                <p className="mt-2 text-[15px] text-gray-600 dark:text-gray-400">
-                  Create custom structures and publish them at clean URLs.
-                </p>
-                <div className="mt-4 inline-flex items-center text-sm text-blue-600">
-                  /blog
-                  <span className="ml-2 transition-transform group-hover:translate-x-0.5">→</span>
+          {showPlans && (
+            <Link
+              href="/planes"
+              className="group w-full rounded-3xl border border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/70 p-8 transition-all hover:shadow-md"
+            >
+              <div className="flex items-start gap-5">
+                <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-lg">
+                  ✈︎
+                </div>
+                <div className="min-w-0">
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 group-hover:opacity-90">
+                    Tourist Plans
+                  </h2>
+                  <p className="mt-2 text-[15px] text-gray-600 dark:text-gray-400">
+                    Design plans and publish with destination‑based URLs.
+                  </p>
+                  <div className="mt-4 inline-flex items-center text-sm text-emerald-600">
+                    /planes
+                    <span className="ml-2 transition-transform group-hover:translate-x-0.5">→</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Link>
-          <Link
-            href="/planes"
-            className="group w-full rounded-3xl border border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/70 p-8 transition-all hover:shadow-md"
-          >
-            <div className="flex items-start gap-5">
-              <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-lg">
-                ✈︎
-              </div>
-              <div className="min-w-0">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 group-hover:opacity-90">
-                  Tourist Plans
-                </h2>
-                <p className="mt-2 text-[15px] text-gray-600 dark:text-gray-400">
-                  Design plans and publish with destination‑based URLs.
-                </p>
-                <div className="mt-4 inline-flex items-center text-sm text-emerald-600">
-                  /planes
-                  <span className="ml-2 transition-transform group-hover:translate-x-0.5">→</span>
-                </div>
-              </div>
-            </div>
-          </Link>
+            </Link>
+          )}
         </div>
       </main>
 
@@ -95,12 +83,16 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between text-xs text-gray-500">
           <span>Nova CMS</span>
           <div className="flex items-center gap-3">
-            <Link href="/blog" className="hover:text-gray-700 dark:hover:text-gray-300">
-              Blog
-            </Link>
-            <Link href="/planes" className="hover:text-gray-700 dark:hover:text-gray-300">
-              Plans
-            </Link>
+            {showPlans && (
+              <Link href="/planes" className="hover:text-gray-700 dark:hover:text-gray-300">
+                Plans
+              </Link>
+            )}
+            {showCircuitos && (
+              <Link href="/circuitos" className="hover:text-gray-700 dark:hover:text-gray-300">
+                Circuits
+              </Link>
+            )}
           </div>
         </div>
       </footer>

@@ -62,6 +62,17 @@ const availablePlugins: Plugin[] = [
     configurable: false,
   },
   {
+    id: 'dynamic-nav',
+    name: 'Dynamic TypePath Nav',
+    description: 'Agrega items de navegación basados en content types (typePath).',
+    version: '1.0.0',
+    category: 'ui',
+    enabled: false,
+    author: 'Nova CMS Team',
+    icon: '🧭',
+    configurable: true,
+  },
+  {
     id: 'seo',
     name: 'SEO Optimizer',
     description: 'Próximamente: Herramientas avanzadas de optimización SEO.',

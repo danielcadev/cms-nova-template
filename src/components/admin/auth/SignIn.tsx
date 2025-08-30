@@ -2,7 +2,7 @@
 'use client'
 
 import { Loader2, Lock, Mail, Package } from 'lucide-react'
-import { useId, useState, useMemo } from 'react'
+import { useId, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuthContext } from '@/contexts/AuthContext'
@@ -18,7 +18,8 @@ export default function LoginForm() {
     if (typeof window === 'undefined') return theme
     try {
       const saved = localStorage.getItem('nova-theme')
-      return saved && ['light', 'dark', 'blue', 'green', 'purple', 'orange', 'beige'].includes(saved)
+      return saved &&
+        ['light', 'dark', 'blue', 'green', 'purple', 'orange', 'beige'].includes(saved)
         ? (saved as any)
         : theme
     } catch {

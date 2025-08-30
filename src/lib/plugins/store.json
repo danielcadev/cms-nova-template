@@ -1,0 +1,17 @@
+{
+  "configs": {
+    "dynamic-nav": {
+      "mode": "include",
+      "include": ["blog"],
+      "exclude": [],
+      "titleCase": false,
+      "templates": {
+        "planes": true,
+        "circuitos": true
+      }
+    }
+  },
+  "states": {
+    "dynamic-nav": true
+  }
+}

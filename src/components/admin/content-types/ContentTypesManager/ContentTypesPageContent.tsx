@@ -81,7 +81,8 @@ export function ContentTypesPageContent({
                 Content Types
               </h1>
               <p className="mt-2 theme-text-secondary max-w-xl">
-                Define and manage the data structures that power your content.
+                Define and manage the data structures that power your content. This is the headless
+                CMS.
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -104,7 +105,34 @@ export function ContentTypesPageContent({
           </div>
         </div>
 
-        {/* Search removed by request */}
+        {/* Info: Headless routes and optional templates */}
+        <div className="mb-8 p-4 rounded-lg border theme-border theme-card">
+          <h3 className="text-sm font-medium theme-text">Headless CMS routes</h3>
+          <p className="text-sm theme-text-secondary mt-2">
+            Each Content Type is publicly accessible using headless routes:
+          </p>
+          <ul className="mt-2 list-disc list-inside text-sm theme-text-secondary space-y-1">
+            <li>
+              Index: <code>/{`[typePath]`}</code> — Lists published entries for the type.
+            </li>
+            <li>
+              Detail:{' '}
+              <code>
+                /{`[typePath]`}/{`[slug]`}
+              </code>{' '}
+              — Renders a single published entry.
+            </li>
+          </ul>
+          <p className="text-sm theme-text-secondary mt-3">
+            Starter templates like Blog, Plans and Circuits are optional and controlled by feature
+            flags in <code>src/lib/config.ts</code>.
+          </p>
+          <div className="mt-3 text-sm theme-text-secondary">
+            For public headless routes, use <code>features.publicTypePaths</code>. You can rely on{' '}
+            <code>src/app/[typePath]</code> and <code>src/app/[typePath]/[slug]</code> or create
+            custom templates as needed.
+          </div>
+        </div>
 
         {/* Content Types List */}
         {displayContentTypes.length > 0 && (

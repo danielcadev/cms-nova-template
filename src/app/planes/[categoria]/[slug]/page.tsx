@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { PublicNavbar } from '@/components/layout/PublicNavbar'
+import { getPluginConfigServer } from '@/lib/plugins/service'
 import { prisma } from '@/lib/prisma'
 
 export const revalidate = 60
@@ -62,13 +63,21 @@ async function getPlan(categoria: string, slug: string) {
       createdAt: plan.createdAt.toISOString(),
       updatedAt: plan.updatedAt.toISOString(),
     }
-  } catch (error) {
-    console.error('Error fetching plan:', error)
+  } catch {
     return null
   }
 }
 
 export default async function PlanDetailPage({ params }: PlanDetailPageProps) {
+  // 404 when plugin templates disable it
+  const dynCfg = (await getPluginConfigServer('dynamic-nav')) as
+    | { templates?: Record<string, boolean> }
+    | undefined
+  const enabledByPlugin = !!dynCfg?.templates?.planes
+  if (!enabledByPlugin) {
+    notFound()
+  }
+
   const categoria = decodeURIComponent(params.categoria)
   const slug = decodeURIComponent(params.slug)
   const plan = await getPlan(categoria, slug)

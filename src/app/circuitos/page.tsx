@@ -1,10 +1,21 @@
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import { PublicNavbar } from '@/components/layout/PublicNavbar'
+import { getPluginConfigServer } from '@/lib/plugins/service'
 import { prisma } from '@/lib/prisma'
 
 export const revalidate = 60
 
 export default async function CircuitsIndexPage() {
+  // 404 when plugin templates disable it
+  const dynCfg = (await getPluginConfigServer('dynamic-nav')) as
+    | { templates?: Record<string, boolean> }
+    | undefined
+  const enabledByPlugin = !!dynCfg?.templates?.circuitos
+  if (!enabledByPlugin) {
+    notFound()
+  }
+
   const plans = await prisma.plan.findMany({
     where: { published: true, section: 'circuitos' },
     select: { categoryAlias: true },
@@ -21,17 +32,6 @@ export default async function CircuitsIndexPage() {
           Circuits by category
         </h1>
         <p className="mt-2 text-sm text-gray-500">/circuitos</p>
-
-        <div className="mt-8 rounded-xl border border-gray-200 dark:border-gray-800 p-6 bg-white/70 dark:bg-gray-900/70">
-          <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-            About this section
-          </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            This is a lightweight, Notion-style index for your travel circuits. Explore
-            comprehensive multi-destination journeys, discover themed routes, extended adventures,
-            and curated experiences that span multiple locations and cultures.
-          </p>
-        </div>
 
         {categories.length === 0 ? (
           <div className="mt-8 rounded-xl border border-gray-200 dark:border-gray-800 p-8 text-center bg-white/70 dark:bg-gray-900/70">

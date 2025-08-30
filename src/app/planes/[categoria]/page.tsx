@@ -1,5 +1,7 @@
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import { PublicNavbar } from '@/components/layout/PublicNavbar'
+import { getPluginConfigServer } from '@/lib/plugins/service'
 import { prisma } from '@/lib/prisma'
 
 export const revalidate = 60
@@ -12,7 +14,6 @@ interface PlansByCategoryPageProps {
 
 async function getPlansByCategory(categoria: string) {
   try {
-    console.log('Searching for plans with category:', categoria)
     const plans = await prisma.plan.findMany({
       where: {
         published: true,
@@ -31,7 +32,6 @@ async function getPlansByCategory(categoria: string) {
       orderBy: { createdAt: 'desc' },
     })
 
-    console.log('Found plans:', plans.length)
     return plans.map((plan) => ({
       id: plan.id,
       title: plan.mainTitle,
@@ -41,15 +41,28 @@ async function getPlansByCategory(categoria: string) {
       createdAt: plan.createdAt.toISOString(),
       updatedAt: plan.updatedAt.toISOString(),
     }))
-  } catch (error) {
-    console.error('Error fetching plans by category:', error)
+  } catch {
     return []
   }
 }
 
 export default async function PlansByCategoryPage({ params }: PlansByCategoryPageProps) {
+  // 404 when plugin templates disable it
+  const dynCfg = (await getPluginConfigServer('dynamic-nav')) as
+    | { templates?: Record<string, boolean> }
+    | undefined
+  const enabledByPlugin = !!dynCfg?.templates?.planes
+  if (!enabledByPlugin) {
+    notFound()
+  }
+
   const categoria = decodeURIComponent(params.categoria)
   const plans = await getPlansByCategory(categoria)
+
+  // 404 if no published entries for this category
+  if (plans.length === 0) {
+    notFound()
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
@@ -69,52 +82,34 @@ export default async function PlansByCategoryPage({ params }: PlansByCategoryPag
         </h1>
         <p className="mt-2 text-sm text-gray-500">/planes/{categoria}</p>
 
-        <div className="mt-8 rounded-xl border border-gray-200 dark:border-gray-800 p-6 bg-white/70 dark:bg-gray-900/70">
-          <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-            Travel Plans in {categoria}
-          </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Discover curated travel itineraries and detailed guides for {categoria}.
-          </p>
-        </div>
-
-        {plans.length === 0 ? (
-          <div className="mt-8 rounded-xl border border-gray-200 dark:border-gray-800 p-8 text-center bg-white/70 dark:bg-gray-900/70">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              No published plans found for "{categoria}". Check back soon for new travel
-              itineraries.
-            </p>
-          </div>
-        ) : (
-          <div className="mt-8 grid grid-cols-1 gap-6">
-            {plans.map((plan) => (
-              <Link
-                key={plan.id}
-                href={`/planes/${categoria}/${plan.slug}`}
-                className="group rounded-xl border border-gray-200 dark:border-gray-800 p-6 bg-white/80 dark:bg-gray-900/70 hover:shadow-sm transition-all"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                      {plan.title}
-                    </h3>
-                    {plan.description && (
-                      <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                        {plan.description}
-                      </p>
-                    )}
-                    <p className="mt-3 text-xs text-gray-500">
-                      Created {new Date(plan.createdAt).toLocaleDateString()}
+        <div className="mt-8 grid grid-cols-1 gap-6">
+          {plans.map((plan) => (
+            <Link
+              key={plan.id}
+              href={`/planes/${categoria}/${plan.slug}`}
+              className="group rounded-xl border border-gray-200 dark:border-gray-800 p-6 bg-white/80 dark:bg-gray-900/70 hover:shadow-sm transition-all"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <h3 className="text-xl font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                    {plan.title}
+                  </h3>
+                  {plan.description && (
+                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                      {plan.description}
                     </p>
-                  </div>
-                  <span className="text-gray-400 group-hover:translate-x-0.5 transition-transform ml-4">
-                    →
-                  </span>
+                  )}
+                  <p className="mt-3 text-xs text-gray-500">
+                    Created {new Date(plan.createdAt).toLocaleDateString()}
+                  </p>
                 </div>
-              </Link>
-            ))}
-          </div>
-        )}
+                <span className="text-gray-400 group-hover:translate-x-0.5 transition-transform ml-4">
+                  →
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   )

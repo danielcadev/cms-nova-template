@@ -55,6 +55,7 @@ export interface UIConfig {
 export interface NovaFeatures {
   users: boolean
   plans: boolean
+  circuitos?: boolean
   contentTypes?: boolean
   headlessCMS?: boolean
   templateSystem?: boolean
@@ -68,6 +69,8 @@ export interface NovaFeatures {
   cache?: boolean
   search?: boolean
   fileManager?: boolean
+  // Controls public headless routes /{typePath} and /{typePath}/{slug}
+  publicTypePaths?: boolean
 }
 
 export interface PerformanceConfig {

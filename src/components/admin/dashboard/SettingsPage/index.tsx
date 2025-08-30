@@ -4,7 +4,6 @@ import { Check, Info, Palette, Settings } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ThemedButton } from '@/components/ui/ThemedButton'
 import { useTheme } from '@/contexts/ThemeContext'
 
 export function SettingsPage() {
@@ -172,8 +171,6 @@ export function SettingsPage() {
               </div>
             </CardContent>
           </Card>
-
-
         </div>
       </div>
     </div>

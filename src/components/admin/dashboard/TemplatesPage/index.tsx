@@ -195,7 +195,8 @@ export function TemplatesPage() {
                 Templates
               </h1>
               <p className="mt-2 theme-text-secondary max-w-xl">
-                Manage your templates and the content created from them.
+                Manage your templates and the content created from them. Plans and Circuits routes
+                are optional.
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -218,7 +219,27 @@ export function TemplatesPage() {
           </div>
         </div>
 
-        {/* Search removed by request */}
+        {/* Info: Optional routes */}
+        <div className="mb-8 p-4 rounded-lg border theme-border theme-card">
+          <h3 className="text-sm font-medium theme-text">Optional public routes</h3>
+          <p className="text-sm theme-text-secondary mt-2">
+            You can use Nova as pure headless CMS or enable the starter templates. The public routes
+            for <span className="font-medium">Plans</span> and{' '}
+            <span className="font-medium">Circuits</span> are optional and controlled by feature
+            flags. Headless routes use <code>/[typePath]</code> and <code>/[typePath]/[slug]</code>.
+          </p>
+          <ol className="mt-3 space-y-2 text-sm theme-text-secondary list-decimal list-inside">
+            <li>
+              To show Plans, leave <code>features.plans = true</code> (default).
+            </li>
+            <li>
+              To show Circuits, set <code>features.circuitos = true</code>.
+            </li>
+            <li>
+              To expose headless routes publicly, use <code>features.publicTypePaths = true</code>.
+            </li>
+          </ol>
+        </div>
 
         {/* Recent Content */}
         {recentContent.length > 0 && (

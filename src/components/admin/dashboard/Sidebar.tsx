@@ -59,7 +59,7 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
         <Link
           href={href}
           className={cn(
-            'group relative flex items-center justify-between px-5 py-3.5 rounded-2xl transition-all duration-150 ease-out',
+            'group relative flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-150 ease-out',
             isActive
               ? 'theme-accent-bg theme-text shadow-sm'
               : 'theme-text-secondary hover:theme-card-hover hover:theme-text',
@@ -75,17 +75,18 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
               className={cn(
                 'transition-colors duration-150',
                 isActive
-                  ? 'h-5 w-5 theme-text'
-                  : 'h-5 w-5 theme-text-secondary group-hover:theme-text',
+                  ? 'h-4.5 w-4.5 theme-text'
+                  : 'h-4.5 w-4.5 theme-text-secondary group-hover:theme-text',
               )}
               strokeWidth={1.5}
             />
 
             <span
               className={cn(
-                'flex-1 text-[15px] font-medium transition-colors duration-150',
+                'flex-1 text-[15px] font-medium tracking-tight transition-colors duration-150',
                 isActive ? 'theme-text' : 'theme-text-secondary group-hover:theme-text',
               )}
+              style={{ fontFeatureSettings: '"ss01" on, "ss02" on' }}
             >
               {label}
             </span>
@@ -175,21 +176,21 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
         }}
       >
         {/* Header (revamped) */}
-        <div className="relative p-5 theme-border-b">
-          <Link href="/admin/dashboard" className="flex items-center gap-4 group" onClick={onClose}>
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl theme-card shadow-ios border theme-border">
-              <Package className="h-7 w-7 theme-text" strokeWidth={1.75} />
+        <div className="relative p-4 theme-border-b">
+          <Link href="/admin/dashboard" className="flex items-center gap-3 group" onClick={onClose}>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl theme-card border theme-border">
+              <Package className="h-5 w-5 theme-text" strokeWidth={1.75} />
             </div>
             <div className="flex flex-col min-w-0">
-              <h1 className="text-2xl font-bold theme-text tracking-tight">Nova CMS</h1>
-              <p className="text-base theme-text-secondary">Workspace</p>
+              <h1 className="text-lg font-semibold theme-text tracking-tight">Nova CMS</h1>
+              <p className="text-xs theme-text-secondary">Workspace</p>
             </div>
           </Link>
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="md:hidden h-8 w-8 rounded-lg hover:theme-card-hover transition-all duration-200 absolute right-4 top-4"
+            className="md:hidden h-8 w-8 rounded-lg hover:theme-card-hover transition-all duration-200 absolute right-3 top-3"
           >
             <X className="h-4 w-4 theme-text-secondary" strokeWidth={1.5} />
           </Button>
@@ -198,16 +199,16 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
         {/* Navigation (revamped) */}
         <nav className="relative flex-1 overflow-y-auto px-4 py-6 space-y-5">
           {navigationSections.map((section, _sectionIndex) => (
-            <div key={section.title} className="space-y-2">
-              {/* Notion-style Section Header */}
+            <div key={section.title} className="space-y-1.5">
+              {/* Section Header */}
               <div className="px-2">
-                <h3 className="text-xs font-semibold theme-text-muted uppercase tracking-wide">
+                <h3 className="text-[10px] font-semibold theme-text-muted uppercase tracking-wider">
                   {section.title}
                 </h3>
               </div>
 
               {/* Section Items */}
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 {section.items.map((item, itemIndex) => {
                   const isActive = pathname === item.href
                   return (
@@ -227,10 +228,10 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
         </nav>
 
         {/* Footer */}
-        <div className="relative p-4 theme-border-t">
-          <div className="flex items-center gap-3 p-3 mb-3 theme-card rounded-xl theme-border shadow-sm">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg theme-accent-bg">
-              <Users className="h-4 w-4 theme-text" strokeWidth={1.5} />
+        <div className="relative p-3 theme-border-t">
+          <div className="flex items-center gap-2.5 p-2.5 mb-2 theme-card rounded-lg theme-border">
+            <div className="flex h-7 w-7 items-center justify-center rounded-md theme-accent-bg">
+              <Users className="h-3.5 w-3.5 theme-text" strokeWidth={1.5} />
             </div>
             <div className="flex flex-col min-w-0 flex-1">
               {userLoading ? (
@@ -240,10 +241,10 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
                 </div>
               ) : (
                 <>
-                  <span className="text-base font-medium theme-text truncate">
+                  <span className="text-sm font-medium theme-text truncate">
                     {user?.name || 'Administrator'}
                   </span>
-                  <span className="text-sm theme-text-secondary">Administrator</span>
+                  <span className="text-[11px] theme-text-secondary">Administrator</span>
                 </>
               )}
             </div>
@@ -254,9 +255,9 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
             onClick={handleLogoutClick}
             variant="ghost"
             size="lg"
-            className="w-full theme-text-secondary hover:theme-card-hover hover:theme-text rounded-lg py-3 text-sm font-medium transition-all duration-150 justify-start"
+            className="w-full theme-text-secondary hover:theme-card-hover hover:theme-text rounded-lg py-2.5 text-[13px] font-medium transition-all duration-150 justify-start"
           >
-            <LogOut className="h-5 w-5 mr-3" strokeWidth={1.5} />
+            <LogOut className="h-4 w-4 mr-2.5" strokeWidth={1.5} />
             Sign out
           </Button>
         </div>

@@ -157,6 +157,29 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 
 ---
 
+## 🧠 Headless CMS & Public Type Paths
+
+CMS Nova works headless by default. There are no special Blog routes: use type paths based on your Content Types’ `apiIdentifier`.
+
+- Headless type paths (controlled by plugin):
+  - Requires enabling the `public-typepaths` plugin in Admin → Plugins.
+  - Index: `/{[typePath]}` — lists published entries for the Content Type (`apiIdentifier`).
+  - Detail: `/{[typePath]}/{[slug]}` — renders a single published entry.
+  - Invalid types or no published entries return 404.
+
+- Dynamic navigation for type paths (separate plugin):
+  - Enable the `dynamic-nav` plugin in Admin → Plugins to add items to the navbar.
+  - Modes:
+    - `auto`: discovers Content Types from `/api/content-types` and creates links per `apiIdentifier`.
+    - `include`: manually list which `typePaths` to show.
+  - Options: `exclude` to omit, and `titleCase` to format labels.
+
+- Starter pages for Plans/Circuits (optional and independent from type paths):
+  - When disabled, `/planes` or `/circuitos` show a “disabled” notice with a link to the Dashboard.
+  - When enabled, they render category indexes based on published entries.
+
+Note: For a blog, create a Content Type (e.g. `blog`) and use the headless type paths `/{[typePath]}` and `/{[typePath]}/{[slug]}` instead of special routes like `/blog`.
+
 ## 📚 Documentation
 
 - 📖 **[API Documentation](./docs/api.md)**

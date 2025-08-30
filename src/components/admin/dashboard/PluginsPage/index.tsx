@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { useToast } from '@/hooks/use-toast'
 import type { Plugin } from '@/lib/plugins/config'
 import { getAllPlugins, togglePlugin, updatePluginConfig } from '@/lib/plugins/service'
+import { PluginConfigModal } from './PluginConfigModal'
 import { PluginsPageContent } from './PluginsPageContent'
-import { S3ConfigModal } from './S3ConfigModal'
 
 export default function PluginsPage() {
   const [plugins, setPlugins] = useState<Plugin[]>([])
@@ -17,7 +17,12 @@ export default function PluginsPage() {
     try {
       setIsLoading(true)
       const pluginData = await getAllPlugins()
-      setPlugins(pluginData)
+      // Merge enabled state with any locally toggled states stored in localStorage
+      const persisted = JSON.parse(localStorage.getItem('nova-plugin-states') || '{}') as Record<
+        string,
+        boolean
+      >
+      setPlugins(pluginData.map((p) => ({ ...p, enabled: persisted[p.id] ?? p.enabled })))
     } catch (error) {
       console.error('Error loading plugins:', error)
       toast({
@@ -35,29 +40,42 @@ export default function PluginsPage() {
     loadPlugins()
   }, [loadPlugins])
 
-  const handleTogglePlugin = async (pluginId: string) => {
-    try {
-      const newState = await togglePlugin(pluginId)
+  const handleTogglePlugin = useCallback(
+    async (pluginId: string) => {
+      try {
+        const newState = await togglePlugin(pluginId)
 
-      // Actualizar el estado local
-      setPlugins((prev) =>
-        prev.map((plugin) => (plugin.id === pluginId ? { ...plugin, enabled: newState } : plugin)),
-      )
+        // Persist state locally to survive reloads (demo storage; replace with DB in prod)
+        const persisted = JSON.parse(localStorage.getItem('nova-plugin-states') || '{}') as Record<
+          string,
+          boolean
+        >
+        persisted[pluginId] = newState
+        localStorage.setItem('nova-plugin-states', JSON.stringify(persisted))
 
-      const plugin = plugins.find((p) => p.id === pluginId)
-      toast({
-        title: newState ? 'Plugin enabled' : 'Plugin disabled',
-        description: `${plugin?.name} has been ${newState ? 'enabled' : 'disabled'} successfully`,
-      })
-    } catch (error) {
-      console.error('Error toggling plugin:', error)
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Could not change plugin state',
-        variant: 'destructive',
-      })
-    }
-  }
+        // Actualizar el estado local
+        setPlugins((prev) =>
+          prev.map((plugin) =>
+            plugin.id === pluginId ? { ...plugin, enabled: newState } : plugin,
+          ),
+        )
+
+        const plugin = plugins.find((p) => p.id === pluginId)
+        toast({
+          title: newState ? 'Plugin enabled' : 'Plugin disabled',
+          description: `${plugin?.name} has been ${newState ? 'enabled' : 'disabled'} successfully`,
+        })
+      } catch (error) {
+        console.error('Error toggling plugin:', error)
+        toast({
+          title: 'Error',
+          description: error instanceof Error ? error.message : 'Could not change plugin state',
+          variant: 'destructive',
+        })
+      }
+    },
+    [plugins, toast],
+  )
 
   const handleRefresh = async () => {
     await loadPlugins()
@@ -72,11 +90,21 @@ export default function PluginsPage() {
     setIsConfigModalOpen(true)
   }
 
+  // Allow config modals to toggle plugin via window event
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<{ id: string }>).detail
+      if (detail?.id) handleTogglePlugin(detail.id)
+    }
+    window.addEventListener('nova-toggle-plugin', handler as EventListener)
+    return () => window.removeEventListener('nova-toggle-plugin', handler as EventListener)
+  }, [handleTogglePlugin])
+
   const handleSaveConfig = async (config: Record<string, any>) => {
     if (!selectedPlugin) return
 
     try {
-      // Para S3, guardar directamente en la API
+      // For S3, save directly to the API
       if (selectedPlugin.id === 's3-storage' || selectedPlugin.id === 's3') {
         const response = await fetch('/api/plugins/s3', {
           method: 'POST',
@@ -93,9 +121,29 @@ export default function PluginsPage() {
         // Configuration saved successfully; keep UI feedback via toast only
         const _result = await response.json()
       } else {
-        // Para otros plugins, usar el servicio
+        // For other plugins, use the generic service
         await updatePluginConfig(selectedPlugin.id, config)
       }
+
+      // Notificar a la app para actualizaciones en tiempo real (nav)
+      try {
+        const evt = new CustomEvent('nova-plugin-config-changed', {
+          detail: { id: selectedPlugin.id, config },
+        })
+        window.dispatchEvent(evt)
+        // fuerza re-lectura en navbar desde localStorage
+        try {
+          const key = 'nova-plugin-configs'
+          const current = JSON.parse(localStorage.getItem(key) || '{}')
+          localStorage.setItem(
+            key,
+            JSON.stringify({
+              ...current,
+              [selectedPlugin.id]: { ...(current?.[selectedPlugin.id] || {}), ...config },
+            }),
+          )
+        } catch {}
+      } catch {}
 
       await loadPlugins() // Recargar para obtener la configuración actualizada
 
@@ -123,17 +171,15 @@ export default function PluginsPage() {
         onConfigurePlugin={handleConfigurePlugin}
       />
 
-      {selectedPlugin && (
-        <S3ConfigModal
-          plugin={selectedPlugin}
-          isOpen={isConfigModalOpen}
-          onClose={() => {
-            setIsConfigModalOpen(false)
-            setSelectedPlugin(null)
-          }}
-          onSave={handleSaveConfig}
-        />
-      )}
+      <PluginConfigModal
+        plugin={selectedPlugin}
+        isOpen={isConfigModalOpen}
+        onClose={() => {
+          setIsConfigModalOpen(false)
+          setSelectedPlugin(null)
+        }}
+        onSave={handleSaveConfig}
+      />
     </>
   )
 }
