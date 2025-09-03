@@ -27,7 +27,6 @@ function transformPrismaPlanToFormValues(plan: PrismaPlan): PlanFormValues {
     allowGroundTransport: plan.allowGroundTransport,
     published: plan.published,
     // Campos opcionales con valores por defecto
-    destinationId: plan.destinationId ?? undefined,
     generalPolicies: plan.generalPolicies ?? '',
     videoUrl: plan.videoUrl ?? '',
     // Arrays JSON

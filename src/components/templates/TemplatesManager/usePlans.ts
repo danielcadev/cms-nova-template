@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react'
 interface Plan {
   id: string
   mainTitle: string
-  destination: string
   published: boolean
   createdAt: string | Date
 }

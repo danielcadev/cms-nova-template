@@ -15,7 +15,6 @@ export function transformPlanToFormData(plan: Plan): PlanFormValues {
     transfersText: plan.transfersText,
     holidayTitle: plan.holidayTitle,
     holidayText: plan.holidayText,
-    destinationId: plan.destination,
     allowGroundTransport: false,
     // Transformación de mainImage
     mainImage: plan.mainImage

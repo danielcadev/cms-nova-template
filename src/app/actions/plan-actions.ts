@@ -27,7 +27,6 @@ export async function updatePlanDataAction(planId: string, data: PlanFormValues)
       where: { id: planId },
       data: {
         mainTitle: data.mainTitle,
-        destinationId: data.destinationId,
         allowGroundTransport: data.allowGroundTransport,
         articleAlias: data.articleAlias,
         categoryAlias: data.categoryAlias,
@@ -103,7 +102,6 @@ export async function createDraftPlanAction(data: PlanFormValues) {
     const newPlan = await prisma.plan.create({
       data: {
         mainTitle: data.mainTitle || 'Plan sin título',
-        destinationId: data.destinationId || null,
         allowGroundTransport: data.allowGroundTransport || false,
         articleAlias,
         categoryAlias: data.categoryAlias || `categoria-${timestamp}`,
@@ -236,7 +234,6 @@ export async function updatePlanAction(_prevState: any, formData: FormData) {
       where: { id: planId },
       data: {
         mainTitle: data.mainTitle,
-        destinationId: data.destinationId,
         allowGroundTransport: data.allowGroundTransport,
         articleAlias: data.articleAlias,
         categoryAlias: data.categoryAlias,
@@ -351,15 +348,8 @@ export async function publishPlanAction(
       opts?.articleAlias ||
       existing.articleAlias ||
       slugify(existing.mainTitle || 'plan', { lower: true, strict: true })
-    // Prefer destination name as first url segment
-    let baseCategory = opts?.categoryAlias || existing.categoryAlias
-    if (!baseCategory && existing.destinationId) {
-      const dest = await prisma.destination.findUnique({
-        where: { id: existing.destinationId },
-        select: { name: true },
-      })
-      if (dest?.name) baseCategory = slugify(dest.name, { lower: true, strict: true })
-    }
+    // Prefer destination name as first url segment (fallback removed as destinationId no longer used)
+    const baseCategory = opts?.categoryAlias || existing.categoryAlias
     // Do not force 'planes' default; keep empty if missing to avoid wrong prefix
 
     // Ensure unique articleAlias if constraint exists

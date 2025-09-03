@@ -25,7 +25,6 @@ import { useToast } from '@/hooks/use-toast'
 interface Plan {
   id: string
   mainTitle: string
-  destination: string
   published: boolean
   createdAt: string | Date
 }
@@ -39,7 +38,7 @@ interface TouristPlansViewProps {
 }
 
 type ViewMode = 'list' | 'grid'
-type SortField = 'title' | 'destination' | 'date' | 'status'
+type SortField = 'title' | 'date' | 'status'
 type SortOrder = 'asc' | 'desc'
 type FilterStatus = 'all' | 'published' | 'draft'
 
@@ -106,11 +105,7 @@ export function TouristPlansView({
     // Apply search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
-      filtered = filtered.filter(
-        (plan) =>
-          plan.mainTitle.toLowerCase().includes(query) ||
-          plan.destination.toLowerCase().includes(query),
-      )
+      filtered = filtered.filter((plan) => plan.mainTitle.toLowerCase().includes(query))
     }
 
     // Apply status filter
@@ -130,10 +125,7 @@ export function TouristPlansView({
           aValue = a.mainTitle.toLowerCase()
           bValue = b.mainTitle.toLowerCase()
           break
-        case 'destination':
-          aValue = a.destination.toLowerCase()
-          bValue = b.destination.toLowerCase()
-          break
+
         case 'date':
           aValue = new Date(a.createdAt).getTime()
           bValue = new Date(b.createdAt).getTime()
@@ -221,7 +213,7 @@ export function TouristPlansView({
                 <div className="relative flex-1 max-w-md">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 theme-text-muted" />
                   <Input
-                    placeholder="Search plans by title or destination..."
+                    placeholder="Search plans by title..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10 theme-card theme-text border theme-border"
@@ -259,7 +251,6 @@ export function TouristPlansView({
                     {[
                       { field: 'date' as SortField, label: 'Date' },
                       { field: 'title' as SortField, label: 'Title' },
-                      { field: 'destination' as SortField, label: 'Destination' },
                       { field: 'status' as SortField, label: 'Status' },
                     ].map(({ field, label }) => (
                       <button
@@ -407,10 +398,6 @@ export function TouristPlansView({
                           </div>
                           <div className="flex items-center gap-4 text-xs theme-text-muted">
                             <span className="flex items-center gap-1">
-                              <MapPin className="h-3 w-3 theme-text-muted" />
-                              {plan.destination}
-                            </span>
-                            <span className="flex items-center gap-1">
                               <Calendar className="h-3 w-3 theme-text-muted" />
                               {formatDate(plan.createdAt)}
                             </span>
@@ -476,10 +463,7 @@ export function TouristPlansView({
                       <h3 className="font-semibold theme-text mb-2 line-clamp-2 text-lg">
                         {plan.mainTitle}
                       </h3>
-                      <div className="flex items-center gap-2 theme-text-muted text-sm mb-2">
-                        <MapPin className="h-4 w-4" />
-                        {plan.destination}
-                      </div>
+
                       <div className="flex items-center gap-2 theme-text-muted text-sm">
                         <Calendar className="h-4 w-4" />
                         {formatDate(plan.createdAt)}

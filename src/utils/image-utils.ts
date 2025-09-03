@@ -78,12 +78,12 @@ export function generateOptimizedImageName(title: string, extension: string): st
   return `${normalizedTitle}-${shortTimestamp}.${extension.toLowerCase()}`
 }
 
-export function generateImageAltText(title: string, destination: string): string {
-  return `${title} en ${destination} - Tour turístico`
+export function generateImageAltText(title: string): string {
+  return `${title} - Tour turístico`
 }
 
-export function generateImageCaption(title: string, destination: string): string {
-  return `Descubre ${title} en ${destination}`
+export function generateImageCaption(title: string): string {
+  return `Descubre ${title}`
 }
 
 export function extractImageNameFromUrl(url: string): string {
@@ -120,20 +120,15 @@ export function createImageMetadata(
   }
 }
 
-export function createOptimizedImage(
-  url: string,
-  key: string,
-  title: string,
-  destination: string,
-): OptimizedImage {
+export function createOptimizedImage(url: string, key: string, title: string): OptimizedImage {
   return {
     src: url,
     url,
     key,
-    alt: generateImageAltText(title, destination),
+    alt: generateImageAltText(title),
     width: IMAGE_CONFIG.dimensions.width,
     height: IMAGE_CONFIG.dimensions.height,
-    caption: generateImageCaption(title, destination),
+    caption: generateImageCaption(title),
   }
 }
 

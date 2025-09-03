@@ -81,9 +81,8 @@ model Verification {
 
 // --------- DESTINOS ---------
 model Destination {
-  id     String @id @default(cuid())
-  name   String @unique
-  plans  Plan[]
+  id   String @id @default(cuid())
+  name String @unique
 }
 
 // --------- CONTENIDO/PLANES ---------
@@ -100,8 +99,7 @@ model Plan {
   transfersText        String   @db.Text
   holidayTitle         String
   holidayText          String   @db.Text
-  destinationId        String?
-  destination          Destination? @relation(fields: [destinationId], references: [id])
+
   includes             String   @db.Text
   notIncludes          String   @db.Text
   itinerary            Json[]

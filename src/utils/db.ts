@@ -100,7 +100,6 @@ export function formatPlanData(data: PlanFormValues) {
     transfersText: data.transfersText?.trim() || '',
     holidayTitle: data.holidayTitle?.trim() || '',
     holidayText: data.holidayText?.trim() || '',
-    destination: data.destinationId?.trim() || '',
     includes: includesValue,
     notIncludes: data.notIncludes?.trim() || '',
     itinerary: itineraryJson as Prisma.InputJsonValue[],
@@ -121,7 +120,6 @@ export const validateRequiredFields = (data: PlanFormValues) => {
     articleAlias: 'Article alias',
     categoryAlias: 'Category',
     promotionalText: 'Promotional text',
-    destination: 'Destination',
   } as const
 
   const missingFields = Object.entries(requiredFields)

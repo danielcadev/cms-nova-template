@@ -88,7 +88,7 @@ export function EditTourismTemplate({ templateId }: EditTourismTemplateProps) {
   const titleId = useId()
   const slugId = useId()
   const descId = useId()
-  const destId = useId()
+  const _destId = useId()
   const durationId = useId()
   const priceId = useId()
   const categoryId = useId()
@@ -143,10 +143,6 @@ export function EditTourismTemplate({ templateId }: EditTourismTemplateProps) {
 
     if (!formData.slug?.trim()) {
       errors.push('Slug is required')
-    }
-
-    if (!formData.destination?.trim()) {
-      errors.push('Destination is required')
     }
 
     if (!formData.price || formData.price <= 0) {
@@ -341,16 +337,7 @@ export function EditTourismTemplate({ templateId }: EditTourismTemplateProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor={destId}>Destination *</Label>
-                <Input
-                  id={destId}
-                  value={formData.destination || ''}
-                  onChange={(e) => handleInputChange('destination', e.target.value)}
-                  placeholder="Enter destination"
-                  required
-                />
-              </div>
+              <div className="space-y-2"></div>
 
               <div className="space-y-2">
                 <Label htmlFor={durationId}>Duration</Label>

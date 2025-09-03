@@ -51,24 +51,68 @@ const ItineraryDaySchema = z.object({
   image: z.string().url('Must be a valid image URL').optional().or(z.literal('')),
 })
 
-// Esquema para una opción de precio
-const PriceOptionSchema = z.object({
+// Nueva estructura de precios (compatible con legacy)
+const SeasonalAccommodationSchema = z.object({
   id: z.string().min(1, 'ID is required'),
-  numPersons: z
-    .number()
-    .min(1, 'Number of people must be at least 1')
-    .max(100, 'Groups of more than 100 people are not allowed'),
+  accommodation: z.string().min(1, 'Accommodation is required'),
+  price: z.string().min(0).optional().or(z.literal('')),
   currency: z.enum(['COP', 'USD', 'EUR'], {
     errorMap: () => ({ message: 'Currency must be COP, USD or EUR' }),
   }),
-  perPersonPrice: z
-    .number({
-      invalid_type_error: 'Price must be a valid number',
-    })
-    .min(0, 'Price must be greater than or equal to 0')
-    .nullable()
-    .optional(),
 })
+
+const NewPriceOptionSchema = z.union([
+  // Simple price per person
+  z.object({
+    id: z.string().min(1, 'ID is required'),
+    mode: z.literal('simple'),
+    label: z.string().optional().default(''),
+    price: z.string().min(0).optional().or(z.literal('')),
+    currency: z.enum(['COP', 'USD', 'EUR'], {
+      errorMap: () => ({ message: 'Currency must be COP, USD or EUR' }),
+    }),
+  }),
+  // Advanced price with description
+  z.object({
+    id: z.string().min(1, 'ID is required'),
+    mode: z.literal('advanced'),
+    label: z.string().min(1, 'Label is required'),
+    price: z.string().min(1, 'Price is required'),
+    currency: z.enum(['COP', 'USD', 'EUR'], {
+      errorMap: () => ({ message: 'Currency must be COP, USD or EUR' }),
+    }),
+  }),
+  // Seasonal prices with accommodations
+  z.object({
+    id: z.string().min(1, 'ID is required'),
+    mode: z.literal('seasonal'),
+    label: z.string().optional().default(''),
+    price: z.string().optional().or(z.literal('')),
+    seasonTitle: z.string().min(1, 'Season title is required'),
+    seasonAccommodations: z.array(SeasonalAccommodationSchema),
+    currency: z.enum(['COP', 'USD', 'EUR'], {
+      errorMap: () => ({ message: 'Currency must be COP, USD or EUR' }),
+    }),
+  }),
+  // Legacy support: numPersons + perPersonPrice
+  z.object({
+    id: z.string().min(1, 'ID is required'),
+    numPersons: z
+      .number()
+      .min(1, 'Number of people must be at least 1')
+      .max(100, 'Groups of more than 100 people are not allowed'),
+    currency: z.enum(['COP', 'USD', 'EUR'], {
+      errorMap: () => ({ message: 'Currency must be COP, USD or EUR' }),
+    }),
+    perPersonPrice: z
+      .number({
+        invalid_type_error: 'Price must be a valid number',
+      })
+      .min(0, 'Price must be greater than or equal to 0')
+      .nullable()
+      .optional(),
+  }),
+])
 
 // Esquema para opciones de transporte
 const TransportOptionSchema = z.object({
@@ -94,7 +138,6 @@ export const planSchema = z.object({
     .string()
     .min(3, 'Main title must be at least 3 characters')
     .max(200, 'Main title cannot exceed 200 characters'),
-  destinationId: z.string().optional(),
   allowGroundTransport: z.boolean().default(false),
   // Top-level section for public URL (e.g., "planes", "circuitos"). Not persisted in DB, used at publish-time
   section: z.string().max(50).optional(),
@@ -129,7 +172,7 @@ export const planSchema = z.object({
     .max(30, 'No se permiten itinerarios de más de 30 días')
     .optional(),
   priceOptions: z
-    .array(PriceOptionSchema)
+    .array(NewPriceOptionSchema)
     .max(20, 'No se permiten más de 20 opciones de precio')
     .optional(),
 
@@ -185,7 +228,7 @@ export type PlanFormValues = z.infer<typeof planSchema>
 export type IncludeSection = z.infer<typeof includeSectionSchema>
 
 // Tipo exportado para opciones de precios
-export type PriceOption = z.infer<typeof PriceOptionSchema>
+export type PriceOption = z.infer<typeof NewPriceOptionSchema>
 
 // Tipo exportado para opciones de transporte
 export type TransportOption = z.infer<typeof TransportOptionSchema>

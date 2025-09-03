@@ -158,7 +158,6 @@ export interface AdminPlan {
   transfersText: string
   holidayTitle: string
   holidayText: string
-  destination: string
   includes: string
   notIncludes: string
   itinerary: PlanItinerary[]

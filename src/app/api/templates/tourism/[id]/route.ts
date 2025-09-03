@@ -12,7 +12,6 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
       slug: 'costa-rica-adventure',
       description:
         'Discover the natural wonders of Costa Rica with this comprehensive adventure package.',
-      destination: 'Costa Rica',
       duration: '7 days 6 nights',
       price: 1299,
       category: 'adventure',
@@ -56,11 +55,8 @@ export async function PUT(_request: NextRequest, { params }: { params: { id: str
     const body = await _request.json()
 
     // Validate required fields
-    if (!body.title || !body.slug || !body.destination || !body.price) {
-      return NextResponse.json(
-        { error: 'Title, slug, destination, and price are required' },
-        { status: 400 },
-      )
+    if (!body.title || !body.slug || !body.price) {
+      return NextResponse.json({ error: 'Title, slug, and price are required' }, { status: 400 })
     }
 
     // For now, we'll return the updated mock data

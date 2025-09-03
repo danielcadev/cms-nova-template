@@ -165,7 +165,6 @@ export const PlanManager = memo(function PlanManager({ onPlanUpdate }: PlanManag
       filtered = filtered.filter((plan) => {
         const searchableText = `
           ${plan.mainTitle}
-          ${plan.destination}
           ${plan.categoryAlias}
           ${plan.promotionalText}
         `.toLowerCase()
@@ -180,15 +179,9 @@ export const PlanManager = memo(function PlanManager({ onPlanUpdate }: PlanManag
       if (debouncedSearchTerm.trim()) {
         const aTitle = a.mainTitle.toLowerCase()
         const bTitle = b.mainTitle.toLowerCase()
-        const aDestination = a.destination.toLowerCase()
-        const bDestination = b.destination.toLowerCase()
 
-        const aExactMatch =
-          aTitle.includes(debouncedSearchTerm.toLowerCase()) ||
-          aDestination.includes(debouncedSearchTerm.toLowerCase())
-        const bExactMatch =
-          bTitle.includes(debouncedSearchTerm.toLowerCase()) ||
-          bDestination.includes(debouncedSearchTerm.toLowerCase())
+        const aExactMatch = aTitle.includes(debouncedSearchTerm.toLowerCase())
+        const bExactMatch = bTitle.includes(debouncedSearchTerm.toLowerCase())
 
         if (aExactMatch && !bExactMatch) return -1
         if (!aExactMatch && bExactMatch) return 1

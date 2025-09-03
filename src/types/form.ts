@@ -68,7 +68,6 @@ export interface Plan {
   transfersText: string
   holidayTitle: string
   holidayText: string
-  destination: string
   includes: string
   notIncludes: string
 
@@ -145,7 +144,7 @@ export interface PlanManagerProps {
 
 // Interfaces para API y búsqueda
 export interface GetPlansOptions {
-  orderBy?: 'createdAt' | 'mainTitle' | 'destination'
+  orderBy?: 'createdAt' | 'mainTitle'
   orderDirection?: 'asc' | 'desc'
   published?: boolean
   search?: string
@@ -233,7 +232,6 @@ export interface PlanFormData {
   transfersText: string
   holidayTitle: string
   holidayText: string
-  destination: string
   includes: string
   notIncludes: string
   itinerary: ItineraryDay[]
@@ -280,7 +278,7 @@ export const planFormSchema = z.object({
   transfersText: z.string().min(1, 'El texto de transfers es requerido'),
   holidayTitle: z.string().min(1, 'El título de holidays es requerido'),
   holidayText: z.string().min(1, 'El texto de holidays es requerido'),
-  destination: z.string().min(1, 'El destino es requerido'),
+
   includes: z.string().min(1, 'Las inclusiones son requeridas'),
   notIncludes: z.string().min(1, 'Las exclusiones son requeridas'),
   itinerary: z.array(

@@ -1,13 +1,12 @@
 ﻿'use client'
 
-import { ArrowLeft, Calendar, Eye, FileText, MapPin, Plus } from 'lucide-react'
+import { ArrowLeft, Calendar, Eye, FileText, Plus } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
 interface Plan {
   id: string
   mainTitle: string
-  destination: string
   published: boolean
   createdAt: string | Date
 }
@@ -122,11 +121,6 @@ export function TouristPlansView({ plans, isLoading, error, onBack }: TouristPla
                       <h3 className="font-bold text-xl text-gray-900 mb-4 line-clamp-2 group-hover:text-blue-600 transition-colors leading-tight">
                         {plan.mainTitle}
                       </h3>
-
-                      <div className="flex items-center gap-3 text-gray-500 mb-6">
-                        <MapPin className="h-5 w-5" />
-                        <span className="font-medium">{plan.destination}</span>
-                      </div>
 
                       <div className="flex items-center gap-3 text-gray-400">
                         <Calendar className="h-4 w-4" />

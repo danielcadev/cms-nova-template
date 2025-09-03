@@ -1,8 +1,9 @@
 'use client'
 
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import slugify from 'slugify'
+
 import { type ComboboxOption, Combobox as OriginalCombobox } from '@/components/ui/combobox'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -12,7 +13,7 @@ import type { PlanFormValues } from '@/schemas/plan'
 import { MainImage } from '../components/MainImage'
 
 // =====================================================================================
-// SECCIÓN UNIFICADA, SIN PASOS
+// UNIFIED SECTION, NO STEPS
 // =====================================================================================
 
 const URLPreview = memo(
@@ -42,20 +43,17 @@ export function BasicInfoSection() {
   const { control, setValue, watch } = useFormContext<PlanFormValues>()
   const { toast } = useToast()
 
-  const [destinations, setDestinations] = useState<ComboboxOption[]>([])
-  const [isLoadingDest, setIsLoadingDest] = useState(true)
   const [categoryOptions, setCategoryOptions] = useState<ComboboxOption[]>([])
   const [planSlugOptions, setPlanSlugOptions] = useState<ComboboxOption[]>([])
 
+  // Local persistence keys
+  const CATEGORY_KEY = 'nova.categoryOptions'
+  const SLUG_KEY = 'nova.planSlugOptions'
+
   const mainTitle = watch('mainTitle')
-  const destinationId = watch('destinationId')
+
   const articleAlias = watch('articleAlias')
   const _section = watch('section')
-
-  const _destinationSlug = useMemo(() => {
-    const selected = destinations.find((d) => d.value === destinationId)
-    return selected ? slugify(selected.label, { lower: true, strict: true }) : ''
-  }, [destinations, destinationId])
 
   const generateSmartSlug = useCallback((text: string, count: number = 7): string[] => {
     if (!text) return []
@@ -106,64 +104,50 @@ export function BasicInfoSection() {
     const currentArticleAlias = watch('articleAlias')
     const suggestions = mainTitle ? generateSmartSlug(mainTitle, 7) : []
 
-    // Crear opciones incluyendo el valor actual si existe
+    // Create options including current value if it exists
     const options = suggestions.map((s) => ({ label: s, value: s }))
 
-    // Si hay un articleAlias actual y no está en las sugerencias, agregarlo al inicio
+    // If there's a current articleAlias and it's not in suggestions, add it at the beginning
     if (currentArticleAlias && !suggestions.includes(currentArticleAlias)) {
       options.unshift({ label: currentArticleAlias, value: currentArticleAlias })
     }
 
+    // Update options only; don't auto-select by default
     setPlanSlugOptions(options)
+  }, [mainTitle, generateSmartSlug, watch])
 
-    // Solo establecer un valor por defecto si no hay articleAlias actual
-    if (suggestions.length > 0 && !currentArticleAlias) {
-      setValue('articleAlias', suggestions[0])
-    }
-  }, [mainTitle, setValue, watch, generateSmartSlug])
-
+  // Category/destination options: manual with local persistence
   useEffect(() => {
-    const fetchDests = async () => {
-      try {
-        const res = await fetch('/api/destinations')
-        const data = await res.json()
-        setDestinations(data.map((d: any) => ({ label: d.name, value: d.id })))
-      } catch (_e) {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: 'No se pudieron cargar los destinos.',
-        })
-      } finally {
-        setIsLoadingDest(false)
-      }
-    }
-    fetchDests()
-  }, [toast])
-
-  // Cargar categorías existentes desde la base de datos
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await fetch('/api/categories')
-        const data = await res.json()
-        setCategoryOptions(data)
-      } catch (e) {
-        console.error('Error loading categories:', e)
-        // No mostrar toast para categorías ya que no es crítico
-      }
-    }
-    fetchCategories()
+    // Load locally saved options
+    try {
+      const storedCats = JSON.parse(localStorage.getItem(CATEGORY_KEY) || '[]')
+      const storedSlugs = JSON.parse(localStorage.getItem(SLUG_KEY) || '[]')
+      if (Array.isArray(storedCats)) setCategoryOptions(storedCats)
+      if (Array.isArray(storedSlugs)) setPlanSlugOptions(storedSlugs)
+    } catch {}
   }, [])
 
+  useEffect(() => {
+    // Save changes locally
+    try {
+      localStorage.setItem(CATEGORY_KEY, JSON.stringify(categoryOptions))
+    } catch {}
+  }, [categoryOptions])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(SLUG_KEY, JSON.stringify(planSlugOptions))
+    } catch {}
+  }, [planSlugOptions])
+
   const handleCreateCategory = useCallback(
-    (inputValue: string) => {
+    async (inputValue: string) => {
       const newValue = slugify(inputValue, { lower: true, strict: true })
       if (!categoryOptions.some((o: ComboboxOption) => o.value === newValue)) {
         const newOption = { label: inputValue, value: newValue }
         setCategoryOptions((prev: ComboboxOption[]) => [newOption, ...prev])
         setValue('categoryAlias', newValue)
-        toast({ title: 'Option Added', description: `"${inputValue}" will be used.` })
+        toast({ title: 'Destination added', description: `"${inputValue}" will be used.` })
       }
     },
     [categoryOptions, setValue, toast],
@@ -176,148 +160,15 @@ export function BasicInfoSection() {
         const newOption = { label: inputValue, value: newValue }
         setPlanSlugOptions((prev: ComboboxOption[]) => [newOption, ...prev])
         setValue('articleAlias', newValue)
-        toast({ title: 'Option Added', description: `"${inputValue}" will be used.` })
+        toast({ title: 'Slug added', description: `"${inputValue}" will be used.` })
       }
     },
     [planSlugOptions, setValue, toast],
   )
 
-  // Función especial para crear destinos (requiere API call)
-  const handleCreateDestination = useCallback(
-    async (inputValue: string) => {
-      try {
-        const trimmedValue = inputValue.trim()
-
-        // Verificar si ya existe por nombre
-        if (destinations.some((d) => d.label.toLowerCase() === trimmedValue.toLowerCase())) {
-          toast({
-            title: 'Destination already exists',
-            description: `"${trimmedValue}" is already in the list.`,
-            variant: 'destructive',
-          })
-          return
-        }
-
-        // Crear destino en la base de datos
-        const response = await fetch('/api/destinations', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: trimmedValue }),
-        })
-
-        if (!response.ok) {
-          throw new Error('Error al crear destino')
-        }
-
-        const newDestination = await response.json()
-        const newOption = { label: newDestination.name, value: newDestination.id }
-
-        // Actualizar la lista local y seleccionar el nuevo destino
-        setDestinations((prev) => [newOption, ...prev])
-        setValue('destinationId', newDestination.id)
-
-        toast({
-          title: 'Destino Creado',
-          description: `"${trimmedValue}" ha sido añadido exitosamente.`,
-        })
-      } catch (error) {
-        console.error('Error creating destination:', error)
-        toast({
-          title: 'Error',
-          description: 'No se pudo crear el destino. Inténtalo de nuevo.',
-          variant: 'destructive',
-        })
-      }
-    },
-    [destinations, setValue, toast],
-  )
-
   return (
     <div className="space-y-10">
-      {/* Sección de Imagen */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-        <div className="lg:col-span-1">
-          <div className="sticky top-8">
-            <h3 className="text-xl font-bold theme-text mb-3">Cover Image</h3>
-            <p className="text-sm theme-text-secondary leading-relaxed">
-              This will be the first impression of your plan. Choose a high-quality horizontal image
-              that represents the destination.
-            </p>
-          </div>
-        </div>
-        <div className="lg:col-span-3">
-          <div className="theme-card rounded-xl p-6 theme-border">
-            <MainImage form={useFormContext<PlanFormValues>()} />
-          </div>
-        </div>
-      </div>
-
-      {/* Sección de Destino y Transporte */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-        <div className="lg:col-span-1">
-          <div className="sticky top-8">
-            <h3 className="text-xl font-bold theme-text mb-3">Destination Details</h3>
-            <p className="text-sm theme-text-secondary leading-relaxed">
-              Select the main destination from your database and specify its transportation
-              characteristics.
-            </p>
-          </div>
-        </div>
-        <div className="lg:col-span-3 space-y-6">
-          <div className="theme-card rounded-xl p-6 theme-border">
-            <FormField
-              control={control}
-              name="destinationId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-lg font-semibold theme-text mb-3 block">
-                    Main Destination
-                  </FormLabel>
-                  <FormControl>
-                    <OriginalCombobox
-                      value={field.value}
-                      onChange={field.onChange}
-                      options={destinations}
-                      onCreate={handleCreateDestination}
-                      placeholder={
-                        isLoadingDest
-                          ? 'Loading destinations...'
-                          : 'Search for a destination or create a new one'
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="theme-card rounded-xl p-6 theme-border">
-            <div className="flex items-center justify-between">
-              <div className="space-y-2">
-                <FormLabel className="text-lg font-semibold theme-text">
-                  Is this a ground transport plan?
-                </FormLabel>
-                <p className="text-sm theme-text-secondary">
-                  Enable this if the main means of transportation to reach the destination is by
-                  land (bus, car, etc.).
-                </p>
-              </div>
-              <FormField
-                control={control}
-                name="allowGroundTransport"
-                render={({ field }) => (
-                  <FormControl>
-                    <Switch checked={field.value} onCheckedChange={field.onChange} />
-                  </FormControl>
-                )}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Sección de Título y URLs */}
+      {/* Title and URLs Section */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
         <div className="lg:col-span-1">
           <div className="sticky top-8">
@@ -403,7 +254,19 @@ export function BasicInfoSection() {
                         onChange={field.onChange}
                         options={categoryOptions}
                         onCreate={handleCreateCategory}
-                        placeholder="Choose destination..."
+                        onDeleteOption={(val) => {
+                          setCategoryOptions((prev) => prev.filter((o) => o.value !== val))
+                          if (field.value === val) setValue('categoryAlias', '')
+                          try {
+                            localStorage.setItem(
+                              CATEGORY_KEY,
+                              JSON.stringify(categoryOptions.filter((o) => o.value !== val)),
+                            )
+                          } catch {}
+                        }}
+                        placeholder="Type to search or create..."
+                        emptyMessage="No options"
+                        clearable
                       />
                     </FormControl>
                     <FormMessage />
@@ -422,10 +285,40 @@ export function BasicInfoSection() {
                         onChange={field.onChange}
                         options={planSlugOptions}
                         onCreate={handleCreatePlanSlug}
-                        placeholder="Choose or create..."
+                        onDeleteOption={(val) => {
+                          setPlanSlugOptions((prev) => prev.filter((o) => o.value !== val))
+                          if (field.value === val) setValue('articleAlias', '')
+                          try {
+                            localStorage.setItem(
+                              SLUG_KEY,
+                              JSON.stringify(planSlugOptions.filter((o) => o.value !== val)),
+                            )
+                          } catch {}
+                        }}
+                        placeholder="Type to search or create..."
+                        emptyMessage="No options"
+                        clearable
                       />
                     </FormControl>
                     <FormMessage />
+                    {/* Delete current slug from list */}
+                    {planSlugOptions.length > 0 && (
+                      <div className="mt-2">
+                        <button
+                          type="button"
+                          className="text-xs theme-text-secondary hover:theme-text"
+                          onClick={() => {
+                            const current = field.value
+                            if (!current) return
+                            setPlanSlugOptions((prev) => prev.filter((o) => o.value !== current))
+                            setValue('articleAlias', '')
+                            toast({ title: 'Deleted', description: 'Slug removed from list.' })
+                          }}
+                        >
+                          Remove current slug from list
+                        </button>
+                      </div>
+                    )}
                   </FormItem>
                 )}
               />
@@ -442,6 +335,62 @@ export function BasicInfoSection() {
           </div>
         </div>
       </div>
+
+      {/* Transportation Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+        <div className="lg:col-span-1">
+          <div className="sticky top-8">
+            <h3 className="text-xl font-bold theme-text mb-3">Transportation</h3>
+            <p className="text-sm theme-text-secondary leading-relaxed">
+              Specify if this plan uses ground transportation to reach the destination.
+            </p>
+          </div>
+        </div>
+        <div className="lg:col-span-3 space-y-6">
+          <div className="theme-card rounded-xl p-6 theme-border">
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <FormLabel className="text-lg font-semibold theme-text">
+                  Is this a ground transport plan?
+                </FormLabel>
+                <p className="text-sm theme-text-secondary">
+                  Enable this if the main means of transportation to reach the destination is by
+                  land (bus, car, etc.).
+                </p>
+              </div>
+              <FormField
+                control={control}
+                name="allowGroundTransport"
+                render={({ field }) => (
+                  <FormControl>
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+                )}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Cover Image Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+        <div className="lg:col-span-1">
+          <div className="sticky top-8">
+            <h3 className="text-xl font-bold theme-text mb-3">Cover Image</h3>
+            <p className="text-sm theme-text-secondary leading-relaxed">
+              This will be the first impression of your plan. Choose a high-quality horizontal image
+              that represents the destination.
+            </p>
+          </div>
+        </div>
+        <div className="lg:col-span-3">
+          <div className="theme-card rounded-xl p-6 theme-border">
+            <MainImage form={useFormContext<PlanFormValues>()} />
+          </div>
+        </div>
+      </div>
+
+      {/* (Removed duplicate Title and Web Address section) */}
     </div>
   )
 }

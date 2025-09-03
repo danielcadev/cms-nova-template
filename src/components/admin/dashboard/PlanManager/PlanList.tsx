@@ -148,9 +148,7 @@ export function PlanList({ plans, togglePublished, deletePlan, duplicatePlan }: 
                     {plan.mainTitle}
                   </h3>
                   <div key={`tags-${planKey}`} className="flex items-center gap-3 flex-wrap">
-                    <span key={`destination-${planKey}`} className="text-gray-500">
-                      {plan.destination}
-                    </span>
+                    {/* Destination removed */}
                     <span
                       key={`category-${planKey}`}
                       className="px-3 py-1 rounded-full text-xs bg-blue-50 text-blue-700 font-medium border border-blue-100"

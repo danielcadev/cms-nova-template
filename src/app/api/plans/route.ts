@@ -11,14 +11,12 @@ export async function GET(req: Request) {
     if (!rl.allowed) return R.error('Too many requests. Please try again later.', 429)
 
     const plans = await prisma.plan.findMany({
-      include: { destination: true },
       orderBy: { createdAt: 'desc' },
     })
 
     const formattedPlans = plans.map((plan) => ({
       id: plan.id,
       mainTitle: plan.mainTitle,
-      destination: plan.destination?.name || plan.destination?.id || 'No destination',
       published: plan.published,
       createdAt: plan.createdAt,
       articleAlias: plan.articleAlias,
@@ -38,7 +36,7 @@ const planSchema = z
     mainTitle: z.string().min(1),
     articleAlias: z.string().optional(),
     promotionalText: z.string().optional(),
-    destinationId: z.string().uuid().optional(),
+
     published: z.boolean().optional(),
   })
   .passthrough() // permitir otros campos si los hay (JSON)

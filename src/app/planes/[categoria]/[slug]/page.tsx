@@ -44,11 +44,6 @@ async function getPlan(categoria: string, slug: string) {
         videoUrl: true,
         mainImage: true,
         categoryAlias: true,
-        destination: {
-          select: {
-            name: true,
-          },
-        },
         createdAt: true,
         updatedAt: true,
       },
@@ -118,7 +113,7 @@ export default async function PlanDetailPage({ params }: PlanDetailPageProps) {
             )}
 
             <div className="flex items-center space-x-4 text-sm text-gray-500">
-              <span>Destination: {plan.destination?.name || plan.categoryAlias}</span>
+              <span>Category: {plan.categoryAlias}</span>
               <span>•</span>
               <span>Updated {new Date(plan.updatedAt).toLocaleDateString()}</span>
               {plan.allowGroundTransport && (
@@ -256,43 +251,108 @@ export default async function PlanDetailPage({ params }: PlanDetailPageProps) {
               </div>
             )}
 
-            {/* Price Options */}
-            {plan.priceOptions &&
-              Array.isArray(plan.priceOptions) &&
-              plan.priceOptions.length > 0 && (
-                <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70">
-                  <div className="p-6">
-                    <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
-                      Pricing Options
-                    </h2>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {plan.priceOptions.map((option: any, index: number) => {
-                        const key = `${option?.id ?? index}-${option?.title ?? 'opt'}`
-                        return (
-                          <div
-                            key={key}
-                            className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
-                          >
-                            <h4 className="font-semibold text-gray-900 dark:text-gray-100">
-                              {option.title || `Option ${index + 1}`}
-                            </h4>
-                            {option.price && (
-                              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-2">
-                                ${option.price}
-                              </p>
-                            )}
-                            {option.description && (
-                              <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">
-                                {option.description}
-                              </p>
-                            )}
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
+            {/* Price - Selected option only */}
+            {Array.isArray(plan.priceOptions) && plan.priceOptions.length > 0 && (
+              <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70">
+                <div className="p-6">
+                  <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
+                    Price
+                  </h2>
+                  {/* Select option by query: ?priceId=ID or ?option=2 (1-indexed). Fallback to first */}
+                  {/* @ts-expect-error searchParams is injected by Next.js App Router */}
+                  {(() => {
+                    // Map currency to symbol
+                    const getSymbol = (c?: string) =>
+                      c === 'USD' ? 'US$' : c === 'EUR' ? '€' : '$'
+                    const options = Array.isArray(plan.priceOptions) ? plan.priceOptions : []
+                    // @ts-expect-error injected prop
+                    const sp = (typeof searchParams !== 'undefined' ? searchParams : {}) as any
+                    const byId = sp?.priceId
+                      ? options.find((o: any) => o?.id === sp.priceId)
+                      : undefined
+                    const idx = sp?.option ? parseInt(String(sp.option), 10) - 1 : NaN
+                    const byIndex = Number.isFinite(idx) && idx >= 0 ? options[idx] : undefined
+                    const chosen = byId ?? byIndex ?? options[0]
+
+                    if (!chosen) return null
+
+                    // Legacy option (numPersons/perPersonPrice)
+                    if (typeof chosen === 'object' && 'numPersons' in chosen) {
+                      const sym = getSymbol((chosen as any).currency)
+                      return (
+                        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                          <h4 className="font-semibold text-gray-900 dark:text-gray-100">
+                            {`${(chosen as any).numPersons} personas`}
+                          </h4>
+                          {(chosen as any).perPersonPrice != null && (
+                            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-2">
+                              {sym} {(chosen as any).perPersonPrice}
+                            </p>
+                          )}
+                        </div>
+                      )
+                    }
+
+                    // New schema
+                    const mode = (chosen as any).mode as
+                      | 'simple'
+                      | 'advanced'
+                      | 'seasonal'
+                      | undefined
+                    const currency = (chosen as any).currency
+                    const sym = getSymbol(currency)
+
+                    if (mode === 'advanced') {
+                      return (
+                        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                          <h4 className="font-semibold text-gray-900 dark:text-gray-100">
+                            {(chosen as any).label}
+                          </h4>
+                          {(chosen as any).price && (
+                            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-2">
+                              {sym} {(chosen as any).price}
+                            </p>
+                          )}
+                        </div>
+                      )
+                    }
+
+                    if (mode === 'simple') {
+                      return (
+                        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                          <h4 className="font-semibold text-gray-900 dark:text-gray-100">
+                            General price (per person)
+                          </h4>
+                          {(chosen as any).price && (
+                            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-2">
+                              {sym} {(chosen as any).price}
+                            </p>
+                          )}
+                        </div>
+                      )
+                    }
+
+                    if (mode === 'seasonal') {
+                      // Collect all seasonal options to allow switching via dropdown
+                      const allSeasonal = options.filter((o: any) => o?.mode === 'seasonal')
+                      const preselectedId = (chosen as any)?.id
+                      const SeasonalPricesDropdown =
+                        require('@/components/public/SeasonalPricesDropdown').default as any
+                      return (
+                        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                          <SeasonalPricesDropdown
+                            options={allSeasonal as any}
+                            preselectedId={preselectedId}
+                          />
+                        </div>
+                      )
+                    }
+
+                    return null
+                  })()}
                 </div>
-              )}
+              </div>
+            )}
 
             {/* Video */}
             {plan.videoUrl && (
