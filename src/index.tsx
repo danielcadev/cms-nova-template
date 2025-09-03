@@ -39,3 +39,6 @@ export { cn } from './lib/utils'
 // Componentes específicos se pueden importar directamente:
 // import { AdminLayout } from '@nova/cms-admin/src/components/admin/AdminLayout'
 // import { Dashboard } from '@nova/cms-admin/src/components/admin/dashboard/DashboardPage/Dashboard'
+
+// Re-export PricingSection para imports con alias '@'
+export { PricingSection } from '../PricingSection'

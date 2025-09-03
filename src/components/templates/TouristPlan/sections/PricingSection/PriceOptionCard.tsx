@@ -1,14 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import React from 'react'
-import { UseFormReturn, useFieldArray } from 'react-hook-form'
-import { PlanFormValues } from '@/schemas/plan'
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { X } from 'lucide-react'
+import type React from 'react'
+import { type UseFormReturn, useFieldArray } from 'react-hook-form'
+import { Button } from '@/components/ui/button'
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import type { PlanFormValues } from '@/schemas/plan'
 
 interface PriceOptionCardProps {
   form: UseFormReturn<PlanFormValues>
@@ -35,31 +41,64 @@ export function PriceOptionCard({
     if (newMode === mode) return
 
     // Set mode first without triggering full validation
-    setValue(`${fieldName}.${index}.mode` as any, newMode, { shouldDirty: true, shouldValidate: false })
+    setValue(`${fieldName}.${index}.mode` as any, newMode, {
+      shouldDirty: true,
+      shouldValidate: false,
+    })
 
     // Normalize fields to avoid stale state when switching modes
     if (newMode === 'simple') {
-      setValue(`${fieldName}.${index}.label` as any, '', { shouldDirty: true, shouldValidate: false })
-      setValue(`${fieldName}.${index}.seasonTitle` as any, '', { shouldDirty: true, shouldValidate: false })
-      setValue(`${fieldName}.${index}.seasonAccommodations` as any, [], { shouldDirty: true, shouldValidate: false })
+      setValue(`${fieldName}.${index}.label` as any, '', {
+        shouldDirty: true,
+        shouldValidate: false,
+      })
+      setValue(`${fieldName}.${index}.seasonTitle` as any, '', {
+        shouldDirty: true,
+        shouldValidate: false,
+      })
+      setValue(`${fieldName}.${index}.seasonAccommodations` as any, [], {
+        shouldDirty: true,
+        shouldValidate: false,
+      })
       // Keep price & currency; simple uses them
     } else if (newMode === 'advanced') {
       // Ensure label exists and clear seasonal data
       const currentLabel = watch(`${fieldName}.${index}.label` as any) || ''
-      setValue(`${fieldName}.${index}.label` as any, currentLabel, { shouldDirty: true, shouldValidate: false })
-      setValue(`${fieldName}.${index}.seasonTitle` as any, '', { shouldDirty: true, shouldValidate: false })
-      setValue(`${fieldName}.${index}.seasonAccommodations` as any, [], { shouldDirty: true, shouldValidate: false })
+      setValue(`${fieldName}.${index}.label` as any, currentLabel, {
+        shouldDirty: true,
+        shouldValidate: false,
+      })
+      setValue(`${fieldName}.${index}.seasonTitle` as any, '', {
+        shouldDirty: true,
+        shouldValidate: false,
+      })
+      setValue(`${fieldName}.${index}.seasonAccommodations` as any, [], {
+        shouldDirty: true,
+        shouldValidate: false,
+      })
       // Keep price & currency; advanced uses them
     } else if (newMode === 'seasonal') {
       // Clear simple/advanced price & label and ensure seasonal structure exists
-      setValue(`${fieldName}.${index}.label` as any, '', { shouldDirty: true, shouldValidate: false })
-      setValue(`${fieldName}.${index}.price` as any, '', { shouldDirty: true, shouldValidate: false })
+      setValue(`${fieldName}.${index}.label` as any, '', {
+        shouldDirty: true,
+        shouldValidate: false,
+      })
+      setValue(`${fieldName}.${index}.price` as any, '', {
+        shouldDirty: true,
+        shouldValidate: false,
+      })
       const hasArray = Array.isArray(watch(`${fieldName}.${index}.seasonAccommodations` as any))
       if (!hasArray) {
-        setValue(`${fieldName}.${index}.seasonAccommodations` as any, [], { shouldDirty: true, shouldValidate: false })
+        setValue(`${fieldName}.${index}.seasonAccommodations` as any, [], {
+          shouldDirty: true,
+          shouldValidate: false,
+        })
       }
       const currentTitle = watch(`${fieldName}.${index}.seasonTitle` as any) || ''
-      setValue(`${fieldName}.${index}.seasonTitle` as any, currentTitle, { shouldDirty: true, shouldValidate: false })
+      setValue(`${fieldName}.${index}.seasonTitle` as any, currentTitle, {
+        shouldDirty: true,
+        shouldValidate: false,
+      })
     }
   }
 
@@ -85,8 +124,11 @@ export function PriceOptionCard({
   }
 
   // Seasonal accommodations array
-  const { fields: accommodationFields, append: appendAccommodation, remove: removeAccommodation } =
-    useFieldArray({ control, name: `${fieldName}.${index}.seasonAccommodations` as any })
+  const {
+    fields: accommodationFields,
+    append: appendAccommodation,
+    remove: removeAccommodation,
+  } = useFieldArray({ control, name: `${fieldName}.${index}.seasonAccommodations` as any })
 
   return (
     <div className="rounded-xl border theme-border p-4 sm:p-5 theme-card">
@@ -119,7 +161,13 @@ export function PriceOptionCard({
         </div>
 
         {canRemove && (
-          <Button type="button" variant="outline" size="sm" onClick={onRemove} className="text-red-600">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onRemove}
+            className="text-red-600"
+          >
             <X className="h-4 w-4" />
           </Button>
         )}
@@ -176,7 +224,9 @@ export function PriceOptionCard({
                   <FormLabel className="text-xs text-gray-600">Price</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-xs select-none">$</span>
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-xs select-none">
+                        $
+                      </span>
                       <Input
                         {...field}
                         value={formatExistingValue(field.value)}
@@ -230,7 +280,9 @@ export function PriceOptionCard({
               </div>
 
               {accommodationFields.length === 0 && (
-                <div className="text-xs text-gray-500">No accommodations yet. Click "Add" to create one.</div>
+                <div className="text-xs text-gray-500">
+                  No accommodations yet. Click "Add" to create one.
+                </div>
               )}
 
               <div className="space-y-2">
@@ -239,7 +291,9 @@ export function PriceOptionCard({
                     <div className="sm:col-span-3">
                       <FormField
                         control={control}
-                        name={`${fieldName}.${index}.seasonAccommodations.${accIndex}.accommodation` as any}
+                        name={
+                          `${fieldName}.${index}.seasonAccommodations.${accIndex}.accommodation` as any
+                        }
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-xs text-gray-600">Accommodation</FormLabel>
@@ -260,7 +314,9 @@ export function PriceOptionCard({
                             <FormLabel className="text-xs text-gray-600">Price</FormLabel>
                             <FormControl>
                               <div className="relative">
-                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-xs select-none">$</span>
+                                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-xs select-none">
+                                  $
+                                </span>
                                 <Input
                                   {...field}
                                   value={formatExistingValue(field.value)}

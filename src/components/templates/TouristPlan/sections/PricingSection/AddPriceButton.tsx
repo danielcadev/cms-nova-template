@@ -1,19 +1,18 @@
-'use client';
+'use client'
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Plus, DollarSign, Info } from 'lucide-react';
+import { DollarSign, Info, Plus } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface AddPriceButtonProps {
-  onAdd: () => void;
-  hasGeneralPrice: boolean;
-  buttonText?: string;
+  onAdd: () => void
+  hasGeneralPrice: boolean
+  buttonText?: string
 }
 
 export function AddPriceButton({ onAdd, hasGeneralPrice, buttonText }: AddPriceButtonProps) {
   // If there is a general price, do not show the add button
   if (hasGeneralPrice) {
-    return null;
+    return null
   }
 
   return (
@@ -29,8 +28,7 @@ export function AddPriceButton({ onAdd, hasGeneralPrice, buttonText }: AddPriceB
           <p className="text-xs sm:text-sm theme-text-secondary max-w-md">
             {hasGeneralPrice
               ? 'Add specific prices for different group types or services'
-              : 'Add different price options for different group sizes or service types'
-            }
+              : 'Add different price options for different group sizes or service types'}
           </p>
           {hasGeneralPrice && (
             <div className="flex items-center gap-2 text-xs theme-accent bg-[var(--theme-accent-light)] px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg max-w-md">
@@ -49,10 +47,10 @@ export function AddPriceButton({ onAdd, hasGeneralPrice, buttonText }: AddPriceB
             {buttonText || (hasGeneralPrice ? 'Add Specific Price' : 'Add New Option')}
           </span>
           <span className="sm:hidden">
-            {buttonText ? 'Add' : (hasGeneralPrice ? 'Add Specific' : 'Add Option')}
+            {buttonText ? 'Add' : hasGeneralPrice ? 'Add Specific' : 'Add Option'}
           </span>
         </Button>
       </div>
     </div>
-  );
+  )
 }

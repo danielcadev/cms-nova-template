@@ -1,11 +1,11 @@
 'use client'
 
-import React, { memo } from 'react'
-import { useFieldArray, UseFormReturn } from 'react-hook-form'
-import { PlanFormValues } from '@/schemas/plan'
-import { PriceOptionCard } from './PriceOptionCard'
+import { memo } from 'react'
+import { type UseFormReturn, useFieldArray } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
+import type { PlanFormValues } from '@/schemas/plan'
 import { AutoFillSeasonalPricesButton } from './AutoFillSeasonalPricesButton'
+import { PriceOptionCard } from './PriceOptionCard'
 
 interface PricingSectionProps {
   form: UseFormReturn<PlanFormValues>
@@ -31,15 +31,35 @@ export const PricingSection = memo(function PricingSection({ form }: PricingSect
 
   const addGeneral = () => {
     if (hasGeneral) return
-    append({ id: Math.random().toString(36).slice(2, 9), mode: 'simple', label: '', price: '', currency: 'COP' } as any)
+    append({
+      id: Math.random().toString(36).slice(2, 9),
+      mode: 'simple',
+      label: '',
+      price: '',
+      currency: 'COP',
+    } as any)
   }
 
   const addSpecific = () => {
-    append({ id: Math.random().toString(36).slice(2, 9), mode: 'advanced', label: '', price: '', currency: 'COP' } as any)
+    append({
+      id: Math.random().toString(36).slice(2, 9),
+      mode: 'advanced',
+      label: '',
+      price: '',
+      currency: 'COP',
+    } as any)
   }
 
   const addSeasonal = () => {
-    append({ id: Math.random().toString(36).slice(2, 9), mode: 'seasonal', label: '', price: '', seasonTitle: '', seasonAccommodations: [], currency: 'COP' } as any)
+    append({
+      id: Math.random().toString(36).slice(2, 9),
+      mode: 'seasonal',
+      label: '',
+      price: '',
+      seasonTitle: '',
+      seasonAccommodations: [],
+      currency: 'COP',
+    } as any)
   }
 
   const removeAt = (index: number) => remove(index)
@@ -53,7 +73,11 @@ export const PricingSection = memo(function PricingSection({ form }: PricingSect
             <h3 className="text-base font-semibold theme-text">General Price</h3>
             <p className="text-xs theme-text-secondary">One price for the whole plan.</p>
           </div>
-          {!hasGeneral && <Button type="button" onClick={addGeneral} className="text-sm">Add General Price</Button>}
+          {!hasGeneral && (
+            <Button type="button" onClick={addGeneral} className="text-sm">
+              Add General Price
+            </Button>
+          )}
         </div>
         <div className="space-y-3">
           {generalItems.length === 0 ? (
@@ -80,7 +104,9 @@ export const PricingSection = memo(function PricingSection({ form }: PricingSect
             <h3 className="text-base font-semibold theme-text">Specific Prices</h3>
             <p className="text-xs theme-text-secondary">Prices with a custom description.</p>
           </div>
-          <Button type="button" onClick={addSpecific} className="text-sm">Add Specific Price</Button>
+          <Button type="button" onClick={addSpecific} className="text-sm">
+            Add Specific Price
+          </Button>
         </div>
         <div className="space-y-3">
           {specificItems.length === 0 ? (
@@ -105,10 +131,14 @@ export const PricingSection = memo(function PricingSection({ form }: PricingSect
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-base font-semibold theme-text">Seasonal Prices</h3>
-            <p className="text-xs theme-text-secondary">Different prices per season and accommodation.</p>
+            <p className="text-xs theme-text-secondary">
+              Different prices per season and accommodation.
+            </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button type="button" onClick={addSeasonal} className="text-sm">Add Seasonal Price</Button>
+            <Button type="button" onClick={addSeasonal} className="text-sm">
+              Add Seasonal Price
+            </Button>
             <AutoFillSeasonalPricesButton form={form} />
           </div>
         </div>

@@ -1,30 +1,30 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Wand2 } from 'lucide-react';
-import { UseFormReturn } from 'react-hook-form';
-import { PlanFormValues } from '@/schemas/plan';
+import { Wand2 } from 'lucide-react'
+import type { UseFormReturn } from 'react-hook-form'
+import { Button } from '@/components/ui/button'
+import type { PlanFormValues } from '@/schemas/plan'
 
 interface AutoFillSeasonalPricesButtonProps {
-  form: UseFormReturn<PlanFormValues>;
+  form: UseFormReturn<PlanFormValues>
 }
 
-export function AutoFillSeasonalPricesButton({
-  form
-}: AutoFillSeasonalPricesButtonProps) {
-  const { setValue } = form;
+export function AutoFillSeasonalPricesButton({ form }: AutoFillSeasonalPricesButtonProps) {
+  const { setValue } = form
 
   const handleAutoFill = () => {
     // Check if 3 seasons already exist
-    const currentOptions = form.getValues('priceOptions') || [];
-    const existingSeasons = currentOptions.filter((option) => option && typeof option === 'object' && 'mode' in option && option.mode === 'seasonal');
+    const currentOptions = form.getValues('priceOptions') || []
+    const existingSeasons = currentOptions.filter(
+      (option) =>
+        option && typeof option === 'object' && 'mode' in option && option.mode === 'seasonal',
+    )
 
     if (existingSeasons.length >= 3) {
       // Already present; do nothing
-      return;
+      return
     }
 
     // Clear all existing options
-    setValue('priceOptions', [], { shouldDirty: true, shouldValidate: true });
+    setValue('priceOptions', [], { shouldDirty: true, shouldValidate: true })
 
     // Default accommodations
     const accommodations = [
@@ -34,23 +34,19 @@ export function AutoFillSeasonalPricesButton({
       'QUADRUPLE',
       'QUINTUPLE',
       'CHILD 3 TO 10 YEARS',
-      'INFANT 0 TO 2 YEARS'
-    ];
+      'INFANT 0 TO 2 YEARS',
+    ]
 
     // Create 3 seasons
-    const seasons = [
-      'LOW SEASON',
-      'MID SEASON',
-      'HIGH SEASON'
-    ];
+    const seasons = ['LOW SEASON', 'MID SEASON', 'HIGH SEASON']
 
     const newSeasons = seasons.map((seasonTitle) => {
       const seasonAccommodations = accommodations.map((accommodation) => ({
         id: Math.random().toString(36).substring(2, 9),
         accommodation,
         price: '1.000.000', // Default price with dot thousand separators
-        currency: 'COP'
-      }));
+        currency: 'COP',
+      }))
 
       return {
         id: Math.random().toString(36).substring(2, 9),
@@ -59,18 +55,21 @@ export function AutoFillSeasonalPricesButton({
         price: '',
         seasonTitle,
         seasonAccommodations,
-        currency: 'COP'
-      };
-    });
+        currency: 'COP',
+      }
+    })
 
     // Set new seasons
-    setValue('priceOptions', newSeasons, { shouldDirty: true, shouldValidate: true });
-  };
+    setValue('priceOptions', newSeasons, { shouldDirty: true, shouldValidate: true })
+  }
 
   // Check if 3 seasons already exist for the label
-  const currentOptions = form.getValues('priceOptions') || [];
-  const existingSeasons = currentOptions.filter((option) => option && typeof option === 'object' && 'mode' in option && option.mode === 'seasonal');
-  const hasAllSeasons = existingSeasons.length >= 3;
+  const currentOptions = form.getValues('priceOptions') || []
+  const existingSeasons = currentOptions.filter(
+    (option) =>
+      option && typeof option === 'object' && 'mode' in option && option.mode === 'seasonal',
+  )
+  const hasAllSeasons = existingSeasons.length >= 3
 
   return (
     <div className="rounded-2xl p-3 sm:p-4 border theme-border theme-card w-full sm:w-auto">
@@ -81,8 +80,7 @@ export function AutoFillSeasonalPricesButton({
         <p className="text-xs theme-text-secondary hidden sm:block">
           {hasAllSeasons
             ? 'This will replace existing seasons'
-            : 'Creates 3 seasons with standard accommodations'
-          }
+            : 'Creates 3 seasons with standard accommodations'}
         </p>
       </div>
       <Button
@@ -97,5 +95,5 @@ export function AutoFillSeasonalPricesButton({
         <span className="sm:hidden">Auto-fill</span>
       </Button>
     </div>
-  );
+  )
 }
