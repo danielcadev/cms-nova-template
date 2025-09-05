@@ -114,12 +114,20 @@ export default function PluginsPage() {
           body: JSON.stringify(config),
         })
 
+        const text = await response.text()
         if (!response.ok) {
-          throw new Error('Failed to save S3 configuration')
+          // Try to surface backend error
+          try {
+            const data = JSON.parse(text)
+            const msg = data?.error || data?.message || 'Failed to save S3 configuration'
+            throw new Error(msg)
+          } catch {
+            throw new Error('Failed to save S3 configuration')
+          }
         }
 
         // Configuration saved successfully; keep UI feedback via toast only
-        const _result = await response.json()
+        const _result = text ? JSON.parse(text) : {}
       } else {
         // For other plugins, use the generic service
         await updatePluginConfig(selectedPlugin.id, config)
@@ -155,7 +163,10 @@ export default function PluginsPage() {
       console.error('Error saving plugin config:', error)
       toast({
         title: 'Error',
-        description: 'Could not save configuration',
+        description:
+          error instanceof Error
+            ? error.message
+            : 'Could not save configuration',
         variant: 'destructive',
       })
     }

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ModalBase, ModalBody, ModalFooter, ModalHeader } from '@/components/ui/Modal'
+import { useToast } from '@/hooks/use-toast'
 import type { Plugin } from '@/lib/plugins/config'
 import { TemplatesSelector } from './TemplatesSelector'
 import { TypePathsSelector } from './TypePathsSelector'
@@ -19,6 +20,7 @@ interface PluginConfigModalProps {
 
 export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginConfigModalProps) {
   const id = useId()
+  const { toast } = useToast()
 
   // Common saving state
   const [isSaving, setIsSaving] = useState(false)
@@ -31,6 +33,8 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
     secretAccessKey: '',
   })
   const [showSecrets, setShowSecrets] = useState(false)
+  const [encryptionOk, setEncryptionOk] = useState<boolean | null>(null)
+  const [encryptionReason, setEncryptionReason] = useState<string>('')
 
   // Dynamic Nav state
   const [navConfig, setNavConfig] = useState({
@@ -69,6 +73,49 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
     }
   }, [plugin, isS3, isDynamicNav])
 
+  // Check if encryption is configured (for storing secrets)
+  useEffect(() => {
+    let ignore = false
+    async function check() {
+      if (!isS3) {
+        setEncryptionOk(null)
+        setEncryptionReason('')
+        return
+      }
+      try {
+        const res = await fetch('/api/system/encryption-status', { cache: 'no-store' })
+        const data = await res.json().catch(() => ({}))
+        if (!ignore) {
+          const ok = !!data.ok
+          setEncryptionOk(ok)
+          setEncryptionReason(data.reason || '')
+          if (!ok) {
+            toast({
+              variant: 'destructive',
+              title: 'Falta configurar ENCRYPTION_KEY',
+              description:
+                'Debes configurar ENCRYPTION_KEY (64 hex) para guardar la configuración de S3. Hasta entonces, el guardado está deshabilitado.',
+            })
+          }
+        }
+      } catch {
+        if (!ignore) {
+          setEncryptionOk(false)
+          setEncryptionReason('error')
+          toast({
+            variant: 'destructive',
+            title: 'No se pudo verificar ENCRYPTION_KEY',
+            description: 'Intenta recargar la página o revisa el servidor.',
+          })
+        }
+      }
+    }
+    check()
+    return () => {
+      ignore = true
+    }
+  }, [isS3, toast])
+
   const title = useMemo(() => {
     if (isS3) return 'Configure AWS S3 Storage'
     if (isDynamicNav) return 'Dynamic TypePath Nav'
@@ -87,7 +134,12 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
     setIsSaving(true)
     try {
       if (isS3) {
-        await onSave(s3Config)
+        // Avoid sending placeholder/masked secret when the user didn't change it
+        const payload = { ...s3Config }
+        if (!payload.secretAccessKey || payload.secretAccessKey.trim().startsWith('•')) {
+          delete (payload as any).secretAccessKey
+        }
+        await onSave(payload)
       } else if (isDynamicNav) {
         await onSave(navConfig)
       } else {
@@ -168,6 +220,17 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                 </button>
               </div>
 
+              {/* Encryption warning */}
+              {isS3 && encryptionOk === false && (
+                <div className="rounded-lg border border-red-300 bg-red-50 dark:border-red-800 dark:bg-red-900/20 p-3 text-red-900 dark:text-red-100 text-sm">
+                  <p className="font-medium mb-1">Encryption key required</p>
+                  <p className="text-xs opacity-90">
+                    Set ENCRYPTION_KEY (64 hexadecimal characters) in your environment before saving this configuration.
+                    Saving is disabled to prevent inconsistent state.
+                  </p>
+                </div>
+              )}
+
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor={`${id}-accessKeyId`} className="text-sm font-medium theme-text">
@@ -200,8 +263,14 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                       setS3Config((prev) => ({ ...prev, secretAccessKey: e.target.value }))
                     }
                     placeholder="••••••••••••••••••••••••••••••••••••••••"
+                    disabled={encryptionOk === false}
                     className="rounded-lg theme-border theme-card theme-text placeholder:theme-text-muted"
                   />
+                  {encryptionOk === false && (
+                    <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
+                      This field is disabled until ENCRYPTION_KEY is set.
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -416,7 +485,8 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
           onClick={handleSave}
           disabled={
             isSaving ||
-            (isS3 && (!s3Config.bucket || !s3Config.accessKeyId || !s3Config.secretAccessKey))
+            (isS3 && (!s3Config.bucket || !s3Config.accessKeyId)) ||
+            (isS3 && encryptionOk === false)
           }
           className="bg-blue-600 hover:bg-blue-700 text-white"
         >

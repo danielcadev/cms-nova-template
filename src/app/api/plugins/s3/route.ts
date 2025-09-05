@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
-import { encrypt } from '@/lib/encryption'
 import { prisma } from '@/lib/prisma'
 import { rateLimit } from '@/lib/rate-limit'
 import { getAdminSession } from '@/lib/server-session'
@@ -24,7 +23,8 @@ export async function GET(request: Request) {
         bucket: config.bucket,
         region: config.region,
         accessKeyId: config.accessKeyId,
-        secretAccessKey: config.secretAccessKey ? '••••••••' : undefined,
+        // Do not send masked secret; omit it so UI doesn't overwrite with placeholder
+        // secretAccessKey intentionally omitted
       }
       return NextResponse.json({ success: true, config: safeConfig, source: 'database' })
     }
@@ -37,11 +37,11 @@ export async function GET(request: Request) {
     }
 
     if (envConfig.bucket && envConfig.accessKeyId && envConfig.secretAccessKey) {
+      // Do not send secrets back to client; omit secretAccessKey
       const safeEnvConfig = {
         bucket: envConfig.bucket,
         region: envConfig.region,
         accessKeyId: envConfig.accessKeyId,
-        secretAccessKey: '••••••••',
       }
       return NextResponse.json({ success: true, config: safeEnvConfig, source: 'env' })
     }
@@ -82,6 +82,16 @@ export async function POST(req: Request) {
       )
     }
 
+    // Require encryption key for any save to avoid partial/confusing states
+    const encryptionKey = process.env.ENCRYPTION_KEY || ''
+    const isHex64 = /^[0-9a-fA-F]{64}$/.test(encryptionKey)
+    if (!isHex64) {
+      return R.error(
+        'Encryption key is required. Set ENCRYPTION_KEY (64 hex chars) before saving S3 configuration.',
+        400,
+      )
+    }
+
     // Read previous (to preserve secret when not sent)
     const prev = await prisma.novaConfig.findUnique({ where: { key: S3_CONFIG_KEY } })
     const prevVal = (prev?.value as any) || {}
@@ -91,10 +101,20 @@ export async function POST(req: Request) {
       region: parsed.data.region,
       accessKeyId: parsed.data.accessKeyId,
       // Only update secret when present; else keep previous encrypted
-      secretAccessKey:
-        typeof parsed.data.secretAccessKey === 'string' && parsed.data.secretAccessKey.trim()
-          ? encrypt(parsed.data.secretAccessKey)
-          : prevVal.secretAccessKey || null,
+      secretAccessKey: prevVal.secretAccessKey || null,
+    } as any
+
+    // If client sent a new secret, encrypt it lazily (and validate key)
+    if (typeof parsed.data.secretAccessKey === 'string' && parsed.data.secretAccessKey.trim()) {
+      try {
+        const { encrypt } = await import('@/lib/encryption')
+        toStore.secretAccessKey = encrypt(parsed.data.secretAccessKey)
+      } catch (_e) {
+        return R.error(
+          'Encryption is not configured. Set ENCRYPTION_KEY (64 hex chars) to save the secret.',
+          400,
+        )
+      }
     }
 
     const s3Config = await prisma.novaConfig.upsert({
