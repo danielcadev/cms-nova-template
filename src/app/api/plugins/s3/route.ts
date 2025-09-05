@@ -57,7 +57,8 @@ const s3ConfigSchema = z.object({
   bucket: z.string().min(1),
   region: z.string().min(1),
   accessKeyId: z.string().min(1),
-  secretAccessKey: z.string().min(1),
+  // Make secret optional to allow updating other fields without re-entering it
+  secretAccessKey: z.string().min(1).optional(),
 })
 
 export async function POST(req: Request) {
@@ -81,7 +82,20 @@ export async function POST(req: Request) {
       )
     }
 
-    const toStore = { ...parsed.data, secretAccessKey: encrypt(parsed.data.secretAccessKey) }
+    // Read previous (to preserve secret when not sent)
+    const prev = await prisma.novaConfig.findUnique({ where: { key: S3_CONFIG_KEY } })
+    const prevVal = (prev?.value as any) || {}
+
+    const toStore = {
+      bucket: parsed.data.bucket,
+      region: parsed.data.region,
+      accessKeyId: parsed.data.accessKeyId,
+      // Only update secret when present; else keep previous encrypted
+      secretAccessKey:
+        typeof parsed.data.secretAccessKey === 'string' && parsed.data.secretAccessKey.trim()
+          ? encrypt(parsed.data.secretAccessKey)
+          : prevVal.secretAccessKey || null,
+    }
 
     const s3Config = await prisma.novaConfig.upsert({
       where: { key: S3_CONFIG_KEY },
@@ -89,7 +103,15 @@ export async function POST(req: Request) {
       create: { key: S3_CONFIG_KEY, value: toStore, category: 'plugin' },
     })
 
-    const responseData = { ...s3Config, value: { ...parsed.data, secretAccessKey: '••••••••' } }
+    const responseData = {
+      ...s3Config,
+      value: {
+        bucket: toStore.bucket,
+        region: toStore.region,
+        accessKeyId: toStore.accessKeyId,
+        secretAccessKey: '••••••••',
+      },
+    }
     return NextResponse.json({ success: true, config: responseData })
   } catch (error) {
     logger.error('Error saving S3 configuration:', error)

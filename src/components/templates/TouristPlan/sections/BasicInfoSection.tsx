@@ -118,12 +118,30 @@ export function BasicInfoSection() {
 
   // Category/destination options: manual with local persistence
   useEffect(() => {
-    // Load locally saved options
+    // Load locally saved options and ensure current form values are present
     try {
       const storedCats = JSON.parse(localStorage.getItem(CATEGORY_KEY) || '[]')
       const storedSlugs = JSON.parse(localStorage.getItem(SLUG_KEY) || '[]')
-      if (Array.isArray(storedCats)) setCategoryOptions(storedCats)
-      if (Array.isArray(storedSlugs)) setPlanSlugOptions(storedSlugs)
+
+      // Start with stored categories (if any)
+      let nextCats: ComboboxOption[] = Array.isArray(storedCats) ? storedCats : []
+
+      // Ensure current categoryAlias from the form is available as an option
+      const currentCategory = watch('categoryAlias')
+      if (currentCategory && !nextCats.some((o: ComboboxOption) => o.value === currentCategory)) {
+        nextCats = [{ label: currentCategory, value: currentCategory }, ...nextCats]
+      }
+      setCategoryOptions(nextCats)
+
+      // Start with stored slugs (if any)
+      let nextSlugs: ComboboxOption[] = Array.isArray(storedSlugs) ? storedSlugs : []
+
+      // Ensure current articleAlias from the form is available as an option
+      const currentSlug = watch('articleAlias')
+      if (currentSlug && !nextSlugs.some((o: ComboboxOption) => o.value === currentSlug)) {
+        nextSlugs = [{ label: currentSlug, value: currentSlug }, ...nextSlugs]
+      }
+      setPlanSlugOptions(nextSlugs)
     } catch {}
   }, [])
 
@@ -301,24 +319,6 @@ export function BasicInfoSection() {
                       />
                     </FormControl>
                     <FormMessage />
-                    {/* Delete current slug from list */}
-                    {planSlugOptions.length > 0 && (
-                      <div className="mt-2">
-                        <button
-                          type="button"
-                          className="text-xs theme-text-secondary hover:theme-text"
-                          onClick={() => {
-                            const current = field.value
-                            if (!current) return
-                            setPlanSlugOptions((prev) => prev.filter((o) => o.value !== current))
-                            setValue('articleAlias', '')
-                            toast({ title: 'Deleted', description: 'Slug removed from list.' })
-                          }}
-                        >
-                          Remove current slug from list
-                        </button>
-                      </div>
-                    )}
                   </FormItem>
                 )}
               />

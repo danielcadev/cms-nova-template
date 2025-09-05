@@ -3,7 +3,7 @@
 
 import { X } from 'lucide-react'
 import type React from 'react'
-import { type UseFormReturn, useFieldArray } from 'react-hook-form'
+import { useFormContext, useFieldArray } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -17,7 +17,6 @@ import {
 import type { PlanFormValues } from '@/schemas/plan'
 
 interface PriceOptionCardProps {
-  form: UseFormReturn<PlanFormValues>
   index: number
   onRemove: () => void
   canRemove: boolean
@@ -26,14 +25,13 @@ interface PriceOptionCardProps {
 }
 
 export function PriceOptionCard({
-  form,
   index,
   onRemove,
   canRemove,
   hasOtherGeneralPrice = false,
   fieldName = 'priceOptions',
 }: PriceOptionCardProps) {
-  const { control, setValue, watch, trigger } = form
+  const { control, setValue, watch, trigger } = useFormContext<PlanFormValues>()
   const mode: 'simple' | 'advanced' | 'seasonal' =
     (watch(`${fieldName}.${index}.mode` as any) as any) || 'simple'
 

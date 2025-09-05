@@ -1,18 +1,15 @@
 'use client'
 
 import { memo } from 'react'
-import { type UseFormReturn, useFieldArray } from 'react-hook-form'
+import { useFormContext, useFieldArray } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import type { PlanFormValues } from '@/schemas/plan'
 import { AutoFillSeasonalPricesButton } from './AutoFillSeasonalPricesButton'
 import { PriceOptionCard } from './PriceOptionCard'
 
-interface PricingSectionProps {
-  form: UseFormReturn<PlanFormValues>
-}
-
 // Full revamp: Three Notion-like blocks with independent add controls
-export const PricingSection = memo(function PricingSection({ form }: PricingSectionProps) {
+export const PricingSection = memo(function PricingSection() {
+  const form = useFormContext<PlanFormValues>()
   const { control, watch } = form
 
   const { fields, append, remove } = useFieldArray({ control, name: 'priceOptions' })
@@ -86,7 +83,6 @@ export const PricingSection = memo(function PricingSection({ form }: PricingSect
             generalItems.map(({ id, index }) => (
               <PriceOptionCard
                 key={id}
-                form={form}
                 index={index}
                 onRemove={() => removeAt(index)}
                 canRemove={true}
@@ -115,7 +111,6 @@ export const PricingSection = memo(function PricingSection({ form }: PricingSect
             specificItems.map(({ id, index }) => (
               <PriceOptionCard
                 key={id}
-                form={form}
                 index={index}
                 onRemove={() => removeAt(index)}
                 canRemove={true}
@@ -139,7 +134,7 @@ export const PricingSection = memo(function PricingSection({ form }: PricingSect
             <Button type="button" onClick={addSeasonal} className="text-sm">
               Add Seasonal Price
             </Button>
-            <AutoFillSeasonalPricesButton form={form} />
+            <AutoFillSeasonalPricesButton />
           </div>
         </div>
         <div className="space-y-3">
@@ -149,7 +144,6 @@ export const PricingSection = memo(function PricingSection({ form }: PricingSect
             seasonalItems.map(({ id, index }) => (
               <PriceOptionCard
                 key={id}
-                form={form}
                 index={index}
                 onRemove={() => removeAt(index)}
                 canRemove={true}

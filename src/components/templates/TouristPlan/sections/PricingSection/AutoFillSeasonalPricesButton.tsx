@@ -1,21 +1,18 @@
+'use client'
+
 import { Wand2 } from 'lucide-react'
-import type { UseFormReturn } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import type { PlanFormValues } from '@/schemas/plan'
 
-interface AutoFillSeasonalPricesButtonProps {
-  form: UseFormReturn<PlanFormValues>
-}
-
-export function AutoFillSeasonalPricesButton({ form }: AutoFillSeasonalPricesButtonProps) {
-  const { setValue } = form
+export function AutoFillSeasonalPricesButton() {
+  const { setValue, getValues } = useFormContext<PlanFormValues>()
 
   const handleAutoFill = () => {
     // Check if 3 seasons already exist
-    const currentOptions = form.getValues('priceOptions') || []
+    const currentOptions = getValues('priceOptions') || []
     const existingSeasons = currentOptions.filter(
-      (option) =>
-        option && typeof option === 'object' && 'mode' in option && option.mode === 'seasonal',
+      (option) => option && typeof option === 'object' && 'mode' in option && option.mode === 'seasonal',
     )
 
     if (existingSeasons.length >= 3) {
@@ -64,10 +61,9 @@ export function AutoFillSeasonalPricesButton({ form }: AutoFillSeasonalPricesBut
   }
 
   // Check if 3 seasons already exist for the label
-  const currentOptions = form.getValues('priceOptions') || []
+  const currentOptions = getValues('priceOptions') || []
   const existingSeasons = currentOptions.filter(
-    (option) =>
-      option && typeof option === 'object' && 'mode' in option && option.mode === 'seasonal',
+    (option) => option && typeof option === 'object' && 'mode' in option && option.mode === 'seasonal',
   )
   const hasAllSeasons = existingSeasons.length >= 3
 
@@ -78,9 +74,7 @@ export function AutoFillSeasonalPricesButton({ form }: AutoFillSeasonalPricesBut
           {hasAllSeasons ? 'Recreate seasons?' : 'Need help getting started?'}
         </p>
         <p className="text-xs theme-text-secondary hidden sm:block">
-          {hasAllSeasons
-            ? 'This will replace existing seasons'
-            : 'Creates 3 seasons with standard accommodations'}
+          {hasAllSeasons ? 'This will replace existing seasons' : 'Creates 3 seasons with standard accommodations'}
         </p>
       </div>
       <Button

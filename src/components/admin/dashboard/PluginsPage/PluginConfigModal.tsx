@@ -30,7 +30,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
     accessKeyId: '',
     secretAccessKey: '',
   })
-  const [showSecrets, setShowSecrets] = useState(true)
+  const [showSecrets, setShowSecrets] = useState(false)
 
   // Dynamic Nav state
   const [navConfig, setNavConfig] = useState({
