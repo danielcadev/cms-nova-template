@@ -1,13 +1,17 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
+import { rateLimit } from '@/lib/rate-limit'
 
 export async function POST(request: Request) {
   try {
     if (process.env.NODE_ENV === 'production' || process.env.ENABLE_ADMIN_TOOLS !== 'true') {
       return new NextResponse('Not Found', { status: 404 })
     }
-    const { email, password } = await request.json()
 
+    const rl = rateLimit(request, { limit: 10, windowMs: 60_000, key: 'test-login:POST' })
+    if (!rl.allowed) return NextResponse.json({ success: false }, { status: 429 })
+
+    const { email, password } = await request.json()
     if (!email || !password) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
     }
@@ -33,7 +37,6 @@ export async function POST(request: Request) {
         {
           success: false,
           error: 'Authentication error',
-          details: authError.message || 'Unknown error',
           code: authError.code || 'UNKNOWN_ERROR',
         },
         { status: 401 },
@@ -42,13 +45,6 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('❌ Error in test-login:', error)
 
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Internal Server Error',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 },
-    )
+    return NextResponse.json({ success: false }, { status: 500 })
   }
 }
