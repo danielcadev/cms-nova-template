@@ -15,7 +15,6 @@ export function MediaGrid({
   onSelect?: (item: MediaItem) => void
   onDeleted?: () => void
 }) {
-  const [hovered, setHovered] = useState<string | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
   const [preview, setPreview] = useState<MediaItem | null>(null)
 
@@ -57,9 +56,7 @@ export function MediaGrid({
             <button
               type="button"
               onClick={() => selectItem(m)}
-              onMouseEnter={() => setHovered(m.key)}
-              onMouseLeave={() => setHovered((h) => (h === m.key ? null : h))}
-              className="w-full focus:outline-none text-left"
+              className="w-full text-left focus:outline-none"
               aria-label={`Select ${m.key}`}
             >
               <div className="aspect-square relative">
@@ -76,49 +73,47 @@ export function MediaGrid({
                     {m.mimeType}
                   </div>
                 )}
-                {/* Hover overlay actions */}
-                <div
-                  className={`absolute inset-0 bg-black/0 group-hover:bg-black/25 transition flex items-start justify-between p-2 ${hovered === m.key ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
-                >
-                  <div className="flex gap-1">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        setPreview(m)
-                      }}
-                      className="px-2 py-1 rounded-md border theme-border theme-card hover:theme-card-hover text-xs theme-text"
-                    >
-                      Open
-                    </button>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        navigator.clipboard.writeText(m.url)
-                      }}
-                      className="px-2 py-1 rounded-md border theme-border theme-card hover:theme-card-hover text-xs theme-text"
-                    >
-                      Copy URL
-                    </button>
-                  </div>
-                  <div>
-                    <button
-                      type="button"
-                      onClick={(e) => deleteItem(e, m.key)}
-                      className="px-2 py-1 rounded-md border border-red-300 bg-red-50 hover:bg-red-100 text-xs text-red-700"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
               </div>
               <div className="absolute inset-x-0 bottom-0 px-2 py-1 text-[11px] theme-bg-secondary/80 backdrop-blur theme-text truncate">
                 {m.key}
               </div>
             </button>
+            {/* Hover overlay actions */}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition flex items-start justify-between p-2 opacity-0 group-hover:opacity-100 pointer-events-none">
+              <div className="flex gap-1 pointer-events-auto">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setPreview(m)
+                  }}
+                  className="px-2 py-1 rounded-md border theme-border theme-card hover:theme-card-hover text-xs theme-text"
+                >
+                  Open
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    navigator.clipboard.writeText(m.url)
+                  }}
+                  className="px-2 py-1 rounded-md border theme-border theme-card hover:theme-card-hover text-xs theme-text"
+                >
+                  Copy URL
+                </button>
+              </div>
+              <div className="pointer-events-auto">
+                <button
+                  type="button"
+                  onClick={(e) => deleteItem(e, m.key)}
+                  className="px-2 py-1 rounded-md border border-red-300 bg-red-50 hover:bg-red-100 text-xs text-red-700"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
           </div>
         ))}
       </div>

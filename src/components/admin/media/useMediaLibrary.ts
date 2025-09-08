@@ -107,31 +107,50 @@ export function useMediaLibrary() {
       const fArr = Array.from(files)
       const results: { success: boolean; item?: MediaItem; error?: string }[] = []
 
+      // Small helpers to avoid long hangs
+      const fetchWithTimeout = async (
+        input: RequestInfo,
+        init: RequestInit & { timeoutMs?: number } = {},
+      ) => {
+        const controller = new AbortController()
+        const id = setTimeout(() => controller.abort(), init.timeoutMs ?? 15000) // default 15s
+        try {
+          const res = await fetch(input, { ...init, signal: controller.signal })
+          return res
+        } finally {
+          clearTimeout(id)
+        }
+      }
+
       const doServerUpload = async (file: File, folderToUse: string) => {
         const form = new FormData()
         form.append('file', file)
         if (folderToUse) form.append('folder', folderToUse)
-        const res = await fetch('/api/upload', { method: 'POST', body: form })
-        const data = await res.json()
-        if (res.ok && data.success) {
+        const res = await fetchWithTimeout('/api/upload', {
+          method: 'POST',
+          body: form,
+          timeoutMs: 120000,
+        })
+        const data = await res.json().catch(() => ({}))
+        if (res.ok && (data as any).success) {
           return {
             success: true as const,
             item: {
-              id: data.key,
-              key: data.key,
-              url: data.url,
-              mimeType: data.type,
-              size: data.size,
+              id: (data as any).key,
+              key: (data as any).key,
+              url: (data as any).url,
+              mimeType: (data as any).type,
+              size: (data as any).size,
               folder: folderToUse,
             },
           }
         }
-        return { success: false as const, error: data.error || 'Upload failed' }
+        return { success: false as const, error: (data as any).error || 'Upload failed' }
       }
 
       const doPresignedUpload = async (file: File, folderToUse: string) => {
         // 1) Ask backend for presigned URL
-        const presignRes = await fetch('/api/upload/presign', {
+        const presignRes = await fetchWithTimeout('/api/upload/presign', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -140,6 +159,7 @@ export function useMediaLibrary() {
             size: file.size,
             folder: folderToUse || 'uploads',
           }),
+          timeoutMs: 10000, // 10s
         })
         if (!presignRes.ok) throw new Error('Presign request failed')
         const presignJson = await presignRes.json()
@@ -147,12 +167,17 @@ export function useMediaLibrary() {
         const { url, key, headers, publicUrl } = presignJson.data
 
         // 2) PUT file to S3
-        const putRes = await fetch(url, { method: 'PUT', headers, body: file })
+        const putRes = await fetchWithTimeout(url, {
+          method: 'PUT',
+          headers,
+          body: file,
+          timeoutMs: 120000,
+        })
         if (!putRes.ok) throw new Error('S3 upload failed')
 
         // 3) Register asset in DB
         const fileUrl = publicUrl
-        const registerRes = await fetch('/api/media/register', {
+        const registerRes = await fetchWithTimeout('/api/media/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -162,17 +187,18 @@ export function useMediaLibrary() {
             size: file.size,
             folder: folderToUse || 'uploads',
           }),
+          timeoutMs: 10000,
         })
         if (!registerRes.ok) throw new Error('Register asset failed')
-        const regJson = await registerRes.json()
-        if (!regJson?.success) throw new Error(regJson?.error || 'Register error')
+        const regJson = await registerRes.json().catch(() => ({}))
+        if (!(regJson as any)?.success) throw new Error((regJson as any)?.error || 'Register error')
 
         return {
           success: true as const,
           item: {
             id: key,
             key,
-            url: regJson.data?.url || fileUrl,
+            url: (regJson as any).data?.url || fileUrl,
             mimeType: file.type,
             size: file.size,
             folder: folderToUse,
@@ -180,18 +206,27 @@ export function useMediaLibrary() {
         }
       }
 
+      // Concurrency control for multiple uploads
       const folderToUse = targetFolder || folder || 'uploads'
-      for (const file of fArr) {
-        try {
-          // Try presigned upload first
-          const r = await doPresignedUpload(file as File, folderToUse)
-          results.push(r)
-        } catch (_e) {
-          // Fallback to server upload
-          const r = await doServerUpload(file as File, folderToUse)
-          results.push(r)
+      const CONCURRENCY = 3
+      let index = 0
+      const worker = async () => {
+        while (true) {
+          const i = index++
+          if (i >= fArr.length) break
+          const file = fArr[i] as File
+          try {
+            const r = await doPresignedUpload(file, folderToUse)
+            results[i] = r
+          } catch (_e) {
+            const r = await doServerUpload(file, folderToUse)
+            results[i] = r
+          }
         }
       }
+
+      const workers = Array.from({ length: Math.min(CONCURRENCY, fArr.length) }, () => worker())
+      await Promise.all(workers)
 
       await fetchItems({ page: 1, q, folder: targetFolder ?? folder })
       return results
