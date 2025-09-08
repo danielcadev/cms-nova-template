@@ -9,7 +9,7 @@ import { ApiResponseBuilder as R } from '@/utils/api-response'
 import logger from '@/utils/logger'
 
 const S3_CONFIG_KEY = 's3-credentials'
-const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+const MAX_FILE_SIZE = 15 * 1024 * 1024 // 15MB
 const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
 
 const deleteSchema = z.object({
