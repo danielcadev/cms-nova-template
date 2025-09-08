@@ -215,7 +215,7 @@ export function MainImage({ form }: MainImageProps) {
                             <p className="text-sm text-gray-500 text-center">
                               Drag & drop, click to select, or choose from Media
                               <span className="block mt-1 text-xs">
-                                Recommended size: 1200x630px • Max 5MB • JPG, PNG, or WebP
+                                Recommended size: 1200x630px • Max 10MB • JPG, PNG, WebP, or GIF
                               </span>
                             </p>
                           </div>

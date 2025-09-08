@@ -125,3 +125,13 @@ export async function POST(request: NextRequest) {
     return R.error('Internal server error while generating presigned URL', 500)
   }
 }
+
+// Handle preflight requests to avoid 405 on OPTIONS
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: {
+      Allow: 'POST, OPTIONS',
+    },
+  })
+}

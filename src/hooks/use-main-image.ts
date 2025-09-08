@@ -37,11 +37,12 @@ export function useMainImage({ form }: UseMainImageProps) {
       body: formData,
       timeoutMs: 120000,
     })
-    const data = await res.json().catch(() => ({}))
-    if (!res.ok || !(data as any).success) {
-      throw new Error((data as any).error || 'Error al subir el archivo')
+    const json = (await res.json().catch(() => ({}))) as any
+    if (!res.ok || !json?.success) {
+      throw new Error(json?.error || 'Error al subir el archivo')
     }
-    return { url: (data as any).url as string, key: (data as any).key as string }
+    const payload = json?.data ?? {}
+    return { url: payload.url as string, key: payload.key as string }
   }
 
   const presignedUpload = async (file: File) => {
@@ -90,30 +91,44 @@ export function useMainImage({ form }: UseMainImageProps) {
 
   const handleImageUpload = async (file: File) => {
     try {
+      console.debug('[MainImage] handleImageUpload:start', {
+        name: file.name,
+        type: file.type,
+        size: file.size,
+      })
       setIsUploading(true)
       setError(null)
 
       // Validar imagen
       const validation = validateImage(file)
+      console.debug('[MainImage] validation', validation)
       if (!validation.isValid) {
         throw new Error(validation.error)
       }
 
       // Eliminar imagen anterior si existe
       const currentImage = form.getValues('mainImage')
+      console.debug('[MainImage] currentImage(before)', currentImage)
       if (currentImage) {
+        console.debug('[MainImage] deleting previous image')
         await handleImageDelete()
+        console.debug('[MainImage] previous image deleted')
       }
 
       // Try fast path (presigned S3 PUT), fallback to server upload
       let result: { url: string; key: string }
       try {
+        console.debug('[MainImage] presignedUpload:attempt')
         result = await presignedUpload(file)
-      } catch (_e) {
+        console.debug('[MainImage] presignedUpload:success', result)
+      } catch (e) {
+        console.warn('[MainImage] presignedUpload:failed, falling back to serverUpload', e)
         result = await serverUpload(file)
+        console.debug('[MainImage] serverUpload:success', result)
       }
 
       // Actualizar formulario
+      console.debug('[MainImage] form.setValue(mainImage)')
       form.setValue(
         'mainImage',
         {
@@ -129,6 +144,7 @@ export function useMainImage({ form }: UseMainImageProps) {
           shouldDirty: true,
         },
       )
+      console.debug('[MainImage] form.setValue done')
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
       setError(errorMessage)
@@ -140,6 +156,7 @@ export function useMainImage({ form }: UseMainImageProps) {
   const handleImageDelete = async () => {
     try {
       const currentImage = form.getValues('mainImage')
+      console.debug('[MainImage] handleImageDelete:currentImage', currentImage)
 
       // Si no hay imagen, no hacer nada
       if (!currentImage) return
@@ -158,22 +175,26 @@ export function useMainImage({ form }: UseMainImageProps) {
       // Si hay una key, intentar eliminar la imagen de S3
       if (imageKey) {
         try {
-          await fetchWithTimeout('/api/upload', {
+          console.debug('[MainImage] delete:attempt', imageKey)
+          const res = await fetchWithTimeout('/api/upload', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ key: imageKey }),
             timeoutMs: 10000,
           })
+          console.debug('[MainImage] delete:status', res.status)
         } catch (_error) {
-          // best-effort
+          console.warn('[MainImage] delete:failed')
         }
       }
 
       // Limpiar el campo de imagen en el formulario
+      console.debug('[MainImage] clearing form mainImage')
       form.setValue('mainImage', null, {
         shouldValidate: true,
         shouldDirty: true,
       })
+      console.debug('[MainImage] cleared')
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
       setError(errorMessage)

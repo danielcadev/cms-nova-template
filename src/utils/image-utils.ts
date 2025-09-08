@@ -10,7 +10,7 @@ import {
 } from '@/types/image'
 
 export const IMAGE_CONFIG = {
-  maxSize: 5 * 1024 * 1024, // 5MB en bytes
+  maxSize: 10 * 1024 * 1024, // 10MB en bytes (alineado con API)
   acceptedTypes: Object.values(ACCEPTED_IMAGE_TYPES) as AcceptedImageType[],
   dimensions: {
     width: 1200,
