@@ -1,7 +1,7 @@
 'use client'
 
 import { Eye, EyeOff, Save } from 'lucide-react'
-import { useEffect, useId, useMemo, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -34,7 +34,9 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
   })
   const [showSecrets, setShowSecrets] = useState(false)
   const [encryptionOk, setEncryptionOk] = useState<boolean | null>(null)
-  const [encryptionReason, setEncryptionReason] = useState<string>('')
+  const [_encryptionReason, setEncryptionReason] = useState<string>('')
+  // Cache encryption status for 30s to avoid repeated network calls when reopening modal
+  const encCacheRef = useRef<{ ok: boolean; ts: number } | null>(null)
 
   // Dynamic Nav state
   const [navConfig, setNavConfig] = useState({
@@ -82,11 +84,34 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
         setEncryptionReason('')
         return
       }
+
+      // Use short-lived cache (30s) to avoid repeated fetches
+      const now = Date.now()
+      const cached = encCacheRef.current
+      if (cached && now - cached.ts < 30_000) {
+        setEncryptionOk(cached.ok)
+        if (!cached.ok) {
+          toast({
+            variant: 'destructive',
+            title: 'Falta configurar ENCRYPTION_KEY',
+            description:
+              'Debes configurar ENCRYPTION_KEY (64 hex) para guardar la configuración de S3. Hasta entonces, el guardado está deshabilitado.',
+          })
+        }
+        return
+      }
+
+      const ctrl = new AbortController()
+      const timeout = setTimeout(() => ctrl.abort(), 2500)
       try {
-        const res = await fetch('/api/system/encryption-status', { cache: 'no-store' })
+        const res = await fetch('/api/system/encryption-status', {
+          cache: 'no-store',
+          signal: ctrl.signal,
+        })
         const data = await res.json().catch(() => ({}))
         if (!ignore) {
           const ok = !!data.ok
+          encCacheRef.current = { ok, ts: Date.now() }
           setEncryptionOk(ok)
           setEncryptionReason(data.reason || '')
           if (!ok) {
@@ -100,6 +125,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
         }
       } catch {
         if (!ignore) {
+          encCacheRef.current = { ok: false, ts: Date.now() }
           setEncryptionOk(false)
           setEncryptionReason('error')
           toast({
@@ -108,6 +134,8 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
             description: 'Intenta recargar la página o revisa el servidor.',
           })
         }
+      } finally {
+        clearTimeout(timeout)
       }
     }
     check()
@@ -225,8 +253,8 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                 <div className="rounded-lg border border-red-300 bg-red-50 dark:border-red-800 dark:bg-red-900/20 p-3 text-red-900 dark:text-red-100 text-sm">
                   <p className="font-medium mb-1">Encryption key required</p>
                   <p className="text-xs opacity-90">
-                    Set ENCRYPTION_KEY (64 hexadecimal characters) in your environment before saving this configuration.
-                    Saving is disabled to prevent inconsistent state.
+                    Set ENCRYPTION_KEY (64 hexadecimal characters) in your environment before saving
+                    this configuration. Saving is disabled to prevent inconsistent state.
                   </p>
                 </div>
               )}

@@ -163,10 +163,7 @@ export default function PluginsPage() {
       console.error('Error saving plugin config:', error)
       toast({
         title: 'Error',
-        description:
-          error instanceof Error
-            ? error.message
-            : 'Could not save configuration',
+        description: error instanceof Error ? error.message : 'Could not save configuration',
         variant: 'destructive',
       })
     }

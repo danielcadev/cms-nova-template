@@ -12,6 +12,7 @@
     }
   },
   "states": {
-    "dynamic-nav": true
+    "dynamic-nav": true,
+    "s3-storage": false
   }
 }

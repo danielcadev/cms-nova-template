@@ -12,7 +12,8 @@ export function AutoFillSeasonalPricesButton() {
     // Check if 3 seasons already exist
     const currentOptions = getValues('priceOptions') || []
     const existingSeasons = currentOptions.filter(
-      (option) => option && typeof option === 'object' && 'mode' in option && option.mode === 'seasonal',
+      (option) =>
+        option && typeof option === 'object' && 'mode' in option && option.mode === 'seasonal',
     )
 
     if (existingSeasons.length >= 3) {
@@ -63,7 +64,8 @@ export function AutoFillSeasonalPricesButton() {
   // Check if 3 seasons already exist for the label
   const currentOptions = getValues('priceOptions') || []
   const existingSeasons = currentOptions.filter(
-    (option) => option && typeof option === 'object' && 'mode' in option && option.mode === 'seasonal',
+    (option) =>
+      option && typeof option === 'object' && 'mode' in option && option.mode === 'seasonal',
   )
   const hasAllSeasons = existingSeasons.length >= 3
 
@@ -74,7 +76,9 @@ export function AutoFillSeasonalPricesButton() {
           {hasAllSeasons ? 'Recreate seasons?' : 'Need help getting started?'}
         </p>
         <p className="text-xs theme-text-secondary hidden sm:block">
-          {hasAllSeasons ? 'This will replace existing seasons' : 'Creates 3 seasons with standard accommodations'}
+          {hasAllSeasons
+            ? 'This will replace existing seasons'
+            : 'Creates 3 seasons with standard accommodations'}
         </p>
       </div>
       <Button

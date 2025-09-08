@@ -143,7 +143,7 @@ export function BasicInfoSection() {
       }
       setPlanSlugOptions(nextSlugs)
     } catch {}
-  }, [])
+  }, [watch])
 
   useEffect(() => {
     // Save changes locally

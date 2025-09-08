@@ -1,7 +1,7 @@
 'use client'
 
 import { memo } from 'react'
-import { useFormContext, useFieldArray } from 'react-hook-form'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import type { PlanFormValues } from '@/schemas/plan'
 import { AutoFillSeasonalPricesButton } from './AutoFillSeasonalPricesButton'
