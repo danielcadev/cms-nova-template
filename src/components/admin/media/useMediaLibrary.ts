@@ -113,7 +113,7 @@ export function useMediaLibrary() {
         init: RequestInit & { timeoutMs?: number } = {},
       ) => {
         const controller = new AbortController()
-        const id = setTimeout(() => controller.abort(), init.timeoutMs ?? 15000) // default 15s
+        const id = setTimeout(() => controller.abort(), init.timeoutMs ?? 10000) // default 10s
         try {
           const res = await fetch(input, { ...init, signal: controller.signal })
           return res
@@ -171,7 +171,7 @@ export function useMediaLibrary() {
           method: 'PUT',
           headers,
           body: file,
-          timeoutMs: 120000,
+          timeoutMs: 45000, // fail fast and fallback to server upload if needed
         })
         if (!putRes.ok) throw new Error('S3 upload failed')
 
