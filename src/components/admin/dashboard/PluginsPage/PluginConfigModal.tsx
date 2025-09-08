@@ -35,6 +35,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
   const [showSecrets, setShowSecrets] = useState(false)
   const [encryptionOk, setEncryptionOk] = useState<boolean | null>(null)
   const [_encryptionReason, setEncryptionReason] = useState<string>('')
+  const [hasExistingConfig, setHasExistingConfig] = useState(false)
   // Cache encryption status for 30s to avoid repeated network calls when reopening modal
   const encCacheRef = useRef<{ ok: boolean; ts: number } | null>(null)
 
@@ -56,12 +57,13 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
     if (!plugin) return
 
     if (isS3) {
-      setS3Config({
-        bucket: plugin.settings?.bucket || '',
-        region: plugin.settings?.region || 'us-east-1',
-        accessKeyId: plugin.settings?.accessKeyId || '',
-        secretAccessKey: plugin.settings?.secretAccessKey || '',
-      })
+      const bucket = plugin.settings?.bucket || ''
+      const region = plugin.settings?.region || 'us-east-1'
+      const accessKeyId = plugin.settings?.accessKeyId || ''
+      const secretAccessKey = plugin.settings?.secretAccessKey || ''
+      setS3Config({ bucket, region, accessKeyId, secretAccessKey })
+      // Mark if there is an existing config (so secret can be optional when editing)
+      setHasExistingConfig(!!(bucket && region && accessKeyId))
     }
 
     if (isDynamicNav) {
@@ -513,7 +515,10 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
           onClick={handleSave}
           disabled={
             isSaving ||
-            (isS3 && (!s3Config.bucket || !s3Config.accessKeyId)) ||
+            (isS3 &&
+              (!s3Config.bucket ||
+                !s3Config.accessKeyId ||
+                (!hasExistingConfig && !s3Config.secretAccessKey))) ||
             (isS3 && encryptionOk === false)
           }
           className="bg-blue-600 hover:bg-blue-700 text-white"

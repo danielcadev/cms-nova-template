@@ -28,16 +28,15 @@ export function MainImage({ form }: MainImageProps) {
   useEffect(() => {
     const fetchS3Config = async () => {
       try {
-        const response = await fetch('/api/plugins/s3')
+        const response = await fetch('/api/plugins/s3', { cache: 'no-store' })
         const data = await response.json()
 
-        // Verificar que la configuración existe y tiene las propiedades necesarias
+        // Consider S3 configured if backend reports a usable config (secret is never sent to client)
         if (
-          data.success &&
-          data.config &&
+          data?.success &&
+          data?.config &&
           data.config.bucket &&
           data.config.accessKeyId &&
-          data.config.secretAccessKey &&
           data.config.region
         ) {
           setIsS3Configured(true)
@@ -248,12 +247,14 @@ export function MainImage({ form }: MainImageProps) {
                           </Button>
                           <Button
                             type="button"
-                            variant="destructive"
+                            variant="outline"
                             size="sm"
                             onClick={handleImageDelete}
-                            className="rounded-full h-8 w-8 p-0 shadow-lg"
+                            className="rounded-full h-8 w-8 p-0 shadow-lg bg-white/90 hover:bg-white dark:bg-black/40 dark:hover:bg-black/60 border theme-border"
+                            aria-label="Remove image"
+                            title="Remove image"
                           >
-                            <X className="w-4 h-4" />
+                            <X className="w-4 h-4 theme-text" />
                           </Button>
                         </div>
                       </div>

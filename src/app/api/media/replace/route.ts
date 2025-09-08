@@ -8,7 +8,8 @@ import { getAdminSession } from '@/lib/server-session'
 import { ApiResponseBuilder as R } from '@/utils/api-response'
 import logger from '@/utils/logger'
 
-const registerSchema = z.object({
+const schema = z.object({
+  // New asset
   key: z.string().min(1),
   url: z.string().url(),
   mimeType: z.string().min(1),
@@ -18,8 +19,8 @@ const registerSchema = z.object({
   alt: z.string().optional().nullable(),
   width: z.number().int().positive().optional().nullable(),
   height: z.number().int().positive().optional().nullable(),
-  // New: optionally delete previous asset (server-side replacement)
-  previousKey: z.string().optional().nullable(),
+  // Previous asset to remove
+  previousKey: z.string().min(1),
 })
 
 async function getS3Config() {
@@ -43,7 +44,7 @@ async function getS3Config() {
     }
     if (envConfig.bucket && envConfig.accessKeyId && envConfig.secretAccessKey) return envConfig
   } catch (error) {
-    logger.error('Error getting S3 config (media/register):', error)
+    logger.error('Error getting S3 config (media/replace):', error)
   }
   return null
 }
@@ -54,14 +55,14 @@ export async function POST(req: NextRequest) {
     if (!session) return R.error('Unauthorized', 401)
 
     const rl = rateLimit(req as unknown as Request, {
-      limit: 30,
+      limit: 20,
       windowMs: 60_000,
-      key: 'media:register:POST',
+      key: 'media:replace:POST',
     })
     if (!rl.allowed) return R.error('Too many requests. Please try again later.', 429)
 
     const json = await req.json().catch(() => ({}))
-    const parsed = registerSchema.safeParse(json)
+    const parsed = schema.safeParse(json)
     if (!parsed.success) {
       return R.validationError(
         'Invalid data',
@@ -75,7 +76,7 @@ export async function POST(req: NextRequest) {
 
     const { key, url, mimeType, size, folder, title, alt, width, height, previousKey } = parsed.data
 
-    // Upsert by key to avoid duplicates if re-registered
+    // Upsert new asset first
     const item = await prisma.asset.upsert({
       where: { key },
       update: {
@@ -101,8 +102,8 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    // If previousKey provided and different from new key, delete previous from S3 and DB
     if (previousKey && previousKey !== key) {
+      // Delete previous from S3 and DB
       try {
         const s3 = await getS3Config()
         if (s3?.bucket && s3?.accessKeyId && s3?.secretAccessKey) {
@@ -114,13 +115,13 @@ export async function POST(req: NextRequest) {
         }
         await prisma.asset.delete({ where: { key: previousKey } }).catch(() => undefined)
       } catch (e) {
-        logger.warn('Failed to delete previous asset during register', { previousKey, error: e })
+        logger.warn('media/replace: failed to delete previous', { previousKey, error: e })
       }
     }
 
-    return R.success(item, 'Asset registered')
+    return R.success(item, 'Asset replaced successfully')
   } catch (error) {
-    logger.error('Error registering media asset:', error)
+    logger.error('media/replace: error', error)
     return R.error('Internal Server Error', 500)
   }
 }

@@ -89,6 +89,66 @@ export function useMainImage({ form }: UseMainImageProps) {
     return { url: publicUrl as string, key: key as string }
   }
 
+  // Compress image on client to speed up upload (except GIF to preserve animation)
+  const maybeCompressImage = async (file: File): Promise<File> => {
+    try {
+      if (typeof window === 'undefined') return file
+      // Skip GIF to preserve animation
+      if (file.type === 'image/gif') return file
+
+      // Only compress if large (>1.5MB) or very large dimensions
+      const shouldTry =
+        file.size > 1.5 * 1024 * 1024 || file.type === 'image/jpeg' || file.type === 'image/png'
+      if (!shouldTry) return file
+
+      const objectUrl = URL.createObjectURL(file)
+      const img = document.createElement('img')
+      const loaded = await new Promise<boolean>((resolve) => {
+        img.onload = () => resolve(true)
+        img.onerror = () => resolve(false)
+        img.src = objectUrl
+      })
+      if (!loaded) {
+        URL.revokeObjectURL(objectUrl)
+        return file
+      }
+
+      const maxWidth = 1600 // keep quality but reduce heavy images
+      const maxHeight = 1600
+      let { width, height } = img
+      const ratio = Math.min(maxWidth / width, maxHeight / height, 1)
+      width = Math.round(width * ratio)
+      height = Math.round(height * ratio)
+
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+      const ctx = canvas.getContext('2d')
+      if (!ctx) {
+        URL.revokeObjectURL(objectUrl)
+        return file
+      }
+      ctx.drawImage(img, 0, 0, width, height)
+
+      const targetType = 'image/webp'
+      const quality = 0.82
+      const blob: Blob | null = await new Promise((resolve) =>
+        canvas.toBlob((b) => resolve(b), targetType, quality),
+      )
+
+      URL.revokeObjectURL(objectUrl)
+      if (!blob) return file
+
+      // If compression yields larger file (rare), keep original
+      if (blob.size >= file.size) return file
+
+      const newName = `${file.name.replace(/\.[^.]+$/, '')}.webp`
+      return new File([blob], newName, { type: targetType })
+    } catch {
+      return file
+    }
+  }
+
   const handleImageUpload = async (file: File) => {
     try {
       console.debug('[MainImage] handleImageUpload:start', {
@@ -113,12 +173,18 @@ export function useMainImage({ form }: UseMainImageProps) {
       // Try fast path (presigned S3 PUT), fallback to server upload
       let result: { url: string; key: string }
       try {
-        console.debug('[MainImage] presignedUpload:attempt')
-        result = await presignedUpload(file)
+        const uploadFile = await maybeCompressImage(file)
+        console.debug('[MainImage] presignedUpload:attempt', {
+          originalSize: file.size,
+          uploadSize: uploadFile.size,
+          type: uploadFile.type,
+        })
+        result = await presignedUpload(uploadFile)
         console.debug('[MainImage] presignedUpload:success', result)
       } catch (e) {
         console.warn('[MainImage] presignedUpload:failed, falling back to serverUpload', e)
-        result = await serverUpload(file)
+        const uploadFile = await maybeCompressImage(file)
+        result = await serverUpload(uploadFile)
         console.debug('[MainImage] serverUpload:success', result)
       }
 
@@ -141,25 +207,49 @@ export function useMainImage({ form }: UseMainImageProps) {
       )
       console.debug('[MainImage] form.setValue done')
 
-      // Borrar imagen anterior de S3 (best-effort) sin limpiar el form
+      // Borrado robusto server-side durante el registro (evita duplicación)
       try {
-        let imageKey: string | undefined
+        let previousKeyToDelete: string | undefined
         if (typeof previousImage === 'object' && previousImage?.key) {
-          imageKey = previousImage.key as string
+          previousKeyToDelete = previousImage.key as string
         } else if (typeof previousImage === 'string' && previousImage) {
           const url = new URL(previousImage)
-          imageKey = url.pathname.substring(1)
+          previousKeyToDelete = url.pathname.substring(1)
         }
-        if (imageKey) {
-          console.debug('[MainImage] delete old image:attempt', imageKey)
-          await fetchWithTimeout('/api/upload', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ key: imageKey }),
-            timeoutMs: 10000,
-          }).catch(() => undefined)
-        }
-      } catch {}
+        // Prefer replace endpoint for robust server-side deletion of previous asset
+        await fetchWithTimeout('/api/media/replace', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            key: result.key,
+            url: result.url,
+            mimeType: file.type,
+            size: file.size,
+            folder: 'main-images',
+            previousKey: previousKeyToDelete,
+          }),
+          timeoutMs: 10000,
+        })
+      } catch {
+        // fallback: intentar DELETE directo de la anterior (best-effort)
+        try {
+          let imageKey: string | undefined
+          if (typeof previousImage === 'object' && previousImage?.key) {
+            imageKey = previousImage.key as string
+          } else if (typeof previousImage === 'string' && previousImage) {
+            const url = new URL(previousImage)
+            imageKey = url.pathname.substring(1)
+          }
+          if (imageKey) {
+            await fetchWithTimeout('/api/upload', {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ key: imageKey }),
+              timeoutMs: 10000,
+            }).catch(() => undefined)
+          }
+        } catch {}
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
       setError(errorMessage)
