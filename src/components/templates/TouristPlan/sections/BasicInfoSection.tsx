@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import slugify from 'slugify'
 
@@ -40,7 +40,8 @@ const URLPreview = memo(
 URLPreview.displayName = 'URLPreview'
 
 export function BasicInfoSection() {
-  const { control, setValue, watch } = useFormContext<PlanFormValues>()
+  const form = useFormContext<PlanFormValues>()
+  const { control, setValue, watch } = form
   const { toast } = useToast()
 
   const [categoryOptions, setCategoryOptions] = useState<ComboboxOption[]>([])
@@ -50,10 +51,12 @@ export function BasicInfoSection() {
   const CATEGORY_KEY = 'nova.categoryOptions'
   const SLUG_KEY = 'nova.planSlugOptions'
 
-  const mainTitle = watch('mainTitle')
-
-  const articleAlias = watch('articleAlias')
-  const _section = watch('section')
+  const [mainTitle, articleAlias, section, categoryAlias] = watch([
+    'mainTitle',
+    'articleAlias',
+    'section',
+    'categoryAlias',
+  ])
 
   const generateSmartSlug = useCallback((text: string, count: number = 7): string[] => {
     if (!text) return []
@@ -100,50 +103,47 @@ export function BasicInfoSection() {
       .slice(0, count)
   }, [])
 
-  useEffect(() => {
-    const currentArticleAlias = watch('articleAlias')
+  // Memoize slug options to prevent unnecessary recalculations
+  const suggestedSlugOptions = useMemo(() => {
     const suggestions = mainTitle ? generateSmartSlug(mainTitle, 7) : []
-
-    // Create options including current value if it exists
     const options = suggestions.map((s) => ({ label: s, value: s }))
 
     // If there's a current articleAlias and it's not in suggestions, add it at the beginning
-    if (currentArticleAlias && !suggestions.includes(currentArticleAlias)) {
-      options.unshift({ label: currentArticleAlias, value: currentArticleAlias })
+    if (articleAlias && !suggestions.includes(articleAlias)) {
+      options.unshift({ label: articleAlias, value: articleAlias })
     }
 
-    // Update options only; don't auto-select by default
-    setPlanSlugOptions(options)
-  }, [mainTitle, generateSmartSlug, watch])
+    return options
+  }, [mainTitle, articleAlias, generateSmartSlug])
 
-  // Category/destination options: manual with local persistence
+  // Update plan slug options when suggestions change
   useEffect(() => {
-    // Load locally saved options and ensure current form values are present
+    setPlanSlugOptions(suggestedSlugOptions)
+  }, [suggestedSlugOptions])
+
+  // Load initial options from localStorage only once on mount
+  useEffect(() => {
     try {
       const storedCats = JSON.parse(localStorage.getItem(CATEGORY_KEY) || '[]')
-      const storedSlugs = JSON.parse(localStorage.getItem(SLUG_KEY) || '[]')
+      const _storedSlugs = JSON.parse(localStorage.getItem(SLUG_KEY) || '[]')
 
-      // Start with stored categories (if any)
-      let nextCats: ComboboxOption[] = Array.isArray(storedCats) ? storedCats : []
-
-      // Ensure current categoryAlias from the form is available as an option
-      const currentCategory = watch('categoryAlias')
-      if (currentCategory && !nextCats.some((o: ComboboxOption) => o.value === currentCategory)) {
-        nextCats = [{ label: currentCategory, value: currentCategory }, ...nextCats]
-      }
-      setCategoryOptions(nextCats)
-
-      // Start with stored slugs (if any)
-      let nextSlugs: ComboboxOption[] = Array.isArray(storedSlugs) ? storedSlugs : []
-
-      // Ensure current articleAlias from the form is available as an option
-      const currentSlug = watch('articleAlias')
-      if (currentSlug && !nextSlugs.some((o: ComboboxOption) => o.value === currentSlug)) {
-        nextSlugs = [{ label: currentSlug, value: currentSlug }, ...nextSlugs]
-      }
-      setPlanSlugOptions(nextSlugs)
+      setCategoryOptions(Array.isArray(storedCats) ? storedCats : [])
+      // Don't set planSlugOptions here as it will be handled by suggestedSlugOptions
     } catch {}
-  }, [watch])
+  }, [])
+
+  // Ensure current form values are included in options when they change
+  useEffect(() => {
+    if (categoryAlias) {
+      setCategoryOptions((prev) => {
+        const exists = prev.some((o) => o.value === categoryAlias)
+        if (!exists) {
+          return [{ label: categoryAlias, value: categoryAlias }, ...prev]
+        }
+        return prev
+      })
+    }
+  }, [categoryAlias])
 
   useEffect(() => {
     // Save changes locally
@@ -327,8 +327,8 @@ export function BasicInfoSection() {
             <div>
               <FormLabel className="font-medium theme-text mb-3 block">URL Preview</FormLabel>
               <URLPreview
-                section={watch('section') || 'planes'}
-                categoryAlias={watch('categoryAlias') || ''}
+                section={section || 'planes'}
+                categoryAlias={categoryAlias || ''}
                 articleAlias={articleAlias || ''}
               />
             </div>
@@ -385,7 +385,7 @@ export function BasicInfoSection() {
         </div>
         <div className="lg:col-span-3">
           <div className="theme-card rounded-xl p-6 theme-border">
-            <MainImage form={useFormContext<PlanFormValues>()} />
+            <MainImage form={form} />
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import { CheckCircle2, XCircle, Youtube } from 'lucide-react'
 import { memo } from 'react'
-import { useFormContext, useWatch } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
@@ -23,10 +23,12 @@ const getYoutubeEmbedUrl = (url: string) => {
 }
 
 export const VideoSection = memo(function VideoSection() {
-  const { control } = useFormContext()
-  const videoUrl = useWatch({ control, name: 'videoUrl' }) || ''
-  const embedUrl = getYoutubeEmbedUrl(videoUrl)
-  const isValid = isValidYoutubeUrl(videoUrl)
+  const { control, watch } = useFormContext()
+  // Use watch array to get stable reference instead of useWatch
+  const [videoUrl] = watch(['videoUrl'])
+  const currentVideoUrl = videoUrl || ''
+  const embedUrl = getYoutubeEmbedUrl(currentVideoUrl)
+  const isValid = isValidYoutubeUrl(currentVideoUrl)
 
   return (
     <div className="space-y-8">
@@ -64,13 +66,13 @@ export const VideoSection = memo(function VideoSection() {
                         placeholder="https://youtube.com/watch?v=..."
                         className={cn(
                           'pl-12 text-base py-3',
-                          videoUrl &&
+                          currentVideoUrl &&
                             (isValid
                               ? 'border-green-500 focus:border-green-500'
                               : 'border-red-500 focus:border-red-500'),
                         )}
                       />
-                      {videoUrl && (
+                      {currentVideoUrl && (
                         <div className="absolute right-4 top-1/2 -translate-y-1/2">
                           {isValid ? (
                             <CheckCircle2 className="h-5 w-5 text-green-500" />

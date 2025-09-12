@@ -7,14 +7,16 @@ interface UsePricingStateProps {
 }
 
 export default function usePricingState({ form }: UsePricingStateProps) {
-  const priceOptions = form.watch('priceOptions') || []
+  // Use watch with array to get stable reference
+  const [priceOptions] = form.watch(['priceOptions'])
+  const currentPriceOptions = priceOptions || []
 
   const pricePackages: PriceOption[] = useMemo(() => {
-    return priceOptions.map((option) => ({
+    return currentPriceOptions.map((option) => ({
       ...option,
       perPersonPrice: option.perPersonPrice || null,
     }))
-  }, [priceOptions])
+  }, [currentPriceOptions])
 
   const addPricePackage = useCallback(
     (numPersons: number, currency: 'COP' | 'USD' | 'EUR'): boolean => {

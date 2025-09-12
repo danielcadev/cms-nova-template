@@ -32,11 +32,18 @@ export function PriceOptionCard({
   fieldName = 'priceOptions',
 }: PriceOptionCardProps) {
   const { control, setValue, watch, trigger } = useFormContext<PlanFormValues>()
-  const mode: 'simple' | 'advanced' | 'seasonal' =
-    (watch(`${fieldName}.${index}.mode` as any) as any) || 'simple'
+  // Use watch with array to get stable references and reduce re-renders
+  const [mode, label, seasonTitle, seasonAccommodations] = watch([
+    `${fieldName}.${index}.mode` as any,
+    `${fieldName}.${index}.label` as any,
+    `${fieldName}.${index}.seasonTitle` as any,
+    `${fieldName}.${index}.seasonAccommodations` as any,
+  ])
+
+  const currentMode: 'simple' | 'advanced' | 'seasonal' = mode || 'simple'
 
   const handleModeChange = (newMode: 'simple' | 'advanced' | 'seasonal') => {
-    if (newMode === mode) return
+    if (newMode === currentMode) return
 
     // Set mode first without triggering full validation
     setValue(`${fieldName}.${index}.mode` as any, newMode, {
@@ -61,7 +68,7 @@ export function PriceOptionCard({
       // Keep price & currency; simple uses them
     } else if (newMode === 'advanced') {
       // Ensure label exists and clear seasonal data
-      const currentLabel = watch(`${fieldName}.${index}.label` as any) || ''
+      const currentLabel = label || ''
       setValue(`${fieldName}.${index}.label` as any, currentLabel, {
         shouldDirty: true,
         shouldValidate: false,
@@ -85,14 +92,14 @@ export function PriceOptionCard({
         shouldDirty: true,
         shouldValidate: false,
       })
-      const hasArray = Array.isArray(watch(`${fieldName}.${index}.seasonAccommodations` as any))
+      const hasArray = Array.isArray(seasonAccommodations)
       if (!hasArray) {
         setValue(`${fieldName}.${index}.seasonAccommodations` as any, [], {
           shouldDirty: true,
           shouldValidate: false,
         })
       }
-      const currentTitle = watch(`${fieldName}.${index}.seasonTitle` as any) || ''
+      const currentTitle = seasonTitle || ''
       setValue(`${fieldName}.${index}.seasonTitle` as any, currentTitle, {
         shouldDirty: true,
         shouldValidate: false,
@@ -136,22 +143,22 @@ export function PriceOptionCard({
           <button
             type="button"
             className={`px-3 py-1.5 text-sm ${
-              mode === 'simple' ? 'theme-bg-secondary font-semibold' : 'theme-card'
-            } ${hasOtherGeneralPrice && mode !== 'simple' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              currentMode === 'simple' ? 'theme-bg-secondary font-semibold' : 'theme-card'
+            } ${hasOtherGeneralPrice && currentMode !== 'simple' ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={() => !hasOtherGeneralPrice && handleModeChange('simple')}
           >
             General
           </button>
           <button
             type="button"
-            className={`px-3 py-1.5 text-sm ${mode === 'advanced' ? 'theme-bg-secondary font-semibold' : 'theme-card'}`}
+            className={`px-3 py-1.5 text-sm ${currentMode === 'advanced' ? 'theme-bg-secondary font-semibold' : 'theme-card'}`}
             onClick={() => handleModeChange('advanced')}
           >
             Specific
           </button>
           <button
             type="button"
-            className={`px-3 py-1.5 text-sm ${mode === 'seasonal' ? 'theme-bg-secondary font-semibold' : 'theme-card'}`}
+            className={`px-3 py-1.5 text-sm ${currentMode === 'seasonal' ? 'theme-bg-secondary font-semibold' : 'theme-card'}`}
             onClick={() => handleModeChange('seasonal')}
           >
             Seasonal
@@ -173,9 +180,9 @@ export function PriceOptionCard({
 
       {/* Body */}
       <div className="mt-4 space-y-4">
-        {mode !== 'seasonal' && (
+        {currentMode !== 'seasonal' && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {mode === 'advanced' && (
+            {currentMode === 'advanced' && (
               <FormField
                 control={control}
                 name={`${fieldName}.${index}.label` as any}
@@ -242,7 +249,7 @@ export function PriceOptionCard({
           </div>
         )}
 
-        {mode === 'seasonal' && (
+        {currentMode === 'seasonal' && (
           <div className="space-y-3">
             <FormField
               control={control}

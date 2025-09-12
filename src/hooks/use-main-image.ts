@@ -1,5 +1,5 @@
 // hooks/use-main-image.ts
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import type { PlanFormValues } from '@/schemas/plan'
 import { validateImage } from '@/utils/image-utils'
@@ -12,85 +12,91 @@ export function useMainImage({ form }: UseMainImageProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Helper to avoid long hangs
-  const fetchWithTimeout = async (
-    input: RequestInfo,
-    init: RequestInit & { timeoutMs?: number } = {},
-  ) => {
-    const controller = new AbortController()
-    const id = setTimeout(() => controller.abort(), init.timeoutMs ?? 10000) // default 10s
-    try {
-      const res = await fetch(input, { ...init, signal: controller.signal })
-      return res
-    } finally {
-      clearTimeout(id)
-    }
-  }
+  // Helper to avoid long hangs - memoized to avoid recreating on every render
+  const fetchWithTimeout = useCallback(
+    async (input: RequestInfo, init: RequestInit & { timeoutMs?: number } = {}) => {
+      const controller = new AbortController()
+      const id = setTimeout(() => controller.abort(), init.timeoutMs ?? 10000) // default 10s
+      try {
+        const res = await fetch(input, { ...init, signal: controller.signal })
+        return res
+      } finally {
+        clearTimeout(id)
+      }
+    },
+    [],
+  )
 
-  const serverUpload = async (file: File) => {
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('folder', 'main-images')
+  const serverUpload = useCallback(
+    async (file: File) => {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('folder', 'main-images')
 
-    const res = await fetchWithTimeout('/api/upload', {
-      method: 'POST',
-      body: formData,
-      timeoutMs: 120000,
-    })
-    const json = (await res.json().catch(() => ({}))) as any
-    if (!res.ok || !json?.success) {
-      throw new Error(json?.error || 'Error al subir el archivo')
-    }
-    const payload = json?.data ?? {}
-    return { url: payload.url as string, key: payload.key as string }
-  }
+      const res = await fetchWithTimeout('/api/upload', {
+        method: 'POST',
+        body: formData,
+        timeoutMs: 120000,
+      })
+      const json = (await res.json().catch(() => ({}))) as any
+      if (!res.ok || !json?.success) {
+        throw new Error(json?.error || 'Error al subir el archivo')
+      }
+      const payload = json?.data ?? {}
+      return { url: payload.url as string, key: payload.key as string }
+    },
+    [fetchWithTimeout],
+  )
 
-  const presignedUpload = async (file: File) => {
-    // 1) Ask backend for presigned URL
-    const presignRes = await fetchWithTimeout('/api/upload/presign', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        fileName: file.name,
-        contentType: file.type,
-        size: file.size,
-        folder: 'main-images',
-      }),
-      timeoutMs: 10000,
-    })
-    if (!presignRes.ok) throw new Error('Presign request failed')
-    const presignJson = await presignRes.json()
-    if (!presignJson?.success) throw new Error(presignJson?.error || 'Presign error')
-    const { url, key, headers, publicUrl } = presignJson.data
+  const presignedUpload = useCallback(
+    async (file: File) => {
+      // 1) Ask backend for presigned URL
+      const presignRes = await fetchWithTimeout('/api/upload/presign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fileName: file.name,
+          contentType: file.type,
+          size: file.size,
+          folder: 'main-images',
+        }),
+        timeoutMs: 10000,
+      })
+      if (!presignRes.ok) throw new Error('Presign request failed')
+      const presignJson = await presignRes.json()
+      if (!presignJson?.success) throw new Error(presignJson?.error || 'Presign error')
+      const { url, key, headers, publicUrl } = presignJson.data
 
-    // 2) PUT file to S3
-    const putRes = await fetchWithTimeout(url, {
-      method: 'PUT',
-      headers,
-      body: file,
-      timeoutMs: 120000, // larger files need more time
-    })
-    if (!putRes.ok) throw new Error('S3 upload failed')
+      // 2) PUT file to S3
+      const putRes = await fetchWithTimeout(url, {
+        method: 'PUT',
+        headers,
+        body: file,
+        timeoutMs: 120000, // larger files need more time
+      })
+      if (!putRes.ok) throw new Error('S3 upload failed')
 
-    // 3) Register asset in DB (best-effort)
-    await fetchWithTimeout('/api/media/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        key,
-        url: publicUrl,
-        mimeType: file.type,
-        size: file.size,
-        folder: 'main-images',
-      }),
-      timeoutMs: 10000,
-    }).catch(() => undefined)
+      // 3) Register asset in DB (best-effort)
+      await fetchWithTimeout('/api/media/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          key,
+          url: publicUrl,
+          mimeType: file.type,
+          size: file.size,
+          folder: 'main-images',
+        }),
+        timeoutMs: 10000,
+      }).catch(() => undefined)
 
-    return { url: publicUrl as string, key: key as string }
-  }
+      return { url: publicUrl as string, key: key as string }
+    },
+    [fetchWithTimeout],
+  )
 
   // Compress image on client to speed up upload (except GIF to preserve animation)
-  const maybeCompressImage = async (file: File): Promise<File> => {
+  const maybeCompressImage = useCallback(async (file: File): Promise<File> => {
     try {
       if (typeof window === 'undefined') return file
       // Skip GIF to preserve animation
@@ -147,118 +153,121 @@ export function useMainImage({ form }: UseMainImageProps) {
     } catch {
       return file
     }
-  }
+  }, [])
 
-  const handleImageUpload = async (file: File) => {
-    try {
-      console.debug('[MainImage] handleImageUpload:start', {
-        name: file.name,
-        type: file.type,
-        size: file.size,
-      })
-      setIsUploading(true)
-      setError(null)
-
-      // Validar imagen
-      const validation = validateImage(file)
-      console.debug('[MainImage] validation', validation)
-      if (!validation.isValid) {
-        throw new Error(validation.error)
-      }
-
-      // Conservar imagen previa para borrarla solo si la nueva sube bien
-      const previousImage = form.getValues('mainImage')
-      console.debug('[MainImage] previousImage', previousImage)
-
-      // Try fast path (presigned S3 PUT), fallback to server upload
-      let result: { url: string; key: string }
+  const handleImageUpload = useCallback(
+    async (file: File) => {
       try {
-        const uploadFile = await maybeCompressImage(file)
-        console.debug('[MainImage] presignedUpload:attempt', {
-          originalSize: file.size,
-          uploadSize: uploadFile.size,
-          type: uploadFile.type,
+        console.debug('[MainImage] handleImageUpload:start', {
+          name: file.name,
+          type: file.type,
+          size: file.size,
         })
-        result = await presignedUpload(uploadFile)
-        console.debug('[MainImage] presignedUpload:success', result)
-      } catch (e) {
-        console.warn('[MainImage] presignedUpload:failed, falling back to serverUpload', e)
-        const uploadFile = await maybeCompressImage(file)
-        result = await serverUpload(uploadFile)
-        console.debug('[MainImage] serverUpload:success', result)
-      }
+        setIsUploading(true)
+        setError(null)
 
-      // Actualizar formulario con nueva imagen
-      console.debug('[MainImage] form.setValue(mainImage)')
-      form.setValue(
-        'mainImage',
-        {
-          url: result.url,
-          alt: form.getValues('mainTitle') || 'Imagen principal del plan turístico',
-          width: 1200,
-          height: 630,
-          caption: '',
-          key: result.key,
-        },
-        {
-          shouldValidate: true,
-          shouldDirty: true,
-        },
-      )
-      console.debug('[MainImage] form.setValue done')
-
-      // Borrado robusto server-side durante el registro (evita duplicación)
-      try {
-        let previousKeyToDelete: string | undefined
-        if (typeof previousImage === 'object' && previousImage?.key) {
-          previousKeyToDelete = previousImage.key as string
-        } else if (typeof previousImage === 'string' && previousImage) {
-          const url = new URL(previousImage)
-          previousKeyToDelete = url.pathname.substring(1)
+        // Validar imagen
+        const validation = validateImage(file)
+        console.debug('[MainImage] validation', validation)
+        if (!validation.isValid) {
+          throw new Error(validation.error)
         }
-        // Prefer replace endpoint for robust server-side deletion of previous asset
-        await fetchWithTimeout('/api/media/replace', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            key: result.key,
-            url: result.url,
-            mimeType: file.type,
-            size: file.size,
-            folder: 'main-images',
-            previousKey: previousKeyToDelete,
-          }),
-          timeoutMs: 10000,
-        })
-      } catch {
-        // fallback: intentar DELETE directo de la anterior (best-effort)
+
+        // Conservar imagen previa para borrarla solo si la nueva sube bien
+        const previousImage = form.getValues('mainImage')
+        console.debug('[MainImage] previousImage', previousImage)
+
+        // Try fast path (presigned S3 PUT), fallback to server upload
+        let result: { url: string; key: string }
         try {
-          let imageKey: string | undefined
+          const uploadFile = await maybeCompressImage(file)
+          console.debug('[MainImage] presignedUpload:attempt', {
+            originalSize: file.size,
+            uploadSize: uploadFile.size,
+            type: uploadFile.type,
+          })
+          result = await presignedUpload(uploadFile)
+          console.debug('[MainImage] presignedUpload:success', result)
+        } catch (e) {
+          console.warn('[MainImage] presignedUpload:failed, falling back to serverUpload', e)
+          const uploadFile = await maybeCompressImage(file)
+          result = await serverUpload(uploadFile)
+          console.debug('[MainImage] serverUpload:success', result)
+        }
+
+        // Actualizar formulario con nueva imagen
+        console.debug('[MainImage] form.setValue(mainImage)')
+        form.setValue(
+          'mainImage',
+          {
+            url: result.url,
+            alt: form.getValues('mainTitle') || 'Imagen principal del plan turístico',
+            width: 1200,
+            height: 630,
+            caption: '',
+            key: result.key,
+          },
+          {
+            shouldValidate: true,
+            shouldDirty: true,
+          },
+        )
+        console.debug('[MainImage] form.setValue done')
+
+        // Borrado robusto server-side durante el registro (evita duplicación)
+        try {
+          let previousKeyToDelete: string | undefined
           if (typeof previousImage === 'object' && previousImage?.key) {
-            imageKey = previousImage.key as string
+            previousKeyToDelete = previousImage.key as string
           } else if (typeof previousImage === 'string' && previousImage) {
             const url = new URL(previousImage)
-            imageKey = url.pathname.substring(1)
+            previousKeyToDelete = url.pathname.substring(1)
           }
-          if (imageKey) {
-            await fetchWithTimeout('/api/upload', {
-              method: 'DELETE',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ key: imageKey }),
-              timeoutMs: 10000,
-            }).catch(() => undefined)
-          }
-        } catch {}
+          // Prefer replace endpoint for robust server-side deletion of previous asset
+          await fetchWithTimeout('/api/media/replace', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              key: result.key,
+              url: result.url,
+              mimeType: file.type,
+              size: file.size,
+              folder: 'main-images',
+              previousKey: previousKeyToDelete,
+            }),
+            timeoutMs: 10000,
+          })
+        } catch {
+          // fallback: intentar DELETE directo de la anterior (best-effort)
+          try {
+            let imageKey: string | undefined
+            if (typeof previousImage === 'object' && previousImage?.key) {
+              imageKey = previousImage.key as string
+            } else if (typeof previousImage === 'string' && previousImage) {
+              const url = new URL(previousImage)
+              imageKey = url.pathname.substring(1)
+            }
+            if (imageKey) {
+              await fetchWithTimeout('/api/upload', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key: imageKey }),
+                timeoutMs: 10000,
+              }).catch(() => undefined)
+            }
+          } catch {}
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
+        setError(errorMessage)
+      } finally {
+        setIsUploading(false)
       }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
-      setError(errorMessage)
-    } finally {
-      setIsUploading(false)
-    }
-  }
+    },
+    [form, fetchWithTimeout, presignedUpload, maybeCompressImage, serverUpload],
+  )
 
-  const handleImageDelete = async () => {
+  const handleImageDelete = useCallback(async () => {
     try {
       const currentImage = form.getValues('mainImage')
       console.debug('[MainImage] handleImageDelete:currentImage', currentImage)
@@ -304,7 +313,7 @@ export function useMainImage({ form }: UseMainImageProps) {
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
       setError(errorMessage)
     }
-  }
+  }, [form, fetchWithTimeout])
 
   return {
     isUploading,

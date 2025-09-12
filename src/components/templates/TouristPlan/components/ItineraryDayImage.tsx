@@ -27,7 +27,8 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
   const fieldName = `itinerary.${fieldIndex}.image` as const
 
   const { field } = useController({ name: fieldName, control })
-  const [imageUrl, setImageUrl] = useState(field.value || '')
+  // Remove local imageUrl state that was causing sync issues
+  const imageUrl = field.value || ''
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [s3Config, setS3Config] = useState<any>(null)
@@ -73,7 +74,6 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
 
       const newImageUrl = result.url
       setValue(fieldName, newImageUrl, { shouldDirty: true })
-      setImageUrl(newImageUrl)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error'
       setError(errorMessage)
@@ -84,7 +84,6 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
 
   const handleDelete = () => {
     setValue(fieldName, '', { shouldDirty: true })
-    setImageUrl('')
     setError(null)
   }
 
@@ -184,7 +183,6 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
           onClose={() => setPickerOpen(false)}
           onSelect={(item) => {
             setValue(fieldName, item.url, { shouldDirty: true })
-            setImageUrl(item.url)
             setPickerOpen(false)
           }}
         />

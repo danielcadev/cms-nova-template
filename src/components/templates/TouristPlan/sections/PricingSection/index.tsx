@@ -1,6 +1,6 @@
 'use client'
 
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import type { PlanFormValues } from '@/schemas/plan'
@@ -14,11 +14,17 @@ export const PricingSection = memo(function PricingSection() {
 
   const { fields, append, remove } = useFieldArray({ control, name: 'priceOptions' })
 
-  const items = fields.map((f, index) => ({
-    id: f.id,
-    index,
-    mode: (watch(`priceOptions.${index}.mode`) as 'simple' | 'advanced' | 'seasonal') || 'simple',
-  }))
+  // Optimize watch calls by using useMemo
+  const items = useMemo(
+    () =>
+      fields.map((f, index) => ({
+        id: f.id,
+        index,
+        mode:
+          (watch(`priceOptions.${index}.mode`) as 'simple' | 'advanced' | 'seasonal') || 'simple',
+      })),
+    [fields, watch],
+  )
 
   const generalItems = items.filter((it) => it.mode === 'simple')
   const specificItems = items.filter((it) => it.mode === 'advanced')

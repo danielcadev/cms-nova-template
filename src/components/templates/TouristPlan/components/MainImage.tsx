@@ -4,7 +4,7 @@
 import { Image as ImageIcon, Loader2, Plug, Upload, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { MediaPicker } from '@/components/admin/media/MediaPicker'
 import { Button } from '@/components/ui/button'
@@ -21,7 +21,8 @@ interface MainImageProps {
 
 export function MainImage({ form }: MainImageProps) {
   const { isUploading, error, handleImageUpload, handleImageDelete } = useMainImage({ form })
-  const mainImage = form.watch('mainImage')
+  // Use watch with array to reduce re-renders and get stable reference
+  const [mainImage, mainTitle] = form.watch(['mainImage', 'mainTitle'])
   const [isS3Configured, setIsS3Configured] = useState(false)
   const [isLoadingConfig, setIsLoadingConfig] = useState(true)
 
@@ -53,17 +54,15 @@ export function MainImage({ form }: MainImageProps) {
     fetchS3Config()
   }, [])
 
-  // Normalize mainImage structure when it is a string (edit mode)
+  // Normalize mainImage structure when it is a string (edit mode) - Run only once
   useEffect(() => {
-    const currentMainImage = form.getValues('mainImage')
-
     // If mainImage is a string, convert it to an object
-    if (typeof currentMainImage === 'string' && currentMainImage) {
+    if (typeof mainImage === 'string' && mainImage) {
       form.setValue(
         'mainImage',
         {
-          url: currentMainImage,
-          alt: form.getValues('mainTitle') || 'Main plan image',
+          url: mainImage,
+          alt: mainTitle || 'Main plan image',
           width: 1200,
           height: 630,
           caption: '',
@@ -71,10 +70,10 @@ export function MainImage({ form }: MainImageProps) {
         { shouldValidate: false },
       )
     }
-  }, [form])
+  }, [mainImage, mainTitle, form.setValue]) // Include all dependencies
 
-  // Función para obtener la URL de la imagen
-  const getImageUrl = () => {
+  // Memoize image URL to avoid recalculation on every render
+  const imageUrl = useMemo(() => {
     if (!mainImage) return null
 
     if (typeof mainImage === 'string') {
@@ -82,9 +81,33 @@ export function MainImage({ form }: MainImageProps) {
     }
 
     return mainImage.url
-  }
+  }, [mainImage])
 
-  const imageUrl = getImageUrl()
+  // Create stable handlers using useCallback
+  const handleAltChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (mainImage && typeof mainImage === 'object' && mainImage.url) {
+        form.setValue('mainImage', {
+          ...mainImage,
+          alt: e.target.value,
+        })
+      }
+    },
+    [form, mainImage],
+  )
+
+  const handleCaptionChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      if (mainImage && typeof mainImage === 'object' && mainImage.url) {
+        form.setValue('mainImage', {
+          ...mainImage,
+          caption: e.target.value,
+        })
+      }
+    },
+    [form, mainImage],
+  )
+
   const [pickerOpen, setPickerOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
@@ -103,7 +126,7 @@ export function MainImage({ form }: MainImageProps) {
             {
               url: item.url,
               key: item.key,
-              alt: form.getValues('mainTitle') || 'Main plan image',
+              alt: mainTitle || 'Main plan image',
               width: 1200,
               height: 630,
               caption: '',
@@ -271,14 +294,7 @@ export function MainImage({ form }: MainImageProps) {
                         <Input
                           placeholder="Describe the image for SEO and accessibility"
                           value={mainImage.alt || ''}
-                          onChange={(e) => {
-                            if (mainImage && typeof mainImage === 'object' && mainImage.url) {
-                              form.setValue('mainImage', {
-                                ...mainImage,
-                                alt: e.target.value,
-                              })
-                            }
-                          }}
+                          onChange={handleAltChange}
                           className="rounded-lg border-gray-200"
                         />
                       </div>
@@ -290,14 +306,7 @@ export function MainImage({ form }: MainImageProps) {
                         <Textarea
                           placeholder="Add a descriptive caption"
                           value={mainImage.caption || ''}
-                          onChange={(e) => {
-                            if (mainImage && typeof mainImage === 'object' && mainImage.url) {
-                              form.setValue('mainImage', {
-                                ...mainImage,
-                                caption: e.target.value,
-                              })
-                            }
-                          }}
+                          onChange={handleCaptionChange}
                           className="rounded-lg border-gray-200 resize-none min-h-[100px]"
                         />
                       </div>

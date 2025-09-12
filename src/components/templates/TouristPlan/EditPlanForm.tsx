@@ -63,18 +63,12 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
   })
 
   const {
-    watch,
     formState: { isDirty },
     reset,
   } = form
 
   // Resetear el formulario cuando cambien los initialData
   useEffect(() => {
-    console.log('Resetting form with initialData:', {
-      mainTitle: initialData.mainTitle,
-      articleAlias: initialData.articleAlias,
-      categoryAlias: initialData.categoryAlias,
-    })
     reset(initialData)
   }, [initialData, reset])
 
@@ -82,15 +76,10 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
   const saveForm = useCallback(
     async (data: PlanFormValues) => {
       try {
-        console.log('Auto-saving data:', {
-          articleAlias: data.articleAlias,
-          mainTitle: data.mainTitle,
-        })
         const result = await updatePlanDataAction(planId, data)
         if (!result.success) {
           throw new Error(result.error || 'Failed to save')
         }
-        console.log('Auto-save successful')
       } catch (error) {
         console.error('Auto-save failed:', error)
       }
@@ -98,34 +87,28 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
     [planId],
   )
 
-  // Watch for changes and auto-save
+  // Watch for changes and auto-save with proper debouncing
   useEffect(() => {
-    const subscription = watch((data) => {
-      if (isDirty) {
-        const timeoutId = setTimeout(() => {
-          saveForm(data as PlanFormValues)
-        }, 1000)
-        return () => clearTimeout(timeoutId)
-      }
-    })
-    return () => subscription.unsubscribe()
-  }, [watch, isDirty, saveForm])
+    if (!isDirty) return
+
+    const timeoutId = setTimeout(() => {
+      const data = form.getValues()
+      saveForm(data)
+    }, 2000) // Increased delay to reduce frequency
+
+    return () => clearTimeout(timeoutId)
+  }, [isDirty, saveForm, form])
 
   const handleSave = async (saveStatus: string = status) => {
     startTransition(async () => {
       try {
         const formData = form.getValues()
-        console.log('Manual save - Form data:', {
-          articleAlias: formData.articleAlias,
-          mainTitle: formData.mainTitle,
-        })
         const dataToSave = {
           ...formData,
           published: saveStatus === 'published',
         }
 
         const result = await updatePlanDataAction(planId, dataToSave)
-        console.log('Save result:', result)
         if (result.success) {
           if (saveStatus === 'published') {
             // Also publish the plan
