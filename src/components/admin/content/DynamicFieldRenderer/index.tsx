@@ -308,7 +308,6 @@ export function DynamicFieldRenderer({
           value={value}
           onChange={onChange}
           placeholder={`Enter ${normalizeLabel(field.label).toLowerCase()}`}
-          id={fieldId}
         />
       )
     }
@@ -403,10 +402,10 @@ export function DynamicFieldRenderer({
                   />
                 </div>
                 <ThemedButton
-                  variantTone="destructive"
+                  variantTone="outline"
                   size="sm"
                   onClick={() => onChange(null)}
-                  className="absolute top-3 right-3 rounded-full h-8 w-8 p-0 shadow-lg"
+                  className="absolute top-3 right-3 rounded-full h-8 w-8 p-0 shadow-lg bg-red-500 hover:bg-red-600 text-white border-red-500"
                 >
                   <X className="h-4 w-4" />
                 </ThemedButton>
@@ -455,14 +454,14 @@ export function DynamicFieldRenderer({
                       {value.size ? `${Math.round(value.size / 1024)} KB` : ''}
                     </p>
                   </div>
-                  <Button
-                    variant="outline"
+                  <ThemedButton
+                    variantTone="outline"
                     size="sm"
                     onClick={() => onChange(null)}
                     className="text-red-600 hover:text-red-700 hover:bg-red-50"
                   >
                     <X className="h-4 w-4" />
-                  </Button>
+                  </ThemedButton>
                 </div>
               </div>
             </div>

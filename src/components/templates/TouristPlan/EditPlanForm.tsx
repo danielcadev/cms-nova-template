@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useState, useTransition } from 'react'
+import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { publishPlanAction, updatePlanDataAction } from '@/app/actions/plan-actions'
 import { ContentHeader } from '@/components/admin/shared/ContentHeader'
@@ -70,36 +70,78 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
   // Resetear el formulario cuando cambien los initialData
   useEffect(() => {
     reset(initialData)
+    // Initialize saved values to prevent unnecessary auto-saves on load
+    setLastSavedValues(JSON.stringify(initialData))
   }, [initialData, reset])
 
-  // Auto-save functionality
+  // Auto-save functionality with proper debouncing
+  const [isAutoSaving, setIsAutoSaving] = useState(false)
+  const [lastSavedValues, setLastSavedValues] = useState<string>('')
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
   const saveForm = useCallback(
     async (data: PlanFormValues) => {
       try {
+        setIsAutoSaving(true)
         const result = await updatePlanDataAction(planId, data)
         if (!result.success) {
           throw new Error(result.error || 'Failed to save')
         }
+        // Update the saved values to prevent unnecessary saves
+        setLastSavedValues(JSON.stringify(data))
       } catch (error) {
         console.error('Auto-save failed:', error)
+      } finally {
+        setIsAutoSaving(false)
       }
     },
     [planId],
   )
 
-  // Watch for changes and auto-save with proper debouncing
-  useEffect(() => {
-    if (!isDirty) return
+  // Watch all form values for auto-save with smart debouncing
+  const watchedValues = form.watch()
 
-    const timeoutId = setTimeout(() => {
+  useEffect(() => {
+    if (!isDirty || isAutoSaving || isSubmitting) return
+
+    const currentValues = JSON.stringify(watchedValues)
+
+    // Don't save if values haven't actually changed
+    if (currentValues === lastSavedValues) return
+
+    // Clear any existing timeout
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current)
+    }
+
+    // Set new timeout for auto-save
+    autoSaveTimeoutRef.current = setTimeout(() => {
       const data = form.getValues()
       saveForm(data)
-    }, 2000) // Increased delay to reduce frequency
+    }, 3000) // Increased delay to 3 seconds for better UX
 
-    return () => clearTimeout(timeoutId)
-  }, [isDirty, saveForm, form])
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current)
+      }
+    }
+  }, [watchedValues, isDirty, isAutoSaving, isSubmitting, saveForm, form, lastSavedValues])
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const handleSave = async (saveStatus: string = status) => {
+    // Cancel any pending auto-save before manual save
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current)
+    }
+
     startTransition(async () => {
       try {
         const formData = form.getValues()
@@ -110,6 +152,9 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
 
         const result = await updatePlanDataAction(planId, dataToSave)
         if (result.success) {
+          // Update saved values to prevent auto-save conflicts
+          setLastSavedValues(JSON.stringify(dataToSave))
+
           if (saveStatus === 'published') {
             // Also publish the plan
             const publishResult = await publishPlanAction(planId, {
@@ -243,16 +288,28 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
               backUrl="/admin/dashboard/templates/tourism"
               backLabel="Back"
               title={`Edit ${initialData.mainTitle || 'Tourism Plan'}`}
-              description="Fill in the fields to edit this tourism plan."
+              description={
+                isAutoSaving
+                  ? 'Auto-saving changes...'
+                  : 'Fill in the fields to edit this tourism plan.'
+              }
               status={status}
               onStatusChange={setStatus}
               onSave={handleSave}
               onPublishAndView={handlePublishAndView}
-              isSaving={isSubmitting}
+              isSaving={isSubmitting || isAutoSaving}
               isFormValid={validateForm()}
               showPublishAndView={true}
               showUrlPreview={false}
             />
+
+            {/* Auto-save indicator */}
+            {isAutoSaving && (
+              <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 px-3 py-2 bg-blue-600 text-white text-sm rounded-lg shadow-lg">
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                Auto-saving...
+              </div>
+            )}
 
             {/* Main content */}
             <div className="space-y-6">
