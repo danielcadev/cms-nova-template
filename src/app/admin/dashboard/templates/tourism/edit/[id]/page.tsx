@@ -22,7 +22,20 @@ function transformPrismaPlanToFormValues(plan: PrismaPlan): PlanFormValues {
     transfersText: plan.transfersText,
     holidayTitle: plan.holidayTitle,
     holidayText: plan.holidayText,
-    includes: plan.includes,
+    includes: (() => {
+      if (!plan.includes) return []
+      if (typeof plan.includes === 'string') {
+        try {
+          // Try to parse as JSON array
+          const parsed = JSON.parse(plan.includes)
+          return Array.isArray(parsed) ? parsed : plan.includes
+        } catch {
+          // If parsing fails, return as string (legacy format)
+          return plan.includes
+        }
+      }
+      return plan.includes
+    })(),
     notIncludes: plan.notIncludes,
     allowGroundTransport: plan.allowGroundTransport,
     published: plan.published,

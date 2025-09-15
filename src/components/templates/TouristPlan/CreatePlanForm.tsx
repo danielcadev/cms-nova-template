@@ -27,6 +27,7 @@ export function CreatePlanForm() {
     defaultValues: {
       mainTitle: '',
       promotionalText: '',
+      includes: [],
       itinerary: [],
       priceOptions: [],
     },
