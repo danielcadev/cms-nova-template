@@ -9,6 +9,7 @@ import {
   Image as ImageIcon,
   Layout,
   LogOut,
+  Menu,
   Package,
   Plug,
   Settings,
@@ -17,7 +18,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { memo, useCallback, useMemo } from 'react'
+import { memo, useCallback, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/hooks/use-auth'
 import { useCurrentUser } from '@/hooks/use-current-user'
@@ -35,6 +36,7 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname()
   const { handleLogout } = useAuth()
   const { user, isLoading: userLoading } = useCurrentUser()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const MenuItem = useCallback(
     ({
@@ -59,7 +61,7 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
         <Link
           href={href}
           className={cn(
-            'group relative flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-150 ease-out',
+            'group relative flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-150 ease-out',
             isActive
               ? 'theme-accent-bg theme-text shadow-sm'
               : 'theme-text-secondary hover:theme-card-hover hover:theme-text',
@@ -67,6 +69,7 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
           onClick={() => {
             if (typeof window !== 'undefined' && window.innerWidth < 768) {
               onClose()
+              setMobileMenuOpen(false)
             }
           }}
         >
@@ -75,8 +78,8 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
               className={cn(
                 'transition-colors duration-150',
                 isActive
-                  ? 'h-4.5 w-4.5 theme-text'
-                  : 'h-4.5 w-4.5 theme-text-secondary group-hover:theme-text',
+                  ? 'h-5 w-5 theme-text'
+                  : 'h-5 w-5 theme-text-secondary group-hover:theme-text',
               )}
               strokeWidth={1.5}
             />
@@ -149,14 +152,33 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
     }
   }
 
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen)
+  }
+
   return (
     <>
+      {/* Mobile menu button - visible only on mobile */}
+      <div className="md:hidden fixed top-4 right-4 z-50">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={toggleMobileMenu}
+          className="h-10 w-10 rounded-lg theme-card border theme-border shadow-sm"
+        >
+          <Menu className="h-5 w-5 theme-text" strokeWidth={1.5} />
+        </Button>
+      </div>
+
       {/* Enhanced Mobile Overlay */}
-      {isOpen && (
+      {(isOpen || mobileMenuOpen) && (
         <button
           type="button"
           className="fixed inset-0 z-40 bg-black/40 backdrop-blur-md md:hidden animate-fade-in"
-          onClick={onClose}
+          onClick={() => {
+            onClose()
+            setMobileMenuOpen(false)
+          }}
           aria-label="Close sidebar"
         />
       )}
@@ -167,7 +189,7 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
           'fixed inset-y-0 left-0 z-50 w-80 transform transition-all duration-200 ease-out',
           'theme-bg-secondary theme-border-r',
           'shadow-sm',
-          isOpen ? 'translate-x-0' : '-translate-x-full',
+          isOpen || mobileMenuOpen ? 'translate-x-0' : '-translate-x-full',
           'md:translate-x-0 md:static md:inset-0',
         )}
         style={{
@@ -177,7 +199,14 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
       >
         {/* Header (revamped) */}
         <div className="relative p-4 theme-border-b">
-          <Link href="/admin/dashboard" className="flex items-center gap-3 group" onClick={onClose}>
+          <Link
+            href="/admin/dashboard"
+            className="flex items-center gap-3 group"
+            onClick={() => {
+              onClose()
+              setMobileMenuOpen(false)
+            }}
+          >
             <div className="flex h-10 w-10 items-center justify-center rounded-xl theme-card border theme-border">
               <Package className="h-5 w-5 theme-text" strokeWidth={1.75} />
             </div>
@@ -189,7 +218,10 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
           <Button
             variant="ghost"
             size="sm"
-            onClick={onClose}
+            onClick={() => {
+              onClose()
+              setMobileMenuOpen(false)
+            }}
             className="md:hidden h-8 w-8 rounded-lg hover:theme-card-hover transition-all duration-200 absolute right-3 top-3"
           >
             <X className="h-4 w-4 theme-text-secondary" strokeWidth={1.5} />
@@ -230,8 +262,8 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
         {/* Footer */}
         <div className="relative p-3 theme-border-t">
           <div className="flex items-center gap-2.5 p-2.5 mb-2 theme-card rounded-lg theme-border">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md theme-accent-bg">
-              <Users className="h-3.5 w-3.5 theme-text" strokeWidth={1.5} />
+            <div className="flex h-8 w-8 items-center justify-center rounded-md theme-accent-bg">
+              <Users className="h-4 w-4 theme-text" strokeWidth={1.5} />
             </div>
             <div className="flex flex-col min-w-0 flex-1">
               {userLoading ? (
@@ -255,7 +287,7 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
             onClick={handleLogoutClick}
             variant="ghost"
             size="lg"
-            className="w-full theme-text-secondary hover:theme-card-hover hover:theme-text rounded-lg py-2.5 text-[13px] font-medium transition-all duration-150 justify-start"
+            className="w-full theme-text-secondary hover:theme-card-hover hover:theme-text rounded-lg py-3 text-[13px] font-medium transition-all duration-150 justify-start"
           >
             <LogOut className="h-4 w-4 mr-2.5" strokeWidth={1.5} />
             Sign out

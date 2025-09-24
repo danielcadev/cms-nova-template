@@ -68,23 +68,27 @@ export const PricingSection = memo(function PricingSection() {
   const removeAt = (index: number) => remove(index)
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-6 sm:space-y-8 lg:space-y-10">
       {/* General */}
       <section className="space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h3 className="text-base font-semibold theme-text">General Price</h3>
+            <h3 className="text-sm sm:text-base font-semibold theme-text">General Price</h3>
             <p className="text-xs theme-text-secondary">One price for the whole plan.</p>
           </div>
           {!hasGeneral && (
-            <Button type="button" onClick={addGeneral} className="text-sm">
+            <Button
+              type="button"
+              onClick={addGeneral}
+              className="text-xs sm:text-sm w-full sm:w-auto"
+            >
               Add General Price
             </Button>
           )}
         </div>
         <div className="space-y-3">
           {generalItems.length === 0 ? (
-            <p className="text-sm text-gray-500">No general price.</p>
+            <p className="text-xs sm:text-sm text-gray-500">No general price.</p>
           ) : (
             generalItems.map(({ id, index }) => (
               <PriceOptionCard
@@ -101,18 +105,22 @@ export const PricingSection = memo(function PricingSection() {
 
       {/* Specific */}
       <section className="space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h3 className="text-base font-semibold theme-text">Specific Prices</h3>
+            <h3 className="text-sm sm:text-base font-semibold theme-text">Specific Prices</h3>
             <p className="text-xs theme-text-secondary">Prices with a custom description.</p>
           </div>
-          <Button type="button" onClick={addSpecific} className="text-sm">
+          <Button
+            type="button"
+            onClick={addSpecific}
+            className="text-xs sm:text-sm w-full sm:w-auto"
+          >
             Add Specific Price
           </Button>
         </div>
         <div className="space-y-3">
           {specificItems.length === 0 ? (
-            <p className="text-sm text-gray-500">No specific prices.</p>
+            <p className="text-xs sm:text-sm text-gray-500">No specific prices.</p>
           ) : (
             specificItems.map(({ id, index }) => (
               <PriceOptionCard
@@ -129,15 +137,15 @@ export const PricingSection = memo(function PricingSection() {
 
       {/* Seasonal */}
       <section className="space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h3 className="text-base font-semibold theme-text">Seasonal Prices</h3>
+            <h3 className="text-sm sm:text-base font-semibold theme-text">Seasonal Prices</h3>
             <p className="text-xs theme-text-secondary">
               Different prices per season and accommodation.
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button type="button" onClick={addSeasonal} className="text-sm">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+            <Button type="button" onClick={addSeasonal} className="text-xs sm:text-sm">
               Add Seasonal Price
             </Button>
             <AutoFillSeasonalPricesButton />
@@ -145,7 +153,7 @@ export const PricingSection = memo(function PricingSection() {
         </div>
         <div className="space-y-3">
           {seasonalItems.length === 0 ? (
-            <p className="text-sm text-gray-500">No seasonal prices.</p>
+            <p className="text-xs sm:text-sm text-gray-500">No seasonal prices.</p>
           ) : (
             seasonalItems.map(({ id, index }) => (
               <PriceOptionCard

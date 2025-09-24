@@ -3,7 +3,9 @@
 
 import Image from 'next/image'
 import { useState } from 'react'
+import { ConfirmationModal } from '@/components/ui/ConfirmationModal'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { useConfirmation } from '@/hooks/useConfirmation'
 import type { MediaItem } from './useMediaLibrary'
 
 export function MediaGrid({
@@ -17,24 +19,37 @@ export function MediaGrid({
 }) {
   const [selected, setSelected] = useState<string | null>(null)
   const [preview, setPreview] = useState<MediaItem | null>(null)
+  const confirmation = useConfirmation()
 
-  const deleteItem = async (e: React.MouseEvent, key: string) => {
+  const deleteItem = (e: React.MouseEvent, key: string) => {
     e.preventDefault()
     e.stopPropagation()
-    const ok = confirm('Delete this file from S3 and the library?')
-    if (!ok) return
-    try {
-      const res = await fetch('/api/upload', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key }),
-      })
-      const data = await res.json()
-      if (!res.ok || !data.success) throw new Error(data.error || 'Delete failed')
-      onDeleted?.()
-    } catch (err) {
-      alert((err as Error).message)
-    }
+
+    confirmation.confirm(
+      {
+        title: 'Eliminar Archivo',
+        description:
+          '¿Estás seguro de que quieres eliminar este archivo de S3 y la biblioteca de medios?\n\nEsta acción no se puede deshacer.',
+        confirmText: 'Eliminar Archivo',
+        variant: 'destructive',
+        icon: 'delete',
+      },
+      async () => {
+        try {
+          const res = await fetch('/api/upload', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key }),
+          })
+          const data = await res.json()
+          if (!res.ok || !data.success) throw new Error(data.error || 'Delete failed')
+          onDeleted?.()
+        } catch (err) {
+          alert((err as Error).message)
+          throw err
+        }
+      },
+    )
   }
 
   const selectItem = (m: MediaItem) => {
@@ -66,7 +81,7 @@ export function MediaGrid({
                     alt={m.alt || m.title || m.key}
                     fill
                     className="object-cover"
-                    sizes="200px"
+                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center theme-text-secondary text-xs">
@@ -162,6 +177,16 @@ export function MediaGrid({
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Confirmation Modal */}
+      {confirmation.config && (
+        <ConfirmationModal
+          isOpen={confirmation.isOpen}
+          onClose={confirmation.close}
+          onConfirm={confirmation.handleConfirm}
+          config={confirmation.config}
+        />
+      )}
     </>
   )
 }

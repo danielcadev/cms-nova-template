@@ -36,14 +36,14 @@ export function SettingsPage() {
         {/* Cover Header */}
         <div className="relative overflow-hidden rounded-2xl border theme-border theme-card">
           <div className="absolute inset-0 theme-bg-secondary" />
-          <div className="relative p-8 md:p-10 flex items-start justify-between">
+          <div className="relative p-6 sm:p-8 md:p-10">
             <div className="flex items-start gap-4">
               <div className="h-12 w-12 rounded-lg theme-bg-secondary flex items-center justify-center shrink-0">
                 <Settings className="h-6 w-6 theme-text-secondary" />
               </div>
               <div>
                 <p className="text-sm theme-text-muted mb-2">System</p>
-                <h1 className="text-3xl md:text-4xl font-semibold tracking-tight theme-text">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight theme-text">
                   Settings
                 </h1>
                 <p className="mt-2 theme-text-secondary max-w-xl">
@@ -69,7 +69,7 @@ export function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {[...themes]
                   .sort((a, b) => {
                     const order = [
@@ -101,9 +101,9 @@ export function SettingsPage() {
                             background: `linear-gradient(135deg, ${themeOption.colors.primary} 0%, ${themeOption.colors.secondary} 100%)`,
                           }}
                         />
-                        <div className="text-left">
-                          <p className="font-medium theme-text">{themeOption.name}</p>
-                          <p className="text-sm theme-text-secondary">
+                        <div className="text-left min-w-0">
+                          <p className="font-medium theme-text truncate">{themeOption.name}</p>
+                          <p className="text-sm theme-text-secondary truncate">
                             {themeOption.id === 'light' && 'Clean minimalist'}
                             {themeOption.id === 'beige' && 'Warm parchment'}
                             {themeOption.id === 'dark' && 'Elegant dark'}

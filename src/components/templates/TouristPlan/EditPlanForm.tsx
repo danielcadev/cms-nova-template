@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { publishPlanAction, updatePlanDataAction } from '@/app/actions/plan-actions'
 import { ContentHeader } from '@/components/admin/shared/ContentHeader'
+import { ImageUploadProvider, useImageUpload } from '@/contexts/ImageUploadContext'
 import { useToast } from '@/hooks/use-toast'
 import { type PlanFormValues, planSchema } from '@/schemas/plan'
 import { BasicInfoSection } from './sections/BasicInfoSection'
@@ -23,33 +24,41 @@ interface EditPlanFormProps {
 const _AutosaveStatus = ({ isDirty, isSaving }: { isDirty: boolean; isSaving: boolean }) => {
   if (isSaving) {
     return (
-      <div className="flex items-center gap-2">
-        <div className="w-2 h-2 theme-accent rounded-full animate-pulse"></div>
-        <span className="text-sm theme-text-secondary">Saving...</span>
+      <div className="flex items-center gap-1 sm:gap-2">
+        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 theme-accent rounded-full animate-pulse"></div>
+        <span className="text-xs sm:text-sm theme-text-secondary">Saving...</span>
       </div>
     )
   }
   if (isDirty) {
     return (
-      <div className="flex items-center gap-2">
-        <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-        <span className="text-sm theme-text-secondary">Unsaved changes</span>
+      <div className="flex items-center gap-1 sm:gap-2">
+        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-orange-500 rounded-full"></div>
+        <span className="text-xs sm:text-sm theme-text-secondary hidden sm:inline">
+          Unsaved changes
+        </span>
+        <span className="text-xs theme-text-secondary sm:hidden">Unsaved</span>
       </div>
     )
   }
   return (
-    <div className="flex items-center gap-2">
-      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-      <span className="text-sm theme-text-secondary">All changes saved</span>
+    <div className="flex items-center gap-1 sm:gap-2">
+      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full"></div>
+      <span className="text-xs sm:text-sm theme-text-secondary hidden sm:inline">
+        All changes saved
+      </span>
+      <span className="text-xs theme-text-secondary sm:hidden">Saved</span>
     </div>
   )
 }
 
 const _FORM_STORAGE_KEY_PREFIX = 'planForm-edit-'
 
-export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
+// Internal component that uses the context
+function EditPlanFormInner({ planId, initialData }: EditPlanFormProps) {
   const router = useRouter()
   const { toast } = useToast()
+  const { isUploading: isAnyImageUploading } = useImageUpload()
   const [isSubmitting, startTransition] = useTransition()
   const [_isPublishing, _startPublishTransition] = useTransition()
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['basic']))
@@ -102,7 +111,7 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
   const watchedValues = form.watch()
 
   useEffect(() => {
-    if (!isDirty || isAutoSaving || isSubmitting) return
+    if (!isDirty || isAutoSaving || isSubmitting || isAnyImageUploading) return
 
     const currentValues = JSON.stringify(watchedValues)
 
@@ -114,18 +123,27 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
       clearTimeout(autoSaveTimeoutRef.current)
     }
 
-    // Set new timeout for auto-save
+    // Set new timeout for auto-save (longer delay if uploading)
     autoSaveTimeoutRef.current = setTimeout(() => {
       const data = form.getValues()
       saveForm(data)
-    }, 3000) // Increased delay to 3 seconds for better UX
+    }, 5000) // Increased to 5 seconds to give more time for uploads
 
     return () => {
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current)
       }
     }
-  }, [watchedValues, isDirty, isAutoSaving, isSubmitting, saveForm, form, lastSavedValues])
+  }, [
+    watchedValues,
+    isDirty,
+    isAutoSaving,
+    isSubmitting,
+    isAnyImageUploading,
+    saveForm,
+    form,
+    lastSavedValues,
+  ])
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -283,7 +301,7 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(handleFinalSubmit)}>
-          <div className="max-w-6xl mx-auto px-8 py-8">
+          <div className="max-w-6xl mx-auto px-2 sm:px-4 lg:px-6 py-2 sm:py-4 lg:py-6 pb-16 sm:pb-8">
             <ContentHeader
               backUrl="/admin/dashboard/templates/tourism"
               backLabel="Back"
@@ -305,45 +323,46 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
 
             {/* Auto-save indicator */}
             {isAutoSaving && (
-              <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 px-3 py-2 bg-blue-600 text-white text-sm rounded-lg shadow-lg">
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                Auto-saving...
+              <div className="fixed bottom-2 right-2 z-50 flex items-center gap-1 px-2 py-1 bg-blue-600 text-white text-xs rounded-md shadow-lg">
+                <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                <span className="hidden sm:inline">Auto-saving...</span>
+                <span className="sm:hidden">Saving...</span>
               </div>
             )}
 
             {/* Main content */}
-            <div className="space-y-6">
+            <div className="space-y-2 sm:space-y-4 lg:space-y-6">
               {sections.map((section) => {
                 const isExpanded = expandedSections.has(section.id)
                 return (
                   <div
                     key={section.id}
-                    className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm"
+                    className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm"
                   >
                     <button
                       type="button"
                       onClick={() => toggleSection(section.id)}
-                      className="flex items-center justify-between w-full p-6 text-left hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-all duration-200 group"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between w-full p-2 sm:p-3 lg:p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all duration-200 group gap-2 sm:gap-3"
                     >
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
                         <div
-                          className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${
+                          className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
                             isExpanded
                               ? 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200'
                               : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 group-hover:bg-gray-200 dark:group-hover:bg-gray-700'
                           }`}
                         >
                           {isExpanded ? (
-                            <ChevronDown className="h-5 w-5 transition-transform duration-200" />
+                            <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5 transition-transform duration-200" />
                           ) : (
-                            <ChevronRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-0.5" />
+                            <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5 transition-transform duration-200 group-hover:translate-x-0.5" />
                           )}
                         </div>
-                        <div>
-                          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">
+                        <div className="flex-1 min-w-0">
+                          <h2 className="text-sm sm:text-lg lg:text-xl font-semibold text-gray-900 dark:text-gray-100 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors truncate">
                             {section.title}
                           </h2>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1 line-clamp-1 sm:line-clamp-2">
                             {section.id === 'basic' && 'Title, destination, and main details'}
                             {section.id === 'includes' &&
                               "What's included and excluded in the plan"}
@@ -353,28 +372,28 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-100 transition-colors">
+                      <div className="flex items-center gap-1 sm:gap-2 w-full sm:w-auto justify-between sm:justify-normal">
+                        <span className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-100 transition-colors hidden sm:inline">
                           {isExpanded ? 'Collapse' : 'Expand'}
                         </span>
                         <div
-                          className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${
+                          className={`w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 rounded-full flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
                             isExpanded
                               ? 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200'
                               : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 group-hover:bg-gray-200 dark:group-hover:bg-gray-600'
                           }`}
                         >
                           {isExpanded ? (
-                            <ChevronDown className="h-3 w-3 transition-transform duration-200" />
+                            <ChevronDown className="h-2 w-2 sm:h-2.5 sm:w-2.5 lg:h-3 lg:w-3 transition-transform duration-200" />
                           ) : (
-                            <ChevronRight className="h-3 w-3 transition-transform duration-200" />
+                            <ChevronRight className="h-2 w-2 sm:h-2.5 sm:w-2.5 lg:h-3 lg:w-3 transition-transform duration-200" />
                           )}
                         </div>
                       </div>
                     </button>
                     {isExpanded && (
-                      <div className="px-6 pb-6 pt-0">
-                        <div className="bg-gray-50/50 dark:bg-gray-900/50 rounded-lg p-6 border border-gray-100 dark:border-gray-800">
+                      <div className="px-2 sm:px-3 lg:px-4 pb-2 sm:pb-4 lg:pb-6 pt-0">
+                        <div className="bg-gray-50/50 dark:bg-gray-900/50 rounded-lg p-2 sm:p-3 lg:p-4 border border-gray-100 dark:border-gray-800">
                           {section.component}
                         </div>
                       </div>
@@ -387,5 +406,14 @@ export function EditPlanForm({ planId, initialData }: EditPlanFormProps) {
         </form>
       </FormProvider>
     </div>
+  )
+}
+
+// Main component with provider
+export function EditPlanForm(props: EditPlanFormProps) {
+  return (
+    <ImageUploadProvider>
+      <EditPlanFormInner {...props} />
+    </ImageUploadProvider>
   )
 }

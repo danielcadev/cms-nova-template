@@ -341,4 +341,77 @@
   .theme-accent-hover {
     background-color: var(--theme-accent-hover);
   }
+
+  /* AlertDialog styling that works with themes */
+  [data-radix-alert-dialog-overlay] {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(3px) !important;
+    z-index: 9998 !important;
+    position: fixed !important;
+    inset: 0 !important;
+  }
+
+  [data-radix-alert-dialog-content] {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    z-index: 9999 !important;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
+  /* Force theme classes to work in modals */
+  [data-radix-alert-dialog-content].theme-card {
+    background-color: var(--theme-card) !important;
+    border: 2px solid var(--theme-border) !important;
+  }
+
+  [data-radix-alert-dialog-content].theme-border {
+    border-color: var(--theme-border) !important;
+  }
+
+  [data-radix-alert-dialog-content] .theme-text {
+    color: var(--theme-text-primary) !important;
+  }
+
+  [data-radix-alert-dialog-content] .theme-text-secondary {
+    color: var(--theme-text-secondary) !important;
+  }
+
+  /* Ensure modal is always visible with strong contrast */
+  [data-radix-alert-dialog-content] {
+    border: 2px solid rgba(0, 0, 0, 0.1) !important;
+    box-shadow:
+      0 25px 50px -12px rgba(0, 0, 0, 0.25),
+      0 0 0 1px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  /* Image overlay button classes with proper contrast */
+  .overlay-button-primary {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    border-color: rgba(0, 0, 0, 0.9);
+  }
+
+  .overlay-button-primary:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+
+  .overlay-button-destructive {
+    background-color: rgba(239, 68, 68, 0.9);
+    color: white;
+    border-color: rgba(220, 38, 38, 1);
+  }
+
+  .overlay-button-destructive:hover {
+    background-color: rgba(220, 38, 38, 1);
+  }
+
+  /* Force icons to be white and visible */
+  .overlay-button-primary svg,
+  .overlay-button-destructive svg {
+    color: white !important;
+    stroke: white !important;
+    fill: currentColor !important;
+  }
 }

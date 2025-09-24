@@ -5,7 +5,6 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import type { Plugin } from '@/lib/plugins/config'
-import { S3ConfigModal } from './S3ConfigModal'
 
 interface PluginCardProps {
   plugin: Plugin
@@ -41,7 +40,7 @@ const categoryConfig = {
 }
 
 export function PluginCard({ plugin, onToggle }: PluginCardProps) {
-  const [showS3Modal, setShowS3Modal] = useState(false)
+  const [_showS3Modal, setShowS3Modal] = useState(false)
   const config = categoryConfig[plugin.category]
   const CategoryIcon = config.icon
 
@@ -51,7 +50,7 @@ export function PluginCard({ plugin, onToggle }: PluginCardProps) {
     }
   }
 
-  const handleS3ConfigSave = async (s3Config: any) => {
+  const _handleS3ConfigSave = async (s3Config: any) => {
     try {
       const response = await fetch('/api/plugins/s3', {
         method: 'POST',
@@ -76,39 +75,39 @@ export function PluginCard({ plugin, onToggle }: PluginCardProps) {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-700 h-full">
+    <div className="bg-white dark:bg-gray-900 rounded-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-700 h-full">
       {/* Plugin Header */}
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex items-start justify-between mb-4 sm:mb-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
             <CategoryIcon className={`w-5 h-5 ${config.color}`} strokeWidth={1.5} />
           </div>
 
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1 tracking-tight">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1 tracking-tight truncate">
               {plugin.name}
             </h3>
-            <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+            <span className="text-xs text-gray-500 dark:text-gray-400 font-medium block truncate">
               {plugin.author}
             </span>
           </div>
         </div>
 
         <div
-          className={`w-2 h-2 rounded-full ${plugin.enabled ? 'bg-emerald-500' : 'bg-gray-400'}`}
+          className={`w-2 h-2 rounded-full flex-shrink-0 ${plugin.enabled ? 'bg-emerald-500' : 'bg-gray-400'}`}
         />
       </div>
 
       {/* Plugin Description */}
-      <div className="mb-6">
-        <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+      <div className="mb-4 sm:mb-6">
+        <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed line-clamp-3">
           {plugin.description}
         </p>
       </div>
 
       {/* Plugin Details */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 mb-3">
+      <div className="mb-4 sm:mb-6">
+        <div className="flex flex-wrap items-center gap-2 mb-3">
           <span className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-md font-medium">
             {config.label}
           </span>
@@ -119,7 +118,7 @@ export function PluginCard({ plugin, onToggle }: PluginCardProps) {
       </div>
 
       {/* Plugin Actions */}
-      <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800">
+      <div className="flex flex-wrap items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800 gap-3">
         <div className="flex items-center gap-3">
           <Switch
             checked={plugin.enabled}
@@ -141,7 +140,7 @@ export function PluginCard({ plugin, onToggle }: PluginCardProps) {
               className="border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 text-sm font-medium"
             >
               <Settings className="w-4 h-4 mr-2" strokeWidth={1.5} />
-              Configure
+              <span className="hidden xs:inline">Configure</span>
             </Button>
           ) : (
             <span className="text-xs px-3 py-1 bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 rounded-full font-medium">
@@ -150,16 +149,6 @@ export function PluginCard({ plugin, onToggle }: PluginCardProps) {
           )}
         </div>
       </div>
-
-      {/* S3 Configuration Modal */}
-      {plugin.id === 's3' && (
-        <S3ConfigModal
-          plugin={plugin}
-          isOpen={showS3Modal}
-          onClose={() => setShowS3Modal(false)}
-          onSave={handleS3ConfigSave}
-        />
-      )}
     </div>
   )
 }

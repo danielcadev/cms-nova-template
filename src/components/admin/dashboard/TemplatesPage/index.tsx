@@ -188,10 +188,10 @@ export function TemplatesPage() {
         {/* Cover */}
         <div className="relative overflow-hidden rounded-2xl border theme-border theme-card mb-6">
           <div className="absolute inset-0 theme-bg-secondary" />
-          <div className="relative p-8 md:p-10 flex items-start justify-between">
+          <div className="relative p-6 sm:p-8 md:p-10 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
             <div>
               <p className="text-sm theme-text-muted mb-2">Library</p>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight theme-text">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight theme-text">
                 Templates
               </h1>
               <p className="mt-2 theme-text-secondary max-w-xl">
@@ -199,18 +199,18 @@ export function TemplatesPage() {
                 are optional.
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2">
               <button
                 type="button"
                 onClick={handleRefresh}
                 disabled={isRefreshing}
-                className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium theme-text-secondary rounded-lg border theme-border theme-card backdrop-blur-sm hover:theme-card-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium theme-text-secondary rounded-lg border theme-border theme-card backdrop-blur-sm hover:theme-card-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors w-full sm:w-auto justify-center"
               >
                 <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
                 {isRefreshing ? 'Refreshing...' : 'Refresh'}
               </button>
-              <Link href="/admin/dashboard/content-types/create">
-                <ThemedButton className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border theme-border theme-card theme-text hover:theme-card-hover transition-colors">
+              <Link href="/admin/dashboard/content-types/create" className="w-full sm:w-auto">
+                <ThemedButton className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border theme-border theme-card theme-text hover:theme-card-hover transition-colors w-full justify-center">
                   <Plus className="h-4 w-4" />
                   New template
                 </ThemedButton>

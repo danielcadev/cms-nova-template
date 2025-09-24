@@ -40,18 +40,18 @@ export function ViewContentComponent({ contentTypes, plans, allContentEntries }:
         {/* Cover */}
         <div className="relative overflow-hidden rounded-2xl border theme-border theme-card mb-6">
           <div className="absolute inset-0 theme-bg-secondary" />
-          <div className="relative p-8 md:p-10 flex items-start justify-between">
+          <div className="relative p-6 sm:p-8 md:p-10 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
             <div>
               <p className="text-sm theme-text-muted mb-2">Content</p>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight theme-text">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight theme-text">
                 View content
               </h1>
               <p className="mt-2 theme-text-secondary max-w-xl">
                 Manage, create and organize all your content from one place.
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <ThemedButton asChild>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2">
+              <ThemedButton asChild className="w-full sm:w-auto justify-center">
                 <Link href="/admin/dashboard/content-types">
                   <Database className="h-4 w-4 mr-2 theme-text" />
                   Content types
@@ -59,7 +59,7 @@ export function ViewContentComponent({ contentTypes, plans, allContentEntries }:
               </ThemedButton>
               <ThemedButton
                 asChild
-                className="theme-card theme-text border theme-border hover:theme-card-hover"
+                className="theme-card theme-text border theme-border hover:theme-card-hover w-full sm:w-auto justify-center"
               >
                 <Link href="/admin/dashboard/content-types/create">
                   <Plus className="h-4 w-4 mr-2 theme-text" />
@@ -260,9 +260,9 @@ export function ViewContentComponent({ contentTypes, plans, allContentEntries }:
           <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
             Quick Actions
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             <ThemedButton
-              className="justify-start h-12 theme-card theme-text border theme-border hover:theme-card-hover"
+              className="justify-start h-12 theme-card theme-text border theme-border hover:theme-card-hover w-full"
               asChild
             >
               <Link href="/admin/dashboard/content-types/create">
@@ -272,7 +272,7 @@ export function ViewContentComponent({ contentTypes, plans, allContentEntries }:
             </ThemedButton>
             <ThemedButton
               asChild
-              className="justify-start h-12 theme-card theme-text border theme-border hover:theme-card-hover"
+              className="justify-start h-12 theme-card theme-text border theme-border hover:theme-card-hover w-full"
             >
               <Link href="/admin/dashboard/templates">
                 <Layout className="h-4 w-4 mr-3 theme-text" />
@@ -281,7 +281,7 @@ export function ViewContentComponent({ contentTypes, plans, allContentEntries }:
             </ThemedButton>
             <ThemedButton
               asChild
-              className="justify-start h-12 theme-card theme-text border theme-border hover:theme-card-hover"
+              className="justify-start h-12 theme-card theme-text border theme-border hover:theme-card-hover w-full md:col-span-3 sm:col-span-2"
             >
               <Link href="/admin/dashboard/content-types">
                 <Database className="h-4 w-4 mr-3 theme-text" />

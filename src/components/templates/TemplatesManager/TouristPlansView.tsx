@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  ArrowLeft,
   Calendar,
   ChevronRight,
   Edit,
@@ -18,9 +17,11 @@ import {
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
+import { ConfirmationModal } from '@/components/ui/ConfirmationModal'
 import { Input } from '@/components/ui/input'
 import { ThemedButton } from '@/components/ui/ThemedButton'
 import { useToast } from '@/hooks/use-toast'
+import { useConfirmation } from '@/hooks/useConfirmation'
 
 interface Plan {
   id: string
@@ -46,7 +47,7 @@ export function TouristPlansView({
   plans,
   isLoading,
   error,
-  onBack,
+  onBack: _onBack,
   onDeletePlan,
 }: TouristPlansViewProps) {
   const [deletingPlanId, setDeletingPlanId] = useState<string | null>(null)
@@ -57,28 +58,40 @@ export function TouristPlansView({
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
   const router = useRouter()
   const { toast } = useToast()
+  const confirmation = useConfirmation()
 
-  const handleDeletePlan = async (planId: string) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar este plan?')) {
-      return
-    }
+  const handleDeletePlan = (planId: string) => {
+    const plan = plans.find((p) => p.id === planId)
+    const planTitle = plan?.mainTitle || 'este plan'
 
-    try {
-      setDeletingPlanId(planId)
-      await onDeletePlan(planId)
-      toast({
-        title: 'Plan eliminado',
-        description: 'El plan ha sido eliminado exitosamente.',
-      })
-    } catch (_error) {
-      toast({
-        title: 'Error',
-        description: 'No se pudo eliminar el plan. Inténtalo de nuevo.',
+    confirmation.confirm(
+      {
+        title: 'Eliminar Plan',
+        description: `¿Estás seguro de que quieres eliminar "${planTitle}"?\n\nEsta acción no se puede deshacer y toda la información del plan será eliminada permanentemente.`,
+        confirmText: 'Eliminar Plan',
         variant: 'destructive',
-      })
-    } finally {
-      setDeletingPlanId(null)
-    }
+        icon: 'delete',
+      },
+      async () => {
+        try {
+          setDeletingPlanId(planId)
+          await onDeletePlan(planId)
+          toast({
+            title: 'Plan eliminado',
+            description: 'El plan ha sido eliminado exitosamente.',
+          })
+        } catch (_error) {
+          toast({
+            title: 'Error',
+            description: 'No se pudo eliminar el plan. Inténtalo de nuevo.',
+            variant: 'destructive',
+          })
+          throw _error
+        } finally {
+          setDeletingPlanId(null)
+        }
+      },
+    )
   }
 
   const handleEditPlan = (planId: string) => {
@@ -171,35 +184,30 @@ export function TouristPlansView({
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-950">
-      <div className="mx-auto max-w-6xl px-6 py-10 space-y-10">
-        {/* Cover Header */}
-        <div className="relative overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70">
-          <div className="absolute inset-0 bg-gradient-to-r from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-950 dark:to-gray-950" />
-          <div className="relative p-8 md:p-10 flex items-start justify-between">
-            <div className="flex items-start gap-4">
-              <ThemedButton
-                variantTone="ghost"
-                onClick={onBack}
-                className="mt-1 px-3 py-2 theme-text hover:theme-text-secondary"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2 theme-text" strokeWidth={1.5} />
-                Templates
-              </ThemedButton>
-              <div>
-                <p className="text-sm theme-text-muted mb-2">Tourism</p>
-                <h1 className="text-3xl md:text-4xl font-semibold tracking-tight theme-text">
-                  Tourist Plans
-                </h1>
-                <p className="mt-2 theme-text-secondary max-w-xl">
-                  Create and manage your tourism plans and itineraries with a clean, organized
-                  workspace.
-                </p>
-              </div>
+      <div className="mx-auto max-w-6xl px-8 py-10">
+        {/* Cover */}
+        <div className="relative overflow-hidden rounded-2xl border theme-border theme-card mb-6">
+          <div className="absolute inset-0 theme-bg-secondary" />
+          <div className="relative p-6 sm:p-8 md:p-10 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+            <div>
+              <p className="text-sm theme-text-muted mb-2">Tourism</p>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight theme-text">
+                Tourist Plans
+              </h1>
+              <p className="mt-2 theme-text-secondary">
+                Create and manage your tourism plans and itineraries with a clean, organized
+                workspace.
+              </p>
             </div>
-            <ThemedButton onClick={handleCreatePlan} className="shrink-0">
-              <Plus className="h-4 w-4 mr-2 theme-text" strokeWidth={1.5} />
-              Create plan
-            </ThemedButton>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2">
+              <ThemedButton
+                onClick={handleCreatePlan}
+                className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border theme-border theme-card theme-text hover:theme-card-hover transition-colors w-full sm:w-auto justify-center"
+              >
+                <Plus className="h-4 w-4" />
+                Create plan
+              </ThemedButton>
+            </div>
           </div>
         </div>
 
@@ -207,29 +215,29 @@ export function TouristPlansView({
         {plans.length > 0 && (
           <div className="rounded-xl border theme-border theme-card p-4 space-y-4">
             {/* Search and Filters Row */}
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-              <div className="flex flex-col sm:flex-row gap-3 flex-1">
+            <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+              <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full">
                 {/* Search */}
-                <div className="relative flex-1 max-w-md">
+                <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 theme-text-muted" />
                   <Input
                     placeholder="Search plans by title..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 theme-card theme-text border theme-border"
+                    className="pl-10 theme-card theme-text border theme-border w-full min-w-[200px]"
                   />
                 </div>
 
                 {/* Status Filter */}
                 <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4 theme-text-muted" />
+                  <Filter className="h-4 w-4 theme-text-muted hidden sm:block" />
                   <div className="flex rounded-lg border theme-border overflow-hidden">
                     {(['all', 'published', 'draft'] as FilterStatus[]).map((status) => (
                       <button
                         type="button"
                         key={status}
                         onClick={() => setFilterStatus(status)}
-                        className={`px-3 py-1.5 text-xs font-medium transition-colors ${
+                        className={`px-3 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
                           filterStatus === status
                             ? 'theme-card-hover theme-text'
                             : 'theme-card theme-text-secondary hover:theme-text'
@@ -243,10 +251,10 @@ export function TouristPlansView({
               </div>
 
               {/* View Mode and Sort */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 w-full md:w-auto">
                 {/* Sort Options */}
                 <div className="flex items-center gap-2">
-                  <span className="text-xs theme-text-muted">Sort by:</span>
+                  <span className="text-xs theme-text-muted hidden sm:block">Sort by:</span>
                   <div className="flex rounded-lg border theme-border overflow-hidden">
                     {[
                       { field: 'date' as SortField, label: 'Date' },
@@ -257,7 +265,7 @@ export function TouristPlansView({
                         type="button"
                         key={field}
                         onClick={() => handleSort(field)}
-                        className={`px-2 py-1 text-xs font-medium transition-colors flex items-center gap-1 ${
+                        className={`px-2 py-1.5 text-xs font-medium transition-colors flex items-center gap-1 whitespace-nowrap ${
                           sortField === field
                             ? 'theme-card-hover theme-text'
                             : 'theme-card theme-text-secondary hover:theme-text'
@@ -285,6 +293,7 @@ export function TouristPlansView({
                         ? 'theme-card-hover theme-text'
                         : 'theme-card theme-text-secondary hover:theme-text'
                     }`}
+                    title="List view"
                   >
                     <List className="h-4 w-4" />
                   </button>
@@ -296,6 +305,7 @@ export function TouristPlansView({
                         ? 'theme-card-hover theme-text'
                         : 'theme-card theme-text-secondary hover:theme-text'
                     }`}
+                    title="Grid view"
                   >
                     <Grid3X3 className="h-4 w-4" />
                   </button>
@@ -376,7 +386,7 @@ export function TouristPlansView({
               <div className="divide-y theme-border rounded-xl border theme-border overflow-hidden theme-card">
                 {filteredAndSortedPlans.map((plan) => (
                   <div key={plan.id} className="group">
-                    <div className="flex items-center justify-between p-4 md:p-5 hover:theme-card-hover transition-colors">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 md:p-5 hover:theme-card-hover transition-colors gap-3">
                       <div className="flex items-center gap-4 flex-1 min-w-0">
                         <div className="h-10 w-10 rounded-lg theme-bg-secondary flex items-center justify-center shrink-0">
                           <MapPin className="h-5 w-5 theme-text-secondary" />
@@ -389,7 +399,7 @@ export function TouristPlansView({
                             <div
                               className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                                 plan.published
-                                  ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                                  ? 'bg-green-100 text-green-800 dark:bg-green-90/30 dark:text-green-400'
                                   : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
                               }`}
                             >
@@ -411,7 +421,7 @@ export function TouristPlansView({
                           className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 text-xs theme-text hover:theme-text-secondary"
                         >
                           <Edit className="h-3 w-3 mr-1 theme-text" />
-                          Edit
+                          <span className="hidden sm:inline">Edit</span>
                         </ThemedButton>
                         <ThemedButton
                           variantTone="ghost"
@@ -420,11 +430,11 @@ export function TouristPlansView({
                           className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 text-xs text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                         >
                           {deletingPlanId === plan.id ? (
-                            <div className="w-3 h-3 animate-spin rounded-full border border-red-600 border-t-transparent" />
+                            <div className="w-3 h-3 animate-spin rounded-full border-red-600 border-t-transparent" />
                           ) : (
                             <>
                               <Trash2 className="h-3 w-3 mr-1 text-red-600 dark:text-red-400" />
-                              Delete
+                              <span className="hidden sm:inline">Delete</span>
                             </>
                           )}
                         </ThemedButton>
@@ -438,7 +448,7 @@ export function TouristPlansView({
 
             {/* Grid View */}
             {viewMode === 'grid' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredAndSortedPlans.map((plan) => (
                   <div
                     key={plan.id}
@@ -483,7 +493,7 @@ export function TouristPlansView({
                         variantTone="ghost"
                         onClick={() => handleDeletePlan(plan.id)}
                         disabled={deletingPlanId === plan.id}
-                        className="px-3 py-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                        className="px-3 py-2 text-red-600 hover:text-red-700 dark:text-red-40 dark:hover:text-red-300"
                       >
                         {deletingPlanId === plan.id ? (
                           <div className="w-4 h-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
@@ -499,6 +509,16 @@ export function TouristPlansView({
           </div>
         )}
       </div>
+
+      {/* Confirmation Modal */}
+      {confirmation.config && (
+        <ConfirmationModal
+          isOpen={confirmation.isOpen}
+          onClose={confirmation.close}
+          onConfirm={confirmation.handleConfirm}
+          config={confirmation.config}
+        />
+      )}
     </div>
   )
 }

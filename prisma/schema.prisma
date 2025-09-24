@@ -14,15 +14,15 @@ datasource db {
 model User {
   id            String    @id @default(cuid())
   email         String    @unique
-  emailVerified DateTime? // Cambiar a DateTime para Better Auth
+  emailVerified Boolean   @default(false) // Boolean como Better Auth v1.3+ espera
   name          String?
   image         String?
   password      String?   // Agregar campo password
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  role          String    @default("USER")
+  role          String    @default("user") // Minúsculas como Better Auth espera
   accounts      Account[]
-  banned        Boolean?
+  banned        Boolean   @default(false) // Boolean con default
   banReason     String?
   banExpires    DateTime?
   sessions      Session[]

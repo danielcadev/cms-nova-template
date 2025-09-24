@@ -65,12 +65,12 @@ export function MediaToolbar({
     <div className="flex flex-col gap-4">
       {/* Top row: search + folder */}
       <div className="flex flex-wrap gap-2 items-center">
-        <div className="relative">
+        <div className="relative flex-1 min-w-[200px]">
           <input
             value={q}
             onChange={(e) => onSearch(e.target.value)}
             placeholder="Search media..."
-            className="pl-9 pr-3 py-2 rounded-lg border theme-border theme-card theme-text placeholder:theme-text-muted min-w-[240px]"
+            className="pl-9 pr-3 py-2 rounded-lg border theme-border theme-card theme-text placeholder:theme-text-muted w-full"
           />
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm theme-text-secondary">
             🔎
@@ -79,7 +79,7 @@ export function MediaToolbar({
         <select
           value={folder}
           onChange={(e) => onFolder(e.target.value)}
-          className="px-3 py-2 rounded-lg border theme-border theme-card theme-text"
+          className="px-3 py-2 rounded-lg border theme-border theme-card theme-text min-w-[150px]"
         >
           <option value="">All folders</option>
           {folders.map((f) => (
@@ -101,7 +101,7 @@ export function MediaToolbar({
 
       {/* Bottom row: upload + new folder + sort/view */}
       <div className="flex flex-wrap gap-2 items-center justify-between">
-        <div className="flex gap-2 items-center">
+        <div className="flex flex-wrap gap-2 items-center">
           <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border theme-border theme-card hover:theme-card-hover cursor-pointer w-fit">
             <input
               type="file"
@@ -111,12 +111,12 @@ export function MediaToolbar({
             />
             <span className="text-sm theme-text">Upload</span>
           </label>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2 items-center">
             <input
               value={newFolder}
               onChange={(e) => setNewFolder(e.target.value)}
               placeholder="New folder (e.g., uploads/main)"
-              className="px-3 py-2 rounded-lg border theme-border theme-card theme-text placeholder:theme-text-muted min-w-[220px]"
+              className="px-3 py-2 rounded-lg border theme-border theme-card theme-text placeholder:theme-text-muted min-w-[180px]"
             />
             <button
               type="button"
@@ -127,7 +127,7 @@ export function MediaToolbar({
             </button>
           </div>
         </div>
-        <div className="flex gap-2 items-center">
+        <div className="flex flex-wrap gap-2 items-center">
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as any)}

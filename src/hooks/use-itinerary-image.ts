@@ -1,6 +1,7 @@
 // hooks/use-itinerary-image.ts
 import { useCallback, useState } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
+import { useImageUpload } from '@/contexts/ImageUploadContext'
 import type { PlanFormValues } from '@/schemas/plan'
 import { validateImage } from '@/utils/image-utils'
 
@@ -12,6 +13,7 @@ interface UseItineraryImageProps {
 export function useItineraryImage({ form, dayIndex }: UseItineraryImageProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { addUploadingItem, removeUploadingItem } = useImageUpload()
 
   // Helper to avoid long hangs - memoized to avoid recreating on every render
   const fetchWithTimeout = useCallback(
@@ -158,6 +160,7 @@ export function useItineraryImage({ form, dayIndex }: UseItineraryImageProps) {
 
   const handleImageUpload = useCallback(
     async (file: File) => {
+      const uploadId = `itinerary-${dayIndex}-${Date.now()}`
       try {
         console.debug('[ItineraryImage] handleImageUpload:start', {
           dayIndex,
@@ -166,6 +169,7 @@ export function useItineraryImage({ form, dayIndex }: UseItineraryImageProps) {
           size: file.size,
         })
         setIsUploading(true)
+        addUploadingItem(uploadId)
         setError(null)
 
         // Validate image
@@ -236,9 +240,19 @@ export function useItineraryImage({ form, dayIndex }: UseItineraryImageProps) {
         setError(errorMessage)
       } finally {
         setIsUploading(false)
+        removeUploadingItem(uploadId)
       }
     },
-    [form, dayIndex, fetchWithTimeout, presignedUpload, maybeCompressImage, serverUpload],
+    [
+      form,
+      dayIndex,
+      fetchWithTimeout,
+      presignedUpload,
+      maybeCompressImage,
+      serverUpload,
+      addUploadingItem,
+      removeUploadingItem,
+    ],
   )
 
   const handleImageDelete = useCallback(async () => {

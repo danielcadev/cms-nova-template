@@ -208,7 +208,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <div className="flex-1 flex flex-col min-h-screen relative">
         <main className="flex-1 relative">
           <div className="h-full">
-            <div className="transition-all duration-200 ease-out p-6 md:p-8 lg:p-12">
+            <div className="transition-all duration-200 ease-out p-2 sm:p-4 md:p-6 lg:p-8 xl:p-12">
               <div className="max-w-6xl mx-auto">{children}</div>
             </div>
           </div>

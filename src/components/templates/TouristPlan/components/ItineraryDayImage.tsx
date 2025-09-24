@@ -35,22 +35,39 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
     const fetchS3Config = async () => {
       try {
         const response = await fetch('/api/plugins/s3', { cache: 'no-store' })
-        const data = await response.json()
 
-        // Consider S3 configured if backend reports a usable config
-        if (
+        if (!response.ok) {
+          console.error('S3 config API response not ok:', response.status)
+          setIsS3Configured(false)
+          return
+        }
+
+        const data = await response.json()
+        console.debug('[ItineraryDayImage] S3 config response:', {
+          success: data?.success,
+          hasConfig: !!data?.config,
+          config: data?.config
+            ? {
+                bucket: !!data.config.bucket,
+                accessKeyId: !!data.config.accessKeyId,
+                region: !!data.config.region,
+              }
+            : null,
+        })
+
+        // Consider S3 configured if backend reports success and config exists with required fields
+        const isConfigured = !!(
           data?.success &&
           data?.config &&
           data.config.bucket &&
           data.config.accessKeyId &&
           data.config.region
-        ) {
-          setIsS3Configured(true)
-        } else {
-          setIsS3Configured(false)
-        }
+        )
+
+        console.debug('[ItineraryDayImage] S3 configured:', isConfigured)
+        setIsS3Configured(isConfigured)
       } catch (error) {
-        console.error('Failed to load S3 configuration', error)
+        console.error('Failed to load S3 configuration:', error)
         setIsS3Configured(false)
       } finally {
         setIsLoadingConfig(false)
@@ -90,8 +107,8 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
 
   // Media picker selection
   const handleMediaSelect = useCallback(
-    (url: string) => {
-      form.setValue(`itinerary.${fieldIndex}.image`, url, {
+    (item: any) => {
+      form.setValue(`itinerary.${fieldIndex}.image`, item.url, {
         shouldValidate: true,
         shouldDirty: true,
       })
@@ -104,10 +121,10 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
   if (isLoadingConfig) {
     return (
       <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center justify-center h-32">
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <Loader2 className="h-4 w-4 animate-spin" />
+        <CardContent className="p-4 sm:p-6">
+          <div className="flex items-center justify-center h-24 sm:h-32">
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500">
+              <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
               Loading image configuration...
             </div>
           </div>
@@ -120,16 +137,22 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
   if (!isS3Configured) {
     return (
       <Card className="border-amber-200 bg-amber-50">
-        <CardContent className="p-6">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+        <CardContent className="p-4 sm:p-6">
+          <div className="flex items-start gap-2 sm:gap-3">
+            <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-amber-600 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
-              <h4 className="font-medium text-amber-800 mb-1">S3 Configuration Required</h4>
-              <p className="text-sm text-amber-700 mb-3">
+              <h4 className="font-medium text-amber-800 mb-1 text-sm sm:text-base">
+                S3 Configuration Required
+              </h4>
+              <p className="text-xs sm:text-sm text-amber-700 mb-2 sm:mb-3">
                 To upload images for itinerary days, S3 storage must be configured.
               </p>
               <Link href="/admin/dashboard/plugins">
-                <Button variant="outline" size="sm" className="text-amber-700 border-amber-300">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-amber-700 border-amber-300 text-xs sm:text-sm"
+                >
                   Configure S3
                 </Button>
               </Link>
@@ -142,7 +165,7 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
 
   return (
     <Card>
-      <CardContent className="p-4 space-y-4">
+      <CardContent className="p-3 sm:p-4 space-y-3 sm:space-y-4">
         {imageUrl ? (
           <div className="relative group w-full aspect-video rounded-lg overflow-hidden bg-gray-100">
             <Image
@@ -153,32 +176,28 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-            <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <Button
+            <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex gap-1 sm:gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
+              <button
                 type="button"
-                variant="secondary"
-                size="sm"
                 onClick={() => setPickerOpen(true)}
-                className="rounded-full h-8 px-3 shadow-lg bg-white/90 hover:bg-white"
+                className="rounded-full h-7 w-7 sm:h-8 sm:w-8 bg-white dark:bg-gray-100 text-gray-800 dark:text-gray-900 border border-gray-300 dark:border-gray-200 shadow-lg hover:bg-gray-50 dark:hover:bg-gray-300 flex items-center justify-center"
                 disabled={isUploading}
               >
-                <ImageIcon className="h-4 w-4" />
-              </Button>
-              <Button
+                <ImageIcon className="h-3 w-3 sm:h-4 sm:w-4" />
+              </button>
+              <button
                 type="button"
-                variant="destructive"
-                size="sm"
                 onClick={handleImageDelete}
-                className="rounded-full h-8 px-3 shadow-lg"
+                className="rounded-full h-7 w-7 sm:h-8 sm:w-8 bg-red-500 text-white border border-red-600 shadow-lg hover:bg-red-600 flex items-center justify-center"
                 disabled={isUploading}
               >
-                <X className="h-4 w-4" />
-              </Button>
+                <X className="h-3 w-3 sm:h-4 sm:w-4" />
+              </button>
             </div>
             {isUploading && (
               <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                <div className="flex items-center gap-2 text-white text-sm">
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                <div className="flex items-center gap-2 text-white text-xs sm:text-sm">
+                  <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
                   Uploading...
                 </div>
               </div>
@@ -191,32 +210,34 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
             onDragOver={handleDragOver}
             onClick={() => document.getElementById(`day-image-${fieldIndex}`)?.click()}
             className={cn(
-              'flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg transition-colors cursor-pointer',
+              'flex flex-col items-center justify-center w-full h-36 sm:h-48 border-2 border-dashed rounded-lg transition-colors cursor-pointer',
               isUploading
-                ? 'border-blue-300 bg-blue-50'
+                ? 'border-blue-300 bg-blue-50 cursor-not-allowed'
                 : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50',
             )}
             disabled={isUploading}
           >
             {isUploading ? (
               <div className="flex flex-col items-center gap-2">
-                <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
-                <p className="text-sm text-blue-600 font-medium">Uploading image...</p>
+                <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 animate-spin" />
+                <p className="text-xs sm:text-sm text-blue-600 font-medium">Uploading image...</p>
               </div>
             ) : (
               <>
-                <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                <p className="text-sm text-gray-600 font-medium mb-1">Upload day image</p>
-                <p className="text-xs text-gray-500 text-center">
+                <Upload className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400 mb-2" />
+                <p className="text-xs sm:text-sm text-gray-600 font-medium mb-1">
+                  Upload day image
+                </p>
+                <p className="text-xs text-gray-500 text-center px-2">
                   Drag and drop or click to select
                 </p>
-                <div className="flex gap-2 mt-3">
-                  <label htmlFor={`day-image-${fieldIndex}`}>
+                <div className="flex flex-col sm:flex-row gap-2 mt-2 sm:mt-3 w-full sm:w-auto px-4 sm:px-0">
+                  <label htmlFor={`day-image-${fieldIndex}`} className="w-full sm:w-auto">
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
-                      className="cursor-pointer"
+                      className="cursor-pointer w-full sm:w-auto text-xs sm:text-sm"
                       disabled={isUploading}
                     >
                       Choose File
@@ -236,8 +257,9 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
                     size="sm"
                     onClick={() => setPickerOpen(true)}
                     disabled={isUploading}
+                    className="w-full sm:w-auto text-xs sm:text-sm"
                   >
-                    <ImageIcon className="h-4 w-4 mr-1" />
+                    <ImageIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                     Gallery
                   </Button>
                 </div>
@@ -247,11 +269,11 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
         )}
 
         {error && (
-          <div className="flex items-start gap-2 p-3 rounded-lg bg-red-50 border border-red-200">
-            <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
+          <div className="flex items-start gap-2 p-2 sm:p-3 rounded-lg bg-red-50 border border-red-200">
+            <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4 text-red-600 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
-              <p className="text-sm text-red-800 font-medium">Upload Error</p>
-              <p className="text-sm text-red-700">{error}</p>
+              <p className="text-xs sm:text-sm text-red-800 font-medium">Upload Error</p>
+              <p className="text-xs sm:text-sm text-red-700">{error}</p>
             </div>
           </div>
         )}

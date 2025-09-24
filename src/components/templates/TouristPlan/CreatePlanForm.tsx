@@ -144,37 +144,39 @@ export function CreatePlanForm() {
           <form>
             {/* Header */}
             <div className="theme-card theme-border-b sticky top-0 z-10 backdrop-blur-sm">
-              <div className="max-w-6xl mx-auto px-8 py-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-6">
+              <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
                     <Button
                       type="button"
                       variant="ghost"
                       onClick={handleGoBack}
-                      className="flex items-center gap-3 theme-text-secondary hover:theme-text theme-hover px-4 py-2 rounded-lg transition-colors"
+                      className="flex items-center gap-2 sm:gap-3 theme-text-secondary hover:theme-text theme-hover px-3 sm:px-4 py-2 rounded-lg transition-colors self-start"
                     >
-                      <ArrowLeft className="h-5 w-5" />
-                      <span className="font-medium">Back to Plans</span>
+                      <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+                      <span className="font-medium text-sm sm:text-base">Back to Plans</span>
                     </Button>
-                    <div className="w-px h-8 theme-border"></div>
+                    <div className="hidden sm:block w-px h-8 theme-border"></div>
                     <div>
-                      <h1 className="text-2xl font-bold theme-text">Create New Tourism Plan</h1>
-                      <p className="text-sm theme-text-secondary mt-1">
+                      <h1 className="text-xl sm:text-2xl font-bold theme-text">
+                        Create New Tourism Plan
+                      </h1>
+                      <p className="text-xs sm:text-sm theme-text-secondary mt-1">
                         Start typing to activate autosave
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                    <span className="text-sm theme-text-secondary">Ready to create</span>
+                    <span className="text-xs sm:text-sm theme-text-secondary">Ready to create</span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Main content */}
-            <div className="max-w-6xl mx-auto px-8 py-8">
-              <div className="space-y-6">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+              <div className="space-y-4 sm:space-y-6">
                 {sections.map((section) => {
                   const isExpanded = expandedSections.has(section.id)
                   return (
@@ -182,27 +184,27 @@ export function CreatePlanForm() {
                       <button
                         type="button"
                         onClick={() => toggleSection(section.id)}
-                        className="flex items-center justify-between w-full p-6 text-left theme-hover rounded-xl transition-all duration-200 group"
+                        className="flex flex-col sm:flex-row sm:items-center justify-between w-full p-3 sm:p-4 lg:p-6 text-left hover:theme-card-hover transition-all duration-200 group gap-3 sm:gap-4"
                       >
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
                           <div
-                            className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${
+                            className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
                               isExpanded
                                 ? 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200'
                                 : 'theme-bg-secondary group-hover:bg-gray-200 dark:group-hover:bg-gray-700'
                             }`}
                           >
                             {isExpanded ? (
-                              <ChevronDown className="h-5 w-5 transition-transform duration-200" />
+                              <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200" />
                             ) : (
-                              <ChevronRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-0.5 theme-text-secondary" />
+                              <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200 group-hover:translate-x-0.5 theme-text-secondary" />
                             )}
                           </div>
-                          <div>
-                            <h2 className="text-xl font-semibold theme-text group-hover:theme-accent transition-colors">
+                          <div className="flex-1 min-w-0">
+                            <h2 className="text-lg sm:text-xl font-semibold theme-text group-hover:theme-accent transition-colors truncate">
                               {section.title}
                             </h2>
-                            <p className="text-sm theme-text-secondary mt-1">
+                            <p className="text-xs sm:text-sm theme-text-secondary mt-1 line-clamp-2">
                               {section.id === 'basic' && 'Title, destination, and main details'}
                               {section.id === 'includes' &&
                                 "What's included and excluded in the plan"}
@@ -213,28 +215,28 @@ export function CreatePlanForm() {
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm theme-text-secondary group-hover:theme-text transition-colors">
+                        <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-normal">
+                          <span className="text-xs sm:text-sm theme-text-secondary group-hover:theme-text transition-colors">
                             {isExpanded ? 'Collapse' : 'Expand'}
                           </span>
                           <div
-                            className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${
+                            className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
                               isExpanded
                                 ? 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200'
                                 : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 group-hover:bg-gray-200 dark:group-hover:bg-gray-600'
                             }`}
                           >
                             {isExpanded ? (
-                              <ChevronDown className="h-3 w-3 transition-transform duration-200" />
+                              <ChevronDown className="h-2 w-2 sm:h-3 sm:w-3 transition-transform duration-200" />
                             ) : (
-                              <ChevronRight className="h-3 w-3 transition-transform duration-200" />
+                              <ChevronRight className="h-2 w-2 sm:h-3 sm:w-3 transition-transform duration-200" />
                             )}
                           </div>
                         </div>
                       </button>
                       {isExpanded && (
-                        <div className="px-6 pb-6 pt-0">
-                          <div className="bg-gray-50/50 dark:bg-gray-900/50 rounded-lg p-6 border border-gray-100 dark:border-gray-800">
+                        <div className="px-3 sm:px-4 lg:px-6 pb-4 sm:pb-6 pt-0">
+                          <div className="bg-gray-50/50 dark:bg-gray-900/50 rounded-lg p-3 sm:p-4 lg:p-6 border border-gray-100 dark:border-gray-800">
                             {section.component}
                           </div>
                         </div>

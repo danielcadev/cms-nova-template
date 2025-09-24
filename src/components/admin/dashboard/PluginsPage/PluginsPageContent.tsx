@@ -91,17 +91,21 @@ export function PluginsPageContent({
         {/* Cover Header (keep as is) */}
         <div className="relative overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70">
           <div className="absolute inset-0 bg-gradient-to-r from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-950 dark:to-gray-950" />
-          <div className="relative p-8 md:p-10 flex items-start justify-between">
+          <div className="relative p-6 sm:p-8 md:p-10 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
             <div>
               <p className="text-sm theme-text-muted mb-2">System</p>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight theme-text">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight theme-text">
                 Plugins
               </h1>
               <p className="mt-2 theme-text-secondary max-w-xl">
                 Extend your CMS capabilities with specialized plugins and integrations.
               </p>
             </div>
-            <ThemedButton onClick={handleRefreshClick} disabled={refreshing} className="shrink-0">
+            <ThemedButton
+              onClick={handleRefreshClick}
+              disabled={refreshing}
+              className="shrink-0 w-full sm:w-auto justify-center"
+            >
               <RefreshCw
                 className={`h-4 w-4 mr-2 theme-text ${refreshing ? 'animate-spin' : ''}`}
                 strokeWidth={1.5}
@@ -241,13 +245,13 @@ export function PluginsPageContent({
               <div className="divide-y theme-border rounded-xl border theme-border overflow-hidden theme-card">
                 {filteredPlugins.map((plugin) => (
                   <div key={plugin.id} className="group">
-                    <div className="flex items-center justify-between p-4 md:p-5 hover:theme-card-hover transition-colors">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 md:p-5 hover:theme-card-hover transition-colors gap-4">
                       <div className="flex items-center gap-4 flex-1 min-w-0">
                         <div className="h-12 w-12 rounded-lg theme-bg-secondary flex items-center justify-center shrink-0 text-2xl">
                           {plugin.icon}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-3 mb-1">
+                          <div className="flex flex-wrap items-center gap-3 mb-1">
                             <div className="text-sm font-medium theme-text truncate">
                               {plugin.name}
                             </div>
@@ -275,10 +279,10 @@ export function PluginsPageContent({
                           <ThemedButton
                             variantTone="ghost"
                             onClick={() => onConfigurePlugin?.(plugin)}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 text-xs theme-text hover:theme-text-secondary"
+                            className="opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 text-xs theme-text hover:theme-text-secondary"
                           >
                             <Settings className="h-3 w-3 mr-1 theme-text" />
-                            Configure
+                            <span className="hidden xs:inline">Configure</span>
                           </ThemedButton>
                         )}
                         <div className="flex items-center gap-2">
@@ -297,7 +301,7 @@ export function PluginsPageContent({
 
             {/* Grid view */}
             {viewMode === 'grid' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredPlugins.map((plugin) => (
                   <div
                     key={plugin.id}
@@ -337,14 +341,15 @@ export function PluginsPageContent({
                       {plugin.description}
                     </p>
 
-                    <div className="flex items-center justify-between pt-4 border-t theme-border">
+                    <div className="flex flex-wrap items-center justify-between pt-4 border-t theme-border gap-3">
                       {plugin.configurable ? (
                         <ThemedButton
                           variantTone="ghost"
                           onClick={() => onConfigurePlugin?.(plugin)}
                           className="px-3 py-1.5 text-xs theme-text hover:theme-text-secondary"
                         >
-                          <Settings className="h-3 w-3 mr-1 theme-text" /> Configure
+                          <Settings className="h-3 w-3 mr-1 theme-text" />
+                          <span className="hidden xs:inline">Configure</span>
                         </ThemedButton>
                       ) : (
                         <span className="text-xs px-2 py-1 rounded-md theme-bg-secondary theme-text-secondary">

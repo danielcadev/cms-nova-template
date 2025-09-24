@@ -4,7 +4,6 @@ import { usePathname, useRouter } from 'next/navigation'
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { useToast } from '@/hooks/use-toast'
 import { authClient } from '@/lib/auth-client'
-import { isAdminUser } from '@/lib/auth-utils'
 import type {
   BetterAuthResponse,
   BetterAuthUser,
@@ -48,10 +47,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsAuthenticated(false)
         return false
       }
-      const isAdmin = isAdminUser(session.data)
-      setUser(session.data?.user || null)
-      setIsAuthenticated(isAdmin)
-      return isAdmin
+
+      const hasUser = !!session.data?.user
+      if (hasUser) {
+        // Check if user has admin permissions
+        try {
+          const adminCheck = await authClient.admin.listUsers({ limit: 1 })
+          console.log('👑 Admin check result:', adminCheck)
+          setUser(session.data?.user || null)
+          setIsAuthenticated(true)
+        } catch (adminError) {
+          console.log('❌ User does not have admin permissions:', adminError)
+          setUser(null)
+          setIsAuthenticated(false)
+          return false
+        }
+      } else {
+        setUser(null)
+        setIsAuthenticated(false)
+      }
+
+      console.log('👤 Session check:', { hasUser, user: session.data?.user })
+      return hasUser
     } catch (_error) {
       setUser(null)
       setIsAuthenticated(false)
@@ -85,18 +102,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!formData.email || !formData.password) throw new Error('Please fill in all fields')
         if (!formData.email.includes('@')) throw new Error('Please enter a valid email')
 
+        console.log('🔐 Attempting sign in with:', { email: formData.email })
+
+        // Intentar directamente sign in (usuarios deben crearse desde /admin/users)
+
         const signInResponse = (await authClient.signIn.email({
           email: formData.email,
           password: formData.password,
         })) as BetterAuthResponse<UserResponse>
+
+        console.log('📥 Sign in response:', signInResponse)
         if (signInResponse.error)
           throw new Error(signInResponse.error.message || 'Failed to sign in')
 
         await new Promise((resolve) => setTimeout(resolve, 700))
-        const isAdmin = await checkSession()
-        if (!isAdmin) {
+        const isAuthenticated = await checkSession()
+        if (!isAuthenticated) {
           await authClient.signOut()
-          throw new Error('You do not have administrator permissions')
+          throw new Error('Authentication failed')
         }
 
         toast({

@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowRight, Database, Plus, Settings } from 'lucide-react'
+import { Database, Plus, Settings } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
@@ -74,10 +74,10 @@ export function ContentTypesPageContent({
         {/* Cover */}
         <div className="relative overflow-hidden rounded-2xl border theme-border theme-card mb-6">
           <div className="absolute inset-0 theme-bg-secondary" />
-          <div className="relative p-8 md:p-10 flex items-start justify-between">
+          <div className="relative p-6 sm:p-8 md:p-10 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
             <div>
               <p className="text-sm theme-text-muted mb-2">Schema</p>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight theme-text">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight theme-text">
                 Content Types
               </h1>
               <p className="mt-2 theme-text-secondary max-w-xl">
@@ -85,8 +85,8 @@ export function ContentTypesPageContent({
                 CMS.
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <ThemedButton asChild>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2">
+              <ThemedButton asChild className="w-full sm:w-auto justify-center">
                 <Link href="/admin/dashboard/view-content">
                   <Database className="h-4 w-4 mr-2" />
                   View content
@@ -94,7 +94,7 @@ export function ContentTypesPageContent({
               </ThemedButton>
               <ThemedButton
                 asChild
-                className="theme-card theme-text border theme-border hover:theme-card-hover"
+                className="theme-card theme-text border theme-border hover:theme-card-hover w-full sm:w-auto justify-center"
               >
                 <Link href="/admin/dashboard/content-types/create">
                   <Plus className="h-4 w-4 mr-2" />
@@ -139,23 +139,23 @@ export function ContentTypesPageContent({
           <div className="space-y-3 mb-8">
             {displayContentTypes.map((contentType) => (
               <div key={contentType.id} className="group">
-                <div className="flex items-center justify-between p-4 rounded-lg border theme-border theme-card backdrop-blur-sm hover:theme-card-hover transition-colors shadow-sm">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg border theme-border theme-card backdrop-blur-sm hover:theme-card-hover transition-colors shadow-sm gap-4">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 theme-bg-secondary rounded-lg flex items-center justify-center">
                       <Database className="h-5 w-5 theme-text-secondary" />
                     </div>
-                    <div>
-                      <div className="font-medium theme-text">{contentType.name}</div>
-                      <div className="text-sm theme-text-secondary">
+                    <div className="min-w-0 flex-1">
+                      <div className="font-medium theme-text truncate">{contentType.name}</div>
+                      <div className="text-sm theme-text-secondary truncate">
                         {contentType.description || 'Custom content type'} •{' '}
                         {contentType.fields?.length || 0} fields
                       </div>
-                      <div className="text-xs theme-text-muted font-mono mt-1">
+                      <div className="text-xs theme-text-muted font-mono mt-1 truncate">
                         {contentType.apiIdentifier}
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <ThemedButton
                       size="sm"
                       className="theme-card theme-text border theme-border hover:theme-card-hover"
@@ -165,7 +165,7 @@ export function ContentTypesPageContent({
                         href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content`}
                       >
                         <Database className="h-4 w-4 mr-1" />
-                        View entries
+                        <span className="hidden xs:inline">View entries</span>
                       </Link>
                     </ThemedButton>
                     <ThemedButton
@@ -177,10 +177,9 @@ export function ContentTypesPageContent({
                         href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/edit`}
                       >
                         <Settings className="h-4 w-4 mr-1" />
-                        Edit type
+                        <span className="hidden xs:inline">Edit type</span>
                       </Link>
                     </ThemedButton>
-                    <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" />
                   </div>
                 </div>
               </div>

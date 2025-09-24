@@ -136,13 +136,13 @@ export function PriceOptionCard({
   } = useFieldArray({ control, name: `${fieldName}.${index}.seasonAccommodations` as any })
 
   return (
-    <div className="rounded-xl border theme-border p-4 sm:p-5 theme-card">
+    <div className="rounded-xl border theme-border p-3 sm:p-4 lg:p-5 theme-card">
       {/* Row: Mode selector + Remove */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="inline-flex rounded-lg border theme-border overflow-hidden">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div className="inline-flex rounded-lg border theme-border overflow-hidden w-full sm:w-auto">
           <button
             type="button"
-            className={`px-3 py-1.5 text-sm ${
+            className={`px-2 sm:px-3 py-1.5 text-xs sm:text-sm flex-1 sm:flex-initial ${
               currentMode === 'simple' ? 'theme-bg-secondary font-semibold' : 'theme-card'
             } ${hasOtherGeneralPrice && currentMode !== 'simple' ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={() => !hasOtherGeneralPrice && handleModeChange('simple')}
@@ -151,14 +151,14 @@ export function PriceOptionCard({
           </button>
           <button
             type="button"
-            className={`px-3 py-1.5 text-sm ${currentMode === 'advanced' ? 'theme-bg-secondary font-semibold' : 'theme-card'}`}
+            className={`px-2 sm:px-3 py-1.5 text-xs sm:text-sm flex-1 sm:flex-initial ${currentMode === 'advanced' ? 'theme-bg-secondary font-semibold' : 'theme-card'}`}
             onClick={() => handleModeChange('advanced')}
           >
             Specific
           </button>
           <button
             type="button"
-            className={`px-3 py-1.5 text-sm ${currentMode === 'seasonal' ? 'theme-bg-secondary font-semibold' : 'theme-card'}`}
+            className={`px-2 sm:px-3 py-1.5 text-xs sm:text-sm flex-1 sm:flex-initial ${currentMode === 'seasonal' ? 'theme-bg-secondary font-semibold' : 'theme-card'}`}
             onClick={() => handleModeChange('seasonal')}
           >
             Seasonal
@@ -171,26 +171,26 @@ export function PriceOptionCard({
             variant="outline"
             size="sm"
             onClick={onRemove}
-            className="text-red-600"
+            className="text-red-600 w-full sm:w-auto"
           >
-            <X className="h-4 w-4" />
+            <X className="h-3 w-3 sm:h-4 sm:w-4" />
           </Button>
         )}
       </div>
 
       {/* Body */}
-      <div className="mt-4 space-y-4">
+      <div className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
         {currentMode !== 'seasonal' && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {currentMode === 'advanced' && (
               <FormField
                 control={control}
                 name={`${fieldName}.${index}.label` as any}
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="sm:col-span-2 lg:col-span-1">
                     <FormLabel className="text-xs text-gray-600">Description</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="e.g., 2 passengers" />
+                      <Input {...field} placeholder="e.g., 2 passengers" className="text-sm" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -206,7 +206,7 @@ export function PriceOptionCard({
                   <FormLabel className="text-xs text-gray-600">Currency</FormLabel>
                   <FormControl>
                     <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
+                      <SelectTrigger className="text-sm">
                         <SelectValue placeholder="Currency" />
                       </SelectTrigger>
                       <SelectContent>
@@ -238,7 +238,7 @@ export function PriceOptionCard({
                         type="text"
                         placeholder="1.500.000"
                         onChange={handlePriceChange(`${fieldName}.${index}.price`)}
-                        className="pl-6"
+                        className="pl-6 text-sm"
                       />
                     </div>
                   </FormControl>
@@ -258,7 +258,11 @@ export function PriceOptionCard({
                 <FormItem>
                   <FormLabel className="text-xs text-gray-600">Season title</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="e.g., LOW SEASON - Wednesday to Sunday" />
+                    <Input
+                      {...field}
+                      placeholder="e.g., LOW SEASON - Wednesday to Sunday"
+                      className="text-sm"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -266,7 +270,7 @@ export function PriceOptionCard({
             />
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <FormLabel className="text-xs text-gray-600">Accommodations & prices</FormLabel>
                 <Button
                   type="button"
@@ -279,6 +283,7 @@ export function PriceOptionCard({
                       currency: 'COP',
                     })
                   }
+                  className="w-full sm:w-auto text-xs"
                 >
                   Add
                 </Button>
@@ -290,9 +295,9 @@ export function PriceOptionCard({
                 </div>
               )}
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {accommodationFields.map((f, accIndex) => (
-                  <div key={f.id} className="grid grid-cols-1 sm:grid-cols-6 gap-2 items-end">
+                  <div key={f.id} className="grid grid-cols-1 sm:grid-cols-6 gap-3 items-end">
                     <div className="sm:col-span-3">
                       <FormField
                         control={control}
@@ -303,7 +308,11 @@ export function PriceOptionCard({
                           <FormItem>
                             <FormLabel className="text-xs text-gray-600">Accommodation</FormLabel>
                             <FormControl>
-                              <Input {...field} placeholder="e.g., Double, Triple" />
+                              <Input
+                                {...field}
+                                placeholder="e.g., Double, Triple"
+                                className="text-sm"
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -330,7 +339,7 @@ export function PriceOptionCard({
                                   onChange={handlePriceChange(
                                     `${fieldName}.${index}.seasonAccommodations.${accIndex}.price`,
                                   )}
-                                  className="pl-6"
+                                  className="pl-6 text-sm"
                                 />
                               </div>
                             </FormControl>
@@ -343,7 +352,7 @@ export function PriceOptionCard({
                       <Button
                         type="button"
                         variant="outline"
-                        className="text-red-600"
+                        className="text-red-600 w-full sm:w-auto text-xs"
                         onClick={() => removeAccommodation(accIndex)}
                       >
                         Remove

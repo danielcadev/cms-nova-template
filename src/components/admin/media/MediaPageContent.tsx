@@ -34,10 +34,10 @@ export default function MediaPageContent() {
         {/* Cover Header */}
         <div className="relative overflow-hidden rounded-2xl border theme-border theme-card mb-6">
           <div className="absolute inset-0 theme-bg-secondary" />
-          <div className="relative p-8 md:p-10 flex items-start justify-between">
+          <div className="relative p-6 sm:p-8 md:p-10">
             <div>
               <p className="text-sm theme-text-muted mb-2">Assets</p>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight theme-text">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight theme-text">
                 Media Library
               </h1>
               <p className="mt-2 theme-text-secondary max-w-xl">
@@ -115,7 +115,7 @@ export default function MediaPageContent() {
             )}
 
             {/* Pagination */}
-            <div className="flex items-center justify-between pt-2">
+            <div className="flex flex-wrap items-center justify-between pt-2 gap-3">
               <div className="text-sm theme-text-secondary">
                 Page {lib.page} of {lib.totalPages} • {lib.total} items
               </div>

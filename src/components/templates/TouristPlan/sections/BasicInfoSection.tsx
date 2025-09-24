@@ -26,7 +26,7 @@ const URLPreview = memo(
     categoryAlias: string
     articleAlias: string
   }) => (
-    <div className="text-sm font-mono theme-text break-all theme-bg-secondary p-4 rounded-lg theme-border">
+    <div className="text-xs sm:text-sm font-mono theme-text break-all theme-bg-secondary p-3 sm:p-4 rounded-lg theme-border">
       <span className="theme-text-secondary">tudominio.com</span>
       <span className="theme-text-secondary font-medium">/</span>
       <span className="theme-text">{section || 'planes'}</span>
@@ -185,33 +185,35 @@ export function BasicInfoSection() {
   )
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-6 sm:space-y-8 lg:space-y-10">
       {/* Title and URLs Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 items-start">
         <div className="lg:col-span-1">
-          <div className="sticky top-8">
-            <h3 className="text-xl font-bold theme-text mb-3">Title and Web Address</h3>
-            <p className="text-sm theme-text-secondary leading-relaxed">
+          <div className="lg:sticky lg:top-8">
+            <h3 className="text-lg sm:text-xl font-bold theme-text mb-2 sm:mb-3">
+              Title and Web Address
+            </h3>
+            <p className="text-xs sm:text-sm theme-text-secondary leading-relaxed">
               The name of your plan and how it will appear in the browser's address bar. Essential
               for SEO.
             </p>
           </div>
         </div>
-        <div className="lg:col-span-3 space-y-6">
-          <div className="theme-card rounded-xl p-6 theme-border">
+        <div className="lg:col-span-3 space-y-4 sm:space-y-6">
+          <div className="theme-card rounded-xl p-4 sm:p-6 theme-border">
             <FormField
               control={control}
               name="mainTitle"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-lg font-semibold theme-text mb-3 block">
+                  <FormLabel className="text-base sm:text-lg font-semibold theme-text mb-2 sm:mb-3 block">
                     Main Plan Title
                   </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       placeholder="e.g., Magical Circuit through the Riviera Maya"
-                      className="text-lg py-3"
+                      className="text-sm sm:text-lg py-2 sm:py-3"
                     />
                   </FormControl>
                   <FormMessage />
@@ -220,21 +222,23 @@ export function BasicInfoSection() {
             />
           </div>
 
-          <div className="theme-card rounded-xl p-6 theme-border space-y-6">
+          <div className="theme-card rounded-xl p-4 sm:p-6 theme-border space-y-4 sm:space-y-6">
             <div>
-              <h4 className="text-lg font-semibold theme-text mb-2">URL Configuration</h4>
-              <p className="text-sm theme-text-secondary">
+              <h4 className="text-base sm:text-lg font-semibold theme-text mb-1 sm:mb-2">
+                URL Configuration
+              </h4>
+              <p className="text-xs sm:text-sm theme-text-secondary">
                 Configure how your plan will appear in the URL structure.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               <FormField
                 control={control}
                 name="section"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-medium theme-text">
+                  <FormItem className="sm:col-span-2 lg:col-span-1">
+                    <FormLabel className="text-sm sm:text-base font-medium theme-text">
                       Section
                       <span className="text-xs theme-text-secondary block font-normal">
                         Main category (planes, circuitos)
@@ -260,7 +264,7 @@ export function BasicInfoSection() {
                 name="categoryAlias"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-medium theme-text">
+                    <FormLabel className="text-sm sm:text-base font-medium theme-text">
                       Destination
                       <span className="text-xs theme-text-secondary block font-normal">
                         Specific destination (panama, costa-rica)
@@ -296,7 +300,9 @@ export function BasicInfoSection() {
                 name="articleAlias"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-medium theme-text">Plan Slug</FormLabel>
+                    <FormLabel className="text-sm sm:text-base font-medium theme-text">
+                      Plan Slug
+                    </FormLabel>
                     <FormControl>
                       <OriginalCombobox
                         value={field.value}
@@ -325,7 +331,9 @@ export function BasicInfoSection() {
             </div>
 
             <div>
-              <FormLabel className="font-medium theme-text mb-3 block">URL Preview</FormLabel>
+              <FormLabel className="text-sm sm:text-base font-medium theme-text mb-2 sm:mb-3 block">
+                URL Preview
+              </FormLabel>
               <URLPreview
                 section={section || 'planes'}
                 categoryAlias={categoryAlias || ''}
@@ -337,23 +345,23 @@ export function BasicInfoSection() {
       </div>
 
       {/* Transportation Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 items-start">
         <div className="lg:col-span-1">
-          <div className="sticky top-8">
-            <h3 className="text-xl font-bold theme-text mb-3">Transportation</h3>
-            <p className="text-sm theme-text-secondary leading-relaxed">
+          <div className="lg:sticky lg:top-8">
+            <h3 className="text-lg sm:text-xl font-bold theme-text mb-2 sm:mb-3">Transportation</h3>
+            <p className="text-xs sm:text-sm theme-text-secondary leading-relaxed">
               Specify if this plan uses ground transportation to reach the destination.
             </p>
           </div>
         </div>
-        <div className="lg:col-span-3 space-y-6">
-          <div className="theme-card rounded-xl p-6 theme-border">
-            <div className="flex items-center justify-between">
-              <div className="space-y-2">
-                <FormLabel className="text-lg font-semibold theme-text">
+        <div className="lg:col-span-3 space-y-4 sm:space-y-6">
+          <div className="theme-card rounded-xl p-4 sm:p-6 theme-border">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-1 sm:space-y-2">
+                <FormLabel className="text-base sm:text-lg font-semibold theme-text">
                   Is this a ground transport plan?
                 </FormLabel>
-                <p className="text-sm theme-text-secondary">
+                <p className="text-xs sm:text-sm theme-text-secondary">
                   Enable this if the main means of transportation to reach the destination is by
                   land (bus, car, etc.).
                 </p>
@@ -373,18 +381,18 @@ export function BasicInfoSection() {
       </div>
 
       {/* Cover Image Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 items-start">
         <div className="lg:col-span-1">
-          <div className="sticky top-8">
-            <h3 className="text-xl font-bold theme-text mb-3">Cover Image</h3>
-            <p className="text-sm theme-text-secondary leading-relaxed">
+          <div className="lg:sticky lg:top-8">
+            <h3 className="text-lg sm:text-xl font-bold theme-text mb-2 sm:mb-3">Cover Image</h3>
+            <p className="text-xs sm:text-sm theme-text-secondary leading-relaxed">
               This will be the first impression of your plan. Choose a high-quality horizontal image
               that represents the destination.
             </p>
           </div>
         </div>
         <div className="lg:col-span-3">
-          <div className="theme-card rounded-xl p-6 theme-border">
+          <div className="theme-card rounded-xl p-4 sm:p-6 theme-border">
             <MainImage form={form} />
           </div>
         </div>
