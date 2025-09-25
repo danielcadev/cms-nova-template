@@ -25,9 +25,18 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   // Read theme from cookie on the server for first paint
-  const cookieStore = await cookies()
-  const cookieTheme = (cookieStore.get('nova-theme')?.value ?? 'light') as string
-  const validTheme = normalizeTheme(cookieTheme) as Theme
+  let validTheme: Theme = 'light'
+  
+  try {
+    const cookieStore = await cookies()
+    const cookieTheme = (cookieStore.get('nova-theme')?.value ?? 'light') as string
+    validTheme = normalizeTheme(cookieTheme) as Theme
+  } catch (error) {
+    // Fallback to light theme if cookies are not available (e.g., in static generation)
+    console.warn('Could not read theme cookie, using default theme:', error)
+    validTheme = 'light'
+  }
+  
   const _isDark = isDarkThemeId(validTheme)
   const _themeClass = `theme-${validTheme}`
 

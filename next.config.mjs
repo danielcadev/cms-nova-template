@@ -23,8 +23,11 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   compiler: {
-    removeConsole: true,
+    removeConsole: process.env.NODE_ENV === 'production',
   },
+  // Mejorar el manejo de errores en producción
+  poweredByHeader: false,
+  compress: true,
   // Headers CORS eliminados - Better Auth los maneja automáticamente con trustedOrigins
 }
 
