@@ -4,7 +4,8 @@
   "description": "Modern headless CMS with Notion-style design, visual template builder, and complete user management",
   "private": true,
   "scripts": {
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "postbuild": "prisma migrate deploy",
     "dev": "next dev --turbo",
     "start": "next start",
     "lint": "npx @biomejs/biome check .",

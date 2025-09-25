@@ -13,5 +13,9 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: false,
   },
+  // Configuración correcta para CORS en producción
+  trustedOrigins: process.env.NODE_ENV === 'production' 
+    ? [process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000']
+    : undefined,
   plugins: [admin()],
 })
