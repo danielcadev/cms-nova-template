@@ -17,7 +17,7 @@ const nextConfig = {
     ],
   },
   // Configuration for deployment
-  output: 'standalone',
+  // output: 'standalone', // Deshabilitado - causa problemas con archivos estáticos
   serverExternalPackages: ['@prisma/client'],
   typescript: {
     ignoreBuildErrors: true,
