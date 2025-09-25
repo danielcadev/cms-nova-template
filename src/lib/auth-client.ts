@@ -1,9 +1,22 @@
 import { createAuthClient } from 'better-auth/client'
 import { adminClient } from 'better-auth/client/plugins'
 
-const baseURL = process.env.NODE_ENV === 'production'
-  ? process.env.NEXT_PUBLIC_APP_URL || 'https://www.conociendocolombia.com'
-  : 'http://localhost:3000'
+// Determinar la URL base correctamente
+const getBaseURL = () => {
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:3000'
+  }
+  
+  // En producción, usar la URL actual del navegador si está disponible
+  if (typeof window !== 'undefined') {
+    return window.location.origin
+  }
+  
+  // Fallback a la variable de entorno o dominio por defecto
+  return process.env.NEXT_PUBLIC_APP_URL || 'https://www.conociendocolombia.com'
+}
+
+const baseURL = getBaseURL()
 
 export const authClient = createAuthClient({
   baseURL,

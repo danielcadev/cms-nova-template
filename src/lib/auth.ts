@@ -8,7 +8,9 @@ import { prisma } from './prisma'
 const getTrustedOrigins = () => {
   if (process.env.NODE_ENV === 'production') {
     return [
+      // Ambos dominios - con y sin www
       'https://www.conociendocolombia.com',
+      'https://conociendocolombia.com',
       // Solo agregar otros orígenes si están definidos explícitamente
       ...(process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL] : []),
     ].filter(Boolean) as string[]
