@@ -13,9 +13,17 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: false,
   },
-  // Configuración correcta para CORS en producción
+  // Configuración optimizada para Coolify
   trustedOrigins: process.env.NODE_ENV === 'production' 
-    ? [process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000']
-    : undefined,
+    ? [
+        'https://www.conociendocolombia.com',
+        'http://www.conociendocolombia.com', // HTTP también por si Coolify lo necesita
+        process.env.NEXT_PUBLIC_APP_URL,
+        process.env.BETTER_AUTH_URL,
+        // Coolify puede usar URLs internas
+        ...(process.env.COOLIFY_URL ? [process.env.COOLIFY_URL] : []),
+        ...(process.env.APP_URL ? [process.env.APP_URL] : []),
+      ].filter(Boolean) as string[]
+    : ['http://localhost:3000', 'http://localhost:3001'],
   plugins: [admin()],
 })
