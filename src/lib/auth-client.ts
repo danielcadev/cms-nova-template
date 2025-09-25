@@ -13,7 +13,7 @@ const getBaseURL = () => {
   }
   
   // Fallback a la variable de entorno o dominio por defecto
-  return process.env.NEXT_PUBLIC_APP_URL || 'https://www.conociendocolombia.com'
+  return process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 }
 
 const baseURL = getBaseURL()

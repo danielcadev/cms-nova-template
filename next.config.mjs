@@ -29,6 +29,26 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   // Headers CORS eliminados - Better Auth los maneja automáticamente con trustedOrigins
+  
+  // Redirects automáticos de www a sin www para SEO
+  // Descomenta y personaliza según tu dominio:
+  /*
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'www.yourdomain.com',  // Cambiar por tu dominio
+          },
+        ],
+        destination: 'https://yourdomain.com/:path*',  // Cambiar por tu dominio
+        permanent: true, // 301 redirect para SEO
+      },
+    ]
+  },
+  */
 }
 
 export default nextConfig

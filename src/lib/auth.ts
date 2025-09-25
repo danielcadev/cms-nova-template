@@ -7,13 +7,24 @@ import { prisma } from './prisma'
 // Configuración segura de orígenes confiables
 const getTrustedOrigins = () => {
   if (process.env.NODE_ENV === 'production') {
-    return [
-      // Ambos dominios - con y sin www
-      'https://www.conociendocolombia.com',
-      'https://conociendocolombia.com',
-      // Solo agregar otros orígenes si están definidos explícitamente
-      ...(process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL] : []),
-    ].filter(Boolean) as string[]
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.BETTER_AUTH_URL
+    if (!baseUrl) {
+      throw new Error('NEXT_PUBLIC_APP_URL or BETTER_AUTH_URL must be set in production')
+    }
+    
+    const origins = [baseUrl]
+    
+    // OPCIONAL: Incluir automáticamente tanto www como sin www
+    // Establecer INCLUDE_WWW_VARIANT=true para habilitar esta funcionalidad
+    if (process.env.INCLUDE_WWW_VARIANT === 'true') {
+      if (baseUrl.includes('://www.')) {
+        origins.push(baseUrl.replace('://www.', '://'))
+      } else if (baseUrl.includes('://') && !baseUrl.includes('://www.')) {
+        origins.push(baseUrl.replace('://', '://www.'))
+      }
+    }
+    
+    return origins
   }
   
   // En desarrollo, solo localhost
