@@ -12,47 +12,33 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useMainImage } from '@/hooks/use-main-image'
+import { useS3Config } from '@/hooks/use-s3-config'
 import { cn } from '@/lib/utils'
 import type { PlanFormValues } from '@/schemas/plan'
+import { getPlanMediaFolder } from '@/utils/plan-media'
 
 interface MainImageProps {
   form: UseFormReturn<PlanFormValues>
 }
 
 export function MainImage({ form }: MainImageProps) {
-  const { isUploading, error, handleImageUpload, handleImageDelete } = useMainImage({ form })
-  // Use watch with array to reduce re-renders and get stable reference
-  const [mainImage, mainTitle] = form.watch(['mainImage', 'mainTitle'])
-  const [isS3Configured, setIsS3Configured] = useState(false)
-  const [isLoadingConfig, setIsLoadingConfig] = useState(true)
-
-  useEffect(() => {
-    const fetchS3Config = async () => {
-      try {
-        const response = await fetch('/api/plugins/s3', { cache: 'no-store' })
-        const data = await response.json()
-
-        // Consider S3 configured if backend reports a usable config (secret is never sent to client)
-        if (
-          data?.success &&
-          data?.config &&
-          data.config.bucket &&
-          data.config.accessKeyId &&
-          data.config.region
-        ) {
-          setIsS3Configured(true)
-        } else {
-          setIsS3Configured(false)
-        }
-      } catch (error) {
-        console.error('Failed to load S3 configuration', error)
-        setIsS3Configured(false)
-      } finally {
-        setIsLoadingConfig(false)
-      }
-    }
-    fetchS3Config()
-  }, [])
+  const {
+    loading: isLoadingConfig,
+    isConfigured: isS3Configured,
+    error: configError,
+    refresh,
+  } = useS3Config()
+  // Use watch with array to reduce re-renders and get stable references
+  const [mainImage, mainTitle, planSlug] = form.watch(['mainImage', 'mainTitle', 'articleAlias'])
+  const mainImageFolder = useMemo(
+    () => getPlanMediaFolder({ slug: planSlug, fallbackTitle: mainTitle, subfolder: 'main' }),
+    [planSlug, mainTitle],
+  )
+  const { isUploading, error, handleImageUpload, handleImageDelete } = useMainImage({
+    form,
+    isConfigured: isS3Configured,
+    mediaFolder: mainImageFolder,
+  })
 
   // Normalize mainImage structure when it is a string (edit mode) - Run only once
   useEffect(() => {
@@ -134,7 +120,7 @@ export function MainImage({ form }: MainImageProps) {
             { shouldValidate: true, shouldDirty: true },
           )
         }}
-        folder="main-images"
+        folder={mainImageFolder}
       />
       <FormField
         control={form.control}
@@ -153,7 +139,38 @@ export function MainImage({ form }: MainImageProps) {
                 )}
             </div>
 
-            {!isS3Configured ? (
+            {configError ? (
+              <div className="rounded-xl border-2 border-dashed border-red-300 bg-red-50 p-6 text-center">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="p-3 rounded-full bg-red-100 text-red-600">
+                    <Plug className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-red-900">Unable to verify S3</h3>
+                  <p className="text-sm text-red-700 max-w-sm">
+                    {configError}. Try refreshing the configuration or check your plugin settings.
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={refresh}
+                      className="bg-white hover:bg-red-50 border-red-200 text-red-700"
+                    >
+                      Retry
+                    </Button>
+                    <Link href="/admin/dashboard/plugins">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        className="text-red-700 hover:text-red-900"
+                      >
+                        Open Plugins
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ) : !isS3Configured ? (
               <div className="rounded-xl border-2 border-dashed border-amber-400 bg-amber-50 p-6 text-center">
                 <div className="flex flex-col items-center gap-4">
                   <div className="p-3 rounded-full bg-amber-100 text-amber-600">

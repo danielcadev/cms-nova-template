@@ -1,3 +1,5 @@
+import { parseSetCookieHeader } from 'better-auth/cookies'
+import { cookies } from 'next/headers'
 import { type NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { auth } from '@/lib/auth'
@@ -72,25 +74,56 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'El email ya está registrado' }, { status: 400 })
     }
 
-    // Crear usuario con Better Auth (usando el request interno)
-    const signUpResult = await auth.api.signUpEmail({
+    // Crear usuario con el endpoint administrativo sin propagar los cookies de la respuesta
+    const createResponse = await auth.api.createUser({
       body: {
         email: validatedData.email,
         password: validatedData.password,
         name: validatedData.name,
+        role: 'admin',
+        data: {},
       },
-      headers: {
-        'user-agent': 'internal-admin-creation',
-      },
+      headers: request.headers,
+      asResponse: true,
     })
 
-    if (!signUpResult || !signUpResult.user) {
-      throw new Error('Failed to create user with Better Auth')
+    if (!createResponse.ok) {
+      const errorBody = await createResponse.json().catch(() => null)
+      console.error('Better Auth createUser failed:', {
+        status: createResponse.status,
+        body: errorBody,
+      })
+
+      return NextResponse.json({ error: 'Error al crear usuario' }, { status: 500 })
+    }
+
+    const setCookieHeader = createResponse.headers.get('set-cookie')
+    if (setCookieHeader) {
+      const cookieStore = cookies()
+      const parsedCookies = parseSetCookieHeader(setCookieHeader)
+      parsedCookies.forEach((_, key) => {
+        if (!key) return
+        try {
+          cookieStore.delete(key)
+        } catch (error) {
+          console.error('Failed to delete Better Auth cookie', { key, error })
+        }
+      })
+    }
+
+    const createData = (await createResponse.json().catch(() => null)) as {
+      user?: { id: string }
+    } | null
+
+    const createdUser = createData?.user
+
+    if (!createdUser) {
+      throw new Error('Failed to parse created user from Better Auth response')
     }
 
     // Actualizar el rol y otros campos necesarios
     const result = await prisma.user.update({
-      where: { id: signUpResult.user.id },
+      where: { id: createdUser.id },
       data: {
         role: 'admin', // Minúsculas como Better Auth espera por defecto
         emailVerified: true, // Boolean true para verificado

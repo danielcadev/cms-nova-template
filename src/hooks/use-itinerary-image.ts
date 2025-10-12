@@ -8,9 +8,16 @@ import { validateImage } from '@/utils/image-utils'
 interface UseItineraryImageProps {
   form: UseFormReturn<PlanFormValues>
   dayIndex: number
+  isConfigured: boolean
+  mediaFolder: string
 }
 
-export function useItineraryImage({ form, dayIndex }: UseItineraryImageProps) {
+export function useItineraryImage({
+  form,
+  dayIndex,
+  isConfigured,
+  mediaFolder,
+}: UseItineraryImageProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { addUploadingItem, removeUploadingItem } = useImageUpload()
@@ -34,7 +41,9 @@ export function useItineraryImage({ form, dayIndex }: UseItineraryImageProps) {
     async (file: File) => {
       const formData = new FormData()
       formData.append('file', file)
-      formData.append('folder', 'itinerary')
+      if (mediaFolder) {
+        formData.append('folder', mediaFolder)
+      }
 
       const res = await fetchWithTimeout('/api/upload', {
         method: 'POST',
@@ -48,7 +57,7 @@ export function useItineraryImage({ form, dayIndex }: UseItineraryImageProps) {
       const payload = json?.data ?? {}
       return { url: payload.url as string, key: payload.key as string }
     },
-    [fetchWithTimeout],
+    [fetchWithTimeout, mediaFolder],
   )
 
   const presignedUpload = useCallback(
@@ -61,7 +70,7 @@ export function useItineraryImage({ form, dayIndex }: UseItineraryImageProps) {
           fileName: file.name,
           contentType: file.type,
           size: file.size,
-          folder: 'itinerary',
+          folder: mediaFolder,
         }),
         timeoutMs: 10000,
       })
@@ -88,14 +97,14 @@ export function useItineraryImage({ form, dayIndex }: UseItineraryImageProps) {
           url: publicUrl,
           mimeType: file.type,
           size: file.size,
-          folder: 'itinerary',
+          folder: mediaFolder,
         }),
         timeoutMs: 10000,
       }).catch(() => undefined)
 
       return { url: publicUrl as string, key: key as string }
     },
-    [fetchWithTimeout],
+    [fetchWithTimeout, mediaFolder],
   )
 
   // Compress image on client to speed up upload (except GIF to preserve animation)
@@ -162,6 +171,10 @@ export function useItineraryImage({ form, dayIndex }: UseItineraryImageProps) {
     async (file: File) => {
       const uploadId = `itinerary-${dayIndex}-${Date.now()}`
       try {
+        if (!isConfigured) {
+          setError('S3 storage is not configured. Please configure it before uploading.')
+          return
+        }
         console.debug('[ItineraryImage] handleImageUpload:start', {
           dayIndex,
           name: file.name,
@@ -252,6 +265,7 @@ export function useItineraryImage({ form, dayIndex }: UseItineraryImageProps) {
       serverUpload,
       addUploadingItem,
       removeUploadingItem,
+      isConfigured,
     ],
   )
 
@@ -279,7 +293,7 @@ export function useItineraryImage({ form, dayIndex }: UseItineraryImageProps) {
       }
 
       // If there's a key, try to delete the image from S3
-      if (imageKey) {
+      if (imageKey && isConfigured) {
         try {
           console.debug('[ItineraryImage] delete:attempt', imageKey)
           const res = await fetchWithTimeout('/api/upload', {
@@ -305,7 +319,7 @@ export function useItineraryImage({ form, dayIndex }: UseItineraryImageProps) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       setError(errorMessage)
     }
-  }, [form, dayIndex, fetchWithTimeout])
+  }, [form, dayIndex, fetchWithTimeout, isConfigured])
 
   return {
     isUploading,

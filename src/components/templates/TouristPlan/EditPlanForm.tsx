@@ -180,19 +180,9 @@ function EditPlanFormInner({ planId, initialData }: EditPlanFormProps) {
               categoryAlias: formData.categoryAlias,
               section: formData.section,
             })
-            if (publishResult.success) {
-              toast({
-                title: 'Plan published successfully!',
-                description: publishResult.publicPath
-                  ? `Available at: ${publishResult.publicPath}`
-                  : undefined,
-              })
+            if (!publishResult.success) {
+              throw new Error(publishResult.error || 'Failed to publish plan')
             }
-          } else {
-            toast({
-              title: 'Plan saved successfully!',
-              description: `Article alias: ${formData.articleAlias || 'Not set'}`,
-            })
           }
           setStatus(saveStatus)
         } else {

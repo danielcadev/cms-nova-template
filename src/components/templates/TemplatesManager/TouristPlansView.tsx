@@ -3,12 +3,14 @@
 import {
   Calendar,
   ChevronRight,
+  Copy,
   Edit,
   Filter,
   Grid3X3,
   List,
   MapPin,
   Plus,
+  RefreshCcw,
   Search,
   SortAsc,
   SortDesc,
@@ -19,6 +21,7 @@ import { useMemo, useState } from 'react'
 import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
 import { ConfirmationModal } from '@/components/ui/ConfirmationModal'
 import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
 import { ThemedButton } from '@/components/ui/ThemedButton'
 import { useToast } from '@/hooks/use-toast'
 import { useConfirmation } from '@/hooks/useConfirmation'
@@ -35,7 +38,11 @@ interface TouristPlansViewProps {
   isLoading: boolean
   error: string | null
   onBack: () => void
-  onDeletePlan: (planId: string) => Promise<void>
+  onDeletePlan: (planId: string) => Promise<boolean | undefined>
+  onDuplicatePlan?: (planId: string) => Promise<Plan | null | undefined>
+  onTogglePublished?: (planId: string, nextState: boolean) => Promise<boolean>
+  onRefresh?: () => Promise<unknown>
+  isRefreshing?: boolean
 }
 
 type ViewMode = 'list' | 'grid'
@@ -49,8 +56,14 @@ export function TouristPlansView({
   error,
   onBack: _onBack,
   onDeletePlan,
+  onDuplicatePlan,
+  onTogglePublished,
+  onRefresh,
+  isRefreshing = false,
 }: TouristPlansViewProps) {
   const [deletingPlanId, setDeletingPlanId] = useState<string | null>(null)
+  const [duplicatingPlanId, setDuplicatingPlanId] = useState<string | null>(null)
+  const [togglingPlanId, setTogglingPlanId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [sortField, setSortField] = useState<SortField>('date')
@@ -75,10 +88,13 @@ export function TouristPlansView({
       async () => {
         try {
           setDeletingPlanId(planId)
-          await onDeletePlan(planId)
+          const result = await onDeletePlan(planId)
+          if (result === false) {
+            throw new Error('Delete failed')
+          }
           toast({
             title: 'Plan eliminado',
-            description: 'El plan ha sido eliminado exitosamente.',
+            description: `"${planTitle}" ha sido eliminado exitosamente.`,
           })
         } catch (_error) {
           toast({
@@ -96,6 +112,67 @@ export function TouristPlansView({
 
   const handleEditPlan = (planId: string) => {
     router.push(`/admin/dashboard/templates/tourism/edit/${planId}`)
+  }
+
+  const handleDuplicatePlan = async (planId: string) => {
+    if (!onDuplicatePlan) return
+    const plan = plans.find((p) => p.id === planId)
+    const planTitle = plan?.mainTitle || 'este plan'
+    try {
+      setDuplicatingPlanId(planId)
+      const duplicated = await onDuplicatePlan(planId)
+      if (!duplicated) {
+        throw new Error('Duplicate failed')
+      }
+      toast({
+        title: 'Plan duplicado',
+        description: `"${planTitle}" fue duplicado como borrador.`,
+      })
+    } catch (_error) {
+      toast({
+        title: 'Error',
+        description: 'No se pudo duplicar el plan. Inténtalo de nuevo.',
+        variant: 'destructive',
+      })
+    } finally {
+      setDuplicatingPlanId(null)
+    }
+  }
+
+  const handleTogglePublished = async (plan: Plan) => {
+    if (!onTogglePublished) return
+    try {
+      setTogglingPlanId(plan.id)
+      const success = await onTogglePublished(plan.id, !plan.published)
+      if (!success) {
+        throw new Error('Toggle failed')
+      }
+      toast({
+        title: plan.published ? 'Plan revertido a borrador' : 'Plan publicado',
+        description: plan.mainTitle,
+      })
+    } catch (_error) {
+      toast({
+        title: 'Error',
+        description: 'No se pudo actualizar el estado del plan. Inténtalo de nuevo.',
+        variant: 'destructive',
+      })
+    } finally {
+      setTogglingPlanId(null)
+    }
+  }
+
+  const handleRefresh = async () => {
+    if (!onRefresh) return
+    try {
+      await onRefresh()
+    } catch (_error) {
+      toast({
+        title: 'No se pudo sincronizar la lista',
+        description: 'Inténtalo de nuevo.',
+        variant: 'destructive',
+      })
+    }
   }
 
   const handleCreatePlan = () => {
@@ -200,6 +277,16 @@ export function TouristPlansView({
               </p>
             </div>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2">
+              {onRefresh && (
+                <ThemedButton
+                  onClick={handleRefresh}
+                  disabled={isRefreshing}
+                  className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border theme-border theme-card theme-text hover:theme-card-hover transition-colors w-full sm:w-auto justify-center"
+                >
+                  <RefreshCcw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  {isRefreshing ? 'Refreshing' : 'Refresh'}
+                </ThemedButton>
+              )}
               <ThemedButton
                 onClick={handleCreatePlan}
                 className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border theme-border theme-card theme-text hover:theme-card-hover transition-colors w-full sm:w-auto justify-center"
@@ -392,18 +479,34 @@ export function TouristPlansView({
                           <MapPin className="h-5 w-5 theme-text-secondary" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-3 mb-1">
+                          <div className="flex flex-wrap items-center gap-3 mb-1">
                             <div className="text-sm font-medium theme-text truncate">
                               {plan.mainTitle}
                             </div>
-                            <div
-                              className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                                plan.published
-                                  ? 'bg-green-100 text-green-800 dark:bg-green-90/30 dark:text-green-400'
-                                  : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
-                              }`}
-                            >
-                              {plan.published ? 'Published' : 'Draft'}
+                            <div className="flex items-center gap-2">
+                              <div
+                                className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                                  plan.published
+                                    ? 'bg-green-100 text-green-800 dark:bg-green-90/30 dark:text-green-400'
+                                    : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+                                }`}
+                              >
+                                {plan.published ? 'Published' : 'Draft'}
+                              </div>
+                              {onTogglePublished && (
+                                <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                                  <Switch
+                                    checked={plan.published}
+                                    disabled={togglingPlanId === plan.id}
+                                    onCheckedChange={() => handleTogglePublished(plan)}
+                                    className="h-4 w-8"
+                                    title={
+                                      plan.published ? 'Marcar como borrador' : 'Publicar plan'
+                                    }
+                                  />
+                                  <span>{plan.published ? 'On' : 'Off'}</span>
+                                </div>
+                              )}
                             </div>
                           </div>
                           <div className="flex items-center gap-4 text-xs theme-text-muted">
@@ -415,6 +518,23 @@ export function TouristPlansView({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 ml-4">
+                        {onDuplicatePlan && (
+                          <ThemedButton
+                            variantTone="ghost"
+                            onClick={() => handleDuplicatePlan(plan.id)}
+                            disabled={duplicatingPlanId === plan.id}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 text-xs theme-text hover:theme-text-secondary"
+                          >
+                            {duplicatingPlanId === plan.id ? (
+                              <div className="h-3 w-3 animate-spin rounded-full border theme-border border-t-transparent" />
+                            ) : (
+                              <>
+                                <Copy className="h-3 w-3 mr-1 theme-text" />
+                                <span className="hidden sm:inline">Duplicate</span>
+                              </>
+                            )}
+                          </ThemedButton>
+                        )}
                         <ThemedButton
                           variantTone="ghost"
                           onClick={() => handleEditPlan(plan.id)}
@@ -454,18 +574,32 @@ export function TouristPlansView({
                     key={plan.id}
                     className="group rounded-xl border theme-border theme-card p-6 hover:theme-card-hover transition-all duration-200"
                   >
-                    <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-start justify-between mb-4 gap-3">
                       <div className="h-12 w-12 rounded-lg theme-bg-secondary flex items-center justify-center shrink-0">
                         <MapPin className="h-6 w-6 theme-text-secondary" />
                       </div>
-                      <div
-                        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                          plan.published
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                            : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
-                        }`}
-                      >
-                        {plan.published ? 'Published' : 'Draft'}
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                            plan.published
+                              ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                              : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+                          }`}
+                        >
+                          {plan.published ? 'Published' : 'Draft'}
+                        </div>
+                        {onTogglePublished && (
+                          <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                            <Switch
+                              checked={plan.published}
+                              disabled={togglingPlanId === plan.id}
+                              onCheckedChange={() => handleTogglePublished(plan)}
+                              className="h-4 w-8"
+                              title={plan.published ? 'Marcar como borrador' : 'Publicar plan'}
+                            />
+                            <span>{plan.published ? 'On' : 'Off'}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -489,6 +623,21 @@ export function TouristPlansView({
                         <Edit className="h-4 w-4 theme-text" />
                         Edit
                       </ThemedButton>
+                      {onDuplicatePlan && (
+                        <ThemedButton
+                          variantTone="ghost"
+                          onClick={() => handleDuplicatePlan(plan.id)}
+                          disabled={duplicatingPlanId === plan.id}
+                          className="px-3 py-2 text-sm flex items-center gap-2"
+                        >
+                          {duplicatingPlanId === plan.id ? (
+                            <div className="w-4 h-4 animate-spin rounded-full border-2 theme-border border-t-transparent" />
+                          ) : (
+                            <Copy className="h-4 w-4" />
+                          )}
+                          <span className="hidden sm:inline">Duplicate</span>
+                        </ThemedButton>
+                      )}
                       <ThemedButton
                         variantTone="ghost"
                         onClick={() => handleDeletePlan(plan.id)}

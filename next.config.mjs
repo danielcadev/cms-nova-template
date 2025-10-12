@@ -29,7 +29,7 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   // Headers CORS eliminados - Better Auth los maneja automáticamente con trustedOrigins
-  
+
   // Redirects automáticos de www a sin www para SEO
   // Descomenta y personaliza según tu dominio:
   /*

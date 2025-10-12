@@ -1,32 +1,57 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { useCallback, useState } from 'react'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { TouristPlansView } from '@/components/templates/TemplatesManager/TouristPlansView'
-import { usePlans } from '@/components/templates/TemplatesManager/usePlans'
+import { usePlans } from '@/hooks/usePlans'
 
 export default function TourismPage() {
-  const { plans, isLoading, error, refreshPlans } = usePlans()
   const router = useRouter()
+  const { plans, isLoading, error, refreshPlans, deletePlan, duplicatePlan, togglePublished } =
+    usePlans()
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
-  const handleGoBack = () => {
+  const handleGoBack = useCallback(() => {
     router.push('/admin/dashboard/templates')
-  }
+  }, [router])
 
-  const handleDeletePlan = async (planId: string) => {
-    const response = await fetch(`/api/plans/${planId}`, {
-      method: 'DELETE',
-    })
-
-    if (!response.ok) {
-      throw new Error('Error al eliminar el plan')
-    }
-
-    // Refrescar la lista de planes
-    if (refreshPlans) {
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true)
+    try {
       await refreshPlans()
+      return true
+    } finally {
+      setIsRefreshing(false)
     }
-  }
+  }, [refreshPlans])
+
+  const handleDeletePlan = useCallback(
+    async (planId: string) => {
+      const success = await deletePlan(planId)
+      if (!success) throw new Error('No se pudo eliminar el plan')
+      return true
+    },
+    [deletePlan],
+  )
+
+  const handleDuplicatePlan = useCallback(
+    async (planId: string) => {
+      const duplicated = await duplicatePlan(planId)
+      if (!duplicated) throw new Error('No se pudo duplicar el plan')
+      return duplicated
+    },
+    [duplicatePlan],
+  )
+
+  const handleTogglePublished = useCallback(
+    async (planId: string) => {
+      const success = await togglePublished(planId)
+      if (!success) throw new Error('No se pudo actualizar el estado del plan')
+      return success
+    },
+    [togglePublished],
+  )
 
   return (
     <AdminLayout>
@@ -36,6 +61,10 @@ export default function TourismPage() {
         error={error}
         onBack={handleGoBack}
         onDeletePlan={handleDeletePlan}
+        onDuplicatePlan={handleDuplicatePlan}
+        onTogglePublished={(planId, _next) => handleTogglePublished(planId)}
+        onRefresh={handleRefresh}
+        isRefreshing={isRefreshing}
       />
     </AdminLayout>
   )

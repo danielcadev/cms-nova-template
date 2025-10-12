@@ -8,7 +8,6 @@ import { type ComboboxOption, Combobox as OriginalCombobox } from '@/components/
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
-import { useToast } from '@/hooks/use-toast'
 import type { PlanFormValues } from '@/schemas/plan'
 import { MainImage } from '../components/MainImage'
 
@@ -42,10 +41,11 @@ URLPreview.displayName = 'URLPreview'
 export function BasicInfoSection() {
   const form = useFormContext<PlanFormValues>()
   const { control, setValue, watch } = form
-  const { toast } = useToast()
 
   const [categoryOptions, setCategoryOptions] = useState<ComboboxOption[]>([])
   const [planSlugOptions, setPlanSlugOptions] = useState<ComboboxOption[]>([])
+  const [categoryFeedback, setCategoryFeedback] = useState<string>('')
+  const [slugFeedback, setSlugFeedback] = useState<string>('')
 
   // Local persistence keys
   const CATEGORY_KEY = 'nova.categoryOptions'
@@ -165,10 +165,10 @@ export function BasicInfoSection() {
         const newOption = { label: inputValue, value: newValue }
         setCategoryOptions((prev: ComboboxOption[]) => [newOption, ...prev])
         setValue('categoryAlias', newValue)
-        toast({ title: 'Destination added', description: `"${inputValue}" will be used.` })
+        setCategoryFeedback(`Destination "${inputValue}" saved.`)
       }
     },
-    [categoryOptions, setValue, toast],
+    [categoryOptions, setValue],
   )
 
   const handleCreatePlanSlug = useCallback(
@@ -178,11 +178,23 @@ export function BasicInfoSection() {
         const newOption = { label: inputValue, value: newValue }
         setPlanSlugOptions((prev: ComboboxOption[]) => [newOption, ...prev])
         setValue('articleAlias', newValue)
-        toast({ title: 'Slug added', description: `"${inputValue}" will be used.` })
+        setSlugFeedback(`Slug "${inputValue}" saved.`)
       }
     },
-    [planSlugOptions, setValue, toast],
+    [planSlugOptions, setValue],
   )
+
+  useEffect(() => {
+    if (!categoryAlias) {
+      setCategoryFeedback('')
+    }
+  }, [categoryAlias])
+
+  useEffect(() => {
+    if (!articleAlias) {
+      setSlugFeedback('')
+    }
+  }, [articleAlias])
 
   return (
     <div className="space-y-6 sm:space-y-8 lg:space-y-10">
@@ -291,6 +303,9 @@ export function BasicInfoSection() {
                         clearable
                       />
                     </FormControl>
+                    {categoryFeedback && (
+                      <p className="mt-2 text-xs theme-text-secondary">{categoryFeedback}</p>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -324,6 +339,9 @@ export function BasicInfoSection() {
                         clearable
                       />
                     </FormControl>
+                    {slugFeedback && (
+                      <p className="mt-2 text-xs theme-text-secondary">{slugFeedback}</p>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}

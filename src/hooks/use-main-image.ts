@@ -1,16 +1,20 @@
 // hooks/use-main-image.ts
 import { useCallback, useState } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
+import { useImageUpload } from '@/contexts/ImageUploadContext'
 import type { PlanFormValues } from '@/schemas/plan'
 import { validateImage } from '@/utils/image-utils'
 
 interface UseMainImageProps {
   form: UseFormReturn<PlanFormValues>
+  isConfigured: boolean
+  mediaFolder: string
 }
 
-export function useMainImage({ form }: UseMainImageProps) {
+export function useMainImage({ form, isConfigured, mediaFolder }: UseMainImageProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { addUploadingItem, removeUploadingItem } = useImageUpload()
 
   // Helper to avoid long hangs - memoized to avoid recreating on every render
   const fetchWithTimeout = useCallback(
@@ -31,7 +35,9 @@ export function useMainImage({ form }: UseMainImageProps) {
     async (file: File) => {
       const formData = new FormData()
       formData.append('file', file)
-      formData.append('folder', 'main-images')
+      if (mediaFolder) {
+        formData.append('folder', mediaFolder)
+      }
 
       const res = await fetchWithTimeout('/api/upload', {
         method: 'POST',
@@ -45,7 +51,7 @@ export function useMainImage({ form }: UseMainImageProps) {
       const payload = json?.data ?? {}
       return { url: payload.url as string, key: payload.key as string }
     },
-    [fetchWithTimeout],
+    [fetchWithTimeout, mediaFolder],
   )
 
   const presignedUpload = useCallback(
@@ -58,7 +64,7 @@ export function useMainImage({ form }: UseMainImageProps) {
           fileName: file.name,
           contentType: file.type,
           size: file.size,
-          folder: 'main-images',
+          folder: mediaFolder,
         }),
         timeoutMs: 10000,
       })
@@ -85,14 +91,14 @@ export function useMainImage({ form }: UseMainImageProps) {
           url: publicUrl,
           mimeType: file.type,
           size: file.size,
-          folder: 'main-images',
+          folder: mediaFolder,
         }),
         timeoutMs: 10000,
       }).catch(() => undefined)
 
       return { url: publicUrl as string, key: key as string }
     },
-    [fetchWithTimeout],
+    [fetchWithTimeout, mediaFolder],
   )
 
   // Compress image on client to speed up upload (except GIF to preserve animation)
@@ -157,6 +163,11 @@ export function useMainImage({ form }: UseMainImageProps) {
 
   const handleImageUpload = useCallback(
     async (file: File) => {
+      if (!isConfigured) {
+        setError('S3 storage is not configured. Please configure it before uploading.')
+        return
+      }
+      const uploadId = `main-image-${Date.now()}`
       try {
         console.debug('[MainImage] handleImageUpload:start', {
           name: file.name,
@@ -164,6 +175,7 @@ export function useMainImage({ form }: UseMainImageProps) {
           size: file.size,
         })
         setIsUploading(true)
+        addUploadingItem(uploadId)
         setError(null)
 
         // Validar imagen
@@ -232,7 +244,7 @@ export function useMainImage({ form }: UseMainImageProps) {
               url: result.url,
               mimeType: file.type,
               size: file.size,
-              folder: 'main-images',
+              folder: mediaFolder,
               previousKey: previousKeyToDelete,
             }),
             timeoutMs: 10000,
@@ -262,9 +274,20 @@ export function useMainImage({ form }: UseMainImageProps) {
         setError(errorMessage)
       } finally {
         setIsUploading(false)
+        removeUploadingItem(uploadId)
       }
     },
-    [form, fetchWithTimeout, presignedUpload, maybeCompressImage, serverUpload],
+    [
+      form,
+      fetchWithTimeout,
+      presignedUpload,
+      maybeCompressImage,
+      serverUpload,
+      isConfigured,
+      addUploadingItem,
+      removeUploadingItem,
+      mediaFolder,
+    ],
   )
 
   const handleImageDelete = useCallback(async () => {
@@ -287,7 +310,7 @@ export function useMainImage({ form }: UseMainImageProps) {
       }
 
       // Si hay una key, intentar eliminar la imagen de S3
-      if (imageKey) {
+      if (imageKey && isConfigured) {
         try {
           console.debug('[MainImage] delete:attempt', imageKey)
           const res = await fetchWithTimeout('/api/upload', {
@@ -313,7 +336,7 @@ export function useMainImage({ form }: UseMainImageProps) {
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
       setError(errorMessage)
     }
-  }, [form, fetchWithTimeout])
+  }, [form, fetchWithTimeout, isConfigured])
 
   return {
     isUploading,

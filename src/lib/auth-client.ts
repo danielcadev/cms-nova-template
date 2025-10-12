@@ -6,12 +6,12 @@ const getBaseURL = () => {
   if (process.env.NODE_ENV === 'development') {
     return 'http://localhost:3000'
   }
-  
+
   // En producción, usar la URL actual del navegador si está disponible
   if (typeof window !== 'undefined') {
     return window.location.origin
   }
-  
+
   // Fallback a la variable de entorno o dominio por defecto
   return process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 }

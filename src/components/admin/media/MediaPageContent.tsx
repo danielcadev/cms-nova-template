@@ -1,21 +1,24 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Filter, Folder, Layers, LayoutGrid, List as ListIcon } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
 import { MediaGrid } from './MediaGrid'
+import { MediaList } from './MediaList'
 import { MediaToolbar } from './MediaToolbar'
-import { useMediaLibrary } from './useMediaLibrary'
+import { MediaLibraryProvider, useMediaLibrary } from './useMediaLibrary'
+
+const GRID_SKELETON_KEYS = Array.from({ length: 12 }, (_, index) => `media-skeleton-${index}`)
 
 export default function MediaPageContent() {
-  const [loading, setLoading] = useState(true)
-  const lib = useMediaLibrary()
+  const [introLoading, setIntroLoading] = useState(true)
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 200)
-    return () => clearTimeout(t)
+    const timer = setTimeout(() => setIntroLoading(false), 200)
+    return () => clearTimeout(timer)
   }, [])
 
-  if (loading) {
+  if (introLoading) {
     return (
       <div className="px-6 pt-6 relative">
         <AdminLoading
@@ -29,9 +32,55 @@ export default function MediaPageContent() {
   }
 
   return (
+    <MediaLibraryProvider>
+      <MediaLibraryLayout />
+    </MediaLibraryProvider>
+  )
+}
+
+function MediaLibraryLayout() {
+  const { items, loading, error, total, totalPages, page, setPage, filters, uploading } =
+    useMediaLibrary()
+
+  const isEmpty = !loading && items.length === 0
+
+  const activeFilters = useMemo(() => {
+    let count = 0
+    if (filters.search.trim()) count += 1
+    if (filters.folder) count += 1
+    if (filters.sort !== 'newest') count += 1
+    return count
+  }, [filters.folder, filters.search, filters.sort])
+
+  const stats = useMemo(
+    () => [
+      {
+        label: 'Total assets',
+        value: total,
+        icon: Layers,
+      },
+      {
+        label: 'Current folder',
+        value: filters.folder ? `/${filters.folder}` : 'All media',
+        icon: Folder,
+      },
+      {
+        label: 'Active filters',
+        value: activeFilters > 0 ? `${activeFilters}` : 'None',
+        icon: Filter,
+      },
+      {
+        label: 'View mode',
+        value: filters.view === 'grid' ? 'Grid' : 'List',
+        icon: filters.view === 'grid' ? LayoutGrid : ListIcon,
+      },
+    ],
+    [activeFilters, filters.folder, filters.view, total],
+  )
+
+  return (
     <div className="min-h-screen theme-bg">
       <div className="mx-auto max-w-6xl px-6 py-10">
-        {/* Cover Header */}
         <div className="relative overflow-hidden rounded-2xl border theme-border theme-card mb-6">
           <div className="absolute inset-0 theme-bg-secondary" />
           <div className="relative p-6 sm:p-8 md:p-10">
@@ -47,91 +96,80 @@ export default function MediaPageContent() {
           </div>
         </div>
 
-        {/* Content */}
-        <div className="rounded-xl border theme-border theme-card p-0 overflow-hidden">
-          {/* Sticky toolbar */}
-          <div className="sticky top-0 z-10 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-black/30 border-b theme-border p-4">
-            <MediaToolbar
-              q={lib.q}
-              onSearch={lib.search}
-              folders={lib.folders}
-              folder={lib.folder}
-              onFolder={lib.changeFolder}
-              onUpload={(files) => lib.upload(files)}
-              sort={lib.sort}
-              setSort={lib.setSort}
-              view={lib.view}
-              setView={lib.setView}
-            />
+        <div className="mb-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {stats.map(({ label, value, icon: Icon }) => (
+            <div
+              key={label}
+              className="flex items-center gap-3 rounded-2xl border theme-border bg-theme-bg-secondary/60 p-4 shadow-sm"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 dark:text-blue-300">
+                <Icon className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                  {label}
+                </p>
+                <p className="text-lg font-semibold theme-text">{value}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="rounded-3xl border theme-border bg-theme-bg shadow-sm overflow-hidden">
+          <div className="sticky top-[72px] z-20 border-b theme-border bg-theme-bg/85 backdrop-blur supports-[backdrop-filter]:bg-theme-bg/70 px-4 py-4 md:px-6 md:py-6">
+            <MediaToolbar />
           </div>
 
           <div className="p-4 md:p-6 space-y-6">
-            {lib.error && (
-              <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">{lib.error}</div>
-            )}
+            {error && <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">{error}</div>}
 
-            {/* Loading skeleton when changing filters/pagination */}
-            {lib.loading && (
+            {loading && (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {Array.from({ length: 12 }, () => (
+                {GRID_SKELETON_KEYS.map((key) => (
                   <div
-                    key={crypto.randomUUID()}
-                    className="aspect-square rounded-lg border theme-border theme-bg-secondary animate-pulse"
+                    key={key}
+                    className="aspect-square rounded-2xl border theme-border bg-theme-bg-secondary/70 animate-pulse"
                   />
                 ))}
               </div>
             )}
 
-            {/* Empty state */}
-            {!lib.loading && lib.items.length === 0 && (
-              <div className="flex flex-col items-center justify-center text-center py-16 rounded-xl border theme-border theme-bg-secondary">
-                <div className="w-16 h-16 rounded-full theme-bg mb-4 flex items-center justify-center border theme-border">
-                  📁
+            {isEmpty && (
+              <div className="flex flex-col items-center justify-center text-center py-20 rounded-3xl border theme-border bg-theme-bg-secondary/70 shadow-inner">
+                <div className="w-16 h-16 rounded-full bg-blue-500/10 mb-4 flex items-center justify-center text-3xl">
+                  {uploading ? '⏳' : '📁'}
                 </div>
-                <h3 className="text-lg font-medium theme-text">No media found</h3>
-                <p className="text-sm theme-text-secondary mt-1">
-                  Try changing filters or upload new files to this folder.
+                <h3 className="text-lg font-semibold theme-text">No media found</h3>
+                <p className="text-sm theme-text-secondary mt-1 max-w-md">
+                  Adjust the search filters or upload new files to populate this view. All uploaded
+                  media will appear here instantly.
                 </p>
-                <div className="mt-4">
-                  <label className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border theme-border theme-card hover:theme-card-hover cursor-pointer w-fit">
-                    <input
-                      type="file"
-                      multiple
-                      className="hidden"
-                      onChange={(e) => e.target.files && lib.upload(e.target.files)}
-                    />
-                    <span className="text-sm theme-text">Upload files</span>
-                  </label>
-                </div>
               </div>
             )}
 
-            {/* Grid */}
-            {!lib.loading && lib.items.length > 0 && (
-              <MediaGrid
-                items={lib.items}
-                onDeleted={() => lib.fetchItems({ page: lib.page, q: lib.q, folder: lib.folder })}
-              />
+            {!loading && items.length > 0 && (
+              <div className="space-y-4">
+                {filters.view === 'grid' ? <MediaGrid /> : <MediaList />}
+              </div>
             )}
 
-            {/* Pagination */}
             <div className="flex flex-wrap items-center justify-between pt-2 gap-3">
               <div className="text-sm theme-text-secondary">
-                Page {lib.page} of {lib.totalPages} • {lib.total} items
+                Page {page} of {totalPages} • {total} items
               </div>
               <div className="flex gap-2">
                 <button
                   type="button"
-                  disabled={lib.page <= 1 || lib.loading}
-                  onClick={() => lib.setPage(lib.page - 1)}
+                  disabled={page <= 1 || loading}
+                  onClick={() => setPage(page - 1)}
                   className="px-3 py-2 rounded-lg border theme-border theme-card hover:theme-card-hover disabled:opacity-50"
                 >
                   Prev
                 </button>
                 <button
                   type="button"
-                  disabled={lib.page >= lib.totalPages || lib.loading}
-                  onClick={() => lib.setPage(lib.page + 1)}
+                  disabled={page >= totalPages || loading}
+                  onClick={() => setPage(page + 1)}
                   className="px-3 py-2 rounded-lg border theme-border theme-card hover:theme-card-hover disabled:opacity-50"
                 >
                   Next

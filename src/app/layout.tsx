@@ -26,7 +26,7 @@ export default async function RootLayout({
 }>) {
   // Read theme from cookie on the server for first paint
   let validTheme: Theme = 'light'
-  
+
   try {
     const cookieStore = await cookies()
     const cookieTheme = (cookieStore.get('nova-theme')?.value ?? 'light') as string
@@ -36,7 +36,7 @@ export default async function RootLayout({
     console.warn('Could not read theme cookie, using default theme:', error)
     validTheme = 'light'
   }
-  
+
   const _isDark = isDarkThemeId(validTheme)
   const _themeClass = `theme-${validTheme}`
 

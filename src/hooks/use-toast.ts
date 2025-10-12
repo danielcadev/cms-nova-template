@@ -5,14 +5,15 @@ import * as React from 'react'
 
 import type { ToastActionElement, ToastProps } from '@/components/ui/toast'
 
-const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 4000
+const TOAST_LIMIT = 3
+const TOAST_REMOVE_DELAY = 5000
 
 type ToasterToast = ToastProps & {
   id: string
   title?: React.ReactNode
   description?: React.ReactNode
   action?: ToastActionElement
+  icon?: React.ReactNode
 }
 
 let count = 0
@@ -126,36 +127,73 @@ function dispatch(action: Action) {
   })
 }
 
-type Toast = Omit<ToasterToast, 'id'>
+type ToastOptions = Omit<ToasterToast, 'id'> & { id?: string }
 
-function toast({ ...props }: Toast) {
-  const id = genId()
+type ToastReturn = {
+  id: string
+  dismiss: () => void
+  update: (props: Partial<ToasterToast>) => void
+}
 
-  const update = (props: ToasterToast) =>
-    dispatch({
-      type: 'UPDATE_TOAST',
-      toast: { ...props, id },
-    })
+type ToastHandler = {
+  (props: ToastOptions): ToastReturn
+  success: (props: Omit<ToastOptions, 'variant'>) => ToastReturn
+  info: (props: Omit<ToastOptions, 'variant'>) => ToastReturn
+  warning: (props: Omit<ToastOptions, 'variant'>) => ToastReturn
+  error: (props: Omit<ToastOptions, 'variant'>) => ToastReturn
+  dismiss: (toastId?: string) => void
+  dismissAll: () => void
+}
+
+const createToast = ({ id: providedId, ...props }: ToastOptions): ToastReturn => {
+  const id = providedId ?? genId()
   const dismiss = () => dispatch({ type: 'DISMISS_TOAST', toastId: id })
 
-  dispatch({
-    type: 'ADD_TOAST',
-    toast: {
-      ...props,
-      id,
-      open: true,
-      onOpenChange: (open) => {
-        if (!open) dismiss()
-      },
+  const existingToast = memoryState.toasts.find((toast) => toast.id === id)
+
+  const toastPayload: ToasterToast = {
+    ...existingToast,
+    ...props,
+    id,
+    open: true,
+    duration: props.duration ?? TOAST_REMOVE_DELAY,
+    onOpenChange: (open) => {
+      if (!open) dismiss()
+      existingToast?.onOpenChange?.(open)
+      props.onOpenChange?.(open)
     },
-  })
+  }
+
+  if (existingToast) {
+    dispatch({ type: 'UPDATE_TOAST', toast: toastPayload })
+  } else {
+    dispatch({ type: 'ADD_TOAST', toast: toastPayload })
+  }
 
   return {
-    id: id,
+    id,
     dismiss,
-    update,
+    update: (nextProps) =>
+      dispatch({
+        type: 'UPDATE_TOAST',
+        toast: {
+          ...toastPayload,
+          ...nextProps,
+          id,
+        },
+      }),
   }
 }
+
+const toast = Object.assign(createToast as ToastHandler, {
+  success: (props: Omit<ToastOptions, 'variant'>) => createToast({ variant: 'success', ...props }),
+  info: (props: Omit<ToastOptions, 'variant'>) => createToast({ variant: 'info', ...props }),
+  warning: (props: Omit<ToastOptions, 'variant'>) => createToast({ variant: 'warning', ...props }),
+  error: (props: Omit<ToastOptions, 'variant'>) =>
+    createToast({ variant: 'destructive', ...props }),
+  dismiss: (toastId?: string) => dispatch({ type: 'DISMISS_TOAST', toastId }),
+  dismissAll: () => dispatch({ type: 'DISMISS_TOAST' }),
+})
 
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState)

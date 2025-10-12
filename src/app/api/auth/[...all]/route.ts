@@ -1,5 +1,5 @@
-import { auth } from '@/lib/auth'
 import { toNextJsHandler } from 'better-auth/next-js'
+import { auth } from '@/lib/auth'
 
 // Debug info solo en desarrollo
 if (process.env.NODE_ENV === 'development') {

@@ -1,7 +1,8 @@
 import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
-import { admin } from 'better-auth/plugins'
 import { nextCookies } from 'better-auth/next-js'
+import { admin } from 'better-auth/plugins'
+import { adminAc, userAc } from 'better-auth/plugins/admin/access'
 import { prisma } from './prisma'
 
 // Configuración segura de orígenes confiables
@@ -11,9 +12,9 @@ const getTrustedOrigins = () => {
     if (!baseUrl) {
       throw new Error('NEXT_PUBLIC_APP_URL or BETTER_AUTH_URL must be set in production')
     }
-    
+
     const origins = [baseUrl]
-    
+
     // OPCIONAL: Incluir automáticamente tanto www como sin www
     // Establecer INCLUDE_WWW_VARIANT=true para habilitar esta funcionalidad
     if (process.env.INCLUDE_WWW_VARIANT === 'true') {
@@ -23,10 +24,10 @@ const getTrustedOrigins = () => {
         origins.push(baseUrl.replace('://', '://www.'))
       }
     }
-    
+
     return origins
   }
-  
+
   // En desarrollo, solo localhost
   return ['http://localhost:3000']
 }
@@ -49,5 +50,15 @@ export const auth = betterAuth({
     disabled: false,
   },
   // Plugins - nextCookies DEBE ser el último plugin
-  plugins: [admin(), nextCookies()],
+  plugins: [
+    admin({
+      adminRoles: ['admin', 'ADMIN'],
+      roles: {
+        admin: adminAc,
+        ADMIN: adminAc,
+        user: userAc,
+      },
+    }),
+    nextCookies(),
+  ],
 })
