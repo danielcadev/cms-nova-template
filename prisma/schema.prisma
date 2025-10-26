@@ -116,6 +116,37 @@ model Plan {
   @@map("plans")
 }
 
+// --------- EXPERIENCIAS ---------
+model Experience {
+  id            String   @id @default(cuid())
+  title         String
+  slug          String   @unique
+  location      String?
+  locationAlias String
+  durationType  String   @default("flexible")
+  hostName      String?
+  hostBio       String?   @db.Text
+  summary       String    @db.Text
+  narrative     String    @db.Text
+  activities    String?   @db.Text
+  duration      String?
+  schedule      String?
+  scheduleDays  Json?
+  scheduleNote  String?   @db.Text
+  price         String?
+  currency      String   @default("COP")
+  inclusions    String?  @db.Text
+  exclusions    String?  @db.Text
+  tags          String?
+  featured      Boolean  @default(false)
+  published     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([locationAlias])
+  @@map("experiences")
+}
+
 // --------- ACTIVIDAD Y LOGS ---------
 model ActivityLog {
   id          String   @id @default(cuid())

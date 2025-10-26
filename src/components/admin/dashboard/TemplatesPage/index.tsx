@@ -51,18 +51,20 @@ export function TemplatesPage() {
 
         // Fetch tourist plans from API
         const plansResponse = await fetch('/api/plans')
+        const experiencesResponse = await fetch('/api/experiences')
+
+        let recentItems: RecentContent[] = []
+
         if (plansResponse.ok) {
           const plansData = await plansResponse.json()
           const plans = plansData.plans || []
 
-          // Update content counts
           setContentCounts((prev) => ({
             ...prev,
             touristPlans: plans.length,
           }))
 
-          // Transform plans data to recent content format
-          const recentPlans = plans
+          const recentPlans: RecentContent[] = plans
             .sort(
               (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
             )
@@ -77,9 +79,45 @@ export function TemplatesPage() {
               route: `/admin/dashboard/templates/tourism/edit/${plan.id}`,
             }))
 
-          setRecentContent(recentPlans)
+          recentItems = recentItems.concat(recentPlans)
         } else {
           console.error('Error fetching plans:', plansResponse.statusText)
+        }
+
+        if (experiencesResponse.ok) {
+          const experiencesData = await experiencesResponse.json()
+          const experiences = experiencesData.experiences || []
+
+          setContentCounts((prev) => ({
+            ...prev,
+            experiences: experiences.length,
+          }))
+
+          const recentExperiences: RecentContent[] = experiences
+            .sort(
+              (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+            )
+            .slice(0, 6)
+            .map((experience: any) => ({
+              id: experience.id,
+              title: experience.title || 'Untitled Experience',
+              type: 'Experience',
+              status: experience.published ? 'published' : 'draft',
+              createdAt: experience.createdAt,
+              author: experience.hostName || 'Admin',
+              route: `/experiencia/${experience.locationAlias}/${experience.slug}`,
+            }))
+
+          recentItems = recentItems.concat(recentExperiences)
+        } else {
+          console.error('Error fetching experiences:', experiencesResponse.statusText)
+        }
+
+        if (recentItems.length) {
+          recentItems.sort(
+            (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          )
+          setRecentContent(recentItems.slice(0, 6))
         }
 
         // Fetch content types count
@@ -110,6 +148,7 @@ export function TemplatesPage() {
   // State for real content counts
   const [contentCounts, setContentCounts] = useState({
     touristPlans: 0,
+    experiences: 0,
     contentTypes: 0,
   })
 
@@ -126,6 +165,16 @@ export function TemplatesPage() {
     },
     {
       id: '2',
+      name: 'Experiences',
+      description: 'Story-driven journeys to highlight unique Colombian hosts and stories',
+      status: 'active',
+      icon: MapPin,
+      category: 'Tourism',
+      contentCount: contentCounts.experiences,
+      route: '/admin/dashboard/templates/experiences',
+    },
+    {
+      id: '3',
       name: 'Restaurants',
       description: 'Template for menus and restaurant management',
       status: 'coming-soon',
@@ -134,7 +183,7 @@ export function TemplatesPage() {
       contentCount: 0,
     },
     {
-      id: '3',
+      id: '4',
       name: 'Flexible Content',
       description: 'Create completely customized content types',
       status: 'active',
