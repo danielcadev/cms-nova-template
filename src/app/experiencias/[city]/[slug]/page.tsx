@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -47,6 +48,11 @@ export default async function ExperiencePage({ params }: ExperiencePageProps) {
     : []
   const scheduleDayLabel = scheduleDays.map((day) => dayLabelMap[day] ?? day).join(', ')
   const durationTypeLabel = durationLabelMap[experience.durationType ?? 'flexible'] ?? 'Flexible'
+  const galleryImages = Array.isArray(experience.gallery)
+    ? (experience.gallery as string[]).filter(
+        (value) => typeof value === 'string' && value.trim().length > 0,
+      )
+    : []
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-slate-50 to-white dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
@@ -72,6 +78,31 @@ export default async function ExperiencePage({ params }: ExperiencePageProps) {
             <p>{experience.narrative}</p>
           </div>
         </section>
+
+        {galleryImages.length > 0 && (
+          <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/70">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
+              Highlights
+            </h2>
+            <div className="grid grid-cols-2 gap-4">
+              {galleryImages.map((src, index) => (
+                <div
+                  key={src + index.toString()}
+                  className="overflow-hidden rounded-xl border border-slate-200 bg-slate-100/40 dark:border-slate-800 dark:bg-slate-900/40"
+                >
+                  <Image
+                    src={src}
+                    alt={`Highlight ${index + 1}`}
+                    width={800}
+                    height={800}
+                    className="aspect-square w-full object-cover"
+                    unoptimized
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <div className="grid gap-6 md:grid-cols-2">
           {(experience.activities ||

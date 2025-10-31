@@ -111,7 +111,7 @@ export function MediaGrid({
 
   return (
     <>
-      <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+      <div className="grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(220px,1fr))]">
         {items.map((item) => {
           const isImage = item.mimeType.startsWith('image/')
           const fileName = item.key.split('/').pop() ?? item.key

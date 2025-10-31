@@ -6,6 +6,39 @@ import slugify from 'slugify'
 import { prisma } from '@/lib/prisma'
 import { type ExperienceFormValues, experienceSchema } from '@/schemas/experience'
 
+function generateExperienceTags(data: ExperienceFormValues, locationAlias: string) {
+  const tags = new Set<string>()
+  const add = (value?: string | null) => {
+    const trimmed = value?.trim()
+    if (trimmed) {
+      tags.add(trimmed)
+    }
+  }
+
+  add(data.title)
+  add(data.location)
+  add(locationAlias.replace(/-/g, ' '))
+  add(data.durationType)
+  add(data.hostName)
+
+  if (Array.isArray(data.scheduleDays)) {
+    for (const day of data.scheduleDays) {
+      add(day)
+    }
+  }
+
+  return tags.size > 0 ? Array.from(tags).join(', ') : null
+}
+
+function normalizeGallery(gallery?: ExperienceFormValues['gallery']) {
+  if (!Array.isArray(gallery)) return null
+  const cleaned = gallery
+    .map((value) => (typeof value === 'string' ? value.trim() : ''))
+    .filter((value) => value.length > 0)
+
+  return cleaned.length > 0 ? cleaned.slice(0, 4) : null
+}
+
 type ExperienceActionMode = 'draft' | 'publish' | 'publish_view'
 
 export interface CreateExperienceResult {
@@ -66,13 +99,14 @@ export async function createExperienceAction(
         currency: data.currency || 'COP',
         inclusions: data.inclusions?.trim() || null,
         exclusions: data.exclusions?.trim() || null,
-        tags: data.tags?.trim() || null,
+        gallery: normalizeGallery(data.gallery),
+        tags: generateExperienceTags(data, locationAlias),
         featured: data.featured ?? false,
         published: shouldPublish,
       },
     })
 
-    const publicPath = `/experiencia/${locationAlias}/${experience.slug}`
+    const publicPath = `/experiencias/${locationAlias}/${experience.slug}`
     const redirectPath =
       shouldPublish && mode === 'publish_view'
         ? publicPath
@@ -80,7 +114,7 @@ export async function createExperienceAction(
 
     revalidatePath('/admin/dashboard/templates/experiences')
     revalidatePath(publicPath)
-    revalidatePath(`/experiencia/${locationAlias}`)
+    revalidatePath(`/experiencias/${locationAlias}`)
 
     return {
       success: true,
@@ -149,13 +183,14 @@ export async function updateExperienceAction(
         currency: data.currency || 'COP',
         inclusions: data.inclusions?.trim() || null,
         exclusions: data.exclusions?.trim() || null,
-        tags: data.tags?.trim() || null,
+        gallery: normalizeGallery(data.gallery),
+        tags: generateExperienceTags(data, locationAlias),
         featured: data.featured ?? false,
         published: shouldPublish,
       },
     })
 
-    const publicPath = `/experiencia/${experience.locationAlias}/${experience.slug}`
+    const publicPath = `/experiencias/${experience.locationAlias}/${experience.slug}`
     const redirectPath =
       shouldPublish && mode === 'publish_view'
         ? publicPath
@@ -164,7 +199,7 @@ export async function updateExperienceAction(
     revalidatePath('/admin/dashboard/templates/experiences')
     revalidatePath(`/admin/dashboard/templates/experiences/edit/${id}`)
     revalidatePath(publicPath)
-    revalidatePath(`/experiencia/${experience.locationAlias}`)
+    revalidatePath(`/experiencias/${experience.locationAlias}`)
 
     return {
       success: true,

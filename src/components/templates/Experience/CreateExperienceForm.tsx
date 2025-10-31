@@ -2,11 +2,14 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, Eye, Loader2, Save } from 'lucide-react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useMemo, useState, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+
 import { createExperienceAction, updateExperienceAction } from '@/app/actions/experience-actions'
 import { AdminLayout } from '@/components/admin/AdminLayout'
+import { MediaPicker } from '@/components/admin/media/MediaPicker'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -25,8 +28,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import { useS3Config } from '@/hooks/use-s3-config'
 import { useToast } from '@/hooks/use-toast'
 import {
   DAY_OPTIONS,
@@ -35,6 +38,7 @@ import {
   experienceDefaultValues,
   experienceSchema,
 } from '@/schemas/experience'
+import { getExperienceMediaFolder } from '@/utils/experience-media'
 
 interface ExperienceFormProps {
   mode?: 'create' | 'edit'
@@ -60,6 +64,8 @@ const DAY_LABELS: Record<(typeof DAY_OPTIONS)[number], string> = {
   sunday: 'Sunday',
 }
 
+const MAX_GALLERY_IMAGES = 4
+
 export function CreateExperienceForm({
   mode: formMode = 'create',
   experienceId,
@@ -72,12 +78,47 @@ export function CreateExperienceForm({
   const [pendingAction, setPendingAction] = useState<'draft' | 'publish' | 'publish_view'>(
     initialPublished ? 'publish' : 'draft',
   )
+  const {
+    loading: isS3Loading,
+    isConfigured: isS3Configured,
+    error: s3Error,
+    refresh: refreshS3,
+  } = useS3Config()
+  const [pickerIndex, setPickerIndex] = useState<number | null>(null)
 
   const form = useForm<ExperienceFormValues>({
     resolver: zodResolver(experienceSchema),
     defaultValues: initialValues ?? experienceDefaultValues,
     mode: 'onChange',
   })
+  const [experienceTitle, experienceSlug] = form.watch(['title', 'slug'])
+  const galleryFolder = useMemo(
+    () =>
+      getExperienceMediaFolder({
+        slug: experienceSlug,
+        fallbackTitle: experienceTitle,
+        subfolder: 'gallery',
+      }),
+    [experienceSlug, experienceTitle],
+  )
+
+  const setGallerySlot = (index: number, url: string) => {
+    const sanitized = url.trim()
+    if (!sanitized) return
+    const current = Array.isArray(form.getValues('gallery')) ? [...form.getValues('gallery')] : []
+    if (index < current.length) {
+      current[index] = sanitized
+    } else if (current.length < MAX_GALLERY_IMAGES) {
+      current.push(sanitized)
+    } else {
+      current[MAX_GALLERY_IMAGES - 1] = sanitized
+    }
+    const next = current.filter((item) => typeof item === 'string' && item.trim().length > 0)
+    form.setValue('gallery', next.slice(0, MAX_GALLERY_IMAGES), {
+      shouldValidate: true,
+      shouldDirty: true,
+    })
+  }
 
   const onSubmit = (values: ExperienceFormValues) => {
     const actionMode = pendingAction
@@ -149,6 +190,16 @@ export function CreateExperienceForm({
       <div className="min-h-screen theme-bg">
         <FormProvider {...form}>
           <Form {...form}>
+            <MediaPicker
+              isOpen={pickerIndex !== null}
+              onClose={() => setPickerIndex(null)}
+              onSelect={(item) => {
+                if (pickerIndex === null) return
+                setGallerySlot(pickerIndex, item.url)
+                setPickerIndex(null)
+              }}
+              folder={galleryFolder}
+            />
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <header className="theme-card theme-border-b sticky top-0 z-10 backdrop-blur-sm">
                 <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -278,26 +329,6 @@ export function CreateExperienceForm({
                     />
                     <FormField
                       control={form.control}
-                      name="tags"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            Tags
-                            <span className="text-xs font-normal theme-text-secondary">
-                              (optional)
-                            </span>
-                          </FormLabel>
-                          <FormControl>
-                            <Input placeholder="Comma separated tags" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="grid gap-6 md:grid-cols-2">
-                    <FormField
-                      control={form.control}
                       name="hostName"
                       render={({ field }) => (
                         <FormItem>
@@ -311,28 +342,6 @@ export function CreateExperienceForm({
                             <Input placeholder="Optional guide or storyteller" {...field} />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="featured"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border theme-border p-4">
-                          <div className="space-y-1">
-                            <FormLabel className="flex items-center gap-2">
-                              Featured
-                              <span className="text-xs font-normal theme-text-secondary">
-                                (optional)
-                              </span>
-                            </FormLabel>
-                            <FormDescription>
-                              Highlight this experience on landing pages.
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Switch checked={field.value} onCheckedChange={field.onChange} />
-                          </FormControl>
                         </FormItem>
                       )}
                     />
@@ -358,6 +367,132 @@ export function CreateExperienceForm({
                         <FormMessage />
                       </FormItem>
                     )}
+                  />
+                </section>
+
+                <section className="theme-card theme-border rounded-2xl p-6 space-y-6">
+                  <div>
+                    <h2 className="text-lg font-semibold theme-text">Image gallery</h2>
+                    <p className="text-sm theme-text-secondary">
+                      Store up to four images for this experience. They appear in a 2 × 2 grid on
+                      the public page.
+                    </p>
+                  </div>
+                  {isS3Loading ? (
+                    <p className="text-sm theme-text-secondary">Checking media storage…</p>
+                  ) : s3Error ? (
+                    <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                      <p className="font-medium text-red-800">S3 configuration error</p>
+                      <p className="mt-1">{s3Error}</p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="mt-3"
+                        onClick={refreshS3}
+                      >
+                        Retry configuration
+                      </Button>
+                    </div>
+                  ) : !isS3Configured ? (
+                    <p className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700">
+                      Configure S3 in the plugins area to upload images directly. You can still
+                      paste external URLs below.
+                    </p>
+                  ) : null}
+                  <FormField
+                    control={form.control}
+                    name="gallery"
+                    render={({ field }) => {
+                      const value = Array.isArray(field.value)
+                        ? field.value.filter(
+                            (item) => typeof item === 'string' && item.trim().length > 0,
+                          )
+                        : []
+
+                      const handleRemove = (index: number) => {
+                        if (index >= value.length) return
+                        const next = value.filter((_, idx) => idx !== index)
+                        field.onChange(next)
+                      }
+
+                      const handleManualChange = (index: number, raw: string) => {
+                        const sanitized = raw.trim()
+                        if (!sanitized) {
+                          handleRemove(index)
+                          return
+                        }
+                        const next = [...value]
+                        if (index < next.length) {
+                          next[index] = sanitized
+                        } else if (next.length < MAX_GALLERY_IMAGES) {
+                          next.push(sanitized)
+                        }
+                        field.onChange(next.slice(0, MAX_GALLERY_IMAGES))
+                      }
+
+                      const slots = Array.from({ length: MAX_GALLERY_IMAGES })
+
+                      return (
+                        <FormItem className="space-y-3">
+                          <FormControl>
+                            <div className="grid gap-6 sm:grid-cols-2">
+                              {slots.map((_, index) => {
+                                const current = value[index] ?? ''
+                                const slotKey = current ? `${index}-${current}` : `slot-${index}`
+
+                                return (
+                                  <div key={slotKey} className="space-y-3">
+                                    <div className="relative aspect-square overflow-hidden rounded-xl border border-dashed border-slate-200 bg-slate-100/60 dark:border-slate-700 dark:bg-slate-900/40">
+                                      {current ? (
+                                        <Image
+                                          src={current}
+                                          alt={`Gallery image ${index + 1}`}
+                                          fill
+                                          className="object-cover"
+                                          sizes="(max-width: 768px) 100vw, 50vw"
+                                          unoptimized
+                                        />
+                                      ) : (
+                                        <div className="flex h-full items-center justify-center text-sm text-slate-500 dark:text-slate-400">
+                                          No image selected
+                                        </div>
+                                      )}
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                      <Button
+                                        type="button"
+                                        onClick={() => setPickerIndex(index)}
+                                        disabled={isS3Loading || !isS3Configured}
+                                      >
+                                        Open media library
+                                      </Button>
+                                      <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => handleRemove(index)}
+                                        disabled={!current}
+                                      >
+                                        Remove
+                                      </Button>
+                                    </div>
+                                    <Input
+                                      value={current}
+                                      onChange={(event) => {
+                                        handleManualChange(index, event.target.value)
+                                      }}
+                                      placeholder="https://..."
+                                    />
+                                    <FormDescription>Square images work best.</FormDescription>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )
+                    }}
                   />
                 </section>
 

@@ -3,7 +3,8 @@
 
 import { CalendarDays, Check, Folder, Loader2, X } from 'lucide-react'
 import Image from 'next/image'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { MediaGrid } from './MediaGrid'
 import { MediaList } from './MediaList'
 import { MediaToolbar } from './MediaToolbar'
@@ -28,29 +29,79 @@ export function MediaPicker({
   folder,
 }: MediaPickerProps) {
   const [localOpen, setLocalOpen] = useState(isOpen)
+  const [isMounted, setIsMounted] = useState(false)
+  const [themeClassNames, setThemeClassNames] = useState('')
+  const [themeDataTheme, setThemeDataTheme] = useState<string | null>(null)
+  const [themeStyleText, setThemeStyleText] = useState<string | null>(null)
+  const portalRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     setLocalOpen(isOpen)
   }, [isOpen])
 
-  if (!localOpen) return null
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
-  return (
-    <MediaLibraryProvider initialFolder={folder ?? ''}>
-      <MediaPickerModalShell
-        title={title}
-        folder={folder}
-        onClose={() => {
-          setLocalOpen(false)
-          onClose()
-        }}
-        onSelect={(item) => {
-          onSelect(item)
-          setLocalOpen(false)
-          onClose()
-        }}
-      />
-    </MediaLibraryProvider>
+  useEffect(() => {
+    if (!isMounted || !localOpen || typeof document === 'undefined') return
+    const host = document.querySelector('.admin-scope') as HTMLElement | null
+    if (!host) return
+    const classes = Array.from(host.classList).filter(
+      (item) => ['dark'].includes(item) || item.startsWith('theme-'),
+    )
+    setThemeClassNames(classes.join(' '))
+    setThemeDataTheme(host.getAttribute('data-theme'))
+    setThemeStyleText(host.getAttribute('style'))
+  }, [isMounted, localOpen])
+
+  useEffect(() => {
+    if (!portalRef.current) return
+    const styleValue = themeStyleText ?? ''
+    if (styleValue) {
+      portalRef.current.setAttribute('style', styleValue)
+    } else {
+      portalRef.current.removeAttribute('style')
+    }
+  }, [themeStyleText])
+
+  useEffect(() => {
+    if (!isMounted) return
+    if (!localOpen) return
+    const original = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = original
+    }
+  }, [isMounted, localOpen])
+
+  if (!localOpen || !isMounted || typeof document === 'undefined') return null
+
+  return createPortal(
+    <div
+      ref={(node) => {
+        portalRef.current = node
+      }}
+      className={themeClassNames}
+      data-theme={themeDataTheme ?? undefined}
+    >
+      <MediaLibraryProvider initialFolder={folder ?? ''}>
+        <MediaPickerModalShell
+          title={title}
+          folder={folder}
+          onClose={() => {
+            setLocalOpen(false)
+            onClose()
+          }}
+          onSelect={(item) => {
+            onSelect(item)
+            setLocalOpen(false)
+            onClose()
+          }}
+        />
+      </MediaLibraryProvider>
+    </div>,
+    document.body,
   )
 }
 
@@ -98,15 +149,15 @@ function MediaPickerModalShell({ title, folder, onClose, onSelect }: MediaPicker
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 md:px-8">
       <button
         type="button"
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-neutral-950/80 backdrop-blur"
         onClick={onClose}
         aria-label="Close media picker"
       />
-      <div className="relative mx-4 w-full max-w-6xl rounded-3xl border theme-border bg-theme-bg shadow-2xl">
-        <div className="flex h-[80vh] flex-col overflow-hidden">
+      <div className="relative w-full max-w-[1200px] rounded-3xl border theme-border bg-white shadow-2xl dark:bg-slate-950">
+        <div className="flex h-[88vh] flex-col overflow-hidden rounded-3xl">
           <header className="flex items-center justify-between border-b theme-border px-6 py-5">
             <div>
               <h2 className="text-xl font-semibold theme-text">{title}</h2>
@@ -126,11 +177,11 @@ function MediaPickerModalShell({ title, folder, onClose, onSelect }: MediaPicker
 
           <div className="flex flex-1 flex-col overflow-hidden lg:flex-row">
             <div className="flex min-w-0 flex-1 flex-col border-b theme-border lg:border-b-0 lg:border-r">
-              <div className="border-b theme-border px-6 py-4">
+              <div className="border-b theme-border px-4 py-4 sm:px-6">
                 <MediaToolbar allowFolderManagement allowUpload showSortControls showViewToggle />
               </div>
 
-              <div className="flex-1 overflow-y-auto px-6 py-5">
+              <div className="flex-1 overflow-auto px-4 py-5 sm:px-6">
                 {loading && (
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {PICKER_SKELETON_KEYS.map((key) => (
@@ -160,13 +211,13 @@ function MediaPickerModalShell({ title, folder, onClose, onSelect }: MediaPicker
                   <div className="space-y-4">
                     {filters.view === 'grid' ? (
                       <MediaGrid
-                        showDeleteAction={false}
+                        showDeleteAction
                         onConfirmSelect={confirmSelection}
                         items={items}
                       />
                     ) : (
                       <MediaList
-                        showDeleteAction={false}
+                        showDeleteAction
                         onConfirmSelect={confirmSelection}
                         items={items}
                       />
@@ -208,7 +259,7 @@ function MediaPickerModalShell({ title, folder, onClose, onSelect }: MediaPicker
               </div>
             </div>
 
-            <aside className="min-h-[240px] min-w-[280px] border-t theme-border px-6 py-5 lg:min-w-[320px] lg:border-t-0 lg:border-l">
+            <aside className="min-h-[240px] w-full border-t theme-border px-4 py-5 sm:px-6 lg:w-[320px] lg:border-t-0 lg:border-l">
               {selectedItem ? (
                 <div className="flex h-full flex-col gap-4">
                   <div className="relative aspect-square w-full overflow-hidden rounded-2xl border theme-border bg-theme-bg-secondary">

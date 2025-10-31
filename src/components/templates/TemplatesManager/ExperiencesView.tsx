@@ -210,7 +210,7 @@ export function ExperiencesView() {
                 const scheduleDays = Array.isArray(experience.scheduleDays)
                   ? (experience.scheduleDays as string[])
                   : []
-                const publicPath = `/experiencia/${experience.locationAlias}/${experience.slug}`
+                const publicPath = `/experiencias/${experience.locationAlias}/${experience.slug}`
 
                 return (
                   <div

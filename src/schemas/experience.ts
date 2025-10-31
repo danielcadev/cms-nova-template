@@ -30,7 +30,7 @@ export const experienceSchema = z.object({
   currency: z.string().min(1, 'Currency is required').default('COP'),
   inclusions: z.string().optional(),
   exclusions: z.string().optional(),
-  tags: z.string().optional(),
+  gallery: z.array(z.string().url().min(1)).max(4).optional(),
   featured: z.boolean().default(false),
 })
 
@@ -54,6 +54,6 @@ export const experienceDefaultValues: ExperienceFormValues = {
   currency: 'COP',
   inclusions: '',
   exclusions: '',
-  tags: '',
+  gallery: [],
   featured: false,
 }

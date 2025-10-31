@@ -85,7 +85,7 @@ export function MediaToolbar({
     <div className="rounded-2xl border theme-border bg-gradient-to-br from-theme-bg-secondary/80 via-theme-bg-secondary/40 to-transparent p-4 md:p-5 shadow-sm backdrop-blur-sm">
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-3">
-          <div className="relative flex-1 min-w-[240px]">
+          <div className="relative min-w-[260px] flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 theme-text-muted" />
             <input
               value={searchDraft}
@@ -110,7 +110,7 @@ export function MediaToolbar({
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <div className="relative">
               <select
                 value={filters.folder}

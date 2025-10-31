@@ -137,6 +137,7 @@ model Experience {
   currency      String   @default("COP")
   inclusions    String?  @db.Text
   exclusions    String?  @db.Text
+  gallery       Json?
   tags          String?
   featured      Boolean  @default(false)
   published     Boolean  @default(false)

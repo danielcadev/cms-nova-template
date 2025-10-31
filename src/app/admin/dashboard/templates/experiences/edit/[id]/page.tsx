@@ -37,7 +37,11 @@ export default async function EditExperiencePage({ params }: EditExperiencePageP
     currency: experience.currency ?? 'COP',
     inclusions: experience.inclusions ?? '',
     exclusions: experience.exclusions ?? '',
-    tags: experience.tags ?? '',
+    gallery: Array.isArray(experience.gallery)
+      ? (experience.gallery as string[]).filter(
+          (value) => typeof value === 'string' && value.trim().length > 0,
+        )
+      : [],
     featured: experience.featured ?? false,
   }
 

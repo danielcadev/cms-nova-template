@@ -105,7 +105,7 @@ export function TemplatesPage() {
               status: experience.published ? 'published' : 'draft',
               createdAt: experience.createdAt,
               author: experience.hostName || 'Admin',
-              route: `/experiencia/${experience.locationAlias}/${experience.slug}`,
+              route: `/experiencias/${experience.locationAlias}/${experience.slug}`,
             }))
 
           recentItems = recentItems.concat(recentExperiences)
