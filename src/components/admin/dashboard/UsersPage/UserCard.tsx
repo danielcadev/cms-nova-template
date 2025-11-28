@@ -1,6 +1,6 @@
 'use client'
 
-import { Crown, Edit, Eye, MoreHorizontal, Trash2, User } from 'lucide-react'
+import { Crown, Edit, Eye, MoreHorizontal, ShieldCheck, Trash2, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -8,7 +8,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { cn } from '@/lib/utils'
 import type { User as UserType } from '@/types/user'
 
 interface UserCardProps {
@@ -29,19 +28,6 @@ export function UserCard({ user, onViewDetails, onDeleteUser, currentUserId }: U
       .substring(0, 2)
   }
 
-  const getRoleColor = (role: string) => {
-    switch (role?.toLowerCase()) {
-      case 'admin':
-        return 'bg-blue-600'
-      case 'editor':
-        return 'bg-emerald-600'
-      case 'user':
-        return 'bg-gray-600'
-      default:
-        return 'bg-gray-600'
-    }
-  }
-
   const getRoleIcon = (role: string) => {
     switch (role?.toLowerCase()) {
       case 'admin':
@@ -54,96 +40,87 @@ export function UserCard({ user, onViewDetails, onDeleteUser, currentUserId }: U
   }
 
   const RoleIcon = getRoleIcon(user.role)
-
-  // No permitir eliminar el usuario actual
   const canDelete = currentUserId !== user.id && onDeleteUser
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors group gap-3 sm:gap-0">
-      <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0">
-        <div
-          className={cn(
-            'w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center text-white font-medium text-sm flex-shrink-0',
-            getRoleColor(user.role),
-          )}
-        >
-          {getInitials(user.name || 'User')}
-        </div>
-
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-1">
-            <div className="flex items-center gap-2">
-              <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate text-sm sm:text-base">
-                {user.name || 'Unnamed User'}
-              </h3>
-              <div
-                className={cn(
-                  'w-4 h-4 rounded flex items-center justify-center flex-shrink-0',
-                  getRoleColor(user.role),
-                )}
-              >
-                <RoleIcon className="w-2.5 h-2.5 text-white" />
-              </div>
-              {user.emailVerified && (
-                <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0" />
-              )}
-            </div>
-          </div>
-          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-            <span className="truncate max-w-full sm:max-w-xs">{user.email || 'No email'}</span>
-            <span className="hidden sm:inline">•</span>
-            <div className="flex items-center gap-2 sm:gap-1">
-              <span className="capitalize">{user.role?.toLowerCase() || 'user'}</span>
-              <span className="hidden sm:inline">•</span>
-              <span className="text-xs">
-                {user.createdAt
-                  ? new Date(user.createdAt).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })
-                  : 'N/A'}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 self-start sm:self-center">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => onViewDetails(user)}
-          className="opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 sm:h-9 sm:w-9"
-        >
-          <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
-        </Button>
+    <div className="group relative flex flex-col items-center rounded-2xl bg-white p-6 border border-zinc-200 shadow-sm hover:shadow-md hover:border-zinc-300 transition-all duration-200">
+      {/* Actions Menu (Top Right) */}
+      <div className="absolute top-3 right-3 z-10">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              size="sm"
-              className="opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 sm:h-9 sm:w-9"
+              size="icon"
+              className="h-8 w-8 rounded-lg text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100"
             >
-              <MoreHorizontal className="h-3 w-3 sm:h-4 sm:w-4" />
+              <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem onClick={() => onViewDetails(user)}>
-              <Eye className="mr-2 h-4 w-4" />
-              Ver detalles
+          <DropdownMenuContent
+            align="end"
+            className="w-48 rounded-xl border-zinc-200 shadow-lg p-1"
+          >
+            <DropdownMenuItem
+              onSelect={() => {
+                // Allow dropdown to close immediately
+                setTimeout(() => onViewDetails(user), 50)
+              }}
+              className="rounded-lg cursor-pointer text-sm font-medium text-zinc-700 focus:text-zinc-900 focus:bg-zinc-100"
+            >
+              <Eye className="mr-2 h-4 w-4 text-zinc-400" />
+              View Profile
             </DropdownMenuItem>
             {canDelete && (
               <DropdownMenuItem
                 onClick={() => onDeleteUser?.(user)}
-                className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/20"
+                className="text-red-600 focus:text-red-600 focus:bg-red-50 rounded-lg cursor-pointer text-sm font-medium"
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Eliminar usuario
+                Delete Account
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>
         </DropdownMenu>
+      </div>
+
+      {/* Avatar */}
+      <div className="mb-4 relative z-10">
+        <div className="w-16 h-16 rounded-xl flex items-center justify-center text-xl font-bold bg-zinc-100 text-zinc-600 border border-zinc-200">
+          {getInitials(user.name || 'User')}
+        </div>
+        {user.emailVerified && (
+          <div className="absolute -bottom-1 -right-1 bg-white p-0.5 rounded-full border border-zinc-200">
+            <ShieldCheck className="w-4 h-4 text-zinc-900 fill-zinc-100" />
+          </div>
+        )}
+      </div>
+
+      {/* Info */}
+      <div className="text-center w-full mb-6">
+        <h3 className="font-semibold text-zinc-900 truncate w-full text-base mb-1">
+          {user.name || 'Unnamed User'}
+        </h3>
+        <p className="text-sm text-zinc-500 truncate w-full">{user.email || 'No email'}</p>
+      </div>
+
+      {/* Badges & Footer */}
+      <div className="w-full mt-auto space-y-4">
+        <div className="flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg border border-zinc-200 bg-zinc-50 text-xs font-medium uppercase tracking-wide w-fit mx-auto text-zinc-600">
+          <RoleIcon className="w-3.5 h-3.5" />
+          {user.role || 'USER'}
+        </div>
+
+        <div className="pt-4 border-t border-zinc-100 w-full flex items-center justify-center text-xs text-zinc-400">
+          <span>
+            Joined{' '}
+            {user.createdAt
+              ? new Date(user.createdAt).toLocaleDateString('en-US', {
+                  month: 'short',
+                  year: 'numeric',
+                })
+              : 'Unknown'}
+          </span>
+        </div>
       </div>
     </div>
   )

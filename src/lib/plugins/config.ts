@@ -19,7 +19,7 @@ export const AVAILABLE_PLUGINS: Plugin[] = [
     id: 's3-storage',
     name: 'AWS S3 Storage',
     description:
-      'Almacena archivos y medios en Amazon S3 con configuración automática de CDN y optimización de costos',
+      'Store files and media on Amazon S3 with automatic CDN configuration and cost optimization.',
     version: '2.1.0',
     category: 'integration',
     enabled: false,
@@ -38,7 +38,7 @@ export const AVAILABLE_PLUGINS: Plugin[] = [
   {
     id: 'dynamic-nav',
     name: 'Dynamic TypePath Nav',
-    description: 'Adds navigation items based on content types (typePath)',
+    description: 'Adds navigation items based on content types (typePath).',
     version: '1.0.0',
     category: 'ui',
     enabled: false,
@@ -46,14 +46,14 @@ export const AVAILABLE_PLUGINS: Plugin[] = [
     icon: '🧭',
     configurable: true,
     settings: {
-      // 'auto' usa /api/content-types para descubrir typePaths
-      // 'include' usa una lista manual en settings.include
+      // 'auto' uses /api/content-types to discover typePaths
+      // 'include' uses a manual list in settings.include
       mode: 'auto', // 'auto' | 'include'
-      include: [], // lista de typePaths si mode = 'include'
-      exclude: [], // typePaths a omitir
+      include: [], // list of typePaths if mode = 'include'
+      exclude: [], // typePaths to skip
       titleCase: true,
-      // Controla templates de turismo (rutas normales), separado del headless typePath
-      // Mapa dinámico: { [templateName: string]: boolean }
+      // Controls tourism templates (normal routes), separate from headless typePath
+      // Dynamic map: { [templateName: string]: boolean }
       templates: {},
     },
   },
@@ -61,12 +61,89 @@ export const AVAILABLE_PLUGINS: Plugin[] = [
     id: 'public-typepaths',
     name: 'Public Type Paths',
     description:
-      'Expone públicamente las rutas headless `/{typePath}` y `/{typePath}/{slug}` basadas en Content Types',
+      'Publicly exposes headless routes `/{typePath}` and `/{typePath}/{slug}` based on Content Types.',
     version: '1.0.0',
     category: 'utility',
     enabled: false,
     author: 'CMS Team',
     icon: '🌐',
+    configurable: false,
+  },
+  {
+    id: 'analytics',
+    name: 'Google Analytics',
+    description: 'Coming soon: Full integration with Google Analytics for advanced metrics.',
+    version: '1.0.0',
+    category: 'analytics',
+    enabled: false,
+    author: 'CMS Team',
+    icon: '📊',
+    configurable: false,
+  },
+  {
+    id: 'email',
+    name: 'Email Marketing',
+    description: 'Coming soon: Email marketing system with templates and automation.',
+    version: '1.0.0',
+    category: 'integration',
+    enabled: false,
+    author: 'CMS Team',
+    icon: '📧',
+    configurable: false,
+  },
+  {
+    id: 'cdn',
+    name: 'CDN Integration',
+    description: 'Coming soon: Content Delivery Network to optimize speed.',
+    version: '1.0.0',
+    category: 'utility',
+    enabled: false,
+    author: 'CMS Team',
+    icon: '🌐',
+    configurable: false,
+  },
+  {
+    id: 'backup',
+    name: 'Auto Backup',
+    description: 'Coming soon: Scheduled automatic backups and restoration.',
+    version: '1.0.0',
+    category: 'security',
+    enabled: false,
+    author: 'CMS Team',
+    icon: '💾',
+    configurable: false,
+  },
+  {
+    id: 'seo',
+    name: 'SEO Optimizer',
+    description: 'Coming soon: Advanced SEO optimization tools.',
+    version: '1.0.0',
+    category: 'utility',
+    enabled: false,
+    author: 'CMS Team',
+    icon: '🔍',
+    configurable: false,
+  },
+  {
+    id: 'security',
+    name: 'Security Shield',
+    description: 'Coming soon: Advanced protection against threats and vulnerabilities.',
+    version: '1.0.0',
+    category: 'security',
+    enabled: false,
+    author: 'CMS Team',
+    icon: '🛡️',
+    configurable: false,
+  },
+  {
+    id: 'social',
+    name: 'Social Media',
+    description: 'Coming soon: Social media integration and automatic publishing.',
+    version: '1.0.0',
+    category: 'integration',
+    enabled: false,
+    author: 'CMS Team',
+    icon: '📱',
     configurable: false,
   },
 ]

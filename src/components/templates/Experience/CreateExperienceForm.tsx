@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, Eye, Loader2, Save } from 'lucide-react'
+import { ArrowLeft, Loader2, Save } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState, useTransition } from 'react'
@@ -187,7 +187,7 @@ export function CreateExperienceForm({
 
   return (
     <AdminLayout>
-      <div className="min-h-screen theme-bg">
+      <div className="min-h-screen bg-zinc-50/50">
         <FormProvider {...form}>
           <Form {...form}>
             <MediaPicker
@@ -201,90 +201,80 @@ export function CreateExperienceForm({
               folder={galleryFolder}
             />
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <header className="theme-card theme-border-b sticky top-0 z-10 backdrop-blur-sm">
-                <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              {/* Header */}
+              <header className="bg-white border-b border-zinc-200 sticky top-0 z-10">
+                <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
-                    <Button type="button" variant="ghost" onClick={handleBack} className="gap-2">
-                      <ArrowLeft className="h-4 w-4" />
-                      Back to experiences
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={handleBack}
+                      className="text-zinc-500 hover:text-zinc-900 -ml-2"
+                    >
+                      <ArrowLeft className="h-4 w-4 mr-2" />
+                      Back
                     </Button>
-                    <div className="hidden sm:block h-6 w-px theme-border" />
+                    <div className="hidden sm:block h-6 w-px bg-zinc-200" />
                     <div>
-                      <h1 className="text-xl sm:text-2xl font-semibold theme-text">
-                        Create new experience
+                      <h1 className="text-xl font-bold text-zinc-900">
+                        {formMode === 'create' ? 'Create Experience' : 'Edit Experience'}
                       </h1>
-                      <p className="text-sm theme-text-secondary">
-                        Capture the story, activities, and logistics for your experience.
+                      <p className="text-sm text-zinc-500">
+                        Capture the story, activities, and logistics.
                       </p>
                     </div>
                   </div>
-                  <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <Button
                       type="submit"
                       variant="outline"
-                      className="gap-2"
                       disabled={isSaving}
                       onClick={() => setPendingAction('draft')}
+                      className="bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50"
                     >
-                      Save as draft
+                      Save Draft
                     </Button>
                     <Button
                       type="submit"
-                      className="gap-2"
                       disabled={isSaving || !form.formState.isValid}
                       onClick={() => setPendingAction('publish')}
+                      className="bg-zinc-900 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-900/20"
                     >
                       {isSaving && pendingAction === 'publish' ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                       ) : (
-                        <Save className="h-4 w-4" />
+                        <Save className="h-4 w-4 mr-2" />
                       )}
-                      {isSaving && pendingAction === 'publish' ? 'Publishing…' : 'Publish'}
-                    </Button>
-                    <Button
-                      type="submit"
-                      variant="secondary"
-                      className="gap-2"
-                      disabled={isSaving || !form.formState.isValid}
-                      onClick={() => setPendingAction('publish_view')}
-                    >
-                      {isSaving && pendingAction === 'publish_view' ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                      {isSaving && pendingAction === 'publish_view'
-                        ? 'Publishing…'
-                        : 'Publish & view'}
+                      {isSaving && pendingAction === 'publish' ? 'Publishing...' : 'Publish'}
                     </Button>
                   </div>
                 </div>
               </header>
 
-              <main className="max-w-6xl mx-auto px-6 pb-12 space-y-10">
-                <p className="text-xs text-right theme-text-secondary">
-                  Fields marked with <span className="text-red-500 dark:text-red-400">*</span> are
-                  required. Everything else is optional.
-                </p>
-                <section className="theme-card theme-border rounded-2xl p-6 space-y-6">
-                  <div>
-                    <h2 className="text-lg font-semibold theme-text">Basics</h2>
-                    <p className="text-sm theme-text-secondary">
+              <main className="max-w-6xl mx-auto px-6 pb-12 space-y-8">
+                {/* Basics Section */}
+                <section className="bg-white rounded-xl border border-zinc-200 p-8 shadow-sm">
+                  <div className="mb-6">
+                    <h2 className="text-lg font-bold text-zinc-900">Basics</h2>
+                    <p className="text-sm text-zinc-500">
                       Define the core details that identify this experience.
                     </p>
                   </div>
-                  <div className="grid gap-6 md:grid-cols-2">
+                  <div className="grid gap-8 md:grid-cols-2">
                     <FormField
                       control={form.control}
                       name="title"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center gap-1">
-                            Experience title
-                            <span className="text-red-500 dark:text-red-400">*</span>
+                          <FormLabel className="text-zinc-900 font-medium">
+                            Experience Title <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g. Barranquilla, land of Shakira" {...field} />
+                            <Input
+                              placeholder="e.g. Barranquilla, land of Shakira"
+                              {...field}
+                              className="bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -295,16 +285,19 @@ export function CreateExperienceForm({
                       name="slug"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            Slug
-                            <span className="text-xs font-normal theme-text-secondary">
-                              (optional)
-                            </span>
+                          <FormLabel className="text-zinc-900 font-medium">
+                            Slug <span className="text-zinc-400 font-normal">(optional)</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="auto-generated if empty" {...field} />
+                            <Input
+                              placeholder="auto-generated if empty"
+                              {...field}
+                              className="bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900"
+                            />
                           </FormControl>
-                          <FormDescription>Used for public URLs when available.</FormDescription>
+                          <FormDescription className="text-zinc-400">
+                            Used for public URLs.
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -314,14 +307,16 @@ export function CreateExperienceForm({
                       name="location"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            Location / region
-                            <span className="text-xs font-normal theme-text-secondary">
-                              (optional)
-                            </span>
+                          <FormLabel className="text-zinc-900 font-medium">
+                            Location / Region{' '}
+                            <span className="text-zinc-400 font-normal">(optional)</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="City or region" {...field} />
+                            <Input
+                              placeholder="City or region"
+                              {...field}
+                              className="bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -332,74 +327,76 @@ export function CreateExperienceForm({
                       name="hostName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            Host name
-                            <span className="text-xs font-normal theme-text-secondary">
-                              (optional)
-                            </span>
+                          <FormLabel className="text-zinc-900 font-medium">
+                            Host Name <span className="text-zinc-400 font-normal">(optional)</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="Optional guide or storyteller" {...field} />
+                            <Input
+                              placeholder="Optional guide or storyteller"
+                              {...field}
+                              className="bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
                   </div>
-                  <FormField
-                    control={form.control}
-                    name="hostBio"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          Host story
-                          <span className="text-xs font-normal theme-text-secondary">
-                            (optional)
-                          </span>
-                        </FormLabel>
-                        <FormControl>
-                          <Textarea
-                            rows={4}
-                            placeholder="Share the background of the host"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="mt-6">
+                    <FormField
+                      control={form.control}
+                      name="hostBio"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-zinc-900 font-medium">
+                            Host Story <span className="text-zinc-400 font-normal">(optional)</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea
+                              rows={4}
+                              placeholder="Share the background of the host"
+                              {...field}
+                              className="bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 resize-none"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </section>
 
-                <section className="theme-card theme-border rounded-2xl p-6 space-y-6">
-                  <div>
-                    <h2 className="text-lg font-semibold theme-text">Image gallery</h2>
-                    <p className="text-sm theme-text-secondary">
-                      Store up to four images for this experience. They appear in a 2 × 2 grid on
-                      the public page.
+                {/* Image Gallery */}
+                <section className="bg-white rounded-xl border border-zinc-200 p-8 shadow-sm">
+                  <div className="mb-6">
+                    <h2 className="text-lg font-bold text-zinc-900">Image Gallery</h2>
+                    <p className="text-sm text-zinc-500">
+                      Store up to four images. They appear in a 2 × 2 grid on the public page.
                     </p>
                   </div>
+
                   {isS3Loading ? (
-                    <p className="text-sm theme-text-secondary">Checking media storage…</p>
+                    <p className="text-sm text-zinc-500 mb-4">Checking media storage...</p>
                   ) : s3Error ? (
-                    <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-                      <p className="font-medium text-red-800">S3 configuration error</p>
-                      <p className="mt-1">{s3Error}</p>
+                    <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 mb-4">
+                      <p className="font-medium">S3 configuration error</p>
+                      <p>{s3Error}</p>
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
-                        className="mt-3"
+                        className="mt-2"
                         onClick={refreshS3}
                       >
-                        Retry configuration
+                        Retry
                       </Button>
                     </div>
                   ) : !isS3Configured ? (
-                    <p className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700">
-                      Configure S3 in the plugins area to upload images directly. You can still
-                      paste external URLs below.
-                    </p>
+                    <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 mb-4">
+                      Configure S3 in the plugins area to upload images directly.
+                    </div>
                   ) : null}
+
                   <FormField
                     control={form.control}
                     name="gallery"
@@ -434,56 +431,61 @@ export function CreateExperienceForm({
                       const slots = Array.from({ length: MAX_GALLERY_IMAGES })
 
                       return (
-                        <FormItem className="space-y-3">
+                        <FormItem>
                           <FormControl>
-                            <div className="grid gap-6 sm:grid-cols-2">
+                            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                               {slots.map((_, index) => {
                                 const current = value[index] ?? ''
                                 const slotKey = current ? `${index}-${current}` : `slot-${index}`
 
                                 return (
                                   <div key={slotKey} className="space-y-3">
-                                    <div className="relative aspect-square overflow-hidden rounded-xl border border-dashed border-slate-200 bg-slate-100/60 dark:border-slate-700 dark:bg-slate-900/40">
+                                    <div className="relative aspect-square overflow-hidden rounded-xl border-2 border-dashed border-zinc-200 bg-zinc-50 hover:bg-zinc-100 transition-colors">
                                       {current ? (
                                         <Image
                                           src={current}
                                           alt={`Gallery image ${index + 1}`}
                                           fill
                                           className="object-cover"
-                                          sizes="(max-width: 768px) 100vw, 50vw"
+                                          sizes="(max-width: 768px) 100vw, 25vw"
                                           unoptimized
                                         />
                                       ) : (
-                                        <div className="flex h-full items-center justify-center text-sm text-slate-500 dark:text-slate-400">
-                                          No image selected
+                                        <div className="flex h-full items-center justify-center text-sm text-zinc-400">
+                                          Empty Slot
                                         </div>
                                       )}
                                     </div>
-                                    <div className="flex flex-wrap gap-2">
-                                      <Button
-                                        type="button"
-                                        onClick={() => setPickerIndex(index)}
-                                        disabled={isS3Loading || !isS3Configured}
-                                      >
-                                        Open media library
-                                      </Button>
-                                      <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={() => handleRemove(index)}
-                                        disabled={!current}
-                                      >
-                                        Remove
-                                      </Button>
+                                    <div className="flex flex-col gap-2">
+                                      <div className="flex gap-2">
+                                        <Button
+                                          type="button"
+                                          variant="outline"
+                                          size="sm"
+                                          className="flex-1 text-xs h-8"
+                                          onClick={() => setPickerIndex(index)}
+                                          disabled={isS3Loading || !isS3Configured}
+                                        >
+                                          Select
+                                        </Button>
+                                        <Button
+                                          type="button"
+                                          variant="ghost"
+                                          size="sm"
+                                          className="text-xs h-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                          onClick={() => handleRemove(index)}
+                                          disabled={!current}
+                                        >
+                                          Remove
+                                        </Button>
+                                      </div>
+                                      <Input
+                                        value={current}
+                                        onChange={(e) => handleManualChange(index, e.target.value)}
+                                        placeholder="https://..."
+                                        className="h-8 text-xs bg-white"
+                                      />
                                     </div>
-                                    <Input
-                                      value={current}
-                                      onChange={(event) => {
-                                        handleManualChange(index, event.target.value)
-                                      }}
-                                      placeholder="https://..."
-                                    />
-                                    <FormDescription>Square images work best.</FormDescription>
                                   </div>
                                 )
                               })}
@@ -496,97 +498,98 @@ export function CreateExperienceForm({
                   />
                 </section>
 
-                <section className="theme-card theme-border rounded-2xl p-6 space-y-6">
-                  <div>
-                    <h2 className="text-lg font-semibold theme-text">Storytelling</h2>
-                    <p className="text-sm theme-text-secondary">
+                {/* Storytelling */}
+                <section className="bg-white rounded-xl border border-zinc-200 p-8 shadow-sm">
+                  <div className="mb-6">
+                    <h2 className="text-lg font-bold text-zinc-900">Storytelling</h2>
+                    <p className="text-sm text-zinc-500">
                       Describe the experience to inspire travelers.
                     </p>
                   </div>
-                  <FormField
-                    control={form.control}
-                    name="summary"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-1">
-                          Summary
-                          <span className="text-red-500 dark:text-red-400">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Textarea
-                            rows={3}
-                            placeholder="One to two sentence overview"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="narrative"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-1">
-                          Full narrative
-                          <span className="text-red-500 dark:text-red-400">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Textarea
-                            rows={8}
-                            placeholder="Tell the full story of the experience"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="activities"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          Activities
-                          <span className="text-xs font-normal theme-text-secondary">
-                            (optional)
-                          </span>
-                        </FormLabel>
-                        <FormControl>
-                          <Textarea
-                            rows={4}
-                            placeholder="List activities, one per line"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="space-y-6">
+                    <FormField
+                      control={form.control}
+                      name="summary"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-zinc-900 font-medium">
+                            Summary <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea
+                              rows={3}
+                              placeholder="One to two sentence overview"
+                              {...field}
+                              className="bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 resize-none"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="narrative"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-zinc-900 font-medium">
+                            Full Narrative <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea
+                              rows={8}
+                              placeholder="Tell the full story of the experience"
+                              {...field}
+                              className="bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 resize-none"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="activities"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-zinc-900 font-medium">
+                            Activities <span className="text-zinc-400 font-normal">(optional)</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea
+                              rows={4}
+                              placeholder="List activities, one per line"
+                              {...field}
+                              className="bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 resize-none"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </section>
 
-                <section className="theme-card theme-border rounded-2xl p-6 space-y-6">
-                  <div>
-                    <h2 className="text-lg font-semibold theme-text">Logistics</h2>
-                    <p className="text-sm theme-text-secondary">
+                {/* Logistics */}
+                <section className="bg-white rounded-xl border border-zinc-200 p-8 shadow-sm">
+                  <div className="mb-6">
+                    <h2 className="text-lg font-bold text-zinc-900">Logistics</h2>
+                    <p className="text-sm text-zinc-500">
                       Capture practical information for planners and guests.
                     </p>
                   </div>
-                  <div className="grid gap-6 md:grid-cols-2">
+                  <div className="grid gap-8 md:grid-cols-2">
                     <FormField
                       control={form.control}
                       name="durationType"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center gap-1">
-                            Duration type
-                            <span className="text-red-500 dark:text-red-400">*</span>
+                          <FormLabel className="text-zinc-900 font-medium">
+                            Duration Type <span className="text-red-500">*</span>
                           </FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
-                              <SelectTrigger>
+                              <SelectTrigger className="bg-zinc-50 border-zinc-200 focus:ring-zinc-900">
                                 <SelectValue placeholder="Select duration" />
                               </SelectTrigger>
                             </FormControl>
@@ -598,9 +601,6 @@ export function CreateExperienceForm({
                               ))}
                             </SelectContent>
                           </Select>
-                          <FormDescription>
-                            Decide if this experience is hourly, single or multi-day.
-                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -610,80 +610,85 @@ export function CreateExperienceForm({
                       name="duration"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            Duration details
-                            <span className="text-xs font-normal theme-text-secondary">
-                              (optional)
-                            </span>
+                          <FormLabel className="text-zinc-900 font-medium">
+                            Duration Details{' '}
+                            <span className="text-zinc-400 font-normal">(optional)</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g. 6 hours or 2 days / 1 night" {...field} />
+                            <Input
+                              placeholder="e.g. 6 hours or 2 days / 1 night"
+                              {...field}
+                              className="bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
                   </div>
-                  <FormField
-                    control={form.control}
-                    name="scheduleDays"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          Available days
-                          <span className="text-xs font-normal theme-text-secondary">
-                            (optional)
-                          </span>
-                        </FormLabel>
-                        <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-4">
-                          {DAY_OPTIONS.map((day) => {
-                            const selected = field.value?.includes(day)
-                            return (
-                              <button
-                                type="button"
-                                key={day}
-                                onClick={() => {
-                                  const current = new Set(field.value ?? [])
-                                  if (current.has(day)) {
-                                    current.delete(day)
-                                  } else {
-                                    current.add(day)
-                                  }
-                                  field.onChange(Array.from(current))
-                                }}
-                                aria-pressed={selected}
-                                className={`rounded-lg border px-3 py-2 text-sm transition ${
-                                  selected
-                                    ? 'border-primary/60 bg-primary/10 text-primary'
-                                    : 'theme-border theme-card theme-text-secondary hover:theme-card-hover'
-                                }`}
-                              >
-                                {DAY_LABELS[day]}
-                              </button>
-                            )
-                          })}
-                        </div>
-                        <FormDescription>
-                          Select the recurring days the tour runs (leave empty for flexible dates).
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="grid gap-6 md:grid-cols-2">
+
+                  <div className="mt-6">
+                    <FormField
+                      control={form.control}
+                      name="scheduleDays"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-zinc-900 font-medium">
+                            Available Days{' '}
+                            <span className="text-zinc-400 font-normal">(optional)</span>
+                          </FormLabel>
+                          <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 mt-2">
+                            {DAY_OPTIONS.map((day) => {
+                              const selected = field.value?.includes(day)
+                              return (
+                                <button
+                                  type="button"
+                                  key={day}
+                                  onClick={() => {
+                                    const current = new Set(field.value ?? [])
+                                    if (current.has(day)) {
+                                      current.delete(day)
+                                    } else {
+                                      current.add(day)
+                                    }
+                                    field.onChange(Array.from(current))
+                                  }}
+                                  className={`rounded-lg border px-3 py-2 text-sm transition-all duration-200 ${
+                                    selected
+                                      ? 'border-zinc-900 bg-zinc-900 text-white shadow-md'
+                                      : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50'
+                                  }`}
+                                >
+                                  {DAY_LABELS[day]}
+                                </button>
+                              )
+                            })}
+                          </div>
+                          <FormDescription className="mt-2 text-zinc-400">
+                            Select the recurring days the tour runs.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid gap-8 md:grid-cols-2 mt-6">
                     <FormField
                       control={form.control}
                       name="schedule"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            Time window / frequency
-                            <span className="text-xs font-normal theme-text-secondary">
-                              (optional)
-                            </span>
+                          <FormLabel className="text-zinc-900 font-medium">
+                            Time Window / Frequency{' '}
+                            <span className="text-zinc-400 font-normal">(optional)</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g. Departures at 9am and 2pm" {...field} />
+                            <Input
+                              placeholder="e.g. Departures at 9am and 2pm"
+                              {...field}
+                              className="bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -694,17 +699,16 @@ export function CreateExperienceForm({
                       name="scheduleNote"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            Schedule notes
-                            <span className="text-xs font-normal theme-text-secondary">
-                              (optional)
-                            </span>
+                          <FormLabel className="text-zinc-900 font-medium">
+                            Schedule Notes{' '}
+                            <span className="text-zinc-400 font-normal">(optional)</span>
                           </FormLabel>
                           <FormControl>
                             <Textarea
                               rows={3}
                               placeholder="Blackout dates, holiday exceptions, etc."
                               {...field}
+                              className="bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 resize-none"
                             />
                           </FormControl>
                           <FormMessage />
@@ -712,20 +716,23 @@ export function CreateExperienceForm({
                       )}
                     />
                   </div>
-                  <div className="grid gap-6 md:grid-cols-2">
+
+                  <div className="grid gap-8 md:grid-cols-2 mt-6">
                     <FormField
                       control={form.control}
                       name="price"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            Reference price
-                            <span className="text-xs font-normal theme-text-secondary">
-                              (optional)
-                            </span>
+                          <FormLabel className="text-zinc-900 font-medium">
+                            Reference Price{' '}
+                            <span className="text-zinc-400 font-normal">(optional)</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g. 1.500.000" {...field} />
+                            <Input
+                              placeholder="e.g. 1.500.000"
+                              {...field}
+                              className="bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -736,13 +743,12 @@ export function CreateExperienceForm({
                       name="currency"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center gap-1">
-                            Currency
-                            <span className="text-red-500 dark:text-red-400">*</span>
+                          <FormLabel className="text-zinc-900 font-medium">
+                            Currency <span className="text-red-500">*</span>
                           </FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
-                              <SelectTrigger>
+                              <SelectTrigger className="bg-zinc-50 border-zinc-200 focus:ring-zinc-900">
                                 <SelectValue placeholder="Select currency" />
                               </SelectTrigger>
                             </FormControl>
@@ -757,20 +763,23 @@ export function CreateExperienceForm({
                       )}
                     />
                   </div>
-                  <div className="grid gap-6 md:grid-cols-2">
+
+                  <div className="grid gap-8 md:grid-cols-2 mt-6">
                     <FormField
                       control={form.control}
                       name="inclusions"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            Inclusions
-                            <span className="text-xs font-normal theme-text-secondary">
-                              (optional)
-                            </span>
+                          <FormLabel className="text-zinc-900 font-medium">
+                            Inclusions <span className="text-zinc-400 font-normal">(optional)</span>
                           </FormLabel>
                           <FormControl>
-                            <Textarea rows={4} placeholder="What is included" {...field} />
+                            <Textarea
+                              rows={4}
+                              placeholder="What is included"
+                              {...field}
+                              className="bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 resize-none"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -781,14 +790,16 @@ export function CreateExperienceForm({
                       name="exclusions"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            Exclusions
-                            <span className="text-xs font-normal theme-text-secondary">
-                              (optional)
-                            </span>
+                          <FormLabel className="text-zinc-900 font-medium">
+                            Exclusions <span className="text-zinc-400 font-normal">(optional)</span>
                           </FormLabel>
                           <FormControl>
-                            <Textarea rows={4} placeholder="What is not included" {...field} />
+                            <Textarea
+                              rows={4}
+                              placeholder="What is not included"
+                              {...field}
+                              className="bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 resize-none"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

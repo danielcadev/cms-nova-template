@@ -1,5 +1,6 @@
 'use client'
 
+import { Plus } from 'lucide-react'
 import { memo, useMemo } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
@@ -7,14 +8,12 @@ import type { PlanFormValues } from '@/schemas/plan'
 import { AutoFillSeasonalPricesButton } from './AutoFillSeasonalPricesButton'
 import { PriceOptionCard } from './PriceOptionCard'
 
-// Full revamp: Three Notion-like blocks with independent add controls
 export const PricingSection = memo(function PricingSection() {
   const form = useFormContext<PlanFormValues>()
   const { control, watch } = form
 
   const { fields, append, remove } = useFieldArray({ control, name: 'priceOptions' })
 
-  // Optimize watch calls by using useMemo
   const items = useMemo(
     () =>
       fields.map((f, index) => ({
@@ -68,27 +67,26 @@ export const PricingSection = memo(function PricingSection() {
   const removeAt = (index: number) => remove(index)
 
   return (
-    <div className="space-y-6 sm:space-y-8 lg:space-y-10">
+    <div className="space-y-10">
       {/* General */}
-      <section className="space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <section className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="text-sm sm:text-base font-semibold theme-text">General Price</h3>
-            <p className="text-xs theme-text-secondary">One price for the whole plan.</p>
+            <h3 className="text-lg font-semibold text-zinc-900">General Price</h3>
+            <p className="text-sm text-zinc-500">One price for the whole plan.</p>
           </div>
           {!hasGeneral && (
-            <Button
-              type="button"
-              onClick={addGeneral}
-              className="text-xs sm:text-sm w-full sm:w-auto"
-            >
+            <Button type="button" onClick={addGeneral} variant="outline" size="sm" className="h-9">
+              <Plus className="h-4 w-4 mr-2" />
               Add General Price
             </Button>
           )}
         </div>
-        <div className="space-y-3">
+        <div className="space-y-4">
           {generalItems.length === 0 ? (
-            <p className="text-xs sm:text-sm text-gray-500">No general price.</p>
+            <div className="bg-zinc-50 rounded-xl p-6 border border-dashed border-zinc-200 text-center">
+              <p className="text-sm text-zinc-500">No general price configured.</p>
+            </div>
           ) : (
             generalItems.map(({ id, index }) => (
               <PriceOptionCard
@@ -103,24 +101,27 @@ export const PricingSection = memo(function PricingSection() {
         </div>
       </section>
 
+      <div className="h-px bg-zinc-100" />
+
       {/* Specific */}
-      <section className="space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <section className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="text-sm sm:text-base font-semibold theme-text">Specific Prices</h3>
-            <p className="text-xs theme-text-secondary">Prices with a custom description.</p>
+            <h3 className="text-lg font-semibold text-zinc-900">Specific Prices</h3>
+            <p className="text-sm text-zinc-500">
+              Prices with a custom description (e.g., per person, couple).
+            </p>
           </div>
-          <Button
-            type="button"
-            onClick={addSpecific}
-            className="text-xs sm:text-sm w-full sm:w-auto"
-          >
+          <Button type="button" onClick={addSpecific} variant="outline" size="sm" className="h-9">
+            <Plus className="h-4 w-4 mr-2" />
             Add Specific Price
           </Button>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-4">
           {specificItems.length === 0 ? (
-            <p className="text-xs sm:text-sm text-gray-500">No specific prices.</p>
+            <div className="bg-zinc-50 rounded-xl p-6 border border-dashed border-zinc-200 text-center">
+              <p className="text-sm text-zinc-500">No specific prices configured.</p>
+            </div>
           ) : (
             specificItems.map(({ id, index }) => (
               <PriceOptionCard
@@ -135,25 +136,28 @@ export const PricingSection = memo(function PricingSection() {
         </div>
       </section>
 
+      <div className="h-px bg-zinc-100" />
+
       {/* Seasonal */}
-      <section className="space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <section className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="text-sm sm:text-base font-semibold theme-text">Seasonal Prices</h3>
-            <p className="text-xs theme-text-secondary">
-              Different prices per season and accommodation.
-            </p>
+            <h3 className="text-lg font-semibold text-zinc-900">Seasonal Prices</h3>
+            <p className="text-sm text-zinc-500">Different prices per season and accommodation.</p>
           </div>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
-            <Button type="button" onClick={addSeasonal} className="text-xs sm:text-sm">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <Button type="button" onClick={addSeasonal} variant="outline" size="sm" className="h-9">
+              <Plus className="h-4 w-4 mr-2" />
               Add Seasonal Price
             </Button>
             <AutoFillSeasonalPricesButton />
           </div>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-4">
           {seasonalItems.length === 0 ? (
-            <p className="text-xs sm:text-sm text-gray-500">No seasonal prices.</p>
+            <div className="bg-zinc-50 rounded-xl p-6 border border-dashed border-zinc-200 text-center">
+              <p className="text-sm text-zinc-500">No seasonal prices configured.</p>
+            </div>
           ) : (
             seasonalItems.map(({ id, index }) => (
               <PriceOptionCard

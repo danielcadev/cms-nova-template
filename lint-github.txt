@@ -1,0 +1,135 @@
+﻿::notice title=lint/complexity/noUselessLoneBlockStatements,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=510,endLine=510,col=21,endColumn=37::This block statement doesn't serve any purpose and can be safely removed.
+::notice title=lint/complexity/noUselessLoneBlockStatements,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=515,endLine=515,col=21,endColumn=49::This block statement doesn't serve any purpose and can be safely removed.
+::notice title=lint/complexity/noUselessLoneBlockStatements,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=522,endLine=522,col=31,endColumn=62::This block statement doesn't serve any purpose and can be safely removed.
+::notice title=lint/complexity/noUselessLoneBlockStatements,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=535,endLine=539,col=25,endColumn=27::This block statement doesn't serve any purpose and can be safely removed.
+::notice title=lint/complexity/noUselessLoneBlockStatements,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=540,endLine=544,col=25,endColumn=27::This block statement doesn't serve any purpose and can be safely removed.
+::notice title=lint/complexity/noUselessLoneBlockStatements,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=561,endLine=568,col=7,endColumn=9::This block statement doesn't serve any purpose and can be safely removed.
+::warning title=lint/correctness/noUnusedVariables,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=71,endLine=71,col=10,endColumn=27::This variable duplicatingPlanId is unused.
+::warning title=lint/correctness/noUnusedVariables,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=488,endLine=488,col=10,endColumn=13::This type parameter div is unused.
+::warning title=lint/correctness/noUnusedVariables,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=488,endLine=488,col=14,endColumn=23::This type parameter className is unused.
+::warning title=lint/correctness/noUnusedVariables,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=490,endLine=490,col=18,endColumn=21::This type parameter div is unused.
+::warning title=lint/correctness/noUnusedVariables,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=491,endLine=491,col=19,endColumn=22::This type parameter key is unused.
+::warning title=lint/correctness/noUnusedVariables,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=492,endLine=492,col=19,endColumn=28::This type parameter className is unused.
+::warning title=lint/correctness/noUnusedVariables,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=494,endLine=494,col=20,endColumn=23::This type parameter div is unused.
+::warning title=lint/correctness/noUnusedVariables,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=494,endLine=494,col=24,endColumn=33::This type parameter className is unused.
+::warning title=lint/correctness/noUnusedVariables,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=495,endLine=495,col=22,endColumn=25::This type parameter div is unused.
+::warning title=lint/correctness/noUnusedVariables,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=495,endLine=495,col=26,endColumn=35::This type parameter className is unused.
+::warning title=lint/correctness/noUnusedVariables,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=496,endLine=496,col=24,endColumn=30::This type parameter MapPin is unused.
+::warning title=lint/correctness/noUnusedVariables,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=496,endLine=496,col=31,endColumn=40::This type parameter className is unused.
+::warning title=lint/correctness/noUnusedVariables,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=497,endLine=497,col=23,endColumn=26::This type parameter div is unused.
+::warning title=lint/correctness/noUnusedVariables,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=498,endLine=498,col=22,endColumn=26::This type parameter span is unused.
+::warning title=lint/correctness/noUnusedVariables,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=499,endLine=499,col=23,endColumn=32::This type parameter className is unused.
+::error title=lint/a11y/useKeyWithClickEvents,file=src\components\admin\dashboard\PluginsPage\PluginConfigModal.tsx,line=317,endLine=320,col=15,endColumn=16::Enforce to have the onClick mouse event with the onKeyUp, the onKeyDown, or the onKeyPress keyboard event.
+::error title=lint/a11y/useKeyWithClickEvents,file=src\components\admin\dashboard\PluginsPage\PluginConfigModal.tsx,line=327,endLine=330,col=15,endColumn=16::Enforce to have the onClick mouse event with the onKeyUp, the onKeyDown, or the onKeyPress keyboard event.
+::error title=lint/a11y/noStaticElementInteractions,file=src\components\admin\dashboard\PluginsPage\PluginConfigModal.tsx,line=327,endLine=330,col=15,endColumn=16::Static Elements should not be interactive.
+::error title=lint/a11y/noStaticElementInteractions,file=src\components\admin\dashboard\PluginsPage\PluginConfigModal.tsx,line=317,endLine=320,col=15,endColumn=16::Static Elements should not be interactive.
+::error title=lint/a11y/noStaticElementInteractions,file=src\components\admin\dashboard\Sidebar.tsx,line=151,endLine=157,col=9,endColumn=11::Static Elements should not be interactive.
+::error title=lint/a11y/useKeyWithClickEvents,file=src\components\admin\dashboard\Sidebar.tsx,line=151,endLine=157,col=9,endColumn=11::Enforce to have the onClick mouse event with the onKeyUp, the onKeyDown, or the onKeyPress keyboard event.
+::error title=format,file=src\components\admin\dashboard\Sidebar.tsx,line=2,endLine=2,col=1,endColumn=1::Formatter would have printed the following content:
+::error title=lint/suspicious/noArrayIndexKey,file=src\components\admin\dashboard\UsersPage\UsersGrid.tsx,line=58,endLine=58,col=16,endColumn=17::Avoid using the index of an array as key property in an element.
+::error title=lint/suspicious/noArrayIndexKey,file=src\components\admin\dashboard\UsersPage\UsersStats.tsx,line=50,endLine=50,col=28,endColumn=29::Avoid using the index of an array as key property in an element.
+::error title=format,file=src\components\admin\dashboard\ViewContentPage\ViewContentComponent.tsx,line=1,endLine=1,col=2,endColumn=2::Formatter would have printed the following content:
+::error title=lint/a11y/noAutofocus,file=src\components\admin\media\MediaToolbar.tsx,line=151,endLine=151,col=17,endColumn=26::Avoid the autoFocus attribute.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=497,endLine=497,col=22,endColumn=23::Expected a type parameter but instead found '/'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=503,endLine=503,col=25,endColumn=26::Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=504,endLine=504,col=21,endColumn=22::Unexpected token. Did you mean `{'>'}` or `&gt;`?
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=507,endLine=507,col=19,endColumn=20::expected `)` but instead found `<`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=511,endLine=511,col=19,endColumn=20::Expected an expression but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=516,endLine=516,col=19,endColumn=20::Expected an expression but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=525,endLine=525,col=28,endColumn=32::Expected a semicolon or an implicit semicolon after a statement, but found none
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=526,endLine=526,col=21,endColumn=22::Expected an expression but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=547,endLine=547,col=36,endColumn=37::Expected a property, a shorthand property, a getter, a setter, or a method but instead found '('.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=547,endLine=547,col=39,endColumn=41::Expected a function body but instead found '=>'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=551,endLine=551,col=25,endColumn=26::Expected an expression but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=557,endLine=557,col=13,endColumn=14::Expected an expression but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=569,endLine=569,col=5,endColumn=6::Expected an expression but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=499,endLine=499,col=23,endColumn=32::expected `,` but instead found `className`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=499,endLine=499,col=34,endColumn=82::Expected a property, or a signature but instead found '`px-2.5 py-1 rounded-full text-xs font-medium ${'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=500,endLine=500,col=29,endColumn=30::';' expected'
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=501,endLine=501,col=27,endColumn=28::Expected a property, or a signature but instead found '?'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=251,endLine=251,col=5,endColumn=54::Expected corresponding JSX closing tag for 'div'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=503,endLine=503,col=23,endColumn=24::Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=488,endLine=488,col=14,endColumn=23::expected `,` but instead found `className`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=489,endLine=489,col=15,endColumn=16::Expected a parenthesis '(' but instead found '{'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=489,endLine=489,col=38,endColumn=39::';' expected'
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=491,endLine=491,col=19,endColumn=22::expected `,` but instead found `key`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=491,endLine=491,col=28,endColumn=29::';' expected'
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=492,endLine=492,col=19,endColumn=28::expected `,` but instead found `className`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=494,endLine=494,col=19,endColumn=20::Expected a parenthesis '(' but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=494,endLine=494,col=24,endColumn=33::expected `,` but instead found `className`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=495,endLine=495,col=21,endColumn=22::Expected a parenthesis '(' but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=495,endLine=495,col=26,endColumn=35::expected `,` but instead found `className`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=496,endLine=496,col=23,endColumn=24::Expected a parenthesis '(' but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=496,endLine=496,col=31,endColumn=40::expected `,` but instead found `className`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=496,endLine=496,col=51,endColumn=52::expected `,` but instead found `/`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=497,endLine=497,col=21,endColumn=22::Expected a parenthesis '(' but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=497,endLine=497,col=23,endColumn=26::expected `,` but instead found `div`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=488,endLine=488,col=14,endColumn=23::expected `,` but instead found `className`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=489,endLine=489,col=15,endColumn=16::Expected a parenthesis '(' but instead found '{'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=498,endLine=498,col=21,endColumn=22::Expected a parenthesis '(' but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=491,endLine=491,col=19,endColumn=22::expected `,` but instead found `key`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=491,endLine=491,col=28,endColumn=29::';' expected'
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=492,endLine=492,col=19,endColumn=28::expected `,` but instead found `className`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=494,endLine=494,col=19,endColumn=20::Expected a parenthesis '(' but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=494,endLine=494,col=24,endColumn=33::expected `,` but instead found `className`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=495,endLine=495,col=21,endColumn=22::Expected a parenthesis '(' but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=495,endLine=495,col=26,endColumn=35::expected `,` but instead found `className`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=496,endLine=496,col=23,endColumn=24::Expected a parenthesis '(' but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=496,endLine=496,col=31,endColumn=40::expected `,` but instead found `className`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=496,endLine=496,col=51,endColumn=52::expected `,` but instead found `/`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=497,endLine=497,col=21,endColumn=22::Expected a parenthesis '(' but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=497,endLine=497,col=22,endColumn=23::Expected a type parameter but instead found '/'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=497,endLine=497,col=23,endColumn=26::expected `,` but instead found `div`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=498,endLine=498,col=21,endColumn=22::Expected a parenthesis '(' but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=499,endLine=499,col=23,endColumn=32::expected `,` but instead found `className`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=499,endLine=499,col=34,endColumn=82::Expected a property, or a signature but instead found '`px-2.5 py-1 rounded-full text-xs font-medium ${'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=500,endLine=500,col=29,endColumn=30::';' expected'
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=501,endLine=501,col=27,endColumn=28::Expected a property, or a signature but instead found '?'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=251,endLine=251,col=5,endColumn=54::Expected corresponding JSX closing tag for 'div'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=503,endLine=503,col=23,endColumn=24::Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=503,endLine=503,col=25,endColumn=26::Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=504,endLine=504,col=21,endColumn=22::Unexpected token. Did you mean `{'>'}` or `&gt;`?
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=507,endLine=507,col=19,endColumn=20::expected `)` but instead found `<`
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=511,endLine=511,col=19,endColumn=20::Expected an expression but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=516,endLine=516,col=19,endColumn=20::Expected an expression but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=525,endLine=525,col=28,endColumn=32::Expected a semicolon or an implicit semicolon after a statement, but found none
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=526,endLine=526,col=21,endColumn=22::Expected an expression but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=547,endLine=547,col=36,endColumn=37::Expected a property, a shorthand property, a getter, a setter, or a method but instead found '('.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=547,endLine=547,col=39,endColumn=41::Expected a function body but instead found '=>'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=551,endLine=551,col=25,endColumn=26::Expected an expression but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=557,endLine=557,col=13,endColumn=14::Expected an expression but instead found '<'.
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=569,endLine=569,col=5,endColumn=6::Expected an expression but instead found '<'.
+
+::error title=parse,file=src\components\templates\TemplatesManager\TouristPlansView.tsx,line=489,endLine=489,col=38,endColumn=39::';' expected'
+node.exe : check ΓöüΓöüΓöüΓöü
+ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+ΓöüΓöüΓöü
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (check Γ  
+  öüΓöüΓöü...ΓöüΓöüΓöüΓöüΓ   
+ öü:String) [], RemoteExc    
+eption
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+
+  ├ù Some errors were 
+emitted while running checks.
+  
+

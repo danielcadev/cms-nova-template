@@ -10,10 +10,10 @@ export function CreateContentTypePage({ initialData, contentTypeId }: CreateCont
   const isEditing = !!initialData && !!contentTypeId
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-950">
-      <div className="mx-auto max-w-6xl px-6 py-10">
-        {/* Cover */}
-        <div className="relative overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70 mb-6">
+    <div className="min-h-screen bg-zinc-50/50">
+      <div className="mx-auto max-w-6xl px-8 py-10">
+        {/* Header */}
+        <div className="mb-10">
           <CreateContentTypeHeader isEditing={isEditing} initialData={initialData} />
         </div>
 

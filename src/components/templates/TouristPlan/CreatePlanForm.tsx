@@ -1,9 +1,9 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, ChevronDown, ChevronRight } from 'lucide-react'
+import { ArrowLeft, LayoutTemplate } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState, useTransition } from 'react'
+import { useEffect, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { createDraftPlanAction } from '@/app/actions/plan-actions'
 import { AdminLayout } from '@/components/admin/AdminLayout'
@@ -20,7 +20,6 @@ export function CreatePlanForm() {
   const router = useRouter()
   const { toast } = useToast()
   const [isCreatingDraft, startTransition] = useTransition()
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['basic']))
 
   const form = useForm<PlanFormValues>({
     resolver: zodResolver(planSchema),
@@ -39,18 +38,6 @@ export function CreatePlanForm() {
 
   const handleGoBack = () => {
     router.push('/admin/dashboard/templates/tourism')
-  }
-
-  const toggleSection = (sectionId: string) => {
-    setExpandedSections((prev) => {
-      const newSet = new Set(prev)
-      if (newSet.has(sectionId)) {
-        newSet.delete(sectionId)
-      } else {
-        newSet.add(sectionId)
-      }
-      return newSet
-    })
   }
 
   useEffect(() => {
@@ -96,11 +83,11 @@ export function CreatePlanForm() {
   if (isCreatingDraft) {
     return (
       <AdminLayout>
-        <div className="min-h-screen theme-bg flex items-center justify-center">
+        <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
           <div className="text-center">
-            <div className="w-12 h-12 border-3 theme-accent border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-            <h3 className="text-lg font-semibold theme-text mb-2">Creating your plan...</h3>
-            <p className="text-sm theme-text-secondary">
+            <div className="w-12 h-12 border-4 border-zinc-200 border-t-zinc-900 rounded-full animate-spin mx-auto mb-6"></div>
+            <h3 className="text-lg font-semibold text-zinc-900 mb-2">Creating your plan...</h3>
+            <p className="text-sm text-zinc-500">
               Setting up autosave and preparing your workspace
             </p>
           </div>
@@ -113,137 +100,86 @@ export function CreatePlanForm() {
     {
       id: 'basic',
       title: 'Basic Information',
+      description: 'Title, destination, and main details',
       component: <BasicInfoSection />,
     },
     {
       id: 'includes',
       title: "What's Included",
+      description: "What's included and excluded in the plan",
       component: <IncludesSection />,
     },
     {
       id: 'itinerary',
       title: 'Itinerary',
+      description: 'Day by day activities and schedule',
       component: <ItinerarySection />,
     },
     {
       id: 'pricing',
       title: 'Pricing',
+      description: 'Price options for different group sizes',
       component: <PricingSection />,
     },
     {
       id: 'video',
       title: 'Video',
+      description: 'Promotional video content',
       component: <VideoSection />,
     },
   ]
 
   return (
     <AdminLayout>
-      <div className="min-h-screen theme-bg">
+      <div className="min-h-screen bg-zinc-50/50">
         <FormProvider {...form}>
           <form>
             {/* Header */}
-            <div className="theme-card theme-border-b sticky top-0 z-10 backdrop-blur-sm">
-              <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+            <div className="bg-white border-b border-zinc-200 sticky top-0 z-10">
+              <div className="max-w-5xl mx-auto px-6 py-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
                     <Button
                       type="button"
                       variant="ghost"
                       onClick={handleGoBack}
-                      className="flex items-center gap-2 sm:gap-3 theme-text-secondary hover:theme-text theme-hover px-3 sm:px-4 py-2 rounded-lg transition-colors self-start"
+                      className="text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 -ml-2"
                     >
-                      <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-                      <span className="font-medium text-sm sm:text-base">Back to Plans</span>
+                      <ArrowLeft className="h-4 w-4 mr-2" />
+                      Back
                     </Button>
-                    <div className="hidden sm:block w-px h-8 theme-border"></div>
+                    <div className="h-6 w-px bg-zinc-200"></div>
                     <div>
-                      <h1 className="text-xl sm:text-2xl font-bold theme-text">
-                        Create New Tourism Plan
-                      </h1>
-                      <p className="text-xs sm:text-sm theme-text-secondary mt-1">
-                        Start typing to activate autosave
-                      </p>
+                      <div className="flex items-center gap-2 text-zinc-500 text-xs mb-0.5">
+                        <LayoutTemplate className="w-3 h-3" />
+                        <span>Templates / Tourism</span>
+                      </div>
+                      <h1 className="text-lg font-bold text-zinc-900">Create New Plan</h1>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                    <span className="text-xs sm:text-sm theme-text-secondary">Ready to create</span>
+                  <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full text-xs font-medium border border-blue-100">
+                    <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse"></div>
+                    Ready to create
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Main content */}
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-              <div className="space-y-4 sm:space-y-6">
-                {sections.map((section) => {
-                  const isExpanded = expandedSections.has(section.id)
-                  return (
-                    <div key={section.id} className="theme-card rounded-xl theme-border shadow-sm">
-                      <button
-                        type="button"
-                        onClick={() => toggleSection(section.id)}
-                        className="flex flex-col sm:flex-row sm:items-center justify-between w-full p-3 sm:p-4 lg:p-6 text-left hover:theme-card-hover transition-all duration-200 group gap-3 sm:gap-4"
-                      >
-                        <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
-                          <div
-                            className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
-                              isExpanded
-                                ? 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200'
-                                : 'theme-bg-secondary group-hover:bg-gray-200 dark:group-hover:bg-gray-700'
-                            }`}
-                          >
-                            {isExpanded ? (
-                              <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200" />
-                            ) : (
-                              <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200 group-hover:translate-x-0.5 theme-text-secondary" />
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h2 className="text-lg sm:text-xl font-semibold theme-text group-hover:theme-accent transition-colors truncate">
-                              {section.title}
-                            </h2>
-                            <p className="text-xs sm:text-sm theme-text-secondary mt-1 line-clamp-2">
-                              {section.id === 'basic' && 'Title, destination, and main details'}
-                              {section.id === 'includes' &&
-                                "What's included and excluded in the plan"}
-                              {section.id === 'itinerary' && 'Day by day activities and schedule'}
-                              {section.id === 'pricing' &&
-                                'Price options for different group sizes'}
-                              {section.id === 'video' && 'Promotional video content'}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-normal">
-                          <span className="text-xs sm:text-sm theme-text-secondary group-hover:theme-text transition-colors">
-                            {isExpanded ? 'Collapse' : 'Expand'}
-                          </span>
-                          <div
-                            className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
-                              isExpanded
-                                ? 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200'
-                                : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 group-hover:bg-gray-200 dark:group-hover:bg-gray-600'
-                            }`}
-                          >
-                            {isExpanded ? (
-                              <ChevronDown className="h-2 w-2 sm:h-3 sm:w-3 transition-transform duration-200" />
-                            ) : (
-                              <ChevronRight className="h-2 w-2 sm:h-3 sm:w-3 transition-transform duration-200" />
-                            )}
-                          </div>
-                        </div>
-                      </button>
-                      {isExpanded && (
-                        <div className="px-3 sm:px-4 lg:px-6 pb-4 sm:pb-6 pt-0">
-                          <div className="bg-gray-50/50 dark:bg-gray-900/50 rounded-lg p-3 sm:p-4 lg:p-6 border border-gray-100 dark:border-gray-800">
-                            {section.component}
-                          </div>
-                        </div>
-                      )}
+            <div className="max-w-5xl mx-auto px-6 py-8 pb-24">
+              <div className="space-y-8">
+                {sections.map((section) => (
+                  <div
+                    key={section.id}
+                    className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden"
+                  >
+                    <div className="px-6 py-4 border-b border-zinc-100 bg-zinc-50/50">
+                      <h2 className="text-lg font-semibold text-zinc-900">{section.title}</h2>
+                      <p className="text-sm text-zinc-500 mt-0.5">{section.description}</p>
                     </div>
-                  )
-                })}
+                    <div className="p-6">{section.component}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </form>

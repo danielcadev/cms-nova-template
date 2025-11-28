@@ -2,27 +2,24 @@
 
 import {
   Calendar,
-  ChevronRight,
   Copy,
   Edit,
-  Filter,
   Grid3X3,
   List,
   MapPin,
   Plus,
-  RefreshCcw,
+  RefreshCw,
   Search,
-  SortAsc,
-  SortDesc,
   Trash2,
 } from 'lucide-react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
+import { Button } from '@/components/ui/button'
 import { ConfirmationModal } from '@/components/ui/ConfirmationModal'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
-import { ThemedButton } from '@/components/ui/ThemedButton'
 import { useToast } from '@/hooks/use-toast'
 import { useConfirmation } from '@/hooks/useConfirmation'
 
@@ -46,8 +43,6 @@ interface TouristPlansViewProps {
 }
 
 type ViewMode = 'list' | 'grid'
-type SortField = 'title' | 'date' | 'status'
-type SortOrder = 'asc' | 'desc'
 type FilterStatus = 'all' | 'published' | 'draft'
 
 export function TouristPlansView({
@@ -66,8 +61,6 @@ export function TouristPlansView({
   const [togglingPlanId, setTogglingPlanId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('list')
-  const [sortField, setSortField] = useState<SortField>('date')
-  const [sortOrder, setSortOrder] = useState<SortOrder>('desc')
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
   const router = useRouter()
   const { toast } = useToast()
@@ -75,13 +68,13 @@ export function TouristPlansView({
 
   const handleDeletePlan = (planId: string) => {
     const plan = plans.find((p) => p.id === planId)
-    const planTitle = plan?.mainTitle || 'este plan'
+    const planTitle = plan?.mainTitle || 'this plan'
 
     confirmation.confirm(
       {
-        title: 'Eliminar Plan',
-        description: `¿Estás seguro de que quieres eliminar "${planTitle}"?\n\nEsta acción no se puede deshacer y toda la información del plan será eliminada permanentemente.`,
-        confirmText: 'Eliminar Plan',
+        title: 'Delete Plan',
+        description: `Are you sure you want to delete "${planTitle}"?\n\nThis action cannot be undone and all plan information will be permanently removed.`,
+        confirmText: 'Delete Plan',
         variant: 'destructive',
         icon: 'delete',
       },
@@ -93,13 +86,13 @@ export function TouristPlansView({
             throw new Error('Delete failed')
           }
           toast({
-            title: 'Plan eliminado',
-            description: `"${planTitle}" ha sido eliminado exitosamente.`,
+            title: 'Plan deleted',
+            description: `"${planTitle}" has been successfully deleted.`,
           })
         } catch (_error) {
           toast({
             title: 'Error',
-            description: 'No se pudo eliminar el plan. Inténtalo de nuevo.',
+            description: 'Could not delete the plan. Please try again.',
             variant: 'destructive',
           })
           throw _error
@@ -117,7 +110,7 @@ export function TouristPlansView({
   const handleDuplicatePlan = async (planId: string) => {
     if (!onDuplicatePlan) return
     const plan = plans.find((p) => p.id === planId)
-    const planTitle = plan?.mainTitle || 'este plan'
+    const planTitle = plan?.mainTitle || 'this plan'
     try {
       setDuplicatingPlanId(planId)
       const duplicated = await onDuplicatePlan(planId)
@@ -125,13 +118,13 @@ export function TouristPlansView({
         throw new Error('Duplicate failed')
       }
       toast({
-        title: 'Plan duplicado',
-        description: `"${planTitle}" fue duplicado como borrador.`,
+        title: 'Plan duplicated',
+        description: `"${planTitle}" was duplicated as a draft.`,
       })
     } catch (_error) {
       toast({
         title: 'Error',
-        description: 'No se pudo duplicar el plan. Inténtalo de nuevo.',
+        description: 'Could not duplicate the plan. Please try again.',
         variant: 'destructive',
       })
     } finally {
@@ -148,13 +141,13 @@ export function TouristPlansView({
         throw new Error('Toggle failed')
       }
       toast({
-        title: plan.published ? 'Plan revertido a borrador' : 'Plan publicado',
+        title: plan.published ? 'Plan reverted to draft' : 'Plan published',
         description: plan.mainTitle,
       })
     } catch (_error) {
       toast({
         title: 'Error',
-        description: 'No se pudo actualizar el estado del plan. Inténtalo de nuevo.',
+        description: 'Could not update plan status. Please try again.',
         variant: 'destructive',
       })
     } finally {
@@ -168,8 +161,8 @@ export function TouristPlansView({
       await onRefresh()
     } catch (_error) {
       toast({
-        title: 'No se pudo sincronizar la lista',
-        description: 'Inténtalo de nuevo.',
+        title: 'Could not sync list',
+        description: 'Please try again.',
         variant: 'destructive',
       })
     }
@@ -181,7 +174,7 @@ export function TouristPlansView({
 
   const formatDate = (date: string | Date) => {
     const d = new Date(date)
-    return d.toLocaleDateString('es-ES', {
+    return d.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -189,7 +182,7 @@ export function TouristPlansView({
   }
 
   // Filtered and sorted plans
-  const filteredAndSortedPlans = useMemo(() => {
+  const filteredPlans = useMemo(() => {
     let filtered = plans
 
     // Apply search filter
@@ -205,45 +198,11 @@ export function TouristPlansView({
       )
     }
 
-    // Apply sorting
-    filtered.sort((a, b) => {
-      let aValue: string | number
-      let bValue: string | number
-
-      switch (sortField) {
-        case 'title':
-          aValue = a.mainTitle.toLowerCase()
-          bValue = b.mainTitle.toLowerCase()
-          break
-
-        case 'date':
-          aValue = new Date(a.createdAt).getTime()
-          bValue = new Date(b.createdAt).getTime()
-          break
-        case 'status':
-          aValue = a.published ? 1 : 0
-          bValue = b.published ? 1 : 0
-          break
-        default:
-          return 0
-      }
-
-      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1
-      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1
-      return 0
-    })
+    // Sort by date desc
+    filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 
     return filtered
-  }, [plans, searchQuery, filterStatus, sortField, sortOrder])
-
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
-    } else {
-      setSortField(field)
-      setSortOrder('asc')
-    }
-  }
+  }, [plans, searchQuery, filterStatus])
 
   // Loading state
   if (isLoading) {
@@ -260,166 +219,115 @@ export function TouristPlansView({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-950">
-      <div className="mx-auto max-w-6xl px-8 py-10">
-        {/* Cover */}
-        <div className="relative overflow-hidden rounded-2xl border theme-border theme-card mb-6">
-          <div className="absolute inset-0 theme-bg-secondary" />
-          <div className="relative p-6 sm:p-8 md:p-10 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+    <div className="min-h-screen bg-zinc-50/50">
+      <div className="mx-auto max-w-7xl px-8 py-10">
+        {/* Header */}
+        <div className="flex flex-col gap-8 mb-10">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <p className="text-sm theme-text-muted mb-2">Tourism</p>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight theme-text">
-                Tourist Plans
-              </h1>
-              <p className="mt-2 theme-text-secondary">
+              <h1 className="text-3xl font-bold text-zinc-900 tracking-tight">Tourist Plans</h1>
+              <p className="mt-2 text-zinc-500 text-lg max-w-3xl">
                 Create and manage your tourism plans and itineraries with a clean, organized
                 workspace.
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2">
+            <div className="flex items-center gap-3">
+              <Link href="/admin/dashboard/templates">
+                <Button variant="ghost" className="text-zinc-600 hover:text-zinc-900">
+                  Back to templates
+                </Button>
+              </Link>
+              <Button
+                onClick={handleCreatePlan}
+                className="bg-zinc-900 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-900/20"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Create Plan
+              </Button>
+            </div>
+          </div>
+
+          {/* Search and Filters */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-zinc-200 shadow-sm">
+            <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full">
+              {/* Search */}
+              <div className="relative flex-1 w-full sm:max-w-md">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-400" />
+                <Input
+                  placeholder="Search plans by title..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 w-full"
+                />
+              </div>
+
+              {/* Status Filter */}
+              <div className="flex rounded-lg border border-zinc-200 overflow-hidden bg-zinc-50 p-1 gap-1">
+                {(['all', 'published', 'draft'] as FilterStatus[]).map((status) => (
+                  <button
+                    type="button"
+                    key={status}
+                    onClick={() => setFilterStatus(status)}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all capitalize ${
+                      filterStatus === status
+                        ? 'bg-white text-zinc-900 shadow-sm border border-zinc-200'
+                        : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100'
+                    }`}
+                  >
+                    {status}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 w-full sm:w-auto">
               {onRefresh && (
-                <ThemedButton
+                <Button
+                  variant="outline"
                   onClick={handleRefresh}
                   disabled={isRefreshing}
-                  className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border theme-border theme-card theme-text hover:theme-card-hover transition-colors w-full sm:w-auto justify-center"
+                  className="border-zinc-200 text-zinc-700 hover:bg-zinc-50"
                 >
-                  <RefreshCcw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                  {isRefreshing ? 'Refreshing' : 'Refresh'}
-                </ThemedButton>
+                  <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Button>
               )}
-              <ThemedButton
-                onClick={handleCreatePlan}
-                className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border theme-border theme-card theme-text hover:theme-card-hover transition-colors w-full sm:w-auto justify-center"
-              >
-                <Plus className="h-4 w-4" />
-                Create plan
-              </ThemedButton>
+
+              {/* View Mode Toggle */}
+              <div className="flex rounded-lg border border-zinc-200 overflow-hidden bg-zinc-50 p-1 gap-1">
+                <button
+                  type="button"
+                  onClick={() => setViewMode('list')}
+                  className={`p-2 rounded-md transition-all ${
+                    viewMode === 'list'
+                      ? 'bg-white text-zinc-900 shadow-sm border border-zinc-200'
+                      : 'text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100'
+                  }`}
+                  title="List view"
+                >
+                  <List className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('grid')}
+                  className={`p-2 rounded-md transition-all ${
+                    viewMode === 'grid'
+                      ? 'bg-white text-zinc-900 shadow-sm border border-zinc-200'
+                      : 'text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100'
+                  }`}
+                  title="Grid view"
+                >
+                  <Grid3X3 className="h-4 w-4" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Navigation and Search Bar */}
-        {plans.length > 0 && (
-          <div className="rounded-xl border theme-border theme-card p-4 space-y-4">
-            {/* Search and Filters Row */}
-            <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-              <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full">
-                {/* Search */}
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 theme-text-muted" />
-                  <Input
-                    placeholder="Search plans by title..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 theme-card theme-text border theme-border w-full min-w-[200px]"
-                  />
-                </div>
-
-                {/* Status Filter */}
-                <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4 theme-text-muted hidden sm:block" />
-                  <div className="flex rounded-lg border theme-border overflow-hidden">
-                    {(['all', 'published', 'draft'] as FilterStatus[]).map((status) => (
-                      <button
-                        type="button"
-                        key={status}
-                        onClick={() => setFilterStatus(status)}
-                        className={`px-3 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
-                          filterStatus === status
-                            ? 'theme-card-hover theme-text'
-                            : 'theme-card theme-text-secondary hover:theme-text'
-                        }`}
-                      >
-                        {status === 'all' ? 'All' : status === 'published' ? 'Published' : 'Draft'}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* View Mode and Sort */}
-              <div className="flex items-center gap-3 w-full md:w-auto">
-                {/* Sort Options */}
-                <div className="flex items-center gap-2">
-                  <span className="text-xs theme-text-muted hidden sm:block">Sort by:</span>
-                  <div className="flex rounded-lg border theme-border overflow-hidden">
-                    {[
-                      { field: 'date' as SortField, label: 'Date' },
-                      { field: 'title' as SortField, label: 'Title' },
-                      { field: 'status' as SortField, label: 'Status' },
-                    ].map(({ field, label }) => (
-                      <button
-                        type="button"
-                        key={field}
-                        onClick={() => handleSort(field)}
-                        className={`px-2 py-1.5 text-xs font-medium transition-colors flex items-center gap-1 whitespace-nowrap ${
-                          sortField === field
-                            ? 'theme-card-hover theme-text'
-                            : 'theme-card theme-text-secondary hover:theme-text'
-                        }`}
-                      >
-                        {label}
-                        {sortField === field &&
-                          (sortOrder === 'asc' ? (
-                            <SortAsc className="h-3 w-3" />
-                          ) : (
-                            <SortDesc className="h-3 w-3" />
-                          ))}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* View Mode Toggle */}
-                <div className="flex rounded-lg border theme-border overflow-hidden">
-                  <button
-                    type="button"
-                    onClick={() => setViewMode('list')}
-                    className={`p-2 transition-colors ${
-                      viewMode === 'list'
-                        ? 'theme-card-hover theme-text'
-                        : 'theme-card theme-text-secondary hover:theme-text'
-                    }`}
-                    title="List view"
-                  >
-                    <List className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setViewMode('grid')}
-                    className={`p-2 transition-colors ${
-                      viewMode === 'grid'
-                        ? 'theme-card-hover theme-text'
-                        : 'theme-card theme-text-secondary hover:theme-text'
-                    }`}
-                    title="Grid view"
-                  >
-                    <Grid3X3 className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Results Summary */}
-            <div className="flex items-center justify-between text-sm theme-text-muted border-t theme-border pt-3">
-              <span>
-                Showing {filteredAndSortedPlans.length} of {plans.length} plans
-                {searchQuery && ` for "${searchQuery}"`}
-                {filterStatus !== 'all' && ` • ${filterStatus} only`}
-              </span>
-              {filteredAndSortedPlans.length > 0 && (
-                <span>
-                  Sorted by {sortField} ({sortOrder === 'asc' ? 'ascending' : 'descending'})
-                </span>
-              )}
-            </div>
-          </div>
-        )}
-
         {/* Error State */}
         {error && (
-          <div className="rounded-xl border border-red-200 dark:border-red-800 bg-red-50/70 dark:bg-red-900/20 p-6">
-            <div className="text-red-800 dark:text-red-200">
+          <div className="rounded-xl border border-red-200 bg-red-50 p-6 mb-6">
+            <div className="text-red-800">
               <h3 className="font-semibold mb-2">Error loading plans</h3>
               <p className="text-sm">{error}</p>
             </div>
@@ -427,42 +335,42 @@ export function TouristPlansView({
         )}
 
         {/* Plans Content */}
-        {filteredAndSortedPlans.length === 0 && plans.length === 0 && !error ? (
-          <div className="rounded-xl border theme-border theme-card p-12 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-lg theme-bg-secondary flex items-center justify-center">
-              <MapPin className="w-8 h-8 theme-text-secondary" />
+        {filteredPlans.length === 0 && plans.length === 0 && !error ? (
+          <div className="bg-white rounded-2xl border border-dashed border-zinc-300 p-12 text-center">
+            <div className="w-16 h-16 bg-zinc-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <MapPin className="w-8 h-8 text-zinc-400" />
             </div>
-            <h3 className="text-lg font-semibold theme-text mb-2">No plans yet</h3>
-            <p className="theme-text-secondary mb-6 max-w-md mx-auto">
+            <h3 className="text-lg font-semibold text-zinc-900 mb-2">No plans yet</h3>
+            <p className="text-zinc-500 mb-6 max-w-md mx-auto">
               Create your first tourism plan to get started. Build beautiful itineraries and manage
               your travel content.
             </p>
-            <ThemedButton onClick={handleCreatePlan}>
-              <Plus className="h-4 w-4 mr-2 theme-text" strokeWidth={1.5} />
+            <Button onClick={handleCreatePlan} className="bg-zinc-900 text-white hover:bg-zinc-800">
+              <Plus className="h-4 w-4 mr-2" strokeWidth={1.5} />
               Create your first plan
-            </ThemedButton>
+            </Button>
           </div>
-        ) : filteredAndSortedPlans.length === 0 ? (
-          <div className="rounded-xl border theme-border theme-card p-12 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-lg theme-bg-secondary flex items-center justify-center">
-              <Search className="w-8 h-8 theme-text-secondary" />
+        ) : filteredPlans.length === 0 ? (
+          <div className="bg-white rounded-2xl border border-dashed border-zinc-300 p-12 text-center">
+            <div className="w-16 h-16 bg-zinc-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Search className="w-8 h-8 text-zinc-400" />
             </div>
-            <h3 className="text-lg font-semibold theme-text mb-2">No plans found</h3>
-            <p className="theme-text-secondary mb-6 max-w-md mx-auto">
+            <h3 className="text-lg font-semibold text-zinc-900 mb-2">No plans found</h3>
+            <p className="text-zinc-500 mb-6 max-w-md mx-auto">
               {searchQuery
                 ? `No plans match "${searchQuery}". Try adjusting your search or filters.`
                 : `No ${filterStatus} plans found. Try changing your filter.`}
             </p>
             <div className="flex gap-3 justify-center">
               {searchQuery && (
-                <ThemedButton variantTone="ghost" onClick={() => setSearchQuery('')}>
+                <Button variant="ghost" onClick={() => setSearchQuery('')}>
                   Clear search
-                </ThemedButton>
+                </Button>
               )}
               {filterStatus !== 'all' && (
-                <ThemedButton variantTone="ghost" onClick={() => setFilterStatus('all')}>
+                <Button variant="ghost" onClick={() => setFilterStatus('all')}>
                   Show all plans
-                </ThemedButton>
+                </Button>
               )}
             </div>
           </div>
@@ -470,95 +378,97 @@ export function TouristPlansView({
           <div className="space-y-6">
             {/* List View */}
             {viewMode === 'list' && (
-              <div className="divide-y theme-border rounded-xl border theme-border overflow-hidden theme-card">
-                {filteredAndSortedPlans.map((plan) => (
-                  <div key={plan.id} className="group">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 md:p-5 hover:theme-card-hover transition-colors gap-3">
+              <div className="flex flex-col gap-3">
+                {filteredPlans.map((plan) => (
+                  <div
+                    key={plan.id}
+                    className="group bg-white rounded-xl border border-zinc-200 p-4 hover:border-zinc-300 hover:shadow-md transition-all duration-200"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <div className="h-10 w-10 rounded-lg theme-bg-secondary flex items-center justify-center shrink-0">
-                          <MapPin className="h-5 w-5 theme-text-secondary" />
+                        <div className="h-12 w-12 rounded-lg bg-zinc-100 flex items-center justify-center shrink-0 border border-zinc-200">
+                          <MapPin className="h-6 w-6 text-zinc-400" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap items-center gap-3 mb-1">
-                            <div className="text-sm font-medium theme-text truncate">
+                            <h3 className="text-base font-semibold text-zinc-900 truncate">
                               {plan.mainTitle}
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <div
-                                className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                                  plan.published
-                                    ? 'bg-green-100 text-green-800 dark:bg-green-90/30 dark:text-green-400'
-                                    : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
-                                }`}
-                              >
-                                {plan.published ? 'Published' : 'Draft'}
-                              </div>
-                              {onTogglePublished && (
-                                <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                                  <Switch
-                                    checked={plan.published}
-                                    disabled={togglingPlanId === plan.id}
-                                    onCheckedChange={() => handleTogglePublished(plan)}
-                                    className="h-4 w-8"
-                                    title={
-                                      plan.published ? 'Marcar como borrador' : 'Publicar plan'
-                                    }
-                                  />
-                                  <span>{plan.published ? 'On' : 'Off'}</span>
-                                </div>
-                              )}
-                            </div>
+                            </h3>
+                            <span
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                plan.published
+                                  ? 'bg-zinc-900 text-white'
+                                  : 'bg-zinc-100 text-zinc-600'
+                              }`}
+                            >
+                              {plan.published ? 'Published' : 'Draft'}
+                            </span>
                           </div>
-                          <div className="flex items-center gap-4 text-xs theme-text-muted">
+                          <div className="flex items-center gap-4 text-xs text-zinc-500">
                             <span className="flex items-center gap-1">
-                              <Calendar className="h-3 w-3 theme-text-muted" />
+                              <Calendar className="h-3 w-3" />
                               {formatDate(plan.createdAt)}
                             </span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 ml-4">
-                        {onDuplicatePlan && (
-                          <ThemedButton
-                            variantTone="ghost"
-                            onClick={() => handleDuplicatePlan(plan.id)}
-                            disabled={duplicatingPlanId === plan.id}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 text-xs theme-text hover:theme-text-secondary"
-                          >
-                            {duplicatingPlanId === plan.id ? (
-                              <div className="h-3 w-3 animate-spin rounded-full border theme-border border-t-transparent" />
-                            ) : (
-                              <>
-                                <Copy className="h-3 w-3 mr-1 theme-text" />
-                                <span className="hidden sm:inline">Duplicate</span>
-                              </>
-                            )}
-                          </ThemedButton>
-                        )}
-                        <ThemedButton
-                          variantTone="ghost"
-                          onClick={() => handleEditPlan(plan.id)}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 text-xs theme-text hover:theme-text-secondary"
-                        >
-                          <Edit className="h-3 w-3 mr-1 theme-text" />
-                          <span className="hidden sm:inline">Edit</span>
-                        </ThemedButton>
-                        <ThemedButton
-                          variantTone="ghost"
-                          onClick={() => handleDeletePlan(plan.id)}
-                          disabled={deletingPlanId === plan.id}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 text-xs text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                        >
-                          {deletingPlanId === plan.id ? (
-                            <div className="w-3 h-3 animate-spin rounded-full border-red-600 border-t-transparent" />
-                          ) : (
-                            <>
-                              <Trash2 className="h-3 w-3 mr-1 text-red-600 dark:text-red-400" />
-                              <span className="hidden sm:inline">Delete</span>
-                            </>
+
+                      <div className="flex items-center gap-3 self-end sm:self-center">
+                        <div className="flex items-center gap-2 bg-zinc-50 rounded-lg p-1 border border-zinc-100">
+                          <Switch
+                            checked={plan.published}
+                            disabled={togglingPlanId === plan.id}
+                            onCheckedChange={() => handleTogglePublished(plan)}
+                            className="scale-75 data-[state=checked]:bg-zinc-900"
+                          />
+                          <span className="text-xs font-medium text-zinc-600 pr-2">
+                            {plan.published ? 'Visible' : 'Hidden'}
+                          </span>
+                        </div>
+
+                        <div className="h-8 w-px bg-zinc-200 hidden sm:block" />
+
+                        <div className="flex items-center gap-1">
+                          {onDuplicatePlan && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDuplicatePlan(plan.id)}
+                              disabled={duplicatingPlanId === plan.id}
+                              className="h-8 w-8 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100"
+                              title="Duplicate"
+                            >
+                              {duplicatingPlanId === plan.id ? (
+                                <div className="h-3 w-3 animate-spin rounded-full border-2 border-zinc-400 border-t-transparent" />
+                              ) : (
+                                <Copy className="h-4 w-4" />
+                              )}
+                            </Button>
                           )}
-                        </ThemedButton>
-                        <ChevronRight className="h-4 w-4 theme-text-secondary group-hover:theme-text-muted ml-2" />
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEditPlan(plan.id)}
+                            className="h-8 w-8 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100"
+                            title="Edit"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDeletePlan(plan.id)}
+                            disabled={deletingPlanId === plan.id}
+                            className="h-8 w-8 text-zinc-400 hover:text-red-600 hover:bg-red-50"
+                            title="Delete"
+                          >
+                            {deletingPlanId === plan.id ? (
+                              <div className="w-3 h-3 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
+                            ) : (
+                              <Trash2 className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -569,87 +479,84 @@ export function TouristPlansView({
             {/* Grid View */}
             {viewMode === 'grid' && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredAndSortedPlans.map((plan) => (
+                {filteredPlans.map((plan) => (
                   <div
                     key={plan.id}
-                    className="group rounded-xl border theme-border theme-card p-6 hover:theme-card-hover transition-all duration-200"
+                    className="group bg-white rounded-xl border border-zinc-200 p-6 hover:border-zinc-300 hover:shadow-md transition-all duration-200"
                   >
                     <div className="flex items-start justify-between mb-4 gap-3">
-                      <div className="h-12 w-12 rounded-lg theme-bg-secondary flex items-center justify-center shrink-0">
-                        <MapPin className="h-6 w-6 theme-text-secondary" />
+                      <div className="h-12 w-12 rounded-lg bg-zinc-100 flex items-center justify-center shrink-0 border border-zinc-200">
+                        <MapPin className="h-6 w-6 text-zinc-400" />
                       </div>
                       <div className="flex items-center gap-2">
-                        <div
-                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                            plan.published
-                              ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                              : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            plan.published ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-600'
                           }`}
                         >
                           {plan.published ? 'Published' : 'Draft'}
-                        </div>
-                        {onTogglePublished && (
-                          <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                            <Switch
-                              checked={plan.published}
-                              disabled={togglingPlanId === plan.id}
-                              onCheckedChange={() => handleTogglePublished(plan)}
-                              className="h-4 w-8"
-                              title={plan.published ? 'Marcar como borrador' : 'Publicar plan'}
-                            />
-                            <span>{plan.published ? 'On' : 'Off'}</span>
-                          </div>
-                        )}
+                        </span>
                       </div>
                     </div>
 
                     <div className="mb-4">
-                      <h3 className="font-semibold theme-text mb-2 line-clamp-2 text-lg">
+                      <h3 className="font-bold text-zinc-900 mb-2 line-clamp-2 text-lg">
                         {plan.mainTitle}
                       </h3>
 
-                      <div className="flex items-center gap-2 theme-text-muted text-sm">
+                      <div className="flex items-center gap-2 text-zinc-500 text-sm">
                         <Calendar className="h-4 w-4" />
                         {formatDate(plan.createdAt)}
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 pt-4 border-t theme-border">
-                      <ThemedButton
-                        variantTone="outline"
-                        onClick={() => handleEditPlan(plan.id)}
-                        className="flex-1 flex items-center justify-center gap-2 text-sm"
-                      >
-                        <Edit className="h-4 w-4 theme-text" />
-                        Edit
-                      </ThemedButton>
-                      {onDuplicatePlan && (
-                        <ThemedButton
-                          variantTone="ghost"
-                          onClick={() => handleDuplicatePlan(plan.id)}
-                          disabled={duplicatingPlanId === plan.id}
-                          className="px-3 py-2 text-sm flex items-center gap-2"
+                    <div className="flex items-center justify-between pt-4 border-t border-zinc-100 mt-4">
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          checked={plan.published}
+                          disabled={togglingPlanId === plan.id}
+                          onCheckedChange={() => handleTogglePublished(plan)}
+                          className="scale-75 data-[state=checked]:bg-zinc-900"
+                        />
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditPlan(plan.id)}
+                          className="h-8 w-8 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100"
                         >
-                          {duplicatingPlanId === plan.id ? (
-                            <div className="w-4 h-4 animate-spin rounded-full border-2 theme-border border-t-transparent" />
-                          ) : (
-                            <Copy className="h-4 w-4" />
-                          )}
-                          <span className="hidden sm:inline">Duplicate</span>
-                        </ThemedButton>
-                      )}
-                      <ThemedButton
-                        variantTone="ghost"
-                        onClick={() => handleDeletePlan(plan.id)}
-                        disabled={deletingPlanId === plan.id}
-                        className="px-3 py-2 text-red-600 hover:text-red-700 dark:text-red-40 dark:hover:text-red-300"
-                      >
-                        {deletingPlanId === plan.id ? (
-                          <div className="w-4 h-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
-                        ) : (
-                          <Trash2 className="h-4 w-4" />
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        {onDuplicatePlan && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDuplicatePlan(plan.id)}
+                            disabled={duplicatingPlanId === plan.id}
+                            className="h-8 w-8 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100"
+                          >
+                            {duplicatingPlanId === plan.id ? (
+                              <div className="w-3 h-3 animate-spin rounded-full border-2 border-zinc-400 border-t-transparent" />
+                            ) : (
+                              <Copy className="h-4 w-4" />
+                            )}
+                          </Button>
                         )}
-                      </ThemedButton>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeletePlan(plan.id)}
+                          disabled={deletingPlanId === plan.id}
+                          className="h-8 w-8 text-zinc-400 hover:text-red-600 hover:bg-red-50"
+                        >
+                          {deletingPlanId === plan.id ? (
+                            <div className="w-3 h-3 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
+                          ) : (
+                            <Trash2 className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}

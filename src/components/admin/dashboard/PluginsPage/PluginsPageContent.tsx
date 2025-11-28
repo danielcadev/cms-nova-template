@@ -1,20 +1,10 @@
 'use client'
 
-import {
-  CheckCircle,
-  Filter,
-  Grid3X3,
-  List,
-  Puzzle,
-  RefreshCw,
-  Search,
-  Settings,
-  XCircle,
-} from 'lucide-react'
+import { Puzzle, RefreshCw, Search, Settings } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
-import { ThemedButton } from '@/components/ui/ThemedButton'
 import type { Plugin } from '@/lib/plugins/config'
 import { AdminLoading } from '../AdminLoading'
 
@@ -26,7 +16,6 @@ interface PluginsPageContentProps {
   onConfigurePlugin?: (plugin: Plugin) => void
 }
 
-type ViewMode = 'list' | 'grid'
 type FilterStatus = 'all' | 'enabled' | 'disabled'
 
 export function PluginsPageContent({
@@ -37,7 +26,6 @@ export function PluginsPageContent({
   onConfigurePlugin,
 }: PluginsPageContentProps) {
   const [searchQuery, setSearchQuery] = useState('')
-  const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
   const [refreshing, setRefreshing] = useState(false)
 
@@ -82,291 +70,146 @@ export function PluginsPageContent({
       </div>
     )
 
-  const enabledCount = plugins.filter((p) => p.enabled).length
-  const totalCount = plugins.length
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-950">
-      <div className="mx-auto max-w-6xl px-6 py-10 space-y-10">
-        {/* Cover Header (keep as is) */}
-        <div className="relative overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70">
-          <div className="absolute inset-0 bg-gradient-to-r from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-950 dark:to-gray-950" />
-          <div className="relative p-6 sm:p-8 md:p-10 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
-            <div>
-              <p className="text-sm theme-text-muted mb-2">System</p>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight theme-text">
-                Plugins
-              </h1>
-              <p className="mt-2 theme-text-secondary max-w-xl">
-                Extend your CMS capabilities with specialized plugins and integrations.
-              </p>
-            </div>
-            <ThemedButton
-              onClick={handleRefreshClick}
-              disabled={refreshing}
-              className="shrink-0 w-full sm:w-auto justify-center"
-            >
-              <RefreshCw
-                className={`h-4 w-4 mr-2 theme-text ${refreshing ? 'animate-spin' : ''}`}
-                strokeWidth={1.5}
-              />
-              {refreshing ? 'Refreshing...' : 'Refresh'}
-            </ThemedButton>
+    <div className="min-h-screen bg-white pb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">Plugins</h1>
+            <p className="text-zinc-500 mt-1">Extend your CMS capabilities.</p>
           </div>
+          <Button
+            onClick={handleRefreshClick}
+            disabled={refreshing}
+            variant="outline"
+            className="rounded-xl border-zinc-200 text-zinc-700 hover:bg-zinc-50"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+            {refreshing ? 'Refreshing...' : 'Refresh'}
+          </Button>
         </div>
 
         {/* Controls */}
         {plugins.length > 0 && (
-          <div className="rounded-xl border theme-border theme-card p-4 md:p-5 space-y-4">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              {/* Search + Filters */}
-              <div className="flex-1 flex flex-col gap-3 md:flex-row md:items-center">
-                {/* Search */}
-                <div className="relative w-full md:max-w-md">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 theme-text-muted" />
-                  <Input
-                    placeholder="Search plugins by name, description, or author..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 theme-card theme-text border theme-border"
-                  />
-                </div>
-
-                {/* Status Filter */}
-                <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4 theme-text-muted" />
-                  <div className="flex rounded-lg border theme-border overflow-hidden">
-                    {(['all', 'enabled', 'disabled'] as FilterStatus[]).map((status) => (
-                      <button
-                        key={status}
-                        type="button"
-                        onClick={() => setFilterStatus(status)}
-                        className={`px-3 py-1.5 text-xs font-medium transition-colors ${
-                          filterStatus === status
-                            ? 'theme-card-hover theme-text'
-                            : 'theme-card theme-text-secondary hover:theme-text'
-                        }`}
-                      >
-                        {status === 'all' ? 'All' : status === 'enabled' ? 'Enabled' : 'Disabled'}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* View mode */}
-              <div className="flex rounded-lg border theme-border overflow-hidden">
-                <button
-                  type="button"
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 transition-colors ${
-                    viewMode === 'list'
-                      ? 'theme-card-hover theme-text'
-                      : 'theme-card theme-text-secondary hover:theme-text'
-                  }`}
-                >
-                  <List className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 transition-colors ${
-                    viewMode === 'grid'
-                      ? 'theme-card-hover theme-text'
-                      : 'theme-card theme-text-secondary hover:theme-text'
-                  }`}
-                >
-                  <Grid3X3 className="h-4 w-4" />
-                </button>
-              </div>
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+              <Input
+                placeholder="Search plugins..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 rounded-xl border-zinc-200 bg-white h-11 focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all"
+              />
             </div>
 
-            {/* Results summary */}
-            <div className="flex flex-wrap items-center justify-between gap-3 text-sm theme-text-muted border-t theme-border pt-3">
-              <div className="flex items-center gap-2">
-                <span>
-                  Showing {filteredPlugins.length} of {plugins.length}
-                  {searchQuery ? ` for "${searchQuery}"` : ''}
-                  {filterStatus !== 'all' ? ` • ${filterStatus} only` : ''}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">
-                  {enabledCount} enabled
-                </span>
-                <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300">
-                  {totalCount - enabledCount} disabled
-                </span>
-              </div>
+            <div className="flex items-center gap-2 p-1 bg-zinc-100 rounded-xl border border-zinc-200 w-fit">
+              {(['all', 'enabled', 'disabled'] as FilterStatus[]).map((status) => (
+                <button
+                  type="button"
+                  key={status}
+                  onClick={() => setFilterStatus(status)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                    filterStatus === status
+                      ? 'bg-white text-zinc-900 shadow-sm'
+                      : 'text-zinc-500 hover:text-zinc-700'
+                  }`}
+                >
+                  {status === 'all' ? 'All' : status === 'enabled' ? 'Enabled' : 'Disabled'}
+                </button>
+              ))}
             </div>
           </div>
         )}
 
         {/* Content */}
         {filteredPlugins.length === 0 && plugins.length === 0 ? (
-          <div className="rounded-xl border theme-border theme-card p-12 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-lg theme-bg-secondary flex items-center justify-center">
-              <Puzzle className="w-8 h-8 theme-text-secondary" />
+          <div className="text-center py-20 bg-zinc-50 rounded-3xl border border-dashed border-zinc-200">
+            <div className="w-16 h-16 mx-auto bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm border border-zinc-100">
+              <Puzzle className="w-8 h-8 text-zinc-300" />
             </div>
-            <h3 className="text-lg font-semibold theme-text mb-2">No plugins available</h3>
-            <p className="theme-text-secondary mb-6 max-w-md mx-auto">
+            <h3 className="text-lg font-medium text-zinc-900 mb-2">No plugins available</h3>
+            <p className="text-zinc-500 text-sm max-w-sm mx-auto">
               Plugins let you extend your CMS functionality with additional features and
               integrations.
             </p>
           </div>
         ) : filteredPlugins.length === 0 ? (
-          <div className="rounded-xl border theme-border theme-card p-12 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-lg theme-bg-secondary flex items-center justify-center">
-              <Search className="w-8 h-8 theme-text-secondary" />
+          <div className="text-center py-20 bg-zinc-50 rounded-3xl border border-dashed border-zinc-200">
+            <div className="w-16 h-16 mx-auto bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm border border-zinc-100">
+              <Search className="w-8 h-8 text-zinc-300" />
             </div>
-            <h3 className="text-lg font-semibold theme-text mb-2">No plugins found</h3>
-            <p className="theme-text-secondary mb-6 max-w-md mx-auto">
+            <h3 className="text-lg font-medium text-zinc-900 mb-2">No plugins found</h3>
+            <p className="text-zinc-500 text-sm mb-6 max-w-sm mx-auto">
               {searchQuery
-                ? `No plugins match "${searchQuery}". Try adjusting your search or filters.`
-                : `No ${filterStatus} plugins found. Try changing your filter.`}
+                ? `No plugins match "${searchQuery}".`
+                : `No ${filterStatus} plugins found.`}
             </p>
-            <div className="flex gap-3 justify-center">
-              {searchQuery && (
-                <ThemedButton variantTone="ghost" onClick={() => setSearchQuery('')}>
-                  Clear search
-                </ThemedButton>
-              )}
-              {filterStatus !== 'all' && (
-                <ThemedButton variantTone="ghost" onClick={() => setFilterStatus('all')}>
-                  Show all plugins
-                </ThemedButton>
-              )}
-            </div>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSearchQuery('')
+                setFilterStatus('all')
+              }}
+              className="rounded-xl border-zinc-200"
+            >
+              Clear filters
+            </Button>
           </div>
         ) : (
-          <div className="space-y-6">
-            {/* List view */}
-            {viewMode === 'list' && (
-              <div className="divide-y theme-border rounded-xl border theme-border overflow-hidden theme-card">
-                {filteredPlugins.map((plugin) => (
-                  <div key={plugin.id} className="group">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 md:p-5 hover:theme-card-hover transition-colors gap-4">
-                      <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <div className="h-12 w-12 rounded-lg theme-bg-secondary flex items-center justify-center shrink-0 text-2xl">
-                          {plugin.icon}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-wrap items-center gap-3 mb-1">
-                            <div className="text-sm font-medium theme-text truncate">
-                              {plugin.name}
-                            </div>
-                            <div
-                              className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                                plugin.enabled
-                                  ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                                  : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
-                              }`}
-                            >
-                              {plugin.enabled ? 'Enabled' : 'Disabled'}
-                            </div>
-                          </div>
-                          <div className="text-xs theme-text-muted mb-2">
-                            v{plugin.version} • {plugin.author}
-                          </div>
-                          <div className="text-xs theme-text-secondary line-clamp-2">
-                            {plugin.description}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3 ml-4">
-                        {plugin.configurable && (
-                          <ThemedButton
-                            variantTone="ghost"
-                            onClick={() => onConfigurePlugin?.(plugin)}
-                            className="opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 text-xs theme-text hover:theme-text-secondary"
-                          >
-                            <Settings className="h-3 w-3 mr-1 theme-text" />
-                            <span className="hidden xs:inline">Configure</span>
-                          </ThemedButton>
-                        )}
-                        <div className="flex items-center gap-2">
-                          <Switch
-                            checked={plugin.enabled}
-                            onCheckedChange={() => handleTogglePlugin(plugin.id)}
-                            className="data-[state=checked]:bg-emerald-600 data-[state=unchecked]:bg-gray-300 dark:data-[state=unchecked]:bg-gray-600"
-                          />
-                        </div>
-                      </div>
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredPlugins.map((plugin) => (
+              <div
+                key={plugin.id}
+                className="group relative flex flex-col bg-white border border-zinc-200 rounded-2xl p-6 hover:shadow-xl hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+              >
+                <div className="flex items-start justify-between mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:bg-zinc-100 transition-all duration-300">
+                    {plugin.icon}
                   </div>
-                ))}
-              </div>
-            )}
-
-            {/* Grid view */}
-            {viewMode === 'grid' && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredPlugins.map((plugin) => (
                   <div
-                    key={plugin.id}
-                    className="group rounded-xl border theme-border theme-card p-6 hover:shadow-lg hover:theme-card-hover transition-all duration-200"
+                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${
+                      plugin.enabled
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                        : 'bg-zinc-50 text-zinc-500 border-zinc-100'
+                    }`}
                   >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="h-14 w-14 rounded-lg theme-bg-secondary flex items-center justify-center shrink-0 text-3xl">
-                        {plugin.icon}
-                      </div>
-                      <div
-                        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                          plugin.enabled
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                            : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
-                        }`}
-                      >
-                        {plugin.enabled ? (
-                          <>
-                            <CheckCircle className="h-3 w-3 mr-1" /> Enabled
-                          </>
-                        ) : (
-                          <>
-                            <XCircle className="h-3 w-3 mr-1" /> Disabled
-                          </>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="space-y-1 mb-3">
-                      <div className="text-base font-medium theme-text">{plugin.name}</div>
-                      <div className="text-xs theme-text-muted">
-                        v{plugin.version} • {plugin.author}
-                      </div>
-                    </div>
-
-                    <p className="text-sm theme-text-secondary line-clamp-3 mb-5">
-                      {plugin.description}
-                    </p>
-
-                    <div className="flex flex-wrap items-center justify-between pt-4 border-t theme-border gap-3">
-                      {plugin.configurable ? (
-                        <ThemedButton
-                          variantTone="ghost"
-                          onClick={() => onConfigurePlugin?.(plugin)}
-                          className="px-3 py-1.5 text-xs theme-text hover:theme-text-secondary"
-                        >
-                          <Settings className="h-3 w-3 mr-1 theme-text" />
-                          <span className="hidden xs:inline">Configure</span>
-                        </ThemedButton>
-                      ) : (
-                        <span className="text-xs px-2 py-1 rounded-md theme-bg-secondary theme-text-secondary">
-                          Not configurable
-                        </span>
-                      )}
-
-                      <Switch
-                        checked={plugin.enabled}
-                        onCheckedChange={() => handleTogglePlugin(plugin.id)}
-                        className="data-[state=checked]:bg-emerald-600 data-[state=unchecked]:bg-gray-300 dark:data-[state=unchecked]:bg-gray-600"
-                      />
-                    </div>
+                    {plugin.enabled ? 'Enabled' : 'Disabled'}
                   </div>
-                ))}
+                </div>
+
+                <div className="mb-4">
+                  <h3 className="text-lg font-bold text-zinc-900 mb-1 group-hover:text-zinc-700 transition-colors">
+                    {plugin.name}
+                  </h3>
+                  <p className="text-sm text-zinc-500 line-clamp-2 h-10">{plugin.description}</p>
+                </div>
+
+                <div className="mt-auto pt-4 border-t border-zinc-100 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    {plugin.configurable ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onConfigurePlugin?.(plugin)}
+                        className="h-8 px-2 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 rounded-lg"
+                      >
+                        <Settings className="h-4 w-4 mr-1.5" />
+                        Configure
+                      </Button>
+                    ) : (
+                      <span className="text-xs text-zinc-400 px-2">Not configurable</span>
+                    )}
+                  </div>
+
+                  <Switch
+                    checked={plugin.enabled}
+                    onCheckedChange={() => handleTogglePlugin(plugin.id)}
+                    className="data-[state=checked]:bg-zinc-900 data-[state=unchecked]:bg-zinc-200"
+                  />
+                </div>
               </div>
-            )}
+            ))}
           </div>
         )}
       </div>

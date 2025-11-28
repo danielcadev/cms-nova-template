@@ -1,5 +1,5 @@
 import { GeistSans } from 'geist/font/sans'
-import { Inter } from 'next/font/google'
+import { Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 import { cookies } from 'next/headers'
 import { Toaster } from '@/components/ui/toaster'
@@ -8,10 +8,10 @@ import { ErrorProvider } from '@/contexts/ErrorContext'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { isDarkThemeId, normalizeTheme, type Theme } from '@/lib/theme'
 
-const inter = Inter({
+const fontSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-inter',
+  variable: '--font-sans',
 })
 
 export const metadata = {
@@ -41,7 +41,7 @@ export default async function RootLayout({
   const _themeClass = `theme-${validTheme}`
 
   return (
-    <html lang="en" className={`${inter.variable} ${GeistSans.variable}`}>
+    <html lang="en" className={`${fontSans.variable} ${GeistSans.variable}`}>
       <body className="antialiased">
         <ErrorProvider>
           {/* Pass initialTheme from server cookie to avoid hydration mismatch */}

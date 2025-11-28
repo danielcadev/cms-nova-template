@@ -1,10 +1,11 @@
 'use client'
 
-import { Database, Plus, Settings } from 'lucide-react'
+import { Database, FileCode, Plus, Settings } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
-import { ThemedButton } from '@/components/ui/ThemedButton'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 interface ContentType {
   id: string
@@ -54,163 +55,157 @@ export function ContentTypesPageContent({
 
   if (error) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <Database className="h-8 w-8 mx-auto mb-4 text-red-500" />
-          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-            Loading error
-          </h3>
-          <p className="text-gray-600 dark:text-gray-400 text-sm">{error}</p>
+          <h3 className="text-lg font-medium text-zinc-900 mb-2">Loading error</h3>
+          <p className="text-zinc-500 text-sm">{error}</p>
         </div>
       </div>
     )
   }
 
-  const displayContentTypes = filteredContentTypes
-
   return (
-    <div className="min-h-screen theme-bg">
-      <div className="mx-auto max-w-6xl px-8 py-10">
-        {/* Cover */}
-        <div className="relative overflow-hidden rounded-2xl border theme-border theme-card mb-6">
-          <div className="absolute inset-0 theme-bg-secondary" />
-          <div className="relative p-6 sm:p-8 md:p-10 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
-            <div>
-              <p className="text-sm theme-text-muted mb-2">Schema</p>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight theme-text">
-                Content Types
-              </h1>
-              <p className="mt-2 theme-text-secondary max-w-xl">
-                Define and manage the data structures that power your content. This is the headless
-                CMS.
-              </p>
-            </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2">
-              <ThemedButton asChild className="w-full sm:w-auto justify-center">
-                <Link href="/admin/dashboard/view-content">
-                  <Database className="h-4 w-4 mr-2" />
-                  View content
-                </Link>
-              </ThemedButton>
-              <ThemedButton
-                asChild
-                className="theme-card theme-text border theme-border hover:theme-card-hover w-full sm:w-auto justify-center"
-              >
-                <Link href="/admin/dashboard/content-types/create">
-                  <Plus className="h-4 w-4 mr-2" />
-                  New type
-                </Link>
-              </ThemedButton>
-            </div>
+    <div className="min-h-screen bg-white pb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">Content Types</h1>
+            <p className="text-zinc-500 mt-1">Define the schema for your content.</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              asChild
+              className="rounded-xl border-zinc-200 text-zinc-700 hover:bg-zinc-50"
+            >
+              <Link href="/admin/dashboard/view-content">
+                <Database className="h-4 w-4 mr-2" />
+                View Content
+              </Link>
+            </Button>
+            <Button
+              asChild
+              className="rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-900/20"
+            >
+              <Link href="/admin/dashboard/content-types/create">
+                <Plus className="h-4 w-4 mr-2" />
+                New Type
+              </Link>
+            </Button>
           </div>
         </div>
 
-        {/* Info: Headless routes and optional templates */}
-        <div className="mb-8 p-4 rounded-lg border theme-border theme-card">
-          <h3 className="text-sm font-medium theme-text">Headless CMS routes</h3>
-          <p className="text-sm theme-text-secondary mt-2">
-            Each Content Type is publicly accessible using headless routes:
-          </p>
-          <ul className="mt-2 list-disc list-inside text-sm theme-text-secondary space-y-1">
-            <li>
-              Index: <code>/{`[typePath]`}</code> — Lists published entries for the type.
-            </li>
-            <li>
-              Detail:{' '}
-              <code>
-                /{`[typePath]`}/{`[slug]`}
+        {/* Info Card */}
+        <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-6 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+            <FileCode className="w-32 h-32 text-zinc-900" />
+          </div>
+          <div className="relative z-10">
+            <h3 className="font-semibold text-zinc-900 flex items-center gap-2">
+              <FileCode className="w-4 h-4 text-zinc-500" />
+              Headless CMS Routes
+            </h3>
+            <p className="text-sm text-zinc-600 mt-2 max-w-2xl leading-relaxed">
+              Your content is automatically accessible via the headless API. Use{' '}
+              <code className="px-1.5 py-0.5 rounded bg-white border border-zinc-200 text-xs font-mono text-zinc-800">
+                /[typePath]
               </code>{' '}
-              — Renders a single published entry.
-            </li>
-          </ul>
-          <p className="text-sm theme-text-secondary mt-3">
-            Starter templates like Blog, Plans and Circuits are optional and controlled by feature
-            flags in <code>src/lib/config.ts</code>.
-          </p>
-          <div className="mt-3 text-sm theme-text-secondary">
-            For public headless routes, use <code>features.publicTypePaths</code>. You can rely on{' '}
-            <code>src/app/[typePath]</code> and <code>src/app/[typePath]/[slug]</code> or create
-            custom templates as needed.
+              for lists and{' '}
+              <code className="px-1.5 py-0.5 rounded bg-white border border-zinc-200 text-xs font-mono text-zinc-800">
+                /[typePath]/[slug]
+              </code>{' '}
+              for details.
+            </p>
           </div>
         </div>
 
-        {/* Content Types List */}
-        {displayContentTypes.length > 0 && (
-          <div className="space-y-3 mb-8">
-            {displayContentTypes.map((contentType) => (
-              <div key={contentType.id} className="group">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg border theme-border theme-card backdrop-blur-sm hover:theme-card-hover transition-colors shadow-sm gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 theme-bg-secondary rounded-lg flex items-center justify-center">
-                      <Database className="h-5 w-5 theme-text-secondary" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="font-medium theme-text truncate">{contentType.name}</div>
-                      <div className="text-sm theme-text-secondary truncate">
-                        {contentType.description || 'Custom content type'} •{' '}
-                        {contentType.fields?.length || 0} fields
-                      </div>
-                      <div className="text-xs theme-text-muted font-mono mt-1 truncate">
-                        {contentType.apiIdentifier}
-                      </div>
-                    </div>
+        {/* Search */}
+        <div className="relative max-w-md">
+          <Input
+            placeholder="Search content types..."
+            value={searchValue}
+            onChange={(e) => _handleSearchChange(e.target.value)}
+            className="rounded-xl border-zinc-200 bg-white pl-4 h-11 focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all"
+          />
+        </div>
+
+        {/* Grid */}
+        {filteredContentTypes.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredContentTypes.map((contentType) => (
+              <div
+                key={contentType.id}
+                className="group relative flex flex-col bg-white border border-zinc-200 rounded-2xl p-6 hover:shadow-xl hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+              >
+                <div className="flex items-start justify-between mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-900 group-hover:scale-110 group-hover:bg-zinc-100 transition-all duration-300">
+                    <Database className="w-6 h-6" />
                   </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <ThemedButton
-                      size="sm"
-                      className="theme-card theme-text border theme-border hover:theme-card-hover"
+                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       asChild
-                    >
-                      <Link
-                        href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content`}
-                      >
-                        <Database className="h-4 w-4 mr-1" />
-                        <span className="hidden xs:inline">View entries</span>
-                      </Link>
-                    </ThemedButton>
-                    <ThemedButton
-                      size="sm"
-                      className="theme-card theme-text border theme-border hover:theme-card-hover"
-                      asChild
+                      className="h-8 w-8 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-900"
                     >
                       <Link
                         href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/edit`}
                       >
-                        <Settings className="h-4 w-4 mr-1" />
-                        <span className="hidden xs:inline">Edit type</span>
+                        <Settings className="w-4 h-4" />
                       </Link>
-                    </ThemedButton>
+                    </Button>
                   </div>
                 </div>
+
+                <div className="mb-4">
+                  <h3 className="text-lg font-bold text-zinc-900 mb-1 group-hover:text-zinc-700 transition-colors">
+                    {contentType.name}
+                  </h3>
+                  <p className="text-sm text-zinc-500 line-clamp-2 h-10">
+                    {contentType.description || 'No description provided.'}
+                  </p>
+                </div>
+
+                <div className="mt-auto pt-4 border-t border-zinc-100 flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2 text-zinc-500 bg-zinc-50 px-2 py-1 rounded-md border border-zinc-100">
+                    <span className="font-mono text-xs font-medium">
+                      {contentType.apiIdentifier}
+                    </span>
+                  </div>
+                  <div className="text-zinc-400 text-xs">
+                    {contentType.fields?.length || 0} fields
+                  </div>
+                </div>
+
+                <Link
+                  href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content`}
+                  className="absolute inset-0 z-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2"
+                >
+                  <span className="sr-only">View entries for {contentType.name}</span>
+                </Link>
               </div>
             ))}
           </div>
-        )}
-
-        {/* Empty state */}
-        {displayContentTypes.length === 0 && (
-          <div className="text-center py-16">
-            <div className="w-12 h-12 mx-auto bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center mb-4">
-              <Database className="w-6 h-6 text-gray-400" />
+        ) : (
+          <div className="text-center py-20 bg-zinc-50 rounded-3xl border border-dashed border-zinc-200">
+            <div className="w-16 h-16 mx-auto bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm border border-zinc-100">
+              <Database className="w-8 h-8 text-zinc-300" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-              No content types found
-            </h3>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+            <h3 className="text-lg font-medium text-zinc-900 mb-2">No content types found</h3>
+            <p className="text-zinc-500 text-sm mb-6 max-w-sm mx-auto">
               {searchValue
                 ? `No content types match "${searchValue}"`
-                : 'Create your first content type to start structuring your information'}
+                : 'Create your first content type to start structuring your information.'}
             </p>
             {!searchValue && (
-              <ThemedButton
-                className="theme-card theme-text border theme-border hover:theme-card-hover"
-                asChild
-              >
+              <Button asChild className="rounded-xl bg-zinc-900 text-white hover:bg-zinc-800">
                 <Link href="/admin/dashboard/content-types/create">
                   <Plus className="h-4 w-4 mr-2" />
-                  Create content type
+                  Create Content Type
                 </Link>
-              </ThemedButton>
+              </Button>
             )}
           </div>
         )}

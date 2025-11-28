@@ -19,33 +19,21 @@ export function ItinerarySection() {
   const confirmation = useConfirmation()
 
   return (
-    <div className="space-y-6 sm:space-y-8">
-      <div className="text-center">
-        <h3 className="text-xl sm:text-2xl font-bold theme-text mb-2 sm:mb-3">
-          Day-by-Day Itinerary
-        </h3>
-        <p className="text-xs sm:text-sm theme-text-secondary max-w-2xl mx-auto leading-relaxed px-4">
-          Create a detailed itinerary that shows your customers exactly what they can expect each
-          day of the trip.
-        </p>
-      </div>
-
-      <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-8">
+      <div className="space-y-6">
         {fields.map((item, index) => (
           <div
             key={item.id}
-            className="theme-card rounded-xl p-4 sm:p-6 lg:p-8 theme-border shadow-sm"
+            className="bg-white rounded-xl p-6 border border-zinc-200 shadow-sm hover:shadow-md transition-shadow duration-200"
           >
-            <div className="flex flex-col sm:flex-row justify-between items-start mb-4 sm:mb-6 gap-3">
-              <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 theme-accent rounded-xl flex items-center justify-center text-white font-bold text-base sm:text-lg">
+            <div className="flex flex-col sm:flex-row justify-between items-start mb-6 gap-4">
+              <div className="flex items-center gap-4 w-full sm:w-auto">
+                <div className="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-zinc-900/20">
                   {index + 1}
                 </div>
                 <div className="flex-1 sm:flex-initial">
-                  <h4 className="text-lg sm:text-xl font-bold theme-text">Day {index + 1}</h4>
-                  <p className="text-xs sm:text-sm theme-text-secondary">
-                    Configure the activities and experiences for this day
-                  </p>
+                  <h4 className="text-lg font-bold text-zinc-900">Day {index + 1}</h4>
+                  <p className="text-sm text-zinc-500">Configure activities for this day</p>
                 </div>
               </div>
               <Button
@@ -57,27 +45,27 @@ export function ItinerarySection() {
                     remove(index),
                   )
                 }}
-                className="theme-text-secondary hover:text-red-600 hover:bg-red-50 dark:hover:text-red-400 dark:hover:bg-red-900/20 rounded-lg transition-colors opacity-100 self-start sm:self-auto"
+                className="text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors self-start sm:self-auto"
               >
-                <Trash2 className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={1.5} />
+                <Trash2 className="h-5 w-5" strokeWidth={1.5} />
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-              <div className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="space-y-6">
                 <FormField
                   control={control}
                   name={`itinerary.${index}.title`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base sm:text-lg font-semibold theme-text">
+                      <FormLabel className="text-base font-semibold text-zinc-900">
                         Day Title
                       </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           placeholder="e.g., Arrival in Cancun and free afternoon"
-                          className="text-sm sm:text-base py-2 sm:py-3"
+                          className="text-base py-2"
                         />
                       </FormControl>
                       <FormMessage />
@@ -89,15 +77,15 @@ export function ItinerarySection() {
                   name={`itinerary.${index}.description`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base sm:text-lg font-semibold theme-text">
+                      <FormLabel className="text-base font-semibold text-zinc-900">
                         Description and Activities
                       </FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
-                          placeholder="Detail the activities, transfers, meals and other relevant information for this day. Include approximate schedules if possible."
+                          placeholder="Detail the activities, transfers, meals and other relevant information..."
                           rows={6}
-                          className="resize-none text-xs sm:text-base leading-relaxed"
+                          className="resize-none text-sm leading-relaxed"
                         />
                       </FormControl>
                       <FormMessage />
@@ -105,8 +93,8 @@ export function ItinerarySection() {
                   )}
                 />
               </div>
-              <div className="space-y-3 sm:space-y-4">
-                <h5 className="text-base sm:text-lg font-semibold theme-text">Day Image</h5>
+              <div className="space-y-4">
+                <h5 className="text-base font-semibold text-zinc-900">Day Image</h5>
                 <ItineraryDayImage fieldIndex={index} />
               </div>
             </div>
@@ -114,14 +102,12 @@ export function ItinerarySection() {
         ))}
 
         {fields.length === 0 && (
-          <div className="text-center py-12 sm:py-16 px-4 sm:px-8 theme-card rounded-xl theme-border">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 theme-bg-secondary rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
-              <PlusCircle className="h-8 w-8 sm:h-10 sm:w-10 theme-text-secondary" />
+          <div className="text-center py-16 px-8 bg-zinc-50 rounded-xl border border-dashed border-zinc-200">
+            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-zinc-100">
+              <PlusCircle className="h-8 w-8 text-zinc-400" />
             </div>
-            <h4 className="text-lg sm:text-xl font-semibold theme-text mb-2 sm:mb-3">
-              Start your itinerary
-            </h4>
-            <p className="text-xs sm:text-sm theme-text-secondary max-w-md mx-auto mb-4 sm:mb-6">
+            <h4 className="text-lg font-semibold text-zinc-900 mb-2">Start your itinerary</h4>
+            <p className="text-sm text-zinc-500 max-w-md mx-auto mb-6">
               Add the first day of your tourist plan. You can add as many days as you need.
             </p>
           </div>
@@ -130,10 +116,10 @@ export function ItinerarySection() {
         <Button
           type="button"
           variant="outline"
-          className="w-full theme-card theme-border theme-hover py-4 sm:py-6 border-dashed text-sm sm:text-lg font-medium"
+          className="w-full bg-white border-dashed border-zinc-300 hover:bg-zinc-50 hover:border-zinc-400 text-zinc-600 py-6 text-base font-medium transition-all duration-200"
           onClick={() => append({ day: fields.length + 1, title: '', description: '', image: '' })}
         >
-          <PlusCircle className="mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5" strokeWidth={1.5} />
+          <PlusCircle className="mr-2 h-5 w-5" strokeWidth={1.5} />
           Add Day {fields.length + 1} to Itinerary
         </Button>
       </div>

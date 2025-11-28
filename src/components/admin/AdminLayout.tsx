@@ -2,6 +2,7 @@
 
 import type React from 'react'
 import { type ReactNode, useMemo, useState } from 'react'
+import { ImageUploadProvider } from '@/contexts/ImageUploadContext'
 import { useTheme } from '@/contexts/ThemeContext'
 import { Sidebar } from './dashboard/Sidebar'
 
@@ -199,21 +200,23 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         )}
       </div>
 
-      <Sidebar
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        onToggle={toggleSidebar}
-      />
+      <ImageUploadProvider>
+        <Sidebar
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          onToggle={toggleSidebar}
+        />
 
-      <div className="flex-1 flex flex-col min-h-screen relative">
-        <main className="flex-1 relative">
-          <div className="h-full">
-            <div className="transition-all duration-200 ease-out p-2 sm:p-4 md:p-6 lg:p-8 xl:p-12">
-              <div className="max-w-6xl mx-auto">{children}</div>
+        <div className="flex-1 flex flex-col min-h-screen relative">
+          <main className="flex-1 relative">
+            <div className="h-full">
+              <div className="transition-all duration-200 ease-out p-2 sm:p-4 md:p-6 lg:p-8 xl:p-12">
+                <div className="max-w-6xl mx-auto">{children}</div>
+              </div>
             </div>
-          </div>
-        </main>
-      </div>
+          </main>
+        </div>
+      </ImageUploadProvider>
     </div>
   )
 }

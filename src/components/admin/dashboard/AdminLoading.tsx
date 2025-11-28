@@ -1,5 +1,6 @@
 'use client'
 
+import { Loader2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 interface AdminLoadingProps {
@@ -46,27 +47,22 @@ export function AdminLoading({
   const isPage = variant === 'page'
 
   if (fullScreen) {
-    const overlayBase = 'z-40 theme-bg flex items-center justify-center'
+    const overlayBase = 'z-50 bg-white/80 backdrop-blur-sm flex items-center justify-center'
     const contentOverlay = 'fixed top-0 right-0 bottom-0 left-0 md:left-72'
     const overlayClass = isPage
       ? `fixed inset-0 ${overlayBase}`
       : `${contentOverlay} ${overlayBase}`
     return (
       <div className={overlayClass}>
-        <div className="w-full max-w-sm rounded-2xl border theme-border theme-card shadow-sm p-6 text-center">
-          {title && <h1 className="text-lg font-semibold tracking-tight theme-text">{title}</h1>}
-          <div className="mt-4 flex items-center justify-center">
-            {/* Spinner usa currentColor (theme-text) para el borde superior */}
-            <output
-              className="h-7 w-7 rounded-full border-2 theme-border border-t-current text-current theme-text animate-spin"
-              style={{ animationDuration: '0.8s' }}
-              aria-label="Cargando"
-            />
+        <div className="w-full max-w-sm rounded-2xl border border-zinc-200 bg-white shadow-xl p-8 text-center">
+          {title && <h1 className="text-lg font-bold tracking-tight text-zinc-900">{title}</h1>}
+          <div className="mt-6 flex items-center justify-center">
+            <Loader2 className="h-8 w-8 text-zinc-900 animate-spin" />
           </div>
-          <p className="mt-4 text-sm theme-text-secondary">{message}</p>
-          <div className="mt-6 h-1 w-full overflow-hidden rounded-full theme-border">
+          <p className="mt-4 text-sm text-zinc-500 font-medium">{message}</p>
+          <div className="mt-6 h-1 w-full overflow-hidden rounded-full bg-zinc-100">
             <div
-              className="h-full rounded-full bg-current theme-text transition-[width] duration-200 ease-out"
+              className="h-full rounded-full bg-zinc-900 transition-[width] duration-200 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -76,29 +72,25 @@ export function AdminLoading({
   }
 
   return (
-    <div className={isPage ? 'min-h-screen theme-bg' : ''}>
+    <div className={isPage ? 'min-h-screen bg-zinc-50/50' : ''}>
       <div
         className={
           isPage ? 'flex items-center justify-center min-h-[calc(100vh-2rem)] px-6 py-8' : ''
         }
       >
         <div
-          className={`w-full ${isPage ? 'max-w-md mx-auto' : ''} rounded-2xl border theme-border theme-card backdrop-blur-sm shadow-sm p-6 text-center`}
+          className={`w-full ${isPage ? 'max-w-md mx-auto' : ''} rounded-2xl border border-zinc-200 bg-white shadow-sm p-8 text-center`}
         >
-          {title && <h1 className="text-lg font-semibold tracking-tight theme-text">{title}</h1>}
+          {title && <h1 className="text-lg font-bold tracking-tight text-zinc-900">{title}</h1>}
 
-          <div className="mt-4 flex items-center justify-center">
-            <output
-              className="h-7 w-7 rounded-full border-2 theme-border border-t-current text-current theme-text animate-spin"
-              style={{ animationDuration: '0.8s' }}
-              aria-label="Cargando"
-            />
+          <div className="mt-6 flex items-center justify-center">
+            <Loader2 className="h-8 w-8 text-zinc-900 animate-spin" />
           </div>
 
-          <p className="mt-4 text-sm theme-text-secondary">{message}</p>
+          <p className="mt-4 text-sm text-zinc-500 font-medium">{message}</p>
 
-          <div className="mt-6 h-1 w-full overflow-hidden rounded-full theme-border">
-            <div className="h-full w-1/3 animate-[loadingbar_1.2s_ease-in-out_infinite] bg-current theme-text rounded-full" />
+          <div className="mt-6 h-1 w-full overflow-hidden rounded-full bg-zinc-100">
+            <div className="h-full w-1/3 animate-[loadingbar_1.2s_ease-in-out_infinite] bg-zinc-900 rounded-full" />
           </div>
         </div>
       </div>
@@ -116,20 +108,20 @@ export function AdminLoading({
 
 function AdminSkeletonLoader({ title }: { title?: string }) {
   return (
-    <div className="min-h-screen theme-bg">
+    <div className="min-h-screen bg-zinc-50/50">
       <div className="mx-auto max-w-6xl px-6 py-10">
-        <div className="space-y-4">
+        <div className="space-y-6">
           {title ? (
-            <h1 className="text-2xl font-semibold tracking-tight theme-text">{title}</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-900">{title}</h1>
           ) : (
-            <div className="h-8 w-56 rounded theme-border border animate-pulse" />
+            <div className="h-8 w-56 rounded-lg bg-zinc-200 animate-pulse" />
           )}
 
           <div className="flex flex-wrap gap-4">
             {Array.from({ length: 4 }, () => (
               <div
                 key={crypto.randomUUID()}
-                className="h-16 flex-1 min-w-[140px] rounded-xl border theme-border theme-card animate-pulse"
+                className="h-24 flex-1 min-w-[140px] rounded-xl border border-zinc-200 bg-white animate-pulse"
               />
             ))}
           </div>
@@ -139,26 +131,23 @@ function AdminSkeletonLoader({ title }: { title?: string }) {
           {Array.from({ length: 6 }, () => (
             <div
               key={crypto.randomUUID()}
-              className="rounded-xl border theme-border theme-card p-6 shadow-sm"
+              className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm"
             >
-              <div className="flex items-center justify-between">
-                <div className="h-10 w-10 rounded-lg theme-border border animate-pulse" />
-                <div className="h-4 w-16 rounded theme-border border animate-pulse" />
+              <div className="flex items-center justify-between mb-6">
+                <div className="h-12 w-12 rounded-xl bg-zinc-100 animate-pulse" />
+                <div className="h-5 w-20 rounded-md bg-zinc-100 animate-pulse" />
               </div>
 
-              <div className="mt-6 space-y-2">
-                <div className="h-4 w-3/4 rounded theme-border border animate-pulse" />
-                <div className="h-3 w-1/2 rounded theme-border border animate-pulse" />
+              <div className="space-y-3">
+                <div className="h-4 w-3/4 rounded bg-zinc-100 animate-pulse" />
+                <div className="h-3 w-1/2 rounded bg-zinc-100 animate-pulse" />
               </div>
             </div>
           ))}
         </div>
 
         <div className="mt-12 flex justify-center">
-          <div
-            className="h-6 w-6 rounded-full border-2 theme-border border-t-current text-current theme-text animate-spin"
-            style={{ animationDuration: '0.8s' }}
-          />
+          <Loader2 className="h-8 w-8 text-zinc-300 animate-spin" />
         </div>
       </div>
     </div>

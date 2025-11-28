@@ -290,11 +290,11 @@ export function MainImage({ form }: MainImageProps) {
                             variant="outline"
                             size="sm"
                             onClick={handleImageDelete}
-                            className="rounded-full h-8 w-8 p-0 shadow-lg bg-white/90 hover:bg-white dark:bg-black/40 dark:hover:bg-black/60 border theme-border"
+                            className="rounded-full h-8 w-8 p-0 shadow-lg bg-white/90 hover:bg-white dark:bg-black/40 dark:hover:bg-black/60 border border-zinc-200"
                             aria-label="Remove image"
                             title="Remove image"
                           >
-                            <X className="w-4 h-4 theme-text" />
+                            <X className="w-4 h-4 text-zinc-600" />
                           </Button>
                         </div>
                       </div>

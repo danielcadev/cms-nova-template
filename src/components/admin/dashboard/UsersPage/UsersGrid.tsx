@@ -1,6 +1,6 @@
 'use client'
 
-import { UserPlus, Users } from 'lucide-react'
+import { AlertCircle, UserPlus, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { User as UserType } from '@/types/user'
 import { UserCard } from './UserCard'
@@ -35,7 +35,7 @@ export function UsersGrid({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {users.map((user, index) => (
         <UserCard
           key={user.id}
@@ -51,23 +51,20 @@ export function UsersGrid({
 }
 
 function LoadingState() {
+  const skeletonIds = Array.from({ length: 8 }, (_, i) => `skeleton-${Date.now()}-${i}`)
+
   return (
-    <div className="space-y-3">
-      {Array.from({ length: 5 }, () => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {skeletonIds.map((id) => (
         <div
-          key={crypto.randomUUID()}
-          className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-lg border border-gray-200 dark:border-gray-700 animate-pulse gap-3 sm:gap-0"
+          key={id}
+          className="h-[280px] rounded-2xl bg-white border border-zinc-100 p-6 shadow-sm animate-pulse flex flex-col items-center justify-center gap-4"
         >
-          <div className="flex items-center gap-3 sm:gap-4 flex-1">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 dark:bg-gray-700 rounded-lg flex-shrink-0"></div>
-            <div className="flex-1 min-w-0">
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24 sm:w-32 mb-2"></div>
-              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-32 sm:w-40"></div>
-            </div>
-          </div>
-          <div className="flex gap-1 sm:gap-2 self-start sm:self-center">
-            <div className="h-8 w-8 sm:h-9 sm:w-9 bg-gray-200 dark:bg-gray-700 rounded"></div>
-            <div className="h-8 w-8 sm:h-9 sm:w-9 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div className="w-16 h-16 rounded-xl bg-zinc-100" />
+          <div className="h-4 w-32 bg-zinc-100 rounded-full" />
+          <div className="h-3 w-24 bg-zinc-100 rounded-full" />
+          <div className="w-full mt-4 space-y-2">
+            <div className="h-8 w-full bg-zinc-50 rounded-lg" />
           </div>
         </div>
       ))}
@@ -77,43 +74,40 @@ function LoadingState() {
 
 function ErrorState() {
   return (
-    <div className="text-center py-12 sm:py-16 px-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-      <div className="w-12 h-12 mx-auto bg-red-50 dark:bg-red-900/20 rounded-lg flex items-center justify-center mb-4">
-        <Users className="w-6 h-6 text-red-600 dark:text-red-400" />
+    <div className="py-12">
+      <div className="max-w-md mx-auto text-center p-8 rounded-2xl bg-red-50 border border-red-100">
+        <div className="w-12 h-12 mx-auto bg-red-100 rounded-xl flex items-center justify-center mb-4 text-red-600">
+          <AlertCircle className="w-6 h-6" />
+        </div>
+        <h3 className="text-lg font-bold text-red-900 mb-2">Error loading users</h3>
+        <p className="text-sm text-red-600 mb-6">
+          We couldn't fetch the user list. Please check your connection.
+        </p>
+        <Button
+          variant="outline"
+          className="bg-white border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800"
+        >
+          Try Again
+        </Button>
       </div>
-
-      <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-        Error loading users
-      </h3>
-      <p className="text-gray-500 dark:text-gray-400 text-sm mb-6 max-w-sm mx-auto">
-        Could not load users. Check your connection and try again.
-      </p>
-
-      <Button variant="outline" className="text-red-600 border-red-200 hover:bg-red-50 text-sm">
-        Retry
-      </Button>
     </div>
   )
 }
 
 function EmptyState() {
   return (
-    <div className="text-center py-12 sm:py-16 px-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-      <div className="w-12 h-12 mx-auto bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center mb-4">
-        <Users className="w-6 h-6 text-gray-400" />
+    <div className="py-20">
+      <div className="max-w-md mx-auto text-center">
+        <div className="w-20 h-20 mx-auto bg-zinc-50 rounded-2xl flex items-center justify-center mb-6 border border-zinc-100">
+          <Users className="w-8 h-8 text-zinc-400" />
+        </div>
+        <h3 className="text-xl font-bold text-zinc-900 mb-2">No users found</h3>
+        <p className="text-zinc-500 mb-8">Get started by inviting your first team member.</p>
+        <Button className="rounded-xl bg-zinc-900 text-white px-6 py-2.5 h-auto text-sm font-medium hover:bg-zinc-800 transition-colors">
+          <UserPlus className="w-4 h-4 mr-2" />
+          Invite User
+        </Button>
       </div>
-
-      <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-        No users yet
-      </h3>
-      <p className="text-gray-500 dark:text-gray-400 text-sm mb-6 max-w-sm mx-auto">
-        No users are registered in the system yet. Users will appear here when they sign up.
-      </p>
-
-      <Button className="text-sm">
-        <UserPlus className="w-4 h-4 mr-2" />
-        Invite User
-      </Button>
     </div>
   )
 }

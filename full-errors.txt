@@ -1,0 +1,1194 @@
+﻿node.exe : src\components\templates\TemplatesManager\TouristPlansView.tsx:556:7 lint/complexity/noUselessLoneBlockStatements ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (src\components\...ΓöüΓöüΓöüΓöüΓöü:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+  i This block statement doesn't serve any purpose and can be safely removed.
+  
+    554 Γöé       )}
+    555 Γöé 
+  > 556 Γöé       {confirmation.config && (
+        Γöé       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 557 Γöé         <ConfirmationModal
+         ...
+  > 562 Γöé         />
+  > 563 Γöé       )}
+        Γöé       ^^
+    564 Γöé     </div>
+    565 Γöé   )
+  
+  i Standalone block statements without any block-level declarations are redundant in JavaScript and can be removed to simplify the code.
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:499:23 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ! This type parameter className is unused.
+  
+    497 Γöé                     </div>
+    498 Γöé                     <_span
+  > 499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+        Γöé                       ^^^^^^^^^
+    500 Γöé                         plan.published
+    501 Γöé                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:496:32 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ! This type parameter className is unused.
+  
+    494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+  > 496 Γöé                       <_MapPin className="w-5 h-5" />
+        Γöé                                ^^^^^^^^^
+    497 Γöé                     </div>
+    498 Γöé                     <_span
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:497:23 lint/correctness/noUnusedVariables ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ! This type parameter div is unused.
+  
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+  > 497 Γöé                     </div>
+        Γöé                       ^^^
+    498 Γöé                     <_span
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+  
+  i Unused variables are often the result of an incomplete refactoring, typos, or other sources of bugs.
+  
+
+src\components\admin\dashboard\PluginsPage\PluginConfigModal.tsx:317:15 lint/a11y/noStaticElementInteractions ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Static Elements should not be interactive.
+  
+    315 Γöé           <div className="space-y-8">
+    316 Γöé             <div className="grid grid-cols-2 gap-4">
+  > 317 Γöé               <div
+        Γöé               ^^^^
+  > 318 Γöé                 className={`cursor-pointer rounded-xl border p-4 transition-all ${navConfig.mode === 'auto' ? 'border-zinc-900 bg-zinc-50 ring-1 ring-zinc-900' : 'border-zinc-200 hover:border-zinc-300'}`}
+  > 319 Γöé                 onClick={() => setNavConfig((p) => ({ ...p, mode: 'auto' }))}
+  > 320 Γöé               >
+        Γöé               ^
+    321 Γöé                 <div className="flex items-center gap-2 font-medium text-sm mb-1">
+    322 Γöé                   <Zap className="w-4 h-4" /> Auto Mode
+  
+  i To add interactivity such as a mouse or key event listener to a static element, give the element an appropriate role value.
+  
+
+src\components\admin\dashboard\PluginsPage\PluginConfigModal.tsx:327:15 lint/a11y/useKeyWithClickEvents ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Enforce to have the onClick mouse event with the onKeyUp, the onKeyDown, or the onKeyPress keyboard event.
+  
+    325 Γöé               </div>
+    326 Γöé 
+  > 327 Γöé               <div
+        Γöé               ^^^^
+  > 328 Γöé                 className={`cursor-pointer rounded-xl border p-4 transition-all ${navConfig.mode === 'include' ? 'border-zinc-900 bg-zinc-50 ring-1 ring-zinc-900' : 'border-zinc-200 hover:border-zinc-300'}`}
+  > 329 Γöé                 onClick={() => setNavConfig((p) => ({ ...p, mode: 'include' }))}
+  > 330 Γöé               >
+        Γöé               ^
+    331 Γöé                 <div className="flex items-center gap-2 font-medium text-sm mb-1">
+    332 Γöé                   <Globe className="w-4 h-4" /> Manual Mode
+  
+  i Actions triggered using mouse events should have corresponding keyboard events to account for keyboard-only navigation.
+  
+
+src\components\admin\dashboard\PluginsPage\PluginConfigModal.tsx:327:15 lint/a11y/noStaticElementInteractions ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Static Elements should not be interactive.
+  
+    325 Γöé               </div>
+    326 Γöé 
+  > 327 Γöé               <div
+        Γöé               ^^^^
+  > 328 Γöé                 className={`cursor-pointer rounded-xl border p-4 transition-all ${navConfig.mode === 'include' ? 'border-zinc-900 bg-zinc-50 ring-1 ring-zinc-900' : 'border-zinc-200 hover:border-zinc-300'}`}
+  > 329 Γöé                 onClick={() => setNavConfig((p) => ({ ...p, mode: 'include' }))}
+  > 330 Γöé               >
+        Γöé               ^
+    331 Γöé                 <div className="flex items-center gap-2 font-medium text-sm mb-1">
+    332 Γöé                   <Globe className="w-4 h-4" /> Manual Mode
+  
+  i To add interactivity such as a mouse or key event listener to a static element, give the element an appropriate role value.
+  
+
+src\components\admin\dashboard\PluginsPage\PluginConfigModal.tsx:317:15 lint/a11y/useKeyWithClickEvents ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Enforce to have the onClick mouse event with the onKeyUp, the onKeyDown, or the onKeyPress keyboard event.
+  
+    315 Γöé           <div className="space-y-8">
+    316 Γöé             <div className="grid grid-cols-2 gap-4">
+  > 317 Γöé               <div
+        Γöé               ^^^^
+  > 318 Γöé                 className={`cursor-pointer rounded-xl border p-4 transition-all ${navConfig.mode === 'auto' ? 'border-zinc-900 bg-zinc-50 ring-1 ring-zinc-900' : 'border-zinc-200 hover:border-zinc-300'}`}
+  > 319 Γöé                 onClick={() => setNavConfig((p) => ({ ...p, mode: 'auto' }))}
+  > 320 Γöé               >
+        Γöé               ^
+    321 Γöé                 <div className="flex items-center gap-2 font-medium text-sm mb-1">
+    322 Γöé                   <Zap className="w-4 h-4" /> Auto Mode
+  
+  i Actions triggered using mouse events should have corresponding keyboard events to account for keyboard-only navigation.
+  
+
+src\components\admin\dashboard\Sidebar.tsx:150:9 lint/a11y/noStaticElementInteractions ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Static Elements should not be interactive.
+  
+    148 Γöé       {/* Backdrop */}
+    149 Γöé       {(isOpen || mobileMenuOpen) && (
+  > 150 Γöé         <div
+        Γöé         ^^^^
+  > 151 Γöé           className="fixed inset-0 z-40 bg-white/80 backdrop-blur-md md:hidden transition-all duration-500"
+         ...
+  > 155 Γöé           }}
+  > 156 Γöé         />
+        Γöé         ^^
+    157 Γöé       )}
+    158 Γöé 
+  
+  i To add interactivity such as a mouse or key event listener to a static element, give the element an appropriate role value.
+  
+
+src\components\admin\dashboard\Sidebar.tsx:150:9 lint/a11y/useKeyWithClickEvents ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Enforce to have the onClick mouse event with the onKeyUp, the onKeyDown, or the onKeyPress keyboard event.
+  
+    148 Γöé       {/* Backdrop */}
+    149 Γöé       {(isOpen || mobileMenuOpen) && (
+  > 150 Γöé         <div
+        Γöé         ^^^^
+  > 151 Γöé           className="fixed inset-0 z-40 bg-white/80 backdrop-blur-md md:hidden transition-all duration-500"
+         ...
+  > 155 Γöé           }}
+  > 156 Γöé         />
+        Γöé         ^^
+    157 Γöé       )}
+    158 Γöé 
+  
+  i Actions triggered using mouse events should have corresponding keyboard events to account for keyboard-only navigation.
+  
+
+src\components\admin\dashboard\UsersPage\UsersGrid.tsx:58:16 lint/suspicious/noArrayIndexKey ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Avoid using the index of an array as key property in an element.
+  
+    56 Γöé       {Array.from({ length: 8 }, (_, i) => (
+    57 Γöé         <div
+  > 58 Γöé           key={i}
+       Γöé                ^
+    59 Γöé           className="h-[280px] rounded-2xl bg-white border border-zinc-100 p-6 shadow-sm animate-pulse flex flex-col items-center justify-center gap-4"
+    60 Γöé         >
+  
+  i This is the source of the key value.
+  
+    54 Γöé   return (
+    55 Γöé     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+  > 56 Γöé       {Array.from({ length: 8 }, (_, i) => (
+       Γöé                                      ^
+    57 Γöé         <div
+    58 Γöé           key={i}
+  
+  i The order of the items may change, and this also affects performances and component state.
+  
+  i Check the React documentation. 
+  
+
+src\components\admin\dashboard\UsersPage\UsersStats.tsx:50:28 lint/suspicious/noArrayIndexKey ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Avoid using the index of an array as key property in an element.
+  
+    48 Γöé                   {[...Array(20)].map((_, i) => (
+    49 Γöé                     <div
+  > 50 Γöé                       key={i}
+       Γöé                            ^
+    51 Γöé                       className={cn('flex-1 rounded-full', i > 14 ? 'bg-zinc-700' : 'bg-white')}
+    52 Γöé                       style={{ opacity: i > 14 ? 0.3 : 1 - i * 0.02 }}
+  
+  i This is the source of the key value.
+  
+    46 Γöé                 {/* Simulated Activity Bar */}
+    47 Γöé                 <div className="flex gap-1 h-2 w-full max-w-sm opacity-50">
+  > 48 Γöé                   {[...Array(20)].map((_, i) => (
+       Γöé                                           ^
+    49 Γöé                     <div
+    50 Γöé                       key={i}
+  
+  i The order of the items may change, and this also affects performances and component state.
+  
+  i Check the React documentation. 
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:491:29 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù ';' expected'
+  
+    489 Γöé               {filteredAndSortedPlans.map((plan) => (
+    490 Γöé                 <_div
+  > 491 Γöé                   _key={plan.id}
+        Γöé                             ^
+    492 Γöé                   _className="group bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+    493 Γöé                 >
+  
+  i An explicit or implicit semicolon is expected here...
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:494:19 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a parenthesis '(' but instead found '<'.
+  
+    492 Γöé                   _className="group bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+    493 Γöé                 >
+  > 494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+        Γöé                   ^
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+  
+  i Expected a parenthesis '(' here.
+  
+    492 Γöé                   _className="group bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+    493 Γöé                 >
+  > 494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+        Γöé                   ^
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:494:25 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `_className`
+  
+    492 Γöé                   _className="group bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+    493 Γöé                 >
+  > 494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+        Γöé                         ^^^^^^^^^^
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+  
+  i Remove _className
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:495:21 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a parenthesis '(' but instead found '<'.
+  
+    493 Γöé                 >
+    494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+  > 495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+        Γöé                     ^
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+    497 Γöé                     </div>
+  
+  i Expected a parenthesis '(' here.
+  
+    493 Γöé                 >
+    494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+  > 495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+        Γöé                     ^
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+    497 Γöé                     </div>
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:495:27 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `_className`
+  
+    493 Γöé                 >
+    494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+  > 495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+        Γöé                           ^^^^^^^^^^
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+    497 Γöé                     </div>
+  
+  i Remove _className
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:496:23 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a parenthesis '(' but instead found '<'.
+  
+    494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+  > 496 Γöé                       <_MapPin className="w-5 h-5" />
+        Γöé                       ^
+    497 Γöé                     </div>
+    498 Γöé                     <_span
+  
+  i Expected a parenthesis '(' here.
+  
+    494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+  > 496 Γöé                       <_MapPin className="w-5 h-5" />
+        Γöé                       ^
+    497 Γöé                     </div>
+    498 Γöé                     <_span
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:496:32 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `className`
+  
+    494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+  > 496 Γöé                       <_MapPin className="w-5 h-5" />
+        Γöé                                ^^^^^^^^^
+    497 Γöé                     </div>
+    498 Γöé                     <_span
+  
+  i Remove className
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:496:52 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `/`
+  
+    494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+  > 496 Γöé                       <_MapPin className="w-5 h-5" />
+        Γöé                                                    ^
+    497 Γöé                     </div>
+    498 Γöé                     <_span
+  
+  i Remove /
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:497:21 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a parenthesis '(' but instead found '<'.
+  
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+  > 497 Γöé                     </div>
+        Γöé                     ^
+    498 Γöé                     <_span
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+  
+  i Expected a parenthesis '(' here.
+  
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+  > 497 Γöé                     </div>
+        Γöé                     ^
+    498 Γöé                     <_span
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:497:22 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a type parameter but instead found '/'.
+  
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+  > 497 Γöé                     </div>
+        Γöé                      ^
+    498 Γöé                     <_span
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+  
+  i Expected a type parameter here.
+  
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+  > 497 Γöé                     </div>
+        Γöé                      ^
+    498 Γöé                     <_span
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:497:23 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `div`
+  
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+  > 497 Γöé                     </div>
+        Γöé                       ^^^
+    498 Γöé                     <_span
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+  
+  i Remove div
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:498:21 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a parenthesis '(' but instead found '<'.
+  
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+    497 Γöé                     </div>
+  > 498 Γöé                     <_span
+        Γöé                     ^
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+    500 Γöé                         plan.published
+  
+  i Expected a parenthesis '(' here.
+  
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+    497 Γöé                     </div>
+  > 498 Γöé                     <_span
+        Γöé                     ^
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+    500 Γöé                         plan.published
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:499:23 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `className`
+  
+    497 Γöé                     </div>
+    498 Γöé                     <_span
+  > 499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+        Γöé                       ^^^^^^^^^
+    500 Γöé                         plan.published
+    501 Γöé                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+  
+  i Remove className
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:499:34 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a property, or a signature but instead found '`px-2.5 py-1 rounded-full text-xs font-medium ${'.
+  
+    497 Γöé                     </div>
+    498 Γöé                     <_span
+  > 499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+        Γöé                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    500 Γöé                         plan.published
+    501 Γöé                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+  
+  i Expected a property, or a signature here.
+  
+    497 Γöé                     </div>
+    498 Γöé                     <_span
+  > 499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+        Γöé                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    500 Γöé                         plan.published
+    501 Γöé                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:500:29 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù ';' expected'
+  
+    498 Γöé                     <_span
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+  > 500 Γöé                         plan.published
+        Γöé                             ^
+    501 Γöé                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+    502 Γöé                           : 'bg-zinc-50 text-zinc-600 border border-zinc-100'
+  
+  i An explicit or implicit semicolon is expected here...
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:501:27 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a property, or a signature but instead found '?'.
+  
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+    500 Γöé                         plan.published
+  > 501 Γöé                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+        Γöé                           ^
+    502 Γöé                           : 'bg-zinc-50 text-zinc-600 border border-zinc-100'
+    503 Γöé                       }`}
+  
+  i Expected a property, or a signature here.
+  
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+    500 Γöé                         plan.published
+  > 501 Γöé                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+        Γöé                           ^
+    502 Γöé                           : 'bg-zinc-50 text-zinc-600 border border-zinc-100'
+    503 Γöé                       }`}
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:251:5 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected corresponding JSX closing tag for 'div'.
+  
+    250 Γöé   return (
+  > 251 Γöé     <div className="p-6 max-w-7xl mx-auto space-y-8">
+        Γöé     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    252 Γöé       {/* Header */}
+    253 Γöé       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+  
+  i Opening tag
+  
+    250 Γöé   return (
+  > 251 Γöé     <div className="p-6 max-w-7xl mx-auto space-y-8">
+        Γöé     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    252 Γöé       {/* Header */}
+    253 Γöé       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+  
+  i closing tag
+  
+    504 Γöé                     >
+    505 Γöé                       {plan.published ? 'Published' : 'Draft'}
+  > 506 Γöé                     </span>
+        Γöé                     ^^^^^^^
+    507 Γöé                   </div>
+    508 Γöé 
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:503:23 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  
+    501 Γöé                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+    502 Γöé                           : 'bg-zinc-50 text-zinc-600 border border-zinc-100'
+  > 503 Γöé                       }`}
+        Γöé                       ^
+    504 Γöé                     >
+    505 Γöé                       {plan.published ? 'Published' : 'Draft'}
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:503:25 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  
+    501 Γöé                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+    502 Γöé                           : 'bg-zinc-50 text-zinc-600 border border-zinc-100'
+  > 503 Γöé                       }`}
+        Γöé                         ^
+    504 Γöé                     >
+    505 Γöé                       {plan.published ? 'Published' : 'Draft'}
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:504:21 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Unexpected token. Did you mean `{'>'}` or `&gt;`?
+  
+    502 Γöé                           : 'bg-zinc-50 text-zinc-600 border border-zinc-100'
+    503 Γöé                       }`}
+  > 504 Γöé                     >
+        Γöé                     ^
+    505 Γöé                       {plan.published ? 'Published' : 'Draft'}
+    506 Γöé                     </span>
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:507:19 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `)` but instead found `<`
+  
+    505 Γöé                       {plan.published ? 'Published' : 'Draft'}
+    506 Γöé                     </span>
+  > 507 Γöé                   </div>
+        Γöé                   ^
+    508 Γöé 
+    509 Γöé                   <h3 className="font-bold text-zinc-900 mb-2 line-clamp-2 h-12">plan.mainTitle
+  
+  i Remove <
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:552:13 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected an expression but instead found '<'.
+  
+    550 Γöé                 </div>
+    551 Γöé               ))}
+  > 552 Γöé             </div>
+        Γöé             ^
+    553 Γöé           </div>
+    554 Γöé       )}
+  
+  i Expected an expression here.
+  
+    550 Γöé                 </div>
+    551 Γöé               ))}
+  > 552 Γöé             </div>
+        Γöé             ^
+    553 Γöé           </div>
+    554 Γöé       )}
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:564:5 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected an expression but instead found '<'.
+  
+    562 Γöé         />
+    563 Γöé       )}
+  > 564 Γöé     </div>
+        Γöé     ^
+    565 Γöé   )
+    566 Γöé }
+  
+  i Expected an expression here.
+  
+    562 Γöé         />
+    563 Γöé       )}
+  > 564 Γöé     </div>
+        Γöé     ^
+    565 Γöé   )
+    566 Γöé }
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:488:15 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `_className`
+  
+    486 Γöé           ) : (
+    487 Γöé       ) : (
+  > 488 Γöé         <_div _className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        Γöé               ^^^^^^^^^^
+    489 Γöé               {filteredAndSortedPlans.map((plan) => (
+    490 Γöé                 <_div
+  
+  i Remove _className
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:489:15 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a parenthesis '(' but instead found '{'.
+  
+    487 Γöé       ) : (
+    488 Γöé         <_div _className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  > 489 Γöé               {filteredAndSortedPlans.map((plan) => (
+        Γöé               ^
+    490 Γöé                 <_div
+    491 Γöé                   _key={plan.id}
+  
+  i Expected a parenthesis '(' here.
+  
+    487 Γöé       ) : (
+    488 Γöé         <_div _className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  > 489 Γöé               {filteredAndSortedPlans.map((plan) => (
+        Γöé               ^
+    490 Γöé                 <_div
+    491 Γöé                   _key={plan.id}
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:489:38 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù ';' expected'
+  
+    487 Γöé       ) : (
+    488 Γöé         <_div _className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  > 489 Γöé               {filteredAndSortedPlans.map((plan) => (
+        Γöé                                      ^
+    490 Γöé                 <_div
+    491 Γöé                   _key={plan.id}
+  
+  i An explicit or implicit semicolon is expected here...
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:491:19 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `_key`
+  
+    489 Γöé               {filteredAndSortedPlans.map((plan) => (
+    490 Γöé                 <_div
+  > 491 Γöé                   _key={plan.id}
+        Γöé                   ^^^^
+    492 Γöé                   _className="group bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+    493 Γöé                 >
+  
+  i Remove _key
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:488:15 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `_className`
+  
+    486 Γöé           ) : (
+    487 Γöé       ) : (
+  > 488 Γöé         <_div _className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        Γöé               ^^^^^^^^^^
+    489 Γöé               {filteredAndSortedPlans.map((plan) => (
+    490 Γöé                 <_div
+  
+  i Remove _className
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:492:19 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `_className`
+  
+    490 Γöé                 <_div
+    491 Γöé                   _key={plan.id}
+  > 492 Γöé                   _className="group bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+        Γöé                   ^^^^^^^^^^
+    493 Γöé                 >
+    494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+  
+  i Remove _className
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:489:38 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù ';' expected'
+  
+    487 Γöé       ) : (
+    488 Γöé         <_div _className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  > 489 Γöé               {filteredAndSortedPlans.map((plan) => (
+        Γöé                                      ^
+    490 Γöé                 <_div
+    491 Γöé                   _key={plan.id}
+  
+  i An explicit or implicit semicolon is expected here...
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:491:19 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `_key`
+  
+    489 Γöé               {filteredAndSortedPlans.map((plan) => (
+    490 Γöé                 <_div
+  > 491 Γöé                   _key={plan.id}
+        Γöé                   ^^^^
+    492 Γöé                   _className="group bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+    493 Γöé                 >
+  
+  i Remove _key
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:491:29 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù ';' expected'
+  
+    489 Γöé               {filteredAndSortedPlans.map((plan) => (
+    490 Γöé                 <_div
+  > 491 Γöé                   _key={plan.id}
+        Γöé                             ^
+    492 Γöé                   _className="group bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+    493 Γöé                 >
+  
+  i An explicit or implicit semicolon is expected here...
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:492:19 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `_className`
+  
+    490 Γöé                 <_div
+    491 Γöé                   _key={plan.id}
+  > 492 Γöé                   _className="group bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+        Γöé                   ^^^^^^^^^^
+    493 Γöé                 >
+    494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+  
+  i Remove _className
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:494:19 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a parenthesis '(' but instead found '<'.
+  
+    492 Γöé                   _className="group bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+    493 Γöé                 >
+  > 494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+        Γöé                   ^
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+  
+  i Expected a parenthesis '(' here.
+  
+    492 Γöé                   _className="group bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+    493 Γöé                 >
+  > 494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+        Γöé                   ^
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:494:25 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `_className`
+  
+    492 Γöé                   _className="group bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+    493 Γöé                 >
+  > 494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+        Γöé                         ^^^^^^^^^^
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+  
+  i Remove _className
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:495:21 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a parenthesis '(' but instead found '<'.
+  
+    493 Γöé                 >
+    494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+  > 495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+        Γöé                     ^
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+    497 Γöé                     </div>
+  
+  i Expected a parenthesis '(' here.
+  
+    493 Γöé                 >
+    494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+  > 495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+        Γöé                     ^
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+    497 Γöé                     </div>
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:495:27 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `_className`
+  
+    493 Γöé                 >
+    494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+  > 495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+        Γöé                           ^^^^^^^^^^
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+    497 Γöé                     </div>
+  
+  i Remove _className
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:496:23 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a parenthesis '(' but instead found '<'.
+  
+    494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+  > 496 Γöé                       <_MapPin className="w-5 h-5" />
+        Γöé                       ^
+    497 Γöé                     </div>
+    498 Γöé                     <_span
+  
+  i Expected a parenthesis '(' here.
+  
+    494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+  > 496 Γöé                       <_MapPin className="w-5 h-5" />
+        Γöé                       ^
+    497 Γöé                     </div>
+    498 Γöé                     <_span
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:496:32 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `className`
+  
+    494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+  > 496 Γöé                       <_MapPin className="w-5 h-5" />
+        Γöé                                ^^^^^^^^^
+    497 Γöé                     </div>
+    498 Γöé                     <_span
+  
+  i Remove className
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:496:52 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `/`
+  
+    494 Γöé                   <_div _className="flex items-start justify-between mb-4">
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+  > 496 Γöé                       <_MapPin className="w-5 h-5" />
+        Γöé                                                    ^
+    497 Γöé                     </div>
+    498 Γöé                     <_span
+  
+  i Remove /
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:497:21 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a parenthesis '(' but instead found '<'.
+  
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+  > 497 Γöé                     </div>
+        Γöé                     ^
+    498 Γöé                     <_span
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+  
+  i Expected a parenthesis '(' here.
+  
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+  > 497 Γöé                     </div>
+        Γöé                     ^
+    498 Γöé                     <_span
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:497:22 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a type parameter but instead found '/'.
+  
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+  > 497 Γöé                     </div>
+        Γöé                      ^
+    498 Γöé                     <_span
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+  
+  i Expected a type parameter here.
+  
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+  > 497 Γöé                     </div>
+        Γöé                      ^
+    498 Γöé                     <_span
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:497:23 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `div`
+  
+    495 Γöé                     <_div _className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+  > 497 Γöé                     </div>
+        Γöé                       ^^^
+    498 Γöé                     <_span
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+  
+  i Remove div
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:498:21 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a parenthesis '(' but instead found '<'.
+  
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+    497 Γöé                     </div>
+  > 498 Γöé                     <_span
+        Γöé                     ^
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+    500 Γöé                         plan.published
+  
+  i Expected a parenthesis '(' here.
+  
+    496 Γöé                       <_MapPin className="w-5 h-5" />
+    497 Γöé                     </div>
+  > 498 Γöé                     <_span
+        Γöé                     ^
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+    500 Γöé                         plan.published
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:499:23 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `className`
+  
+    497 Γöé                     </div>
+    498 Γöé                     <_span
+  > 499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+        Γöé                       ^^^^^^^^^
+    500 Γöé                         plan.published
+    501 Γöé                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+  
+  i Remove className
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:499:34 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a property, or a signature but instead found '`px-2.5 py-1 rounded-full text-xs font-medium ${'.
+  
+    497 Γöé                     </div>
+    498 Γöé                     <_span
+  > 499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+        Γöé                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    500 Γöé                         plan.published
+    501 Γöé                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+  
+  i Expected a property, or a signature here.
+  
+    497 Γöé                     </div>
+    498 Γöé                     <_span
+  > 499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+        Γöé                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    500 Γöé                         plan.published
+    501 Γöé                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:500:29 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù ';' expected'
+  
+    498 Γöé                     <_span
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+  > 500 Γöé                         plan.published
+        Γöé                             ^
+    501 Γöé                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+    502 Γöé                           : 'bg-zinc-50 text-zinc-600 border border-zinc-100'
+  
+  i An explicit or implicit semicolon is expected here...
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:501:27 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a property, or a signature but instead found '?'.
+  
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+    500 Γöé                         plan.published
+  > 501 Γöé                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+        Γöé                           ^
+    502 Γöé                           : 'bg-zinc-50 text-zinc-600 border border-zinc-100'
+    503 Γöé                       }`}
+  
+  i Expected a property, or a signature here.
+  
+    499 Γöé                       className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+    500 Γöé                         plan.published
+  > 501 Γöé                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+        Γöé                           ^
+    502 Γöé                           : 'bg-zinc-50 text-zinc-600 border border-zinc-100'
+    503 Γöé                       }`}
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:251:5 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected corresponding JSX closing tag for 'div'.
+  
+    250 Γöé   return (
+  > 251 Γöé     <div className="p-6 max-w-7xl mx-auto space-y-8">
+        Γöé     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    252 Γöé       {/* Header */}
+    253 Γöé       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+  
+  i Opening tag
+  
+    250 Γöé   return (
+  > 251 Γöé     <div className="p-6 max-w-7xl mx-auto space-y-8">
+        Γöé     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    252 Γöé       {/* Header */}
+    253 Γöé       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+  
+  i closing tag
+  
+    504 Γöé                     >
+    505 Γöé                       {plan.published ? 'Published' : 'Draft'}
+  > 506 Γöé                     </span>
+        Γöé                     ^^^^^^^
+    507 Γöé                   </div>
+    508 Γöé 
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:503:23 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  
+    501 Γöé                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+    502 Γöé                           : 'bg-zinc-50 text-zinc-600 border border-zinc-100'
+  > 503 Γöé                       }`}
+        Γöé                       ^
+    504 Γöé                     >
+    505 Γöé                       {plan.published ? 'Published' : 'Draft'}
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:503:25 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+  
+    501 Γöé                           ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+    502 Γöé                           : 'bg-zinc-50 text-zinc-600 border border-zinc-100'
+  > 503 Γöé                       }`}
+        Γöé                         ^
+    504 Γöé                     >
+    505 Γöé                       {plan.published ? 'Published' : 'Draft'}
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:504:21 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Unexpected token. Did you mean `{'>'}` or `&gt;`?
+  
+    502 Γöé                           : 'bg-zinc-50 text-zinc-600 border border-zinc-100'
+    503 Γöé                       }`}
+  > 504 Γöé                     >
+        Γöé                     ^
+    505 Γöé                       {plan.published ? 'Published' : 'Draft'}
+    506 Γöé                     </span>
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:507:19 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `)` but instead found `<`
+  
+    505 Γöé                       {plan.published ? 'Published' : 'Draft'}
+    506 Γöé                     </span>
+  > 507 Γöé                   </div>
+        Γöé                   ^
+    508 Γöé 
+    509 Γöé                   <h3 className="font-bold text-zinc-900 mb-2 line-clamp-2 h-12">plan.mainTitle
+  
+  i Remove <
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:552:13 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected an expression but instead found '<'.
+  
+    550 Γöé                 </div>
+    551 Γöé               ))}
+  > 552 Γöé             </div>
+        Γöé             ^
+    553 Γöé           </div>
+    554 Γöé       )}
+  
+  i Expected an expression here.
+  
+    550 Γöé                 </div>
+    551 Γöé               ))}
+  > 552 Γöé             </div>
+        Γöé             ^
+    553 Γöé           </div>
+    554 Γöé       )}
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:564:5 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected an expression but instead found '<'.
+  
+    562 Γöé         />
+    563 Γöé       )}
+  > 564 Γöé     </div>
+        Γöé     ^
+    565 Γöé   )
+    566 Γöé }
+  
+  i Expected an expression here.
+  
+    562 Γöé         />
+    563 Γöé       )}
+  > 564 Γöé     </div>
+        Γöé     ^
+    565 Γöé   )
+    566 Γöé }
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx format ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Code formatting aborted due to parsing errors. To format code with errors, enable the 'formatter.formatWithErrors' option.
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:489:15 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a parenthesis '(' but instead found '{'.
+  
+    487 Γöé       ) : (
+    488 Γöé         <_div _className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  > 489 Γöé               {filteredAndSortedPlans.map((plan) => (
+        Γöé               ^
+    490 Γöé                 <_div
+    491 Γöé                   _key={plan.id}
+  
+  i Expected a parenthesis '(' here.
+  
+    487 Γöé       ) : (
+    488 Γöé         <_div _className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  > 489 Γöé               {filteredAndSortedPlans.map((plan) => (
+        Γöé               ^
+    490 Γöé                 <_div
+    491 Γöé                   _key={plan.id}
+  
+
+Checked 333 files in 152ms. No fixes applied.
+Found 65 errors.
+Found 3 warnings.
+check ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Some errors were emitted while running checks.
+  
+

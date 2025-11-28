@@ -1,0 +1,379 @@
+﻿node.exe : src\components\admin\dashboard\PluginsPage\PluginConfigModal.tsx:317:15 lint/a11y/noStaticElementInteractions ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo              : NotSpecified: (src\com    ponents\...ΓöüΓöüΓöüΓöüΓ    öü:String) [], RemoteExc    eption
+    + FullyQualifiedErrorId     : NativeCommandError
+ 
+
+  ├ù Static Elements should not be interactive.
+  
+    315 Γöé           <div className="space-y-8">
+    316 Γöé             <div className="grid grid-cols-2 gap-4">
+  > 317 Γöé               <div
+        Γöé               ^^^^
+  > 318 Γöé                 className={`cursor-pointer rounded-xl border p-4 transition-all ${navConfig.mode === 'auto' ? 'border-zinc-900 bg-zinc-50 ring-1 ring-zinc-900' : 'border-zinc-200 hover:border-zinc-300'}`}
+  > 319 Γöé                 onClick={() => setNavConfig((p) => ({ ...p, mode: 'auto' }))}
+  > 320 Γöé               >
+        Γöé               ^
+    321 Γöé                 <div className="flex items-center gap-2 font-medium text-sm mb-1">
+    322 Γöé                   <Zap className="w-4 h-4" /> Auto Mode
+  
+  i To add interactivity such as a mouse or key event listener to a static element, give the element an appropriate role value.
+  
+
+src\components\admin\dashboard\PluginsPage\PluginConfigModal.tsx:317:15 lint/a11y/useKeyWithClickEvents ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Enforce to have the onClick mouse event with the onKeyUp, the onKeyDown, or the onKeyPress keyboard event.
+  
+    315 Γöé           <div className="space-y-8">
+    316 Γöé             <div className="grid grid-cols-2 gap-4">
+  > 317 Γöé               <div
+        Γöé               ^^^^
+  > 318 Γöé                 className={`cursor-pointer rounded-xl border p-4 transition-all ${navConfig.mode === 'auto' ? 'border-zinc-900 bg-zinc-50 ring-1 ring-zinc-900' : 'border-zinc-200 hover:border-zinc-300'}`}
+  > 319 Γöé                 onClick={() => setNavConfig((p) => ({ ...p, mode: 'auto' }))}
+  > 320 Γöé               >
+        Γöé               ^
+    321 Γöé                 <div className="flex items-center gap-2 font-medium text-sm mb-1">
+    322 Γöé                   <Zap className="w-4 h-4" /> Auto Mode
+  
+  i Actions triggered using mouse events should have corresponding keyboard events to account for keyboard-only navigation.
+  
+
+src\components\admin\dashboard\PluginsPage\PluginConfigModal.tsx:327:15 lint/a11y/useKeyWithClickEvents ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Enforce to have the onClick mouse event with the onKeyUp, the onKeyDown, or the onKeyPress keyboard event.
+  
+    325 Γöé               </div>
+    326 Γöé 
+  > 327 Γöé               <div
+        Γöé               ^^^^
+  > 328 Γöé                 className={`cursor-pointer rounded-xl border p-4 transition-all ${navConfig.mode === 'include' ? 'border-zinc-900 bg-zinc-50 ring-1 ring-zinc-900' : 'border-zinc-200 hover:border-zinc-300'}`}
+  > 329 Γöé                 onClick={() => setNavConfig((p) => ({ ...p, mode: 'include' }))}
+  > 330 Γöé               >
+        Γöé               ^
+    331 Γöé                 <div className="flex items-center gap-2 font-medium text-sm mb-1">
+    332 Γöé                   <Globe className="w-4 h-4" /> Manual Mode
+  
+  i Actions triggered using mouse events should have corresponding keyboard events to account for keyboard-only navigation.
+  
+
+src\components\admin\dashboard\PluginsPage\PluginConfigModal.tsx:327:15 lint/a11y/noStaticElementInteractions ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Static Elements should not be interactive.
+  
+    325 Γöé               </div>
+    326 Γöé 
+  > 327 Γöé               <div
+        Γöé               ^^^^
+  > 328 Γöé                 className={`cursor-pointer rounded-xl border p-4 transition-all ${navConfig.mode === 'include' ? 'border-zinc-900 bg-zinc-50 ring-1 ring-zinc-900' : 'border-zinc-200 hover:border-zinc-300'}`}
+  > 329 Γöé                 onClick={() => setNavConfig((p) => ({ ...p, mode: 'include' }))}
+  > 330 Γöé               >
+        Γöé               ^
+    331 Γöé                 <div className="flex items-center gap-2 font-medium text-sm mb-1">
+    332 Γöé                   <Globe className="w-4 h-4" /> Manual Mode
+  
+  i To add interactivity such as a mouse or key event listener to a static element, give the element an appropriate role value.
+  
+
+src\components\admin\dashboard\Sidebar.tsx:150:9 lint/a11y/noStaticElementInteractions ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Static Elements should not be interactive.
+  
+    148 Γöé       {/* Backdrop */}
+    149 Γöé       {(isOpen || mobileMenuOpen) && (
+  > 150 Γöé         <div
+        Γöé         ^^^^
+  > 151 Γöé           className="fixed inset-0 z-40 bg-white/80 backdrop-blur-md md:hidden transition-all duration-500"
+         ...
+  > 155 Γöé           }}
+  > 156 Γöé         />
+        Γöé         ^^
+    157 Γöé       )}
+    158 Γöé 
+  
+  i To add interactivity such as a mouse or key event listener to a static element, give the element an appropriate role value.
+  
+
+src\components\admin\dashboard\Sidebar.tsx:150:9 lint/a11y/useKeyWithClickEvents ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Enforce to have the onClick mouse event with the onKeyUp, the onKeyDown, or the onKeyPress keyboard event.
+  
+    148 Γöé       {/* Backdrop */}
+    149 Γöé       {(isOpen || mobileMenuOpen) && (
+  > 150 Γöé         <div
+        Γöé         ^^^^
+  > 151 Γöé           className="fixed inset-0 z-40 bg-white/80 backdrop-blur-md md:hidden transition-all duration-500"
+         ...
+  > 155 Γöé           }}
+  > 156 Γöé         />
+        Γöé         ^^
+    157 Γöé       )}
+    158 Γöé 
+  
+  i Actions triggered using mouse events should have corresponding keyboard events to account for keyboard-only navigation.
+  
+
+src\components\admin\dashboard\UsersPage\UsersGrid.tsx:58:16 lint/suspicious/noArrayIndexKey ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Avoid using the index of an array as key property in an element.
+  
+    56 Γöé       {Array.from({ length: 8 }, (_, i) => (
+    57 Γöé         <div
+  > 58 Γöé           key={i}
+       Γöé                ^
+    59 Γöé           className="h-[280px] rounded-2xl bg-white border border-zinc-100 p-6 shadow-sm animate-pulse flex flex-col items-center justify-center gap-4"
+    60 Γöé         >
+  
+  i This is the source of the key value.
+  
+    54 Γöé   return (
+    55 Γöé     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+  > 56 Γöé       {Array.from({ length: 8 }, (_, i) => (
+       Γöé                                      ^
+    57 Γöé         <div
+    58 Γöé           key={i}
+  
+  i The order of the items may change, and this also affects performances and component state.
+  
+  i Check the React documentation. 
+  
+
+src\components\admin\dashboard\UsersPage\UsersStats.tsx:50:28 lint/suspicious/noArrayIndexKey ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Avoid using the index of an array as key property in an element.
+  
+    48 Γöé                   {[...Array(20)].map((_, i) => (
+    49 Γöé                     <div
+  > 50 Γöé                       key={i}
+       Γöé                            ^
+    51 Γöé                       className={cn('flex-1 rounded-full', i > 14 ? 'bg-zinc-700' : 'bg-white')}
+    52 Γöé                       style={{ opacity: i > 14 ? 0.3 : 1 - i * 0.02 }}
+  
+  i This is the source of the key value.
+  
+    46 Γöé                 {/* Simulated Activity Bar */}
+    47 Γöé                 <div className="flex gap-1 h-2 w-full max-w-sm opacity-50">
+  > 48 Γöé                   {[...Array(20)].map((_, i) => (
+       Γöé                                           ^
+    49 Γöé                     <div
+    50 Γöé                       key={i}
+  
+  i The order of the items may change, and this also affects performances and component state.
+  
+  i Check the React documentation. 
+  
+
+src\components\admin\media\MediaToolbar.tsx:151:17 lint/a11y/noAutofocus  FIXABLE  ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Avoid the autoFocus attribute.
+  
+    149 Γöé                 placeholder="folder/name"
+    150 Γöé                 className="w-[140px] border-none bg-transparent text-sm focus:outline-none px-2 py-1 placeholder:text-zinc-300"
+  > 151 Γöé                 autoFocus
+        Γöé                 ^^^^^^^^^
+    152 Γöé                 onKeyDown={(event) => {
+    153 Γöé                   if (event.key === 'Enter') {
+  
+  i Unsafe fix: Remove the autoFocus attribute.
+  
+    149 149 Γöé                   placeholder="folder/name"
+    150 150 Γöé                   className="w-[140px] border-none bg-transparent text-sm focus:outline-none px-2 py-1 placeholder:text-zinc-300"
+    151     Γöé - ┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖┬╖autoFocus
+    152 151 Γöé                   onKeyDown={(event) => {
+    153 152 Γöé                     if (event.key === 'Enter') {
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:488:14 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `className`
+  
+    486 Γöé           ) : (
+    487 Γöé       ) : (
+  > 488 Γöé         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        Γöé              ^^^^^^^^^
+    489 Γöé               {filteredAndSortedPlans.map((plan) => (
+    490 Γöé                 <div
+  
+  i Remove className
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:489:15 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a parenthesis '(' but instead found '{'.
+  
+    487 Γöé       ) : (
+    488 Γöé         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  > 489 Γöé               {filteredAndSortedPlans.map((plan) => (
+        Γöé               ^
+    490 Γöé                 <div
+    491 Γöé                   key={plan.id}
+  
+  i Expected a parenthesis '(' here.
+  
+    487 Γöé       ) : (
+    488 Γöé         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  > 489 Γöé               {filteredAndSortedPlans.map((plan) => (
+        Γöé               ^
+    490 Γöé                 <div
+    491 Γöé                   key={plan.id}
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:489:38 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù ';' expected'
+  
+    487 Γöé       ) : (
+    488 Γöé         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  > 489 Γöé               {filteredAndSortedPlans.map((plan) => (
+        Γöé                                      ^
+    490 Γöé                 <div
+    491 Γöé                   key={plan.id}
+  
+  i An explicit or implicit semicolon is expected here...
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:491:19 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `key`
+  
+    489 Γöé               {filteredAndSortedPlans.map((plan) => (
+    490 Γöé                 <div
+  > 491 Γöé                   key={plan.id}
+        Γöé                   ^^^
+    492 Γöé                   className="group bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+    493 Γöé                 >
+  
+  i Remove key
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:491:28 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù ';' expected'
+  
+    489 Γöé               {filteredAndSortedPlans.map((plan) => (
+    490 Γöé                 <div
+  > 491 Γöé                   key={plan.id}
+        Γöé                            ^
+    492 Γöé                   className="group bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+    493 Γöé                 >
+  
+  i An explicit or implicit semicolon is expected here...
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:492:19 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `className`
+  
+    490 Γöé                 <div
+    491 Γöé                   key={plan.id}
+  > 492 Γöé                   className="group bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+        Γöé                   ^^^^^^^^^
+    493 Γöé                 >
+    494 Γöé                   <div className="flex items-start justify-between mb-4">
+  
+  i Remove className
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:494:19 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a parenthesis '(' but instead found '<'.
+  
+    492 Γöé                   className="group bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+    493 Γöé                 >
+  > 494 Γöé                   <div className="flex items-start justify-between mb-4">
+        Γöé                   ^
+    495 Γöé                     <div className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <MapPin className="w-5 h-5" />
+  
+  i Expected a parenthesis '(' here.
+  
+    492 Γöé                   className="group bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+    493 Γöé                 >
+  > 494 Γöé                   <div className="flex items-start justify-between mb-4">
+        Γöé                   ^
+    495 Γöé                     <div className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <MapPin className="w-5 h-5" />
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:494:24 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `className`
+  
+    492 Γöé                   className="group bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
+    493 Γöé                 >
+  > 494 Γöé                   <div className="flex items-start justify-between mb-4">
+        Γöé                        ^^^^^^^^^
+    495 Γöé                     <div className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+    496 Γöé                       <MapPin className="w-5 h-5" />
+  
+  i Remove className
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:495:21 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a parenthesis '(' but instead found '<'.
+  
+    493 Γöé                 >
+    494 Γöé                   <div className="flex items-start justify-between mb-4">
+  > 495 Γöé                     <div className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+        Γöé                     ^
+    496 Γöé                       <MapPin className="w-5 h-5" />
+    497 Γöé                     </div>
+  
+  i Expected a parenthesis '(' here.
+  
+    493 Γöé                 >
+    494 Γöé                   <div className="flex items-start justify-between mb-4">
+  > 495 Γöé                     <div className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+        Γöé                     ^
+    496 Γöé                       <MapPin className="w-5 h-5" />
+    497 Γöé                     </div>
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:495:26 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù expected `,` but instead found `className`
+  
+    493 Γöé                 >
+    494 Γöé                   <div className="flex items-start justify-between mb-4">
+  > 495 Γöé                     <div className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+        Γöé                          ^^^^^^^^^
+    496 Γöé                       <MapPin className="w-5 h-5" />
+    497 Γöé                     </div>
+  
+  i Remove className
+  
+
+src\components\templates\TemplatesManager\TouristPlansView.tsx:496:23 parse ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Expected a parenthesis '(' but instead found '<'.
+  
+    494 Γöé                   <div className="flex items-start justify-between mb-4">
+    495 Γöé                     <div className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+  > 496 Γöé                       <MapPin className="w-5 h-5" />
+        Γöé                       ^
+    497 Γöé                     </div>
+    498 Γöé                     <span
+  
+  i Expected a parenthesis '(' here.
+  
+    494 Γöé                   <div className="flex items-start justify-between mb-4">
+    495 Γöé                     <div className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-500">
+  > 496 Γöé                       <MapPin className="w-5 h-5" />
+        Γöé                       ^
+    497 Γöé                     </div>
+    498 Γöé                     <span
+  
+
+The number of diagnostics exceeds the limit allowed. Use --max-diagnostics to increase it.
+Diagnostics not shown: 74.
+Checked 333 files in 142ms. No fixes applied.
+Found 74 errors.
+Found 15 warnings.
+check ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+
+  ├ù Some errors were emitted while running checks.
+  
+
+

@@ -31,22 +31,22 @@ function EmptyDropZone({ activeId }: { activeId: string | null }) {
   return (
     <div
       ref={setNodeRef}
-      className={`text-center py-16 border-2 border-dashed rounded-lg transition-all duration-300 ${
+      className={`text-center py-16 border-2 border-dashed rounded-xl transition-all duration-300 ${
         isOver || activeId?.startsWith('palette-')
-          ? 'border-gray-400 dark:border-gray-500 bg-gray-50 dark:bg-gray-800/50'
-          : 'border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/20'
+          ? 'border-zinc-400 bg-zinc-50'
+          : 'border-zinc-200 bg-zinc-50/50'
       }`}
     >
-      <div className="w-12 h-12 mx-auto bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center mb-4">
-        <Plus className="h-6 w-6 text-gray-400 dark:text-gray-500" />
+      <div className="w-12 h-12 mx-auto bg-white border border-zinc-200 rounded-xl flex items-center justify-center mb-4 shadow-sm">
+        <Plus className="h-6 w-6 text-zinc-400" />
       </div>
-      <h4 className="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">
-        {activeId?.startsWith('palette-') ? 'Drop field here' : 'No fields yet'}
+      <h4 className="text-lg font-semibold text-zinc-900 mb-2">
+        {activeId?.startsWith('palette-') ? 'Drop field here' : 'Start building'}
       </h4>
-      <p className="text-sm text-gray-500 dark:text-gray-500 max-w-md mx-auto">
+      <p className="text-sm text-zinc-500 max-w-md mx-auto">
         {activeId?.startsWith('palette-')
           ? 'Drop the field to add it to your content structure.'
-          : 'Drag field types from above to start building your content structure.'}
+          : 'Drag field types from the palette above to add them to your content type.'}
       </p>
     </div>
   )
@@ -151,8 +151,8 @@ export default function FieldsBuilder() {
     >
       <div className="space-y-8">
         {/* Field Types Palette */}
-        <div>
-          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+        <div className="bg-zinc-50 rounded-xl border border-zinc-200 p-5">
+          <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-4">
             Available Field Types
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -166,12 +166,13 @@ export default function FieldsBuilder() {
 
         {/* Fields List */}
         <div>
-          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-            Fields ({fields.length})
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-zinc-900">Fields ({fields.length})</h3>
+            {fields.length > 0 && <span className="text-xs text-zinc-500">Drag to reorder</span>}
+          </div>
 
           <SortableContext items={fields} strategy={verticalListSortingStrategy}>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* Drop before first */}
               {activeId?.startsWith('palette-') && <DropPlaceholder id={`drop-before-0`} />}
 
@@ -195,15 +196,14 @@ export default function FieldsBuilder() {
         createPortal(
           <DragOverlay>
             {activeId && activeItem ? (
-              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl border border-gray-200 dark:border-gray-800 p-4 flex items-center gap-3">
-                <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    {(activeItem as any)?.icon}
-                  </span>
+              <div className="bg-white rounded-xl shadow-xl border border-zinc-200 p-4 flex items-center gap-3 cursor-grabbing ring-2 ring-zinc-900 ring-offset-2">
+                <div className="w-10 h-10 bg-zinc-100 rounded-lg flex items-center justify-center border border-zinc-200">
+                  <span className="text-zinc-600">{(activeItem as any)?.icon}</span>
                 </div>
-                <span className="font-medium text-gray-900 dark:text-gray-100">
-                  {activeItem?.label}
-                </span>
+                <div className="flex flex-col">
+                  <span className="font-semibold text-zinc-900 text-sm">{activeItem?.label}</span>
+                  <span className="text-xs text-zinc-500">Moving...</span>
+                </div>
               </div>
             ) : null}
           </DragOverlay>,

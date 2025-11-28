@@ -1,6 +1,5 @@
 import { ArrowRight, Database, Edit3, Eye, FileText, Layout, Plus } from 'lucide-react'
 import Link from 'next/link'
-import { ThemedButton } from '@/components/ui/ThemedButton'
 
 export interface ContentType {
   id: string
@@ -25,269 +24,170 @@ export interface ViewContentProps {
   allContentEntries: any[]
 }
 
-export function ViewContentComponent({ contentTypes, plans, allContentEntries }: ViewContentProps) {
-  // Cálculos de métricas
-  const _totalContent = allContentEntries?.length || 0
-  const _totalTemplates = plans?.length || 0
-  const _totalContentTypes = contentTypes?.length || 0
-
-  // Plantillas recientes (últimas 3)
-  const _recentTemplates = plans?.slice(0, 3) || []
-
+export function ViewContentComponent({
+  contentTypes,
+  plans: _plans,
+  allContentEntries,
+}: ViewContentProps) {
   return (
-    <div className="min-h-screen theme-bg">
-      <div className="mx-auto max-w-6xl px-6 py-10">
-        {/* Cover */}
-        <div className="relative overflow-hidden rounded-2xl border theme-border theme-card mb-6">
-          <div className="absolute inset-0 theme-bg-secondary" />
-          <div className="relative p-6 sm:p-8 md:p-10 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
-            <div>
-              <p className="text-sm theme-text-muted mb-2">Content</p>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight theme-text">
-                View content
-              </h1>
-              <p className="mt-2 theme-text-secondary max-w-xl">
-                Manage, create and organize all your content from one place.
+    <div className="min-h-screen p-6 space-y-8">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-zinc-900">Content Management</h1>
+          <p className="text-zinc-500 mt-1">Organize and manage your digital assets</p>
+        </div>
+        <div className="flex gap-3">
+          <Link href="/admin/dashboard/content-types/create">
+            <button
+              type="button"
+              className="inline-flex h-10 items-center justify-center rounded-xl bg-zinc-900 px-4 text-sm font-medium text-white transition-transform hover:scale-105 hover:bg-zinc-800 active:scale-95 shadow-lg shadow-zinc-200"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              New Type
+            </button>
+          </Link>
+        </div>
+      </div>
+
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column: Content Types (Bento Grid) */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-zinc-900">Content Models</h2>
+            <Link
+              href="/admin/dashboard/content-types"
+              className="text-sm font-medium text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-1"
+            >
+              View All <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+
+          {contentTypes.length === 0 ? (
+            <div className="rounded-3xl border border-dashed border-zinc-200 p-12 text-center">
+              <div className="mx-auto h-12 w-12 rounded-xl bg-zinc-50 flex items-center justify-center mb-4">
+                <Database className="h-6 w-6 text-zinc-400" />
+              </div>
+              <h3 className="text-lg font-medium text-zinc-900">No content models</h3>
+              <p className="text-zinc-500 text-sm mt-1 mb-6">
+                Create your first content type to start.
               </p>
-            </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2">
-              <ThemedButton asChild className="w-full sm:w-auto justify-center">
-                <Link href="/admin/dashboard/content-types">
-                  <Database className="h-4 w-4 mr-2 theme-text" />
-                  Content types
-                </Link>
-              </ThemedButton>
-              <ThemedButton
-                asChild
-                className="theme-card theme-text border theme-border hover:theme-card-hover w-full sm:w-auto justify-center"
-              >
-                <Link href="/admin/dashboard/content-types/create">
-                  <Plus className="h-4 w-4 mr-2 theme-text" />
-                  New type
-                </Link>
-              </ThemedButton>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Sections */}
-        <div className="space-y-8 mb-12">
-          {/* Content Types */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                Content Types
-              </h2>
-              <ThemedButton variantTone="ghost" size="sm" className="theme-text" asChild>
-                <Link href="/admin/dashboard/content-types">
-                  View all
-                  <ArrowRight className="h-4 w-4 ml-1 theme-text" />
-                </Link>
-              </ThemedButton>
-            </div>
-
-            {contentTypes.length === 0 ? (
-              <div className="text-center py-12 border theme-border rounded-lg">
-                <div className="w-12 h-12 mx-auto theme-bg-secondary rounded-lg flex items-center justify-center mb-4">
-                  <Database className="w-6 h-6 theme-text-secondary" />
-                </div>
-                <h3 className="text-lg font-medium theme-text mb-2">No content types yet</h3>
-                <p className="theme-text-secondary text-sm mb-6">
-                  Create your first content type to start managing content
-                </p>
-                <ThemedButton
-                  asChild
-                  className="theme-card theme-text border theme-border hover:theme-card-hover"
+              <Link href="/admin/dashboard/content-types/create">
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded-lg bg-zinc-100 text-zinc-900 text-sm font-medium hover:bg-zinc-200 transition-colors"
                 >
-                  <Link href="/admin/dashboard/content-types/create">
-                    <Plus className="h-4 w-4 mr-2 theme-text" />
-                    Create Content Type
-                  </Link>
-                </ThemedButton>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {contentTypes.slice(0, 5).map((contentType) => (
-                  <div
-                    key={contentType.id}
-                    className="flex items-center justify-between p-4 rounded-lg border theme-border hover:theme-card-hover transition-colors"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 theme-bg-secondary rounded-lg flex items-center justify-center">
-                        <Database className="h-5 w-5 theme-text-secondary" />
-                      </div>
-                      <div>
-                        <div className="font-medium theme-text">{contentType.name}</div>
-                        <div className="text-sm theme-text-secondary">
-                          {contentType._count.entries} entries
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ThemedButton variantTone="ghost" size="sm" className="theme-text" asChild>
-                        <Link
-                          href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content`}
-                        >
-                          Content
-                        </Link>
-                      </ThemedButton>
-                      <ThemedButton variantTone="ghost" size="sm" asChild>
-                        <Link
-                          href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/edit`}
-                        >
-                          <Edit3 className="h-4 w-4 theme-text" />
-                        </Link>
-                      </ThemedButton>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Recent Articles */}
-          {allContentEntries.length > 0 && (
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                  Recent Content Types
-                </h2>
-                <ThemedButton variantTone="ghost" size="sm" className="theme-text" asChild>
-                  <Link href="/admin/dashboard/content-types">
-                    View all
-                    <ArrowRight className="h-4 w-4 ml-1 theme-text" />
-                  </Link>
-                </ThemedButton>
-              </div>
-
-              <div className="space-y-3">
-                {allContentEntries.slice(0, 5).map((entry) => (
-                  <div
-                    key={entry.id}
-                    className="flex items-center justify-between p-4 rounded-lg border theme-border hover:theme-card-hover transition-colors"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 theme-bg-secondary rounded-lg flex items-center justify-center">
-                        <FileText className="h-5 w-5 theme-text-secondary" />
-                      </div>
-                      <div>
-                        <div className="font-medium theme-text">
-                          {entry.contentType?.name || 'Article'}
-                        </div>
-                        <div className="text-sm theme-text-secondary">
-                          Content Type: {entry.contentType?.name || 'Unknown'} •{' '}
-                          {new Date(entry.createdAt).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric',
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ThemedButton variantTone="ghost" size="sm" asChild>
-                        <Link
-                          href={`/admin/dashboard/content-types/${entry.contentType?.apiIdentifier || ''}/content`}
-                        >
-                          <Eye className="h-4 w-4 theme-text" />
-                        </Link>
-                      </ThemedButton>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  Create Model
+                </button>
+              </Link>
             </div>
-          )}
-        </div>
-
-        {/* Recent Template Articles */}
-        {plans.length > 0 && (
-          <div className="mt-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                Recent Template Articles
-              </h2>
-              <ThemedButton variantTone="ghost" size="sm" className="theme-text" asChild>
-                <Link href="/admin/dashboard/templates/tourism">
-                  View all
-                  <ArrowRight className="h-4 w-4 ml-1 theme-text" />
-                </Link>
-              </ThemedButton>
-            </div>
-
-            <div className="space-y-3">
-              {plans.slice(0, 5).map((template) => (
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {contentTypes.slice(0, 6).map((type) => (
                 <div
-                  key={template.id}
-                  className="flex items-center justify-between p-4 rounded-lg border theme-border hover:theme-card-hover transition-colors"
+                  key={type.id}
+                  className="group relative overflow-hidden rounded-2xl bg-white p-5 border border-zinc-100 shadow-sm hover:shadow-xl hover:shadow-zinc-200/50 hover:-translate-y-1 transition-all duration-300"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 theme-bg-secondary rounded-lg flex items-center justify-center">
-                      <Layout className="h-5 w-5 theme-text-secondary" />
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="h-10 w-10 rounded-xl bg-zinc-50 flex items-center justify-center group-hover:bg-zinc-900 group-hover:text-white transition-colors duration-300">
+                      <Database className="h-5 w-5 text-zinc-400 group-hover:text-white transition-colors" />
                     </div>
-                    <div>
-                      <div className="font-medium theme-text">{template.mainTitle}</div>
-                      <div className="text-sm theme-text-secondary">
-                        Template: Tourism •{' '}
-                        {new Date(template.createdAt).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                        })}
-                      </div>
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-x-2 group-hover:translate-x-0">
+                      <Link
+                        href={`/admin/dashboard/content-types/${type.apiIdentifier}/edit`}
+                        className="p-2 hover:bg-zinc-100 rounded-lg text-zinc-400 hover:text-zinc-900"
+                      >
+                        <Edit3 className="h-4 w-4" />
+                      </Link>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <ThemedButton variantTone="ghost" size="sm" asChild>
-                      <Link href={`/admin/dashboard/templates/tourism/edit/${template.id}`}>
-                        <Eye className="h-4 w-4 theme-text" />
-                      </Link>
-                    </ThemedButton>
-                    <ThemedButton variantTone="ghost" size="sm" asChild>
-                      <Link href={`/admin/dashboard/templates/tourism/edit/${template.id}`}>
-                        <Edit3 className="h-4 w-4 theme-text" />
-                      </Link>
-                    </ThemedButton>
+
+                  <h3 className="text-base font-bold text-zinc-900 mb-1">{type.name}</h3>
+                  <p className="text-xs text-zinc-400 font-mono mb-4">{type.apiIdentifier}</p>
+
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-zinc-50">
+                    <span className="text-xs font-medium text-zinc-500 bg-zinc-50 px-2 py-1 rounded-md">
+                      {type._count.entries} entries
+                    </span>
+                    <Link
+                      href={`/admin/dashboard/content-types/${type.apiIdentifier}/content`}
+                      className="text-xs font-semibold text-zinc-900 flex items-center gap-1 hover:gap-2 transition-all"
+                    >
+                      Manage <ArrowRight className="h-3 w-3" />
+                    </Link>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* Quick Actions */}
-        <div className="border-t border-gray-200 dark:border-gray-700 pt-8">
-          <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-            Quick Actions
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            <ThemedButton
-              className="justify-start h-12 theme-card theme-text border theme-border hover:theme-card-hover w-full"
-              asChild
-            >
-              <Link href="/admin/dashboard/content-types/create">
-                <Plus className="h-4 w-4 mr-3" />
-                Create Content Type
-              </Link>
-            </ThemedButton>
-            <ThemedButton
-              asChild
-              className="justify-start h-12 theme-card theme-text border theme-border hover:theme-card-hover w-full"
-            >
+        {/* Right Column: Recent Activity & Templates */}
+        <div className="space-y-8">
+          {/* Recent Entries */}
+          <div className="rounded-3xl bg-white p-6 border border-zinc-100 shadow-xl shadow-zinc-200/40">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold text-zinc-900">Recent Entries</h2>
+            </div>
+            <div className="space-y-4">
+              {allContentEntries.length > 0 ? (
+                allContentEntries.slice(0, 5).map((entry) => (
+                  <div
+                    key={entry.id}
+                    className="flex items-center gap-4 group cursor-pointer hover:bg-zinc-50 p-2 -mx-2 rounded-xl transition-colors"
+                  >
+                    <div className="h-10 w-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                      <FileText className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-zinc-900 truncate">
+                        {entry.contentType?.name || 'Untitled Entry'}
+                      </p>
+                      <p className="text-xs text-zinc-400">
+                        {new Date(entry.createdAt).toLocaleDateString(undefined, {
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                    <Link
+                      href={`/admin/dashboard/content-types/${entry.contentType?.apiIdentifier}/content`}
+                      className="opacity-0 group-hover:opacity-100 p-2 text-zinc-400 hover:text-zinc-900 transition-all"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Link>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-zinc-400 text-center py-4">No recent entries found.</p>
+              )}
+            </div>
+          </div>
+
+          {/* Templates Widget */}
+          <div className="rounded-3xl bg-zinc-900 p-6 text-white shadow-xl shadow-zinc-900/20 relative overflow-hidden group">
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 rounded-lg bg-white/10 backdrop-blur-md">
+                  <Layout className="h-5 w-5" />
+                </div>
+                <h3 className="font-bold text-lg">Templates</h3>
+              </div>
+              <p className="text-zinc-400 text-sm mb-6">
+                Start with a pre-built structure for your content.
+              </p>
               <Link href="/admin/dashboard/templates">
-                <Layout className="h-4 w-4 mr-3 theme-text" />
-                Create via Template
+                <button
+                  type="button"
+                  className="w-full py-3 rounded-xl bg-white text-zinc-900 font-semibold text-sm hover:bg-zinc-100 transition-colors"
+                >
+                  Browse Templates
+                </button>
               </Link>
-            </ThemedButton>
-            <ThemedButton
-              asChild
-              className="justify-start h-12 theme-card theme-text border theme-border hover:theme-card-hover w-full md:col-span-3 sm:col-span-2"
-            >
-              <Link href="/admin/dashboard/content-types">
-                <Database className="h-4 w-4 mr-3 theme-text" />
-                Create via Content Type
-              </Link>
-            </ThemedButton>
+            </div>
+            {/* Decoration */}
+            <div className="absolute top-1/2 right-0 -translate-y-1/2 -mr-12 h-32 w-32 rounded-full bg-purple-500 blur-3xl opacity-20 group-hover:opacity-40 transition-opacity" />
           </div>
         </div>
       </div>
