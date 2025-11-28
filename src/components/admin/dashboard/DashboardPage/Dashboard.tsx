@@ -1,16 +1,67 @@
 'use client'
 
-import { Image as ImageIcon, Settings, Users } from 'lucide-react'
+import { Image as ImageIcon, Settings, Users, FileText, UserPlus, Calendar } from 'lucide-react'
 import Link from 'next/link'
 import { useCurrentUser } from '@/hooks/use-current-user'
+import { usePlans } from '@/hooks/usePlans'
+import { useUsers } from '@/hooks/use-users'
 import { cn } from '@/lib/utils'
+import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
+import { useMemo } from 'react'
+import { formatDistanceToNow } from 'date-fns'
+import { es } from 'date-fns/locale'
 
 export function Dashboard() {
   const { user } = useCurrentUser()
+  const { plans, isLoading: plansLoading } = usePlans()
+  const { users, loading: usersLoading } = useUsers()
+
   const userName = user?.name || 'Administrator'
   const currentHour = new Date().getHours()
   const greeting =
     currentHour < 12 ? 'Good morning' : currentHour < 18 ? 'Good afternoon' : 'Good evening'
+
+  const isLoading = plansLoading || usersLoading
+
+  const activities = useMemo(() => {
+    const allActivities = [
+      ...plans.map(plan => ({
+        id: `plan-${plan.id}`,
+        text: `New plan "${plan.mainTitle}" created`,
+        date: new Date(plan.createdAt),
+        color: 'bg-emerald-500',
+        icon: FileText
+      })),
+      ...users.map(user => ({
+        id: `user-${user.id}`,
+        text: `New user ${user.name || user.email} registered`,
+        date: new Date(user.createdAt),
+        color: 'bg-purple-500',
+        icon: UserPlus
+      }))
+    ]
+
+    return allActivities
+      .sort((a, b) => b.date.getTime() - a.date.getTime())
+      .slice(0, 10)
+      .map(activity => ({
+        ...activity,
+        time: formatDistanceToNow(activity.date, { addSuffix: true, locale: es })
+      }))
+  }, [plans, users])
+
+  if (isLoading) {
+    return (
+      <div className="relative min-h-screen">
+        <AdminLoading
+          title="Dashboard"
+          message="Preparing dashboard..."
+          variant="content"
+          fullScreen
+        />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen p-6 space-y-8">
@@ -77,25 +128,26 @@ export function Dashboard() {
             </button>
           </div>
           <div className="flex-1 overflow-y-auto space-y-6 pr-2 scrollbar-none">
-            {[
-              { text: 'New page "About Us" created', time: '10 mins ago', color: 'bg-emerald-500' },
-              { text: 'Updated "Homepage" layout', time: '2 hours ago', color: 'bg-blue-500' },
-              { text: 'New user registered', time: '4 hours ago', color: 'bg-purple-500' },
-              { text: 'System backup completed', time: '1 day ago', color: 'bg-zinc-500' },
-              { text: 'Plugin "SEO Pro" updated', time: '2 days ago', color: 'bg-orange-500' },
-            ].map((item) => (
-              <div key={item.text} className="flex gap-3 items-start group">
-                <div
-                  className={cn('h-2 w-2 mt-2 rounded-full shrink-0 ring-2 ring-white', item.color)}
-                />
-                <div>
-                  <p className="text-sm font-medium text-zinc-700 group-hover:text-zinc-900 transition-colors">
-                    {item.text}
-                  </p>
-                  <p className="text-xs text-zinc-400">{item.time}</p>
+            {activities.length > 0 ? (
+              activities.map((item) => (
+                <div key={item.id} className="flex gap-3 items-start group">
+                  <div
+                    className={cn('h-2 w-2 mt-2 rounded-full shrink-0 ring-2 ring-white', item.color)}
+                  />
+                  <div>
+                    <p className="text-sm font-medium text-zinc-700 group-hover:text-zinc-900 transition-colors">
+                      {item.text}
+                    </p>
+                    <p className="text-xs text-zinc-400">{item.time}</p>
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-zinc-400">
+                <Calendar className="h-8 w-8 mb-2 opacity-50" />
+                <p className="text-sm">No recent activity</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
 

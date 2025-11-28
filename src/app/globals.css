@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../../tailwind.config.js";
 
 /* Base clean theme */
 @layer base {
@@ -38,10 +37,12 @@
     width: 8px;
     height: 8px;
   }
+
   ::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, 0.15);
     border-radius: 8px;
   }
+
   ::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.25);
   }
@@ -49,6 +50,7 @@
 
 /* Theme Classes */
 @layer base {
+
   /* Light Theme (Minimal Light) */
   .theme-light {
     --theme-bg-primary: #ffffff;
@@ -204,17 +206,21 @@
 
   /* Admin scope: consistent typography and card mapping */
   .admin-scope {
-    font-size: 15px; /* base size slightly larger */
+    font-size: 15px;
+    /* base size slightly larger */
     line-height: 1.5;
   }
+
   .admin-scope h1 {
     font-size: 28px;
     font-weight: 700;
   }
+
   .admin-scope h2 {
     font-size: 20px;
     font-weight: 600;
   }
+
   .admin-scope h3 {
     font-size: 16px;
     font-weight: 600;
@@ -272,9 +278,11 @@
   [class*="theme-"] .bg-white\/50 {
     background-color: var(--theme-card);
   }
+
   [class*="theme-"] .bg-gray-950 {
     background-color: var(--theme-bg-secondary);
   }
+
   [class*="theme-"] .border-white\/30,
   [class*="theme-"] .border-white\/20 {
     border-color: var(--theme-border);
@@ -290,6 +298,7 @@
   [class*="theme-"].dark .dark\:text-gray-100 {
     color: var(--theme-text-primary);
   }
+
   [class*="theme-"].dark .dark\:text-gray-400,
   [class*="theme-"].dark .dark\:text-gray-500,
   [class*="theme-"].dark .dark\:text-gray-600 {
@@ -305,39 +314,51 @@
   .theme-bg {
     background-color: var(--theme-bg-primary);
   }
+
   .theme-bg-secondary {
     background-color: var(--theme-bg-secondary);
   }
+
   .theme-bg-tertiary {
     background-color: var(--theme-bg-tertiary);
   }
+
   .theme-card {
     background-color: var(--theme-card);
   }
+
   .theme-card-hover {
     background-color: var(--theme-card-hover);
   }
+
   .theme-text {
     color: var(--theme-text-primary);
   }
+
   .theme-text-secondary {
     color: var(--theme-text-secondary);
   }
+
   .theme-text-muted {
     color: var(--theme-text-muted);
   }
+
   .theme-border {
     border-color: var(--theme-border);
   }
+
   .theme-border-light {
     border-color: var(--theme-border-light);
   }
+
   .theme-accent {
     color: var(--theme-accent);
   }
+
   .theme-accent-bg {
     background-color: var(--theme-accent);
   }
+
   .theme-accent-hover {
     background-color: var(--theme-accent-hover);
   }
