@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@config "../../tailwind.config.js";
 
 /* Base clean theme */
 @layer base {
@@ -50,7 +49,6 @@
 
 /* Theme Classes */
 @layer base {
-
   /* Light Theme (Minimal Light) */
   .theme-light {
     --theme-bg-primary: #ffffff;

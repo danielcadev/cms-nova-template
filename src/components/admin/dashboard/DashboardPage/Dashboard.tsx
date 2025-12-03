@@ -1,15 +1,15 @@
 'use client'
 
-import { Image as ImageIcon, Settings, Users, FileText, UserPlus, Calendar } from 'lucide-react'
-import Link from 'next/link'
-import { useCurrentUser } from '@/hooks/use-current-user'
-import { usePlans } from '@/hooks/usePlans'
-import { useUsers } from '@/hooks/use-users'
-import { cn } from '@/lib/utils'
-import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
-import { useMemo } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { Calendar, FileText, Image as ImageIcon, Settings, UserPlus, Users } from 'lucide-react'
+import Link from 'next/link'
+import { useMemo } from 'react'
+import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
+import { useCurrentUser } from '@/hooks/use-current-user'
+import { useUsers } from '@/hooks/use-users'
+import { usePlans } from '@/hooks/usePlans'
+import { cn } from '@/lib/utils'
 
 export function Dashboard() {
   const { user } = useCurrentUser()
@@ -25,28 +25,28 @@ export function Dashboard() {
 
   const activities = useMemo(() => {
     const allActivities = [
-      ...plans.map(plan => ({
+      ...plans.map((plan) => ({
         id: `plan-${plan.id}`,
         text: `New plan "${plan.mainTitle}" created`,
         date: new Date(plan.createdAt),
         color: 'bg-emerald-500',
-        icon: FileText
+        icon: FileText,
       })),
-      ...users.map(user => ({
+      ...users.map((user) => ({
         id: `user-${user.id}`,
         text: `New user ${user.name || user.email} registered`,
         date: new Date(user.createdAt),
         color: 'bg-purple-500',
-        icon: UserPlus
-      }))
+        icon: UserPlus,
+      })),
     ]
 
     return allActivities
       .sort((a, b) => b.date.getTime() - a.date.getTime())
       .slice(0, 10)
-      .map(activity => ({
+      .map((activity) => ({
         ...activity,
-        time: formatDistanceToNow(activity.date, { addSuffix: true, locale: es })
+        time: formatDistanceToNow(activity.date, { addSuffix: true, locale: es }),
       }))
   }, [plans, users])
 
@@ -132,7 +132,10 @@ export function Dashboard() {
               activities.map((item) => (
                 <div key={item.id} className="flex gap-3 items-start group">
                   <div
-                    className={cn('h-2 w-2 mt-2 rounded-full shrink-0 ring-2 ring-white', item.color)}
+                    className={cn(
+                      'h-2 w-2 mt-2 rounded-full shrink-0 ring-2 ring-white',
+                      item.color,
+                    )}
                   />
                   <div>
                     <p className="text-sm font-medium text-zinc-700 group-hover:text-zinc-900 transition-colors">
