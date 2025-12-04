@@ -16,6 +16,7 @@ export function transformPlanToFormData(plan: Plan): PlanFormValues {
     holidayTitle: plan.holidayTitle,
     holidayText: plan.holidayText,
     allowGroundTransport: false,
+    published: plan.published,
     // Transformación de mainImage
     mainImage: plan.mainImage
       ? {
@@ -38,9 +39,7 @@ export function transformPlanToFormData(plan: Plan): PlanFormValues {
             return {
               id: String(opt.id || crypto.randomUUID()),
               numPersons: Number(opt.numPersons || 1),
-              price: opt.price !== undefined ? Number(opt.price) : null,
-              groupPrice: opt.groupPrice !== undefined ? Number(opt.groupPrice) : null,
-              accommodation: String(opt.accommodation || 'doble'),
+              perPersonPrice: opt.price !== undefined ? Number(opt.price) : null,
               currency: String(opt.currency || 'COP'),
             } as PriceOption
           })

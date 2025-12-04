@@ -195,10 +195,11 @@ export function ExperiencesView() {
                             {experience.title}
                           </h3>
                           <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${experience.published
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              experience.published
                                 ? 'bg-zinc-900 text-white'
                                 : 'bg-zinc-100 text-zinc-600'
-                              }`}
+                            }`}
                           >
                             {experience.published ? 'Published' : 'Draft'}
                           </span>

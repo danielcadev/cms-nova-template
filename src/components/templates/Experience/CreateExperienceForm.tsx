@@ -404,8 +404,8 @@ export function CreateExperienceForm({
                     render={({ field }) => {
                       const value = Array.isArray(field.value)
                         ? field.value.filter(
-                          (item) => typeof item === 'string' && item.trim().length > 0,
-                        )
+                            (item) => typeof item === 'string' && item.trim().length > 0,
+                          )
                         : []
 
                       const handleRemove = (index: number) => {
@@ -654,10 +654,11 @@ export function CreateExperienceForm({
                                     }
                                     field.onChange(Array.from(current))
                                   }}
-                                  className={`rounded-lg border px-3 py-2 text-sm transition-all duration-200 ${selected
+                                  className={`rounded-lg border px-3 py-2 text-sm transition-all duration-200 ${
+                                    selected
                                       ? 'border-zinc-900 bg-zinc-900 text-white shadow-md'
                                       : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50'
-                                    }`}
+                                  }`}
                                 >
                                   {DAY_LABELS[day]}
                                 </button>
