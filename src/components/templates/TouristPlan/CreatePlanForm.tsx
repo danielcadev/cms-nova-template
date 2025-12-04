@@ -29,6 +29,10 @@ export function CreatePlanForm() {
       includes: [],
       itinerary: [],
       priceOptions: [],
+      allowGroundTransport: false,
+      published: false,
+      generalPolicies: '',
+      transportOptions: [],
     },
   })
 

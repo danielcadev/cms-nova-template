@@ -16,7 +16,7 @@ export const experienceSchema = z.object({
   title: z.string().min(3, 'Title is required'),
   slug: z.string().optional(),
   location: z.string().optional(),
-  durationType: z.enum(DURATION_TYPES).default('flexible'),
+  durationType: z.enum(DURATION_TYPES),
   hostName: z.string().optional(),
   hostBio: z.string().optional(),
   summary: z.string().min(10, 'Summary is required'),
@@ -27,11 +27,11 @@ export const experienceSchema = z.object({
   scheduleDays: z.array(z.enum(DAY_OPTIONS)).optional(),
   scheduleNote: z.string().optional(),
   price: z.string().optional(),
-  currency: z.string().min(1, 'Currency is required').default('COP'),
+  currency: z.string().min(1, 'Currency is required'),
   inclusions: z.string().optional(),
   exclusions: z.string().optional(),
   gallery: z.array(z.string().url().min(1)).max(4).optional(),
-  featured: z.boolean().default(false),
+  featured: z.boolean(),
 })
 
 export type ExperienceFormValues = z.infer<typeof experienceSchema>

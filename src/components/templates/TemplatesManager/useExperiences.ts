@@ -15,6 +15,7 @@ export interface Experience {
   duration?: string | null
   scheduleDays?: string[] | null
   schedule?: string | null
+  updatedAt?: string | null
 }
 
 export function useExperiences() {

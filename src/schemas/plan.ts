@@ -56,9 +56,7 @@ const SeasonalAccommodationSchema = z.object({
   id: z.string().min(1, 'ID is required'),
   accommodation: z.string().min(1, 'Accommodation is required'),
   price: z.string().min(0).optional().or(z.literal('')),
-  currency: z.enum(['COP', 'USD', 'EUR'], {
-    errorMap: () => ({ message: 'Currency must be COP, USD or EUR' }),
-  }),
+  currency: z.enum(['COP', 'USD', 'EUR']),
 })
 
 const NewPriceOptionSchema = z.union([
@@ -66,11 +64,9 @@ const NewPriceOptionSchema = z.union([
   z.object({
     id: z.string().min(1, 'ID is required'),
     mode: z.literal('simple'),
-    label: z.string().optional().default(''),
+    label: z.string().optional(),
     price: z.string().min(0).optional().or(z.literal('')),
-    currency: z.enum(['COP', 'USD', 'EUR'], {
-      errorMap: () => ({ message: 'Currency must be COP, USD or EUR' }),
-    }),
+    currency: z.enum(['COP', 'USD', 'EUR']),
   }),
   // Advanced price with description
   z.object({
@@ -78,21 +74,17 @@ const NewPriceOptionSchema = z.union([
     mode: z.literal('advanced'),
     label: z.string().min(1, 'Label is required'),
     price: z.string().min(1, 'Price is required'),
-    currency: z.enum(['COP', 'USD', 'EUR'], {
-      errorMap: () => ({ message: 'Currency must be COP, USD or EUR' }),
-    }),
+    currency: z.enum(['COP', 'USD', 'EUR']),
   }),
   // Seasonal prices with accommodations
   z.object({
     id: z.string().min(1, 'ID is required'),
     mode: z.literal('seasonal'),
-    label: z.string().optional().default(''),
+    label: z.string().optional(),
     price: z.string().optional().or(z.literal('')),
     seasonTitle: z.string().min(1, 'Season title is required'),
     seasonAccommodations: z.array(SeasonalAccommodationSchema),
-    currency: z.enum(['COP', 'USD', 'EUR'], {
-      errorMap: () => ({ message: 'Currency must be COP, USD or EUR' }),
-    }),
+    currency: z.enum(['COP', 'USD', 'EUR']),
   }),
   // Legacy support: numPersons + perPersonPrice
   z.object({
@@ -101,13 +93,9 @@ const NewPriceOptionSchema = z.union([
       .number()
       .min(1, 'Number of people must be at least 1')
       .max(100, 'Groups of more than 100 people are not allowed'),
-    currency: z.enum(['COP', 'USD', 'EUR'], {
-      errorMap: () => ({ message: 'Currency must be COP, USD or EUR' }),
-    }),
+    currency: z.enum(['COP', 'USD', 'EUR']),
     perPersonPrice: z
-      .number({
-        invalid_type_error: 'Price must be a valid number',
-      })
+      .number()
       .min(0, 'Price must be greater than or equal to 0')
       .nullable()
       .optional(),
@@ -138,7 +126,7 @@ export const planSchema = z.object({
     .string()
     .min(3, 'Main title must be at least 3 characters')
     .max(200, 'Main title cannot exceed 200 characters'),
-  allowGroundTransport: z.boolean().default(false),
+  allowGroundTransport: z.boolean(),
   // Top-level section for public URL (e.g., "planes", "circuitos"). Not persisted in DB, used at publish-time
   section: z.string().max(50).optional(),
   articleAlias: z.string().max(100, 'Alias cannot exceed 100 characters').optional(),
@@ -191,14 +179,10 @@ export const planSchema = z.object({
   // Políticas y transporte
   generalPolicies: z
     .string()
-    .max(5000, 'Las políticas generales no pueden exceder 5000 caracteres')
-    .optional()
-    .default(''),
+    .max(5000, 'Las políticas generales no pueden exceder 5000 caracteres'),
   transportOptions: z
     .array(TransportOptionSchema)
-    .max(10, 'No se permiten más de 10 opciones de transporte')
-    .optional()
-    .default([]),
+    .max(10, 'No se permiten más de 10 opciones de transporte'),
 
   // Video promocional
   videoUrl: z
@@ -219,7 +203,7 @@ export const planSchema = z.object({
     .optional(),
 
   // Estado de publicación
-  published: z.boolean().default(false),
+  published: z.boolean(),
 })
 
 export type PlanFormValues = z.infer<typeof planSchema>
