@@ -12,6 +12,7 @@ interface PlanDetailPageProps {
     categoria: string
     slug: string
   }
+  searchParams?: { [key: string]: string | string[] | undefined }
 }
 
 async function getPlan(categoria: string, slug: string) {
@@ -63,7 +64,7 @@ async function getPlan(categoria: string, slug: string) {
   }
 }
 
-export default async function PlanDetailPage({ params }: PlanDetailPageProps) {
+export default async function PlanDetailPage({ params, searchParams }: PlanDetailPageProps) {
   // 404 when plugin templates disable it
   const dynCfg = (await getPluginConfigServer('dynamic-nav')) as
     | { templates?: Record<string, boolean> }
@@ -259,14 +260,13 @@ export default async function PlanDetailPage({ params }: PlanDetailPageProps) {
                     Price
                   </h2>
                   {/* Select option by query: ?priceId=ID or ?option=2 (1-indexed). Fallback to first */}
-                  {/* @ts-expect-error searchParams is injected by Next.js App Router */}
+
                   {(() => {
                     // Map currency to symbol
                     const getSymbol = (c?: string) =>
                       c === 'USD' ? 'US$' : c === 'EUR' ? '€' : '$'
                     const options = Array.isArray(plan.priceOptions) ? plan.priceOptions : []
-                    // @ts-expect-error injected prop
-                    const sp = (typeof searchParams !== 'undefined' ? searchParams : {}) as any
+                    const sp = searchParams || {}
                     const byId = sp?.priceId
                       ? options.find((o: any) => o?.id === sp.priceId)
                       : undefined
