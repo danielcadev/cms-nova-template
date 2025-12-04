@@ -1,6 +1,6 @@
 'use client'
 
-import { Edit, ExternalLink, Plus, RefreshCw, Trash, Wand2 } from 'lucide-react'
+import { Edit, ExternalLink, MapPin, Plus, RefreshCw, Trash, Wand2 } from 'lucide-react'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -96,59 +96,78 @@ export function ExperiencesView() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50/50">
-      <div className="mx-auto max-w-7xl px-8 py-10">
+    <div className="min-h-screen bg-white pb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Header */}
-        <div className="flex flex-col gap-8 mb-10">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-zinc-900 tracking-tight">
-                Experiences Library
-              </h1>
-              <p className="mt-2 text-zinc-500 text-lg max-w-3xl">
-                Manage story-driven experiences with local hosts, activities, and regional
-                highlights.
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <Link href="/admin/dashboard/templates">
-                <Button variant="ghost" className="text-zinc-600 hover:text-zinc-900">
-                  Back to templates
-                </Button>
-              </Link>
-              <Link href="/admin/dashboard/templates/experiences/create">
-                <Button className="bg-zinc-900 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-900/20">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Experience
-                </Button>
-              </Link>
-            </div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">Experiences Library</h1>
+            <p className="text-zinc-500 mt-1">
+              Manage story-driven experiences with local hosts.
+            </p>
           </div>
-
-          {/* Search and Filters */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-zinc-200 shadow-sm">
-            <div className="relative flex-1 w-full sm:max-w-md">
-              <Input
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder="Search by title, city, or host..."
-                className="w-full bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900"
-              />
-            </div>
+          <div className="flex flex-wrap items-center gap-3">
             <Button
               variant="outline"
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="border-zinc-200 text-zinc-700 hover:bg-zinc-50"
+              asChild
+              className="rounded-xl border-zinc-200 text-zinc-700 hover:bg-zinc-50 h-auto px-4"
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-              Refresh
+              <Link href="/admin/dashboard/templates">
+                Back to templates
+              </Link>
+            </Button>
+            <Button
+              asChild
+              className="rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-900/20 h-auto px-4"
+            >
+              <Link href="/admin/dashboard/templates/experiences/create">
+                <Plus className="h-4 w-4 mr-2" />
+                Create Experience
+              </Link>
             </Button>
           </div>
         </div>
 
+        {/* Info Card */}
+        <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-6 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+            <Wand2 className="w-32 h-32 text-zinc-900" />
+          </div>
+          <div className="relative z-10">
+            <h3 className="font-semibold text-zinc-900 flex items-center gap-2">
+              <Wand2 className="w-4 h-4 text-zinc-500" />
+              Curated Experiences
+            </h3>
+            <p className="text-sm text-zinc-600 mt-2 max-w-2xl leading-relaxed">
+              Create unique, immersive activities led by locals. These experiences are highlighted
+              separately from standard tourist plans and focus on storytelling and cultural exchange.
+            </p>
+          </div>
+        </div>
+
+        {/* Search and Refresh */}
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="relative flex-1 w-full sm:max-w-md">
+            <Input
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Search experiences..."
+              className="rounded-xl border-zinc-200 bg-white pl-4 h-11 focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all"
+            />
+          </div>
+          <Button
+            variant="outline"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="rounded-xl border-zinc-200 text-zinc-700 hover:bg-zinc-50 h-11"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+        </div>
+
         {/* Content */}
-        <div className="space-y-4">
+        <div>
           {isLoading ? (
             <div className="text-center py-20">
               <div className="animate-spin w-8 h-8 border-2 border-zinc-900 border-t-transparent rounded-full mx-auto mb-4" />
@@ -159,131 +178,101 @@ export function ExperiencesView() {
               {error}
             </div>
           ) : filteredExperiences.length === 0 ? (
-            <div className="bg-white rounded-2xl border border-dashed border-zinc-300 p-12 text-center">
-              <div className="w-16 h-16 bg-zinc-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Wand2 className="h-8 w-8 text-zinc-400" />
+            <div className="text-center py-20 bg-zinc-50 rounded-3xl border border-dashed border-zinc-200">
+              <div className="w-16 h-16 mx-auto bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm border border-zinc-100">
+                <Wand2 className="w-8 h-8 text-zinc-300" />
               </div>
-              <h3 className="text-lg font-semibold text-zinc-900 mb-1">No experiences found</h3>
-              <p className="text-zinc-500 mb-6 max-w-md mx-auto">
+              <h3 className="text-lg font-medium text-zinc-900 mb-2">No experiences found</h3>
+              <p className="text-zinc-500 text-sm mb-6 max-w-sm mx-auto">
                 {searchTerm
-                  ? `No results for "${searchTerm}". Try a different search term.`
+                  ? `No results for "${searchTerm}".`
                   : 'Start by creating your first experience to share with travelers.'}
               </p>
               {!searchTerm && (
-                <Link href="/admin/dashboard/templates/experiences/create">
-                  <Button className="bg-zinc-900 text-white hover:bg-zinc-800">
+                <Button asChild className="rounded-xl bg-zinc-900 text-white hover:bg-zinc-800">
+                  <Link href="/admin/dashboard/templates/experiences/create">
                     <Plus className="h-4 w-4 mr-2" />
-                    Create First Experience
-                  </Button>
-                </Link>
+                    Create Experience
+                  </Link>
+                </Button>
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredExperiences.map((experience) => {
                 const publicPath = `/experiencias/${experience.locationAlias}/${experience.slug}`
 
                 return (
                   <div
                     key={experience.id}
-                    className="group bg-white rounded-xl border border-zinc-200 p-5 hover:border-zinc-300 hover:shadow-md transition-all duration-200"
+                    className="group relative flex flex-col bg-white border border-zinc-200 rounded-2xl p-6 hover:shadow-xl hover:shadow-zinc-900/5 hover:border-zinc-300 transition-all duration-300"
                   >
-                    <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
-                      <div className="flex-1 min-w-0 space-y-3">
-                        <div className="flex items-center gap-3">
-                          <h3 className="text-lg font-bold text-zinc-900 truncate">
-                            {experience.title}
-                          </h3>
-                          <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              experience.published
-                                ? 'bg-zinc-900 text-white'
-                                : 'bg-zinc-100 text-zinc-600'
-                            }`}
-                          >
-                            {experience.published ? 'Published' : 'Draft'}
-                          </span>
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-zinc-500">
-                          <div className="flex items-center gap-1.5">
-                            <span className="font-medium text-zinc-700">Location:</span>
-                            {experience.location ?? 'Pending'}
-                          </div>
-                          {experience.hostName && (
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-medium text-zinc-700">Host:</span>
-                              {experience.hostName}
-                            </div>
-                          )}
-                          <div className="flex items-center gap-1.5">
-                            <span className="font-medium text-zinc-700">Duration:</span>
-                            {experience.duration ||
-                              (experience.durationType
-                                ? DURATION_LABELS[experience.durationType]
-                                : 'Flexible')}
-                          </div>
-                        </div>
-
-                        <div className="text-xs text-zinc-400">
-                          Updated{' '}
-                          {new Date(
-                            experience.updatedAt || experience.createdAt,
-                          ).toLocaleDateString()}
-                        </div>
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="w-12 h-12 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-900 group-hover:scale-110 group-hover:bg-zinc-100 transition-all duration-300">
+                        <Wand2 className="w-6 h-6" />
                       </div>
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          checked={experience.published}
+                          onCheckedChange={(next) =>
+                            handleTogglePublished(experience.id, next, experience.title)
+                          }
+                          className="scale-75 data-[state=checked]:bg-zinc-900"
+                        />
+                      </div>
+                    </div>
 
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 lg:self-center">
-                        <div className="flex items-center gap-2 bg-zinc-50 rounded-lg p-1 border border-zinc-100">
-                          <Switch
-                            checked={experience.published}
-                            onCheckedChange={(next) =>
-                              handleTogglePublished(experience.id, next, experience.title)
-                            }
-                            className="scale-75 data-[state=checked]:bg-zinc-900"
-                          />
-                          <span className="text-xs font-medium text-zinc-600 pr-2">
-                            {experience.published ? 'Visible' : 'Hidden'}
-                          </span>
+                    <div className="mb-4 flex-1">
+                      <h3 className="text-lg font-bold text-zinc-900 mb-1 group-hover:text-zinc-700 transition-colors line-clamp-1">
+                        {experience.title}
+                      </h3>
+                      <div className="flex flex-col gap-1 text-sm text-zinc-500">
+                        <div className="flex items-center gap-1.5">
+                          <MapPin className="w-3 h-3" />
+                          {experience.location ?? 'Pending'}
                         </div>
+                        {experience.hostName && (
+                          <div className="text-xs text-zinc-400">
+                            Host: {experience.hostName}
+                          </div>
+                        )}
+                      </div>
+                    </div>
 
-                        <div className="h-8 w-px bg-zinc-200 hidden sm:block" />
-
-                        <div className="flex items-center gap-2 w-full sm:w-auto">
-                          <Link
-                            href={`/admin/dashboard/templates/experiences/edit/${experience.id}`}
-                            className="flex-1 sm:flex-none"
-                          >
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="w-full border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900"
-                            >
-                              <Edit className="h-4 w-4 mr-2" />
-                              Edit
-                            </Button>
+                    <div className="mt-auto pt-4 border-t border-zinc-100 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 w-full">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          asChild
+                          className="flex-1 h-8 rounded-lg text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100"
+                        >
+                          <Link href={publicPath} target="_blank">
+                            <ExternalLink className="h-3 w-3 mr-2" />
+                            View
                           </Link>
+                        </Button>
 
-                          <Link href={publicPath} target="_blank" className="flex-1 sm:flex-none">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="w-full text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100"
-                            >
-                              <ExternalLink className="h-4 w-4 mr-2" />
-                              View
-                            </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          asChild
+                          className="flex-1 h-8 rounded-lg text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100"
+                        >
+                          <Link href={`/admin/dashboard/templates/experiences/edit/${experience.id}`}>
+                            <Edit className="h-3 w-3 mr-2" />
+                            Edit
                           </Link>
+                        </Button>
 
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDelete(experience.id, experience.title)}
-                            className="text-zinc-400 hover:text-red-600 hover:bg-red-50"
-                          >
-                            <Trash className="h-4 w-4" />
-                          </Button>
-                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(experience.id, experience.title)}
+                          className="h-8 w-8 rounded-lg text-zinc-400 hover:text-red-600 hover:bg-red-50"
+                        >
+                          <Trash className="h-3 w-3" />
+                        </Button>
                       </div>
                     </div>
                   </div>
