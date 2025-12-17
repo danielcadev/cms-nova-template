@@ -2,12 +2,12 @@
 // This can be extended in your project's schema.prisma
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "./generated"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // --------- USUARIOS Y AUTENTICACIÓN ---------

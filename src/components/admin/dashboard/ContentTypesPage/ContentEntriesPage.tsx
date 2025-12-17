@@ -1,104 +1,23 @@
 'use client'
 
 import { ArrowLeft, Edit, Eye, Plus, Search, Trash2 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { useToast } from '@/hooks/use-toast'
-
-interface ContentEntry {
-  id: string
-  title: string
-  slug: string
-  status: 'draft' | 'published'
-  createdAt: string
-  updatedAt: string
-  author: {
-    name: string
-    email: string
-  }
-}
-
-interface ContentEntriesPageProps {
-  contentTypeSlug: string
-}
+import type { ContentEntriesPageProps } from './data'
+import { useContentEntries } from './hooks/useContentEntries'
 
 export function ContentEntriesPage({ contentTypeSlug }: ContentEntriesPageProps) {
-  const [entries, setEntries] = useState<ContentEntry[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const router = useRouter()
-  const { toast } = useToast()
-
-  const loadEntries = useCallback(async () => {
-    try {
-      setLoading(true)
-      const response = await fetch(`/api/content-types/${contentTypeSlug}/entries`)
-      if (response.ok) {
-        const data = await response.json()
-        setEntries(data)
-      } else {
-        toast({
-          title: 'Error',
-          description: 'Failed to load content entries',
-          variant: 'destructive',
-        })
-      }
-    } catch (error) {
-      console.error('Error loading entries:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to load content entries',
-        variant: 'destructive',
-      })
-    } finally {
-      setLoading(false)
-    }
-  }, [contentTypeSlug, toast])
-
-  useEffect(() => {
-    loadEntries()
-  }, [loadEntries])
-
-  const handleDeleteEntry = async (entryId: string) => {
-    if (!confirm('Are you sure you want to delete this entry?')) return
-
-    try {
-      const response = await fetch(`/api/content-types/${contentTypeSlug}/entries/${entryId}`, {
-        method: 'DELETE',
-      })
-
-      if (response.ok) {
-        toast({
-          title: 'Success',
-          description: 'Entry deleted successfully',
-        })
-        loadEntries()
-      } else {
-        toast({
-          title: 'Error',
-          description: 'Failed to delete entry',
-          variant: 'destructive',
-        })
-      }
-    } catch (error) {
-      console.error('Error deleting entry:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to delete entry',
-        variant: 'destructive',
-      })
-    }
-  }
-
-  const filteredEntries = entries.filter(
-    (entry) =>
-      entry.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      entry.slug.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  const {
+    entries,
+    loading,
+    searchTerm,
+    setSearchTerm,
+    handleDeleteEntry,
+    filteredEntries,
+    router,
+  } = useContentEntries(contentTypeSlug)
 
   if (loading) {
     return (
@@ -202,6 +121,7 @@ export function ContentEntriesPage({ contentTypeSlug }: ContentEntriesPageProps)
             <div className="text-2xl font-bold text-blue-600">
               {
                 entries.filter((e) => {
+                  if (!e.createdAt) return false
                   const entryDate = new Date(e.createdAt)
                   const now = new Date()
                   return (
@@ -239,8 +159,10 @@ export function ContentEntriesPage({ contentTypeSlug }: ContentEntriesPageProps)
                   </div>
                   <div className="flex items-center gap-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
                     <span>Slug: {entry.slug}</span>
-                    <span>By: {entry.author.name}</span>
-                    <span>Updated: {new Date(entry.updatedAt).toLocaleDateString()}</span>
+                    {entry.author && <span>By: {entry.author.name}</span>}
+                    {entry.updatedAt && (
+                      <span>Updated: {new Date(entry.updatedAt).toLocaleDateString()}</span>
+                    )}
                   </div>
                 </div>
 

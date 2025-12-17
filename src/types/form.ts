@@ -138,9 +138,7 @@ export interface StepLayoutProps extends StepProps {
   PreviewComponent?: ReactNode
   mode?: FormMode // Agregar modo aquí
 }
-export interface PlanManagerProps {
-  onPlanUpdate?: (plan: Plan) => void
-}
+
 
 // Interfaces para API y búsqueda
 export interface GetPlansOptions {

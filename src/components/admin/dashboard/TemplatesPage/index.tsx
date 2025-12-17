@@ -4,206 +4,27 @@ import {
   Clock,
   FileText,
   LayoutTemplate,
-  MapPin,
   Plus,
-  PlusCircle,
   RefreshCw,
   Search,
-  UtensilsCrossed,
 } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { AdminLoading } from '../AdminLoading'
 import { TemplateCard } from './TemplateCard'
-
-export interface Template {
-  id: string
-  name: string
-  description: string
-  status: 'active' | 'draft' | 'coming-soon'
-  icon: any
-  category: string
-  contentCount?: number
-  route?: string
-}
-
-interface RecentContent {
-  id: string
-  title: string
-  type: string
-  status: 'published' | 'draft'
-  createdAt: string
-  author: string
-  route: string
-}
+import { useTemplatesPage } from './useTemplatesPage'
 
 export function TemplatesPage() {
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [recentContent, setRecentContent] = useState<RecentContent[]>([])
-  const [isRefreshing, setIsRefreshing] = useState(false)
-
-  // State for real content counts
-  const [contentCounts, setContentCounts] = useState({
-    touristPlans: 0,
-    experiences: 0,
-    contentTypes: 0,
-  })
-
-  // Fetch real data from database
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true)
-
-        // Fetch tourist plans from API
-        const plansResponse = await fetch('/api/plans')
-        const experiencesResponse = await fetch('/api/experiences')
-
-        let recentItems: RecentContent[] = []
-
-        if (plansResponse.ok) {
-          const plansData = await plansResponse.json()
-          const plans = plansData.plans || []
-
-          setContentCounts((prev) => ({
-            ...prev,
-            touristPlans: plans.length,
-          }))
-
-          const recentPlans: RecentContent[] = plans
-            .sort(
-              (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-            )
-            .slice(0, 6)
-            .map((plan: any) => ({
-              id: plan.id,
-              title: plan.mainTitle || 'Untitled Plan',
-              type: 'Tourism Plan',
-              status: plan.published ? 'published' : 'draft',
-              createdAt: plan.createdAt,
-              author: 'Admin',
-              route: `/admin/dashboard/templates/tourism/edit/${plan.id}`,
-            }))
-
-          recentItems = recentItems.concat(recentPlans)
-        }
-
-        if (experiencesResponse.ok) {
-          const experiencesData = await experiencesResponse.json()
-          const experiences = experiencesData.experiences || []
-
-          setContentCounts((prev) => ({
-            ...prev,
-            experiences: experiences.length,
-          }))
-
-          const recentExperiences: RecentContent[] = experiences
-            .sort(
-              (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-            )
-            .slice(0, 6)
-            .map((experience: any) => ({
-              id: experience.id,
-              title: experience.title || 'Untitled Experience',
-              type: 'Experience',
-              status: experience.published ? 'published' : 'draft',
-              createdAt: experience.createdAt,
-              author: experience.hostName || 'Admin',
-              route: `/experiencias/${experience.locationAlias}/${experience.slug}`,
-            }))
-
-          recentItems = recentItems.concat(recentExperiences)
-        }
-
-        if (recentItems.length) {
-          recentItems.sort(
-            (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-          )
-          setRecentContent(recentItems.slice(0, 6))
-        }
-
-        // Fetch content types count
-        try {
-          const contentTypesResponse = await fetch('/api/content-types')
-          if (contentTypesResponse.ok) {
-            const contentTypesData = await contentTypesResponse.json()
-            const contentTypes = contentTypesData.contentTypes || []
-
-            setContentCounts((prev) => ({
-              ...prev,
-              contentTypes: contentTypes.length,
-            }))
-          }
-        } catch (error) {
-          console.error('Error fetching content types:', error)
-        }
-      } catch (error) {
-        console.error('Error loading data:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadData()
-  }, [])
-
-  const templates: Template[] = [
-    {
-      id: '1',
-      name: 'Tourism Plans',
-      description: 'Complete structure for creating detailed travel itineraries and packages.',
-      status: 'active',
-      icon: FileText,
-      category: 'Tourism',
-      contentCount: contentCounts.touristPlans,
-      route: '/admin/dashboard/templates/tourism',
-    },
-    {
-      id: '2',
-      name: 'Experiences',
-      description: 'Story-driven journeys to highlight unique Colombian hosts and stories.',
-      status: 'active',
-      icon: MapPin,
-      category: 'Tourism',
-      contentCount: contentCounts.experiences,
-      route: '/admin/dashboard/templates/experiences',
-    },
-    {
-      id: '4',
-      name: 'Flexible Content',
-      description: 'Create completely customized content types for any data structure.',
-      status: 'active',
-      icon: PlusCircle,
-      category: 'General',
-      contentCount: contentCounts.contentTypes,
-      route: '/admin/dashboard/content-types',
-    },
-    {
-      id: '3',
-      name: 'Restaurants',
-      description: 'Template for menus, reservations and restaurant management.',
-      status: 'coming-soon',
-      icon: UtensilsCrossed,
-      category: 'Food & Beverage',
-      contentCount: 0,
-    },
-  ]
-
-  // Filter templates
-  const filteredTemplates = templates.filter(
-    (template) =>
-      template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      template.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      template.description.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
-
-  const handleRefresh = async () => {
-    setIsRefreshing(true)
-    window.location.reload()
-  }
+  const {
+    loading,
+    searchTerm,
+    setSearchTerm,
+    recentContent,
+    isRefreshing,
+    filteredTemplates,
+    handleRefresh,
+  } = useTemplatesPage()
 
   if (loading) {
     return (
@@ -261,7 +82,7 @@ export function TemplatesPage() {
                 key={template.id}
                 template={template}
                 index={idx}
-                onViewDetails={() => {}} // Placeholder for now
+                onViewDetails={() => { }} // Placeholder for now
               />
             ))}
           </div>

@@ -1,8 +1,6 @@
 'use client'
 
 import { ArrowLeft, Save, Trash2 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useId, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -14,260 +12,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { useToast } from '@/hooks/use-toast'
-
-interface ContentEntry {
-  id: string
-  title: string
-  slug: string
-  status: 'draft' | 'published'
-  data: Record<string, any>
-  contentType: {
-    id: string
-    name: string
-    slug: string
-    fields: Array<{
-      id: string
-      name: string
-      type: string
-      required: boolean
-      options?: string[]
-    }>
-  }
-}
-
-interface EditContentEntryProps {
-  contentTypeSlug: string
-  entryId: string
-}
+import { EntryForm } from './components/EntryForm'
+import type { EditContentEntryProps } from './data'
+import { useEditContentEntry } from './hooks/useEditContentEntry'
 
 export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryProps) {
-  const [entry, setEntry] = useState<ContentEntry | null>(null)
-  const [formData, setFormData] = useState<Record<string, any>>({})
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [deleting, setDeleting] = useState(false)
-  const router = useRouter()
-  const { toast } = useToast()
-
-  const loadEntry = useCallback(async () => {
-    try {
-      setLoading(true)
-      const response = await fetch(`/api/content-types/${contentTypeSlug}/entries/${entryId}`)
-      if (response.ok) {
-        const data = await response.json()
-        setEntry(data)
-
-        // Initialize form data
-        setFormData({
-          title: data.title,
-          slug: data.slug,
-          status: data.status,
-          ...data.data,
-        })
-      } else {
-        toast({
-          title: 'Error',
-          description: 'Content entry not found',
-          variant: 'destructive',
-        })
-        router.push(`/admin/dashboard/content-types/${contentTypeSlug}/content`)
-      }
-    } catch (error) {
-      console.error('Error loading entry:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to load content entry',
-        variant: 'destructive',
-      })
-    } finally {
-      setLoading(false)
-    }
-  }, [contentTypeSlug, entryId, router, toast])
-
-  useEffect(() => {
-    loadEntry()
-  }, [loadEntry])
-
-  const handleInputChange = (name: string, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!entry) return
-
-    // Validate required fields
-    const errors: string[] = []
-
-    if (!formData.title?.trim()) {
-      errors.push('Title is required')
-    }
-
-    if (!formData.slug?.trim()) {
-      errors.push('Slug is required')
-    }
-
-    entry.contentType.fields.forEach((field) => {
-      if (field.required && !formData[field.name]) {
-        errors.push(`${field.name} is required`)
-      }
-    })
-
-    if (errors.length > 0) {
-      toast({
-        title: 'Validation Error',
-        description: errors.join(', '),
-        variant: 'destructive',
-      })
-      return
-    }
-
-    try {
-      setSaving(true)
-      const response = await fetch(`/api/content-types/${contentTypeSlug}/entries/${entryId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-
-      if (response.ok) {
-        toast({
-          title: 'Success',
-          description: 'Content entry updated successfully',
-        })
-        loadEntry() // Reload to get updated data
-      } else {
-        const error = await response.json()
-        toast({
-          title: 'Error',
-          description: error.message || 'Failed to update content entry',
-          variant: 'destructive',
-        })
-      }
-    } catch (error) {
-      console.error('Error updating entry:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to update content entry',
-        variant: 'destructive',
-      })
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this entry? This action cannot be undone.')) {
-      return
-    }
-
-    try {
-      setDeleting(true)
-      const response = await fetch(`/api/content-types/${contentTypeSlug}/entries/${entryId}`, {
-        method: 'DELETE',
-      })
-
-      if (response.ok) {
-        toast({
-          title: 'Success',
-          description: 'Content entry deleted successfully',
-        })
-        router.push(`/admin/dashboard/content-types/${contentTypeSlug}/content`)
-      } else {
-        toast({
-          title: 'Error',
-          description: 'Failed to delete content entry',
-          variant: 'destructive',
-        })
-      }
-    } catch (error) {
-      console.error('Error deleting entry:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to delete content entry',
-        variant: 'destructive',
-      })
-    } finally {
-      setDeleting(false)
-    }
-  }
-
-  const titleInputId = useId()
-  const slugInputId = useId()
-
-  const renderField = (field: any) => {
-    const value = formData[field.name] || ''
-
-    switch (field.type) {
-      case 'text':
-        return (
-          <Input
-            value={value}
-            onChange={(e) => handleInputChange(field.name, e.target.value)}
-            placeholder={`Enter ${field.name}`}
-          />
-        )
-
-      case 'textarea':
-        return (
-          <Textarea
-            value={value}
-            onChange={(e) => handleInputChange(field.name, e.target.value)}
-            placeholder={`Enter ${field.name}`}
-            rows={4}
-          />
-        )
-
-      case 'select':
-        return (
-          <Select value={value} onValueChange={(val) => handleInputChange(field.name, val)}>
-            <SelectTrigger>
-              <SelectValue placeholder={`Select ${field.name}`} />
-            </SelectTrigger>
-            <SelectContent>
-              {field.options?.map((option) => (
-                <SelectItem key={option} value={option}>
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )
-
-      case 'boolean':
-        return (
-          <Select
-            value={value ? 'true' : 'false'}
-            onValueChange={(val) => handleInputChange(field.name, val === 'true')}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="true">Yes</SelectItem>
-              <SelectItem value="false">No</SelectItem>
-            </SelectContent>
-          </Select>
-        )
-
-      default:
-        return (
-          <Input
-            value={value}
-            onChange={(e) => handleInputChange(field.name, e.target.value)}
-            placeholder={`Enter ${field.name}`}
-          />
-        )
-    }
-  }
+  const {
+    entry,
+    formData,
+    loading,
+    saving,
+    deleting,
+    titleInputId,
+    slugInputId,
+    handleInputChange,
+    handleSubmit,
+    handleDelete,
+    router,
+  } = useEditContentEntry(contentTypeSlug, entryId)
 
   if (loading) {
     return (
@@ -371,7 +133,7 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
         </Card>
 
         {/* Dynamic Fields */}
-        {entry.contentType.fields.length > 0 && (
+        {entry.contentType && entry.contentType.fields.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle>Content Fields</CardTitle>
@@ -383,7 +145,11 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
                   <Label htmlFor={field.name}>
                     {field.name} {field.required && '*'}
                   </Label>
-                  {renderField(field)}
+                  <EntryForm
+                    field={field}
+                    value={formData[field.name]}
+                    onChange={handleInputChange}
+                  />
                 </div>
               ))}
             </CardContent>

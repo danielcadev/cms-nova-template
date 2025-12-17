@@ -17,7 +17,7 @@ export class ApiError extends Error {
         {
           success: false,
           error: 'Validation error',
-          details: error.errors,
+          details: (error as any).errors,
         },
         {
           status: 400,

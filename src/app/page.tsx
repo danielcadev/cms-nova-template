@@ -1,11 +1,10 @@
 import Link from 'next/link'
 import { PublicNavbar } from '@/components/layout/PublicNavbar'
-import { defaultConfig } from '@/lib/config'
+import { defaultConfig } from '@/config/default-config'
 
 export default function HomePage() {
-  const { features } = defaultConfig
-  const showPlans = !!features.plans
-  const showCircuitos = !!features.circuitos
+  const showPlans = !!defaultConfig.features?.plans
+  const showCircuitos = !!defaultConfig.features?.circuitos
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">

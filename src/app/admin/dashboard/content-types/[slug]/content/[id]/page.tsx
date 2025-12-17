@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { EditContentEntryPage } from '@/components/admin/content/EditContentEntryPage'
+import { EditContentEntryPage } from '@/components/admin/content-types/EditContentEntryPage'
 import { prisma } from '@/lib/prisma'
 
 async function getContentEntry(slug: string, entryId: string) {

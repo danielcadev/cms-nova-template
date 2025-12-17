@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { PublicNavbar } from '@/components/layout/PublicNavbar'
-import { defaultConfig } from '@/lib/config'
+import { defaultConfig } from '@/config/default-config'
 import { prisma } from '@/lib/prisma'
 
 export const revalidate = 60

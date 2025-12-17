@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import ContentTypeForm from '@/components/admin/content-types/ContentTypesManager/ContentTypeForm'
+import ContentTypeForm from '@/components/admin/content-types/ContentTypesManager/components/ContentTypeForm'
 import { CreateContentTypeHeader } from '@/components/admin/dashboard/CreateContentTypePage/CreateContentTypeHeader'
 import { prisma } from '@/lib/prisma'
 

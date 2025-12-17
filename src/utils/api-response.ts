@@ -121,7 +121,7 @@ export function createForbiddenResponse(message: string = 'Forbidden'): NextResp
 export function handleApiError(error: unknown): NextResponse {
   // Error de validación de Zod
   if (error instanceof ZodError) {
-    const validationErrors = error.errors.map((err) => ({
+    const validationErrors = (error as any).errors.map((err: any) => ({
       field: err.path.join('.'),
       message: err.message,
       code: err.code,

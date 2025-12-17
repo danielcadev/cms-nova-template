@@ -7,7 +7,7 @@ import { type MouseEvent, useMemo } from 'react'
 import { ConfirmationModal } from '@/components/ui/ConfirmationModal'
 import { toast } from '@/hooks/use-toast'
 import { useConfirmation } from '@/hooks/useConfirmation'
-import type { MediaItem } from './useMediaLibrary'
+import type { MediaItem } from './types'
 import { useMediaLibrary } from './useMediaLibrary'
 
 interface MediaListProps {
@@ -110,11 +110,10 @@ export function MediaList({
                 key={item.key}
                 onClick={() => handleSelect(item)}
                 onDoubleClick={() => onConfirmSelect?.(item)}
-                className={`cursor-pointer transition ${
-                  isSelected
+                className={`cursor-pointer transition ${isSelected
                     ? 'bg-blue-50/80 shadow-inner dark:bg-blue-500/10'
                     : 'hover:bg-theme-bg-secondary/60'
-                }`}
+                  }`}
               >
                 <td className="px-5 py-3">
                   <div className="flex items-center gap-3">

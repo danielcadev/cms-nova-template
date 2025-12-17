@@ -1,8 +1,6 @@
 'use client'
 
 import { Save } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useId, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -14,237 +12,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { useToast } from '@/hooks/use-toast'
-
-interface ContentType {
-  id: string
-  name: string
-  slug: string
-  fields: Array<{
-    id: string
-    name: string
-    type: string
-    required: boolean
-    options?: string[]
-  }>
-}
-
-interface CreateContentEntryProps {
-  contentTypeSlug: string
-}
+import { EntryForm } from './components/EntryForm'
+import type { CreateContentEntryProps } from './data'
+import { useCreateContentEntry } from './hooks/useCreateContentEntry'
 
 export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps) {
-  const [contentType, setContentType] = useState<ContentType | null>(null)
-  const [formData, setFormData] = useState<Record<string, any>>({
-    title: '',
-    slug: '',
-    status: 'draft',
-  })
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const router = useRouter()
-  const { toast } = useToast()
-
-  // Unique IDs for inputs
-  const titleInputId = useId()
-  const slugInputId = useId()
-
-  const loadContentType = useCallback(async () => {
-    try {
-      setLoading(true)
-      const response = await fetch(`/api/content-types/${contentTypeSlug}`)
-      if (response.ok) {
-        const data = await response.json()
-        setContentType(data)
-
-        // Initialize form data with default values
-        const initialData: Record<string, any> = {
-          title: '',
-          slug: '',
-          status: 'draft',
-        }
-
-        data.fields.forEach((field: any) => {
-          initialData[field.name] = field.type === 'boolean' ? false : ''
-        })
-
-        setFormData(initialData)
-      } else {
-        toast({
-          title: 'Error',
-          description: 'Content type not found',
-          variant: 'destructive',
-        })
-        router.push('/admin/dashboard/content-types')
-      }
-    } catch (error) {
-      console.error('Error loading content type:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to load content type',
-        variant: 'destructive',
-      })
-    } finally {
-      setLoading(false)
-    }
-  }, [contentTypeSlug, router, toast])
-
-  useEffect(() => {
-    loadContentType()
-  }, [loadContentType])
-
-  const handleInputChange = useCallback((name: string, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-
-    // Auto-generate slug from title
-    if (name === 'title' && typeof value === 'string') {
-      const slug = value
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '')
-      setFormData((prev) => ({
-        ...prev,
-        slug,
-      }))
-    }
-  }, [])
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!contentType) return
-
-    // Validate required fields
-    const errors: string[] = []
-
-    if (!formData.title.trim()) {
-      errors.push('Title is required')
-    }
-
-    if (!formData.slug.trim()) {
-      errors.push('Slug is required')
-    }
-
-    contentType.fields.forEach((field) => {
-      if (field.required && !formData[field.name]) {
-        errors.push(`${field.name} is required`)
-      }
-    })
-
-    if (errors.length > 0) {
-      toast({
-        title: 'Validation Error',
-        description: errors.join(', '),
-        variant: 'destructive',
-      })
-      return
-    }
-
-    try {
-      setSaving(true)
-      const response = await fetch(`/api/content-types/${contentTypeSlug}/entries`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-
-      if (response.ok) {
-        toast({
-          title: 'Success',
-          description: 'Content entry created successfully',
-        })
-        router.push(`/admin/dashboard/content-types/${contentTypeSlug}/content`)
-      } else {
-        const error = await response.json()
-        toast({
-          title: 'Error',
-          description: error.message || 'Failed to create content entry',
-          variant: 'destructive',
-        })
-      }
-    } catch (error) {
-      console.error('Error creating entry:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to create content entry',
-        variant: 'destructive',
-      })
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  const renderField = (field: any) => {
-    const value = formData[field.name] || ''
-
-    switch (field.type) {
-      case 'text':
-        return (
-          <Input
-            value={value}
-            onChange={(e) => handleInputChange(field.name, e.target.value)}
-            placeholder={`Enter ${field.name}`}
-          />
-        )
-
-      case 'textarea':
-        return (
-          <Textarea
-            value={value}
-            onChange={(e) => handleInputChange(field.name, e.target.value)}
-            placeholder={`Enter ${field.name}`}
-            rows={4}
-          />
-        )
-
-      case 'select':
-        return (
-          <Select value={value} onValueChange={(val) => handleInputChange(field.name, val)}>
-            <SelectTrigger>
-              <SelectValue placeholder={`Select ${field.name}`} />
-            </SelectTrigger>
-            <SelectContent>
-              {field.options?.map((option) => (
-                <SelectItem key={option} value={option}>
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )
-
-      case 'boolean':
-        return (
-          <Select
-            value={value ? 'true' : 'false'}
-            onValueChange={(val) => handleInputChange(field.name, val === 'true')}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="true">Yes</SelectItem>
-              <SelectItem value="false">No</SelectItem>
-            </SelectContent>
-          </Select>
-        )
-
-      default:
-        return (
-          <Input
-            value={value}
-            onChange={(e) => handleInputChange(field.name, e.target.value)}
-            placeholder={`Enter ${field.name}`}
-          />
-        )
-    }
-  }
+  const {
+    contentType,
+    formData,
+    loading,
+    saving,
+    titleInputId,
+    slugInputId,
+    handleInputChange,
+    handleSubmit,
+    router,
+  } = useCreateContentEntry(contentTypeSlug)
 
   if (loading) {
     return (
@@ -330,7 +113,11 @@ export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps)
                   <Label htmlFor={field.name}>
                     {field.name} {field.required && '*'}
                   </Label>
-                  {renderField(field)}
+                  <EntryForm
+                    field={field}
+                    value={formData[field.name]}
+                    onChange={handleInputChange}
+                  />
                 </div>
               ))}
             </CardContent>

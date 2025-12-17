@@ -1,4 +1,4 @@
-import ContentTypeForm from '@/components/admin/content-types/ContentTypesManager/ContentTypeForm'
+import ContentTypeForm from '@/components/admin/content-types/ContentTypesManager/components/ContentTypeForm'
 
 interface CreateContentTypeFormProps {
   initialData?: any

@@ -2,7 +2,7 @@
 
 import { AdminLayout } from '../../AdminLayout'
 import { ContentTypesPageContent } from './ContentTypesPageContent'
-import { useContentTypes } from './useContentTypes'
+import { useContentTypes } from './hooks/useContentTypes'
 
 export default function ContentTypesManager() {
   const {

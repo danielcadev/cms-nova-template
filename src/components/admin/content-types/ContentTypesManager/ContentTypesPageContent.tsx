@@ -24,6 +24,7 @@ interface ContentTypesPageContentProps {
   searchTerm: string
   onSearchChange: (term: string) => void
   filteredContentTypes: ContentType[]
+  onRefresh?: () => void
 }
 
 export function ContentTypesPageContent({

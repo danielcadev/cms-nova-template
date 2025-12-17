@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { PublicNavbar } from '@/components/layout/PublicNavbar'
-import { defaultConfig } from '@/lib/config'
+import { defaultConfig } from '@/config/default-config'
 import { prisma } from '@/lib/prisma'
 
 export const revalidate = 60
@@ -245,11 +245,10 @@ export default async function PublicEntryPage({ params }: PageProps) {
                         {label}:
                       </span>
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                          v
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${v
                             ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
                             : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
-                        }`}
+                          }`}
                       >
                         {v ? 'Yes' : 'No'}
                       </span>
@@ -276,10 +275,10 @@ export default async function PublicEntryPage({ params }: PageProps) {
                   const formatted = Number.isNaN(d.getTime())
                     ? String(value)
                     : d.toLocaleDateString(undefined, {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      })
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })
                   return (
                     <div key={key}>
                       <span className="text-sm font-medium text-gray-600 dark:text-gray-300">

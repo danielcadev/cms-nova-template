@@ -15,7 +15,7 @@ import {
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { cn } from '@/lib/utils'
-import type { SortOption } from './useMediaLibrary'
+import type { SortOption } from './types'
 import { useMediaLibrary } from './useMediaLibrary'
 
 interface MediaToolbarProps {

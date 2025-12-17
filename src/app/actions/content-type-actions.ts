@@ -8,7 +8,7 @@ const fieldSchema = z.object({
   label: z.string().min(3, 'Label is required.'),
   apiIdentifier: z.string(),
   type: z.enum(['TEXT', 'RICH_TEXT', 'NUMBER', 'BOOLEAN', 'DATE', 'MEDIA']),
-  isRequired: z.boolean(),
+  isRequired: z.boolean().optional().default(false),
 })
 
 const contentTypeSchema = z.object({
@@ -18,7 +18,7 @@ const contentTypeSchema = z.object({
   fields: z.array(fieldSchema).min(1, 'You must add at least one field.'),
 })
 
-type ContentTypeFormValues = z.infer<typeof contentTypeSchema>
+type ContentTypeFormValues = z.input<typeof contentTypeSchema>
 
 export async function createContentTypeAction(data: ContentTypeFormValues) {
   const validatedFields = contentTypeSchema.safeParse(data)

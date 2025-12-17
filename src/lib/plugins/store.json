@@ -2,7 +2,9 @@
   "configs": {
     "dynamic-nav": {
       "mode": "include",
-      "include": ["blog"],
+      "include": [
+        "blog"
+      ],
       "exclude": [],
       "titleCase": false,
       "templates": {
@@ -14,6 +16,7 @@
   "states": {
     "dynamic-nav": false,
     "s3-storage": false,
-    "backup": false
+    "backup": false,
+    "email": false
   }
 }

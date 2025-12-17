@@ -1,45 +1,18 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { ContentTypesPageContent } from '@/components/admin/content-types/ContentTypesManager/ContentTypesPageContent'
-
-interface ContentTypeData {
-  id: string
-  name: string
-  apiIdentifier: string
-  description?: string | null
-  fields: any[]
-  createdAt: string
-  updatedAt: string
-}
-
-interface ContentTypesPageProps {
-  initialContentTypes: ContentTypeData[]
-}
+import type { ContentTypesPageProps } from './data'
+import { useContentTypesPage } from './hooks/useContentTypesPage'
 
 export function ContentTypesPage({ initialContentTypes }: ContentTypesPageProps) {
-  const [loading, setLoading] = useState(true)
-  const [error, _setError] = useState<string | null>(null)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [contentTypes] = useState(initialContentTypes)
-
-  // Short themed splash on client-side navigation (keeps parity with Templates)
-  useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 300)
-    return () => clearTimeout(t)
-  }, [])
-
-  // Filtrar content types
-  const filteredContentTypes = contentTypes.filter(
-    (ct) =>
-      ct.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      ct.apiIdentifier.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      ct.description?.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
-
-  const handleSearchChange = (term: string) => {
-    setSearchTerm(term)
-  }
+  const {
+    loading,
+    error,
+    contentTypes,
+    searchTerm,
+    handleSearchChange,
+    filteredContentTypes,
+  } = useContentTypesPage(initialContentTypes)
 
   return (
     <ContentTypesPageContent
