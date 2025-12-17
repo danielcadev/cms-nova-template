@@ -12,6 +12,7 @@ async function getContentType(slug: string) {
     if (!contentType) return null
     return {
       ...contentType,
+      description: contentType.description ?? undefined,
       createdAt: contentType.createdAt.toISOString(),
       updatedAt: contentType.updatedAt.toISOString(),
     }
