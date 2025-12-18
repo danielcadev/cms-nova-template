@@ -90,6 +90,8 @@ export async function POST(request: NextRequest) {
         accessKeyId: s3Config.accessKeyId,
         secretAccessKey: s3Config.secretAccessKey,
       },
+      requestChecksumCalculation: 'WHEN_REQUIRED',
+      responseChecksumValidation: 'WHEN_REQUIRED',
     })
 
     const timestamp = Date.now()
@@ -169,7 +171,7 @@ export async function DELETE(request: NextRequest) {
 
     try {
       await prisma.asset.delete({ where: { key: parsed.data.key } })
-    } catch {}
+    } catch { }
 
     return R.success({ key: parsed.data.key }, 'File deleted')
   } catch (error) {

@@ -91,6 +91,8 @@ export async function POST(request: NextRequest) {
         accessKeyId: s3.accessKeyId!,
         secretAccessKey: s3.secretAccessKey!,
       },
+      requestChecksumCalculation: 'WHEN_REQUIRED',
+      responseChecksumValidation: 'WHEN_REQUIRED',
     })
 
     const command = new PutObjectCommand({
