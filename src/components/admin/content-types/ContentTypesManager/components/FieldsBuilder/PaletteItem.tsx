@@ -1,13 +1,13 @@
 ﻿'use client'
 
+import React from 'react'
 import { useDraggable } from '@dnd-kit/core'
 
 interface FieldType {
   type: string
   label: string
-  icon: JSX.Element
+  icon: React.JSX.Element
   description: string
-  color: string
 }
 
 interface PaletteItemProps {

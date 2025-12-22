@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 
 type Accommodation = {
   id: string
@@ -29,14 +29,14 @@ export default function SeasonalPricesDropdown({
   options,
   preselectedId,
 }: SeasonalPricesDropdownProps) {
-  const validOptions = useMemo(
-    () => (Array.isArray(options) ? options.filter(Boolean) : []),
+  const validOptions: SeasonalOption[] = useMemo(
+    () => (Array.isArray(options) ? options.filter((o): o is SeasonalOption => !!o) : []),
     [options],
   )
   const defaultId = useMemo(() => {
     if (!validOptions.length) return undefined
     const found = preselectedId && validOptions.find((o) => o.id === preselectedId)
-    return found?.id || validOptions[0].id
+    return (found as any)?.id || (validOptions[0] as any).id
   }, [validOptions, preselectedId])
 
   const [selectedId, setSelectedId] = useState<string | undefined>(defaultId)

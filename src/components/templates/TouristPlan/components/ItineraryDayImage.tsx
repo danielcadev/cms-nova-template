@@ -39,6 +39,7 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
   const imageUrl = currentImage || ''
 
   const [pickerOpen, setPickerOpen] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
   const fileInputId = useMemo(() => `day-image-${fieldIndex}`, [fieldIndex])
 
   // Handle file selection from input
@@ -56,9 +57,10 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
 
   // Handle drag and drop
   const handleDrop = useCallback(
-    (event: React.DragEvent<HTMLDivElement>) => {
-      event.preventDefault()
-      const file = event.dataTransfer.files[0]
+    (e: React.DragEvent<HTMLElement>) => {
+      e.preventDefault()
+      setIsDragging(false)
+      const file = e.dataTransfer.files[0]
       if (file?.type.startsWith('image/')) {
         handleImageUpload(file)
       }
@@ -66,8 +68,14 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
     [handleImageUpload],
   )
 
-  const handleDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault()
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLElement>) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }, [])
+
+  const handleDragLeave = useCallback((e: React.DragEvent<HTMLElement>) => {
+    e.preventDefault()
+    setIsDragging(false)
   }, [])
 
   const handleTriggerPicker = useCallback(() => {

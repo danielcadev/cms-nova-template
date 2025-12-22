@@ -25,26 +25,15 @@ export function AutoFillSeasonalPricesButton() {
     setValue('priceOptions', [], { shouldDirty: true, shouldValidate: true })
 
     // Default accommodations
-    const accommodations = [
-      'SINGLE',
-      'DOUBLE',
-      'TRIPLE',
-      'QUADRUPLE',
-      'QUINTUPLE',
-      'CHILD 3 TO 10 YEARS',
-      'INFANT 0 TO 2 YEARS',
-    ]
-
     // Create 3 seasons
     const seasons = ['LOW SEASON', 'MID SEASON', 'HIGH SEASON']
 
     const newSeasons = seasons.map((seasonTitle) => {
-      const seasonAccommodations = accommodations.map((accommodation) => ({
-        id: Math.random().toString(36).substring(2, 9),
-        accommodation,
-        price: '1.000.000', // Default price with dot thousand separators
-        currency: 'COP',
-      }))
+      const seasonAccommodations = [
+        { id: '1', accommodation: 'Sencilla', price: '', currency: 'COP' as const },
+        { id: '2', accommodation: 'Doble', price: '', currency: 'COP' as const },
+        { id: '3', accommodation: 'Triple', price: '', currency: 'COP' as const },
+      ]
 
       return {
         id: Math.random().toString(36).substring(2, 9),
@@ -53,7 +42,7 @@ export function AutoFillSeasonalPricesButton() {
         price: '',
         seasonTitle,
         seasonAccommodations,
-        currency: 'COP',
+        currency: 'COP' as const,
       }
     })
 

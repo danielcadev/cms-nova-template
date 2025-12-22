@@ -3,7 +3,7 @@
 import { Plus, Settings } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { AppleSearchBar } from '../../shared/AppleSearchBar'
+import { AppleSearchBar } from '@/components/admin/shared/AppleSearchBar'
 
 interface ContentTypesHeaderProps {
   searchTerm: string

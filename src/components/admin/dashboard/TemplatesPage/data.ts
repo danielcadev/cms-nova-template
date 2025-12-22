@@ -14,6 +14,8 @@ export interface Template {
     category: string
     contentCount?: number
     route?: string
+    createdAt?: string
+    updatedAt?: string
 }
 
 export interface RecentContent {

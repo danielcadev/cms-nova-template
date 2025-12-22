@@ -9,7 +9,7 @@ export interface ContentType {
   _count: {
     entries: number
   }
-  entries: any[]
+  entries?: any[]
 }
 
 export interface Plan {

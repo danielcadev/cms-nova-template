@@ -23,7 +23,7 @@ export function useFormPersistence(
 
   const watchedValues = form.watch()
   const debouncedValues = useDebounce(watchedValues, autoSaveInterval)
-  const previousDebouncedValuesRef = useRef<PlanFormValues>()
+  const previousDebouncedValuesRef = useRef<PlanFormValues>(undefined)
   const isMounted = useRef(false)
 
   useEffect(() => {

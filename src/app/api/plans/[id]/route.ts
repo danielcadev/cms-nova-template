@@ -69,7 +69,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     if (!parsed.success) {
       return R.validationError(
         'Invalid data',
-        parsed.error.errors.map((err) => ({
+        parsed.error.issues.map((err) => ({
           field: err.path.join('.') || 'body',
           message: err.message,
           code: err.code,

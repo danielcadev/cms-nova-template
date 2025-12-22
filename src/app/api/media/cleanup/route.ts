@@ -55,9 +55,10 @@ export async function POST(req: NextRequest) {
     const json = await req.json().catch(() => ({}))
     const parsed = schema.safeParse(json)
     if (!parsed.success) {
-      const errors = parsed.error.errors.map((e) => ({
+      const errors = parsed.error.issues.map((e) => ({
         field: e.path.join('.'),
         message: e.message,
+        code: e.code,
       }))
       return R.validationError('Invalid data', errors)
     }
@@ -88,7 +89,7 @@ export async function POST(req: NextRequest) {
       try {
         const json = p.mainImage as any
         if (json && typeof json === 'object' && json.key) assetKeys.add(String(json.key))
-      } catch {}
+      } catch { }
     }
 
     // 3) Orphan keys: present in S3 but not referenced in DB/content

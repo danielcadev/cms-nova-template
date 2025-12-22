@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
 
     const setCookieHeader = createResponse.headers.get('set-cookie')
     if (setCookieHeader) {
-      const cookieStore = cookies()
+      const cookieStore = await cookies()
       const parsedCookies = parseSetCookieHeader(setCookieHeader)
       parsedCookies.forEach((_, key) => {
         if (!key) return
@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: 'Datos inválidos',
-          details: error.errors.map((e) => e.message),
+          details: error.issues.map((e) => e.message),
         },
         { status: 400 },
       )

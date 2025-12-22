@@ -52,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (hasUser) {
         // Check if user has admin permissions
         try {
-          const adminCheck = await authClient.admin.listUsers({ limit: 1 })
+          const adminCheck = await authClient.admin.listUsers({ query: { limit: 1 } })
           console.log('👑 Admin check result:', adminCheck)
           setUser(session.data?.user || null)
           setIsAuthenticated(true)

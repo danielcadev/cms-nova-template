@@ -2,9 +2,9 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
-export async function GET(_request: NextRequest, { params }: { params: { slug: string } }) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
-    const { slug } = params
+    const { slug } = await params
 
     // First, find the content type
     const contentType = await prisma.contentType.findUnique({
@@ -18,14 +18,6 @@ export async function GET(_request: NextRequest, { params }: { params: { slug: s
     // Get entries for this content type
     const entries = await prisma.contentEntry.findMany({
       where: { contentTypeId: contentType.id },
-      include: {
-        author: {
-          select: {
-            name: true,
-            email: true,
-          },
-        },
-      },
       orderBy: { updatedAt: 'desc' },
     })
 
@@ -36,9 +28,9 @@ export async function GET(_request: NextRequest, { params }: { params: { slug: s
   }
 }
 
-export async function POST(request: NextRequest, { params }: { params: { slug: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
-    const { slug } = params
+    const { slug } = await params
     const body = await request.json()
 
     // Get the current user session
@@ -80,8 +72,11 @@ export async function POST(request: NextRequest, { params }: { params: { slug: s
     // Check if slug already exists
     const existingEntry = await prisma.contentEntry.findFirst({
       where: {
-        slug: entrySlug,
         contentTypeId: contentType.id,
+        data: {
+          path: ['slug'],
+          equals: entrySlug,
+        } as any,
       },
     })
 
@@ -92,20 +87,9 @@ export async function POST(request: NextRequest, { params }: { params: { slug: s
     // Create the entry
     const entry = await prisma.contentEntry.create({
       data: {
-        title,
-        slug: entrySlug,
         status: status || 'draft',
         data: fieldData,
         contentTypeId: contentType.id,
-        authorId: session.user.id,
-      },
-      include: {
-        author: {
-          select: {
-            name: true,
-            email: true,
-          },
-        },
       },
     })
 

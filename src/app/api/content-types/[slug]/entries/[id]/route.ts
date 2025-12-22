@@ -3,18 +3,16 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { slug: string; id: string } },
+  { params }: { params: Promise<{ slug: string; id: string }> },
 ) {
   try {
-    const { slug, id } = params
+    const { slug, id } = await params
 
     // Find the content type
     const contentType = await prisma.contentType.findUnique({
       where: { apiIdentifier: slug },
       include: {
-        fields: {
-          orderBy: { order: 'asc' },
-        },
+        fields: true,
       },
     })
 
@@ -27,14 +25,6 @@ export async function GET(
       where: {
         id,
         contentTypeId: contentType.id,
-      },
-      include: {
-        author: {
-          select: {
-            name: true,
-            email: true,
-          },
-        },
       },
     })
 
@@ -57,10 +47,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { slug: string; id: string } },
+  { params }: { params: Promise<{ slug: string; id: string }> },
 ) {
   try {
-    const { slug, id } = params
+    const { slug, id } = await params
     const body = await request.json()
 
     // Find the content type with fields (needed to infer title)
@@ -130,10 +120,10 @@ export async function PUT(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { slug: string; id: string } },
+  { params }: { params: Promise<{ slug: string; id: string }> },
 ) {
   try {
-    const { slug, id } = params
+    const { slug, id } = await params
 
     // Find the content type
     const contentType = await prisma.contentType.findUnique({

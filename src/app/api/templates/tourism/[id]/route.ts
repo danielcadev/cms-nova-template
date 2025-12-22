@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params
+    const { id } = await params
 
     // For now, we'll return mock data since we don't have a tourism templates table
     // In a real implementation, you would query your tourism templates table
@@ -49,9 +49,9 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
   }
 }
 
-export async function PUT(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params
+    const { id } = await params
     const body = await _request.json()
 
     // Validate required fields
@@ -74,9 +74,9 @@ export async function PUT(_request: NextRequest, { params }: { params: { id: str
   }
 }
 
-export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params
+    const { id } = await params
 
     // For now, we'll just return success
     // In a real implementation, you would delete from your tourism templates table

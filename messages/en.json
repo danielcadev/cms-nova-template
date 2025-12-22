@@ -1,0 +1,1176 @@
+{
+    "common": {
+        "loading": "Loading..."
+    },
+    "navigation": {
+        "dashboard": "Dashboard",
+        "home": "Home",
+        "content": "Content",
+        "media": "Media",
+        "plugins": "Plugins",
+        "settings": "Settings",
+        "sections": {
+            "overview": "Overview",
+            "manage": "Manage",
+            "system": "System"
+        },
+        "team": "Team",
+        "models": "Models",
+        "contentTypes": "Content Types",
+        "experiences": "Experiences",
+        "tourism": "Tourist Plans",
+        "users": "Users",
+        "workspace": "Workspace",
+        "admin": "Admin",
+        "viewProfile": "View Profile"
+    },
+    "shared": {
+        "contentHeader": {
+            "status": "Status:",
+            "saving": "Saving...",
+            "saveDraft": "Save Draft",
+            "publish": "Publish",
+            "view": "View",
+            "publicUrl": "Public URL",
+            "copy": "Copy",
+            "statuses": {
+                "draft": "Draft",
+                "published": "Published",
+                "archived": "Archived"
+            }
+        }
+    },
+    "viewContent": {
+        "title": "Content View",
+        "subtitle": "Explore and manage all your content models and recent entries.",
+        "newType": "New Content Type",
+        "contentModels": "Content Models",
+        "viewAll": "View all",
+        "noModels": {
+            "title": "No models yet",
+            "description": "Start by defining your content structure to begin creating entries.",
+            "button": "Create my first model"
+        },
+        "modelCard": {
+            "entries": "{count} entries",
+            "manage": "Manage"
+        },
+        "recentEntries": {
+            "title": "Recent Activity",
+            "untitled": "Untitled entry",
+            "noEntries": "No content entries yet."
+        },
+        "templates": {
+            "title": "Template Library",
+            "description": "Access your tourist plans and pre-designed experiences.",
+            "button": "Explore Templates"
+        }
+    },
+    "templates": {
+        "title": "Template Library",
+        "subtitle": "Select a template to quickly create structured content.",
+        "loading": "Loading templates...",
+        "searchPlaceholder": "Search templates...",
+        "refresh": "Refresh",
+        "newTemplate": "New Template",
+        "noTemplates": {
+            "title": "No templates found",
+            "description": "Try adjusting your search or create a new content type."
+        },
+        "sidebar": {
+            "infoTitle": "Content Templates",
+            "infoDescription": "Templates help you maintain consistency in design and structure across your site.",
+            "recentActivity": "Recent Activity",
+            "viewAll": "View all"
+        },
+        "card": {
+            "status": {
+                "active": "Active",
+                "comingSoon": "Coming Soon",
+                "draft": "Draft"
+            },
+            "category": "Category",
+            "items": "{count} items",
+            "manage": "Manage",
+            "notAvailable": "Not available"
+        },
+        "items": {
+            "tourismPlans": {
+                "name": "Tourist Plans",
+                "description": "Optimized template for tours, seasonal pricing, and itineraries."
+            },
+            "experiences": {
+                "name": "Local Experiences",
+                "description": "Focused on storytelling, hosts, and immersive activities."
+            },
+            "flexibleContent": {
+                "name": "Flexible Content",
+                "description": "Modular structure for generic pages and blog articles."
+            },
+            "restaurants": {
+                "name": "Dining Guide",
+                "description": "Management of menus, reservations, and restaurant reviews."
+            }
+        },
+        "categories": {
+            "tourism": "Tourism",
+            "general": "General",
+            "foodBeverage": "Food & Beverage"
+        },
+        "tourism": {
+            "title": "Tourist Plans Library",
+            "subtitle": "Manage and organize your travel offers.",
+            "back": "Back",
+            "create": "Create New Plan",
+            "searchPlaceholder": "Search plans...",
+            "loading": "Loading plans...",
+            "refresh": "Refresh",
+            "infoTitle": "Travel Plans",
+            "infoDescription": "Define destinations, itineraries, and detailed pricing for your travel packages.",
+            "status": {
+                "published": "Published",
+                "draft": "Draft"
+            },
+            "actions": {
+                "edit": "Edit",
+                "delete": "Delete",
+                "duplicate": "Duplicate"
+            },
+            "messages": {
+                "deleteConfirmTitle": "Delete Plan?",
+                "deleteConfirmDesc": "Are you sure you want to delete \"{title}\"? This action cannot be undone.",
+                "deleteSuccess": "Plan \"{title}\" deleted successfully.",
+                "duplicateSuccess": "Plan \"{title}\" duplicated successfully.",
+                "error": "An unexpected error occurred.",
+                "retry": "Please try again."
+            },
+            "noPlans": {
+                "title": "No plans found",
+                "description": "Start by creating your first tourist plan."
+            },
+            "createForm": {
+                "back": "Back",
+                "templates": "Templates",
+                "tourism": "Tourism",
+                "createTitle": "Create New Plan",
+                "ready": "Ready to create",
+                "creating": "Creating draft...",
+                "preparing": "Please wait, we are preparing everything for autosave.",
+                "draftCreated": "Draft created!",
+                "autoSaveActive": "Now all your changes will be saved automatically.",
+                "errorCreating": "Error creating draft",
+                "creatingWorkspace": "Setting up autosave and preparing your workspace",
+                "sections": {
+                    "basic": {
+                        "title": "Basic Information",
+                        "description": "Title, destination, and main details"
+                    },
+                    "includes": {
+                        "title": "What's Included",
+                        "description": "What's included and excluded in the plan"
+                    },
+                    "itinerary": {
+                        "title": "Itinerary",
+                        "description": "Day by day activities and schedule"
+                    },
+                    "pricing": {
+                        "title": "Pricing",
+                        "description": "Price options for different group sizes"
+                    },
+                    "video": {
+                        "title": "Video",
+                        "description": "Promotional video content"
+                    }
+                }
+            },
+            "edit": {
+                "title": "Edit Tourist Plan",
+                "basicInfo": {
+                    "header": "Basic Information",
+                    "description": "Configure the plan's main details, including its title and URL structure.",
+                    "mainTitleLabel": "Main Title",
+                    "mainTitlePlaceholder": "e.g., Magical Circuit through the Riviera Maya",
+                    "urlConfig": "URL Configuration",
+                    "urlConfigDesc": "Define how the link to this plan will look on your website.",
+                    "sectionLabel": "Section",
+                    "sectionPlaceholder": "Choose section...",
+                    "destinationLabel": "Destination / Category",
+                    "destinationPlaceholder": "Category alias (e.g. mexico)",
+                    "slugLabel": "Article Slug",
+                    "slugPlaceholder": "Unique ID (e.g. magical-riviera-maya)",
+                    "urlPreview": "URL Preview",
+                    "searchOrCreate": "Search or create...",
+                    "noOptions": "No options",
+                    "sections": {
+                        "planes": "Plans",
+                        "circuitos": "Circuits"
+                    }
+                },
+                "transport": {
+                    "title": "Ground Transport",
+                    "description": "Configure transport options for this plan.",
+                    "label": "Enable Ground Transport",
+                    "helpText": "Allows users to see and select ground transport options."
+                },
+                "coverImage": {
+                    "title": "Cover Image",
+                    "description": "Upload or select an image that represents the plan in listings.",
+                    "mainImageLabel": "Main Image / Cover",
+                    "dimensions": "{width} × {height} px",
+                    "s3Error": "S3 Error",
+                    "s3ErrorDesc": "There was a problem loading the configuration: {error}",
+                    "retry": "Retry",
+                    "openPlugins": "View Plugins",
+                    "s3Warning": "S3 Not Configured",
+                    "s3WarningDesc": "To upload images directly, you need to configure S3 storage.",
+                    "configS3": "Configure S3",
+                    "uploading": "Uploading image...",
+                    "selectImage": "Select Image",
+                    "openMedia": "Media Library",
+                    "uploadHelp": "Upload a high-quality image for the cover.",
+                    "sizeRecommended": "Recommended size: 1200 x 630 px",
+                    "removeImage": "Remove image",
+                    "altLabel": "Alternative Text (Alt)",
+                    "altPlaceholder": "Describe the image for accessibility and SEO...",
+                    "captionLabel": "Image Caption",
+                    "captionPlaceholder": "Title or short description to appear below the image..."
+                },
+                "includes": {
+                    "mainLabel": "Included Services",
+                    "addSection": "Add Section",
+                    "emptyTitle": "No inclusions yet",
+                    "emptyDesc": "Add details about what travelers will receive with this plan.",
+                    "addFirstSection": "Add First Section",
+                    "sectionHeader": "Section {index}",
+                    "sectionTitleLabel": "Section Title",
+                    "sectionTitlePlaceholder": "e.g. Meals, Accommodation...",
+                    "itemsIncludedLabel": "Included Items",
+                    "itemsIncludedPlaceholder": "e.g. Daily breakfasts, 3 nights hotel...",
+                    "notIncludedLabel": "What's NOT included",
+                    "notIncludedPlaceholder": "e.g. Personal expenses, Tips...",
+                    "preview": "Inclusions Preview"
+                },
+                "itinerary": {
+                    "title": "Itinerary",
+                    "description": "Define day-by-day activities for travelers.",
+                    "dayLabel": "Day {index}",
+                    "dayConfigDesc": "Configure activities and image for this day.",
+                    "dayTitleLabel": "Day Title",
+                    "dayTitlePlaceholder": "e.g. Arrival and Welcome Cocktail",
+                    "dayDescLabel": "Activity Description",
+                    "dayDescPlaceholder": "Describe in detail what will happen this day...",
+                    "dayImageLabel": "Day Image",
+                    "emptyTitle": "Itinerary is empty",
+                    "emptyDesc": "Add days to show the plan's route and activities.",
+                    "addDayButton": "Add Day {index}",
+                    "deleteDayConfirmTitle": "Delete Day {index}",
+                    "deleteDayConfirmDesc": "Are you sure you want to delete this day? This action cannot be undone.",
+                    "deleteDayConfirmText": "Delete Day"
+                },
+                "pricing": {
+                    "general": {
+                        "title": "General Rate",
+                        "description": "The base price that will be shown by default.",
+                        "addBtn": "Add General Rate",
+                        "empty": "No general rate defined."
+                    },
+                    "specific": {
+                        "title": "Specific Rates",
+                        "description": "Additional price options based on service type or accommodation.",
+                        "addBtn": "Add Specific Rate",
+                        "empty": "No specific rates defined."
+                    },
+                    "seasonal": {
+                        "title": "Seasonal Rates",
+                        "description": "Prices that vary by time of year (Low, Mid, High).",
+                        "addBtn": "Add Seasonal Rate",
+                        "empty": "No seasonal rates defined."
+                    },
+                    "card": {
+                        "mode": {
+                            "general": "General",
+                            "specific": "Specific",
+                            "seasonal": "Seasonal"
+                        },
+                        "labels": {
+                            "description": "Description",
+                            "descriptionPlaceholder": "e.g. Price per person in double accommodation",
+                            "currency": "Currency",
+                            "price": "Price",
+                            "pricePlaceholder": "0.00",
+                            "seasonTitle": "Season Title",
+                            "seasonTitlePlaceholder": "e.g. High Season - New Year",
+                            "accommodationsTitle": "Pricing by Accommodation",
+                            "addAccommodationBtn": "Add Accommodation",
+                            "noAccommodations": "No accommodations. Add one to define prices.",
+                            "accommodationLabel": "Accommodation Type",
+                            "accommodationPlaceholder": "e.g. Single, Double, Triple..."
+                        }
+                    },
+                    "autoFill": {
+                        "recreate": "Recreate seasons",
+                        "fill": "Auto-fill Seasons",
+                        "short": "Auto-fill",
+                        "seasons": {
+                            "low": "LOW SEASON",
+                            "mid": "MID SEASON",
+                            "high": "HIGH SEASON"
+                        },
+                        "accommodations": {
+                            "single": "SINGLE",
+                            "double": "DOUBLE",
+                            "triple": "TRIPLE",
+                            "quadruple": "QUADRUPLE",
+                            "quintuple": "QUINTUPLE",
+                            "child": "CHILD 3 TO 10 YEARS",
+                            "infant": "INFANT 0 TO 2 YEARS"
+                        }
+                    }
+                },
+                "video": {
+                    "title": "Promotional Video",
+                    "description": "Link a YouTube video to show on the plan page.",
+                    "urlLabel": "Video URL",
+                    "urlPlaceholder": "https://www.youtube.com/watch?v=...",
+                    "tipsTitle": "Tips for your video",
+                    "tips": "• Make sure the video is public.\n• Short videos (1-2 min) work best.\n• Show the best landscapes and activities of the tour.",
+                    "previewTitle": "Preview",
+                    "previewEmptyTitle": "No Video",
+                    "previewEmptyDesc": "Enter a valid YouTube URL to see the preview here.",
+                    "iframeTitle": "Plan Video"
+                },
+                "form": {
+                    "back": "Back",
+                    "edit": "Edit",
+                    "defaultTitle": "Tourism Plan",
+                    "autoSaving": "Auto-saving changes...",
+                    "fillFields": "Fill in the fields to edit this tourism plan.",
+                    "toasts": {
+                        "savedTitle": "Changes saved",
+                        "publishedDesc": "Plan published successfully.",
+                        "draftDesc": "Draft saved successfully.",
+                        "errorTitle": "Error saving plan",
+                        "publishError": "Error publishing plan"
+                    },
+                    "sections": {
+                        "basic": {
+                            "title": "Basic Information",
+                            "description": "Title, destination, and main details"
+                        },
+                        "includes": {
+                            "title": "What's Included",
+                            "description": "What's included and excluded in the plan"
+                        },
+                        "itinerary": {
+                            "title": "Itinerary",
+                            "description": "Day by day activities and schedule"
+                        },
+                        "pricing": {
+                            "title": "Pricing",
+                            "description": "Price options for different group sizes"
+                        },
+                        "video": {
+                            "title": "Video",
+                            "description": "Promotional video content"
+                        }
+                    }
+                }
+            }
+        },
+        "experiences": {
+            "title": "Experiences Library",
+            "subtitle": "Manage story-driven experiences with local hosts.",
+            "back": "Back",
+            "create": "Create Experience",
+            "refresh": "Refresh",
+            "infoTitle": "Curated Experiences",
+            "infoDescription": "Create unique, immersive activities led by locals.",
+            "searchPlaceholder": "Search experiences...",
+            "loading": "Loading experiences...",
+            "status": {
+                "published": "Published",
+                "draft": "Draft"
+            },
+            "messages": {
+                "deleteConfirmTitle": "Delete Experience?",
+                "deleteConfirmDesc": "Are you sure you want to delete \"{title}\"? This action cannot be undone.",
+                "deleteSuccess": "Experience \"{title}\" deleted successfully.",
+                "error": "Error processing your request.",
+                "retry": "Please try again."
+            },
+            "noExperiences": {
+                "title": "No experiences found",
+                "description": "Start by creating your first experience to share with travelers.",
+                "searchNoMatch": "No experiences found for \"{term}\"."
+            },
+            "card": {
+                "host": "Host: {name}",
+                "view": "View",
+                "edit": "Edit",
+                "delete": "Delete"
+            },
+            "duration": {
+                "flexible": "Flexible",
+                "singleDay": "Single day",
+                "multiDay": "Multi-day",
+                "hourly": "Hourly"
+            },
+            "days": {
+                "monday": "Monday",
+                "tuesday": "Tuesday",
+                "wednesday": "Wednesday",
+                "thursday": "Thursday",
+                "friday": "Friday",
+                "saturday": "Saturday",
+                "sunday": "Sunday"
+            },
+            "edit": {
+                "createTitle": "Create Experience",
+                "editTitle": "Edit Experience",
+                "headerDesc": "Capture the story, activities, and logistics.",
+                "back": "Back",
+                "saveDraft": "Save Draft",
+                "publish": "Publish",
+                "publishing": "Publishing...",
+                "basics": {
+                    "title": "Basics",
+                    "desc": "Define the main details that identify this experience.",
+                    "fields": {
+                        "title": "Experience Title",
+                        "titlePlaceholder": "e.g. Barranquilla, land of Shakira",
+                        "slug": "Slug",
+                        "slugPlaceholder": "auto-generated if left empty",
+                        "slugDesc": "Used for public URLs.",
+                        "location": "Location / Region",
+                        "locationPlaceholder": "City or region",
+                        "hostName": "Host Name",
+                        "hostNamePlaceholder": "Optional guide or narrator",
+                        "hostBio": "Host Story",
+                        "hostBioPlaceholder": "Share the host's background",
+                        "optional": "(optional)"
+                    }
+                },
+                "gallery": {
+                    "title": "Image Gallery",
+                    "desc": "Store up to four images. They will appear in a 2 x 2 grid on the public page.",
+                    "checking": "Checking media storage...",
+                    "s3ErrorTitle": "S3 Configuration Error",
+                    "s3ErrorRetry": "Retry",
+                    "s3NotConfigured": "Configure S3 in the plugins area to upload images directly.",
+                    "emptySlot": "Empty Slot",
+                    "select": "Select",
+                    "remove": "Remove"
+                },
+                "storytelling": {
+                    "title": "Storytelling",
+                    "desc": "Describe the experience to inspire travelers.",
+                    "fields": {
+                        "summary": "Summary",
+                        "summaryPlaceholder": "One or two line brief description",
+                        "narrative": "Full Narrative",
+                        "narrativePlaceholder": "Tell the complete story of the experience",
+                        "activities": "Activities",
+                        "activitiesPlaceholder": "List of activities, one per line"
+                    }
+                },
+                "logistics": {
+                    "title": "Logistics",
+                    "desc": "Capture practical information for planners and guests.",
+                    "fields": {
+                        "durationType": "Duration Type",
+                        "durationPlaceholder": "Select duration",
+                        "durationDetails": "Duration Details",
+                        "durationDetailsPlaceholder": "e.g. 6 hours or 2 days / 1 night",
+                        "availableDays": "Available Days",
+                        "availableDaysDesc": "Select recurring days the tour runs.",
+                        "schedule": "Schedule / Frequency",
+                        "schedulePlaceholder": "e.g. 9am and 2pm departures",
+                        "scheduleNote": "Schedule Notes",
+                        "scheduleNotePlaceholder": "Closing dates, holiday exceptions, etc.",
+                        "price": "Reference Price",
+                        "pricePlaceholder": "e.g. 1,500,000",
+                        "currency": "Currency",
+                        "currencyPlaceholder": "Select currency",
+                        "inclusions": "Inclusions",
+                        "inclusionsPlaceholder": "What is included",
+                        "exclusions": "Exclusions",
+                        "exclusionsPlaceholder": "What is not included"
+                    }
+                },
+                "toasts": {
+                    "publishedTitle": "Experience published",
+                    "publishedDesc": "Your experience is now live with the latest details.",
+                    "draftTitle": "Draft saved",
+                    "draftDesc": "Draft saved successfully. You can continue editing later.",
+                    "errorTitle": "Error saving",
+                    "errorDesc": "Please try again once the API is connected."
+                }
+            }
+        }
+    },
+    "contentTypes": {
+        "title": "Content Types",
+        "subtitle": "Define the schema for your content.",
+        "searchPlaceholder": "Search content types...",
+        "loading": "Loading your content types...",
+        "noContentTypes": {
+            "title": "No content types found",
+            "description": "Create your first content type to start structuring your information."
+        },
+        "info": {
+            "title": "Headless CMS Routes",
+            "description": "Your content is automatically accessible via the headless API.",
+            "forLists": "for lists and",
+            "forDetails": "for details"
+        },
+        "card": {
+            "noDescription": "No description provided.",
+            "fields": "{count} fields",
+            "viewEntries": "View entries for {name}"
+        },
+        "button": {
+            "viewContent": "View Content",
+            "newType": "New Type",
+            "createType": "Create Content Type"
+        },
+        "header": {
+            "back": "Back to Content Types",
+            "createTitle": "Create Content Type",
+            "editTitle": "Edit Content Type",
+            "createDesc": "Define the structure and custom fields for your new content type. Configure validations, data types and organization.",
+            "editDesc": "Modify the structure and fields of your content type. Update validations, data types and organization."
+        },
+        "tabs": {
+            "fields": "Fields",
+            "info": "Information",
+            "preview": "Preview",
+            "settings": "Settings"
+        },
+        "comingSoon": "Coming Soon",
+        "comingSoonDesc": "Advanced settings will be available here.",
+        "form": {
+            "basicInfo": "Basic Information",
+            "nameLabel": "Scenario Name",
+            "namePlaceholder": "e.g. Blog Posts",
+            "identifierLabel": "API Identifier",
+            "identifierPlaceholder": "e.g. blog-posts",
+            "descriptionLabel": "Description",
+            "descriptionPlaceholder": "Describe the purpose of this content type...",
+            "fields": "Content Fields",
+            "fieldsDesc": "Drag and drop fields to build your content structure.",
+            "addField": "Add Field",
+            "save": "Save Content Type",
+            "saving": "Saving...",
+            "cancel": "Cancel",
+            "actions": "Actions",
+            "saveTip": "Make sure to save your changes before leaving.",
+            "quickStart": {
+                "title": "Quick Start Templates",
+                "description": "Don't know where to start? Choose a template to pre-fill your content structure.",
+                "blog": {
+                    "name": "Blog Article",
+                    "desc": "Title, slug, content and cover image",
+                    "titleLabel": "Title",
+                    "imageLabel": "Featured Image"
+                },
+                "product": {
+                    "name": "Product",
+                    "desc": "Name, price, description and gallery",
+                    "nameLabel": "Product Name",
+                    "priceLabel": "Price",
+                    "imageLabel": "Main Image"
+                },
+                "event": {
+                    "name": "Event",
+                    "desc": "Title, date, location and description",
+                    "titleLabel": "Event Title",
+                    "dateLabel": "Event Date",
+                    "locationLabel": "Location",
+                    "imageLabel": "Cover Image"
+                },
+                "seoArticle": {
+                    "name": "SEO Article",
+                    "desc": "Full 14-field structure optimized for Google",
+                    "fields": {
+                        "title": "H1 Main Title",
+                        "slug": "URL Snippet (Slug)",
+                        "content": "Content Body (HTML/H2)",
+                        "metaTitle": "SEO Meta Title",
+                        "metaDesc": "SEO Meta Description",
+                        "canonical": "Canonical URL",
+                        "featuredImage": "Featured Image (OG)",
+                        "excerpt": "Excerpt / Summary",
+                        "category": "Main Category",
+                        "tags": "SEO Tags",
+                        "author": "Author Name",
+                        "date": "Publish Date",
+                        "featured": "Is Featured?",
+                        "schema": "JSON-LD Schema Markup"
+                    }
+                }
+            },
+            "validation": {
+                "nameRequired": "Name is required",
+                "identifierRequired": "API Identifier is required",
+                "identifierInvalid": "Identifier can only contain letters, numbers and dashes"
+            },
+            "messages": {
+                "created": "Content type created",
+                "updated": "Content type updated",
+                "successText": "The content type has been {action} successfully.",
+                "error": "Error",
+                "errorText": "Could not save the content type."
+            }
+        },
+        "fieldTypes": {
+            "TEXT": "Short Text",
+            "TEXTAREA": "Long Text",
+            "RICH_TEXT": "Rich Editor",
+            "NUMBER": "Number",
+            "BOOLEAN": "True/False",
+            "DATE": "Date",
+            "DATETIME": "Date & Time",
+            "EMAIL": "Email",
+            "PHONE": "Phone",
+            "URL": "Web Link",
+            "RATING": "Rating",
+            "PRICE": "Price",
+            "COLOR": "Color",
+            "LOCATION": "Location",
+            "IMAGE": "Image",
+            "GALLERY": "Gallery",
+            "FILE": "File",
+            "descriptions": {
+                "TEXT": "Simple text field for titles or names",
+                "TEXTAREA": "Text area for extensive descriptions",
+                "RICH_TEXT": "Formatted editor for rich content",
+                "NUMBER": "Numeric field for prices or quantities",
+                "BOOLEAN": "Switch for boolean values",
+                "DATE": "Date and time picker",
+                "DATETIME": "Picker with specific date and time",
+                "EMAIL": "Email field with validation",
+                "PHONE": "Phone number field",
+                "URL": "Field for URLs with validation",
+                "RATING": "Star system for ratings",
+                "PRICE": "Monetary field with currency formatting",
+                "COLOR": "Visual color picker",
+                "LOCATION": "Address or GPS coordinates field",
+                "IMAGE": "Image upload with preview",
+                "GALLERY": "Multiple organized images",
+                "FILE": "Document and file upload"
+            }
+        },
+        "fieldCategories": {
+            "basic": "Basic Fields",
+            "advanced": "Advanced Fields",
+            "media": "Media"
+        },
+        "fieldsBuilder": {
+            "availableTypes": "Available Field Types",
+            "fieldCount": "Fields ({count})",
+            "reorder": "Drag to reorder",
+            "empty": {
+                "title": "Start building",
+                "desc": "Drag field types from the palette above to add them to your content type.",
+                "dropTitle": "Drop field here",
+                "dropDesc": "Drop the field to add it to your content structure."
+            },
+            "row": {
+                "required": "Required",
+                "optional": "Optional",
+                "placeholder": "Field label",
+                "moving": "Moving..."
+            }
+        }
+    },
+    "contentEntries": {
+        "back": "Content Types",
+        "title": "{name} Entries",
+        "description": "Manage entries for {name}",
+        "newEntry": "New {name}",
+        "createEntry": "Create {name}",
+        "searchPlaceholder": "Search entries...",
+        "filters": {
+            "all": "All statuses",
+            "published": "Published",
+            "draft": "Draft",
+            "archived": "Archived"
+        },
+        "noEntries": {
+            "title": "No entries found",
+            "description": "Start by creating your first {name} entry"
+        },
+        "row": {
+            "edit": "Edit entry"
+        }
+    },
+    "createEntry": {
+        "newEntry": "New Entry",
+        "in": "in",
+        "back": "Back to list",
+        "header": "Content Editor",
+        "untitled": "Untitled Entry",
+        "status": "Status",
+        "statusOptions": {
+            "draft": "Draft",
+            "published": "Published",
+            "archived": "Archived"
+        },
+        "saveDraft": "Save Draft",
+        "publish": "Publish",
+        "saving": "Saving...",
+        "view": "View",
+        "required": "Required",
+        "basicInfo": {
+            "title": "Basic Information",
+            "description": "Configure the core identity and display fields of your entry."
+        },
+        "mainContent": {
+            "title": "Main Content",
+            "description": "Write your main article body using Markdown or HTML.",
+            "placeholder": "# Write your amazing story here...",
+            "badge": "Markdown / HTML"
+        },
+        "additionalProperties": {
+            "title": "Additional Properties",
+            "description": "Custom fields defined specifically for this content type."
+        },
+        "seoSection": {
+            "title": "SEO & URL Configuration",
+            "description": "Optimize how this content appears in search engines and social media."
+        },
+        "seo": {
+            "slug": "URL Slug",
+            "slugPlaceholder": "example-slug",
+            "auto": "Auto",
+            "route": "Route / Region",
+            "routeDefault": "Default (Content Type)",
+            "routeCustom": "Custom...",
+            "metaTitle": "Meta Title (SEO)",
+            "metaTitlePlaceholder": "Title optimized for search engines",
+            "metaDescription": "Meta Description",
+            "metaDescriptionPlaceholder": "Brief summary for search results",
+            "canonicalUrl": "URL Canónica"
+        },
+        "publishing": {
+            "title": "Publishing & Classification",
+            "description": "Define when and how this content will be shown on your site.",
+            "category": "Category",
+            "categoryPlaceholder": "e.g. Culture, Gastronomy",
+            "publishDate": "Publish Date",
+            "featured": "Mark as Featured / Pillar"
+        }
+    },
+    "editEntry": {
+        "title": "Edit {name}",
+        "subtitle": "Edit Content Entry",
+        "description": "Update the information and status of this entry. Be sure to save changes before leaving.",
+        "back": "Back to list",
+        "in": "in",
+        "untitled": "Untitled",
+        "status": "Status",
+        "statusOptions": {
+            "draft": "Draft",
+            "published": "Published",
+            "archived": "Archived"
+        },
+        "saveChanges": "Save Changes",
+        "deleting": "Deleting...",
+        "saveAsDraft": "Save as draft",
+        "saving": "Saving...",
+        "publishAndView": "Publish & view",
+        "publishing": "Publishing...",
+        "created": "Created: {date}",
+        "updated": "Updated: {date}",
+        "delete": "Delete",
+        "seo": {
+            "title": "SEO & URL",
+            "pathPrefix": "Path prefix",
+            "slug": "Slug (URL friendly)",
+            "auto": "Auto",
+            "slugTip": "Only lowercase letters, numbers and dashes. Use Auto to generate from the title.",
+            "publicUrl": "Public URL",
+            "copy": "Copy"
+        },
+        "mainContent": {
+            "title": "Main Content",
+            "description": "Primary content fields for your {name}"
+        },
+        "additionalFields": {
+            "title": "Additional Fields",
+            "description": "Extra content and metadata fields",
+            "required": "This field is required"
+        },
+        "sidebar": {
+            "info": "Content Info",
+            "type": "Content Type",
+            "status": "Status",
+            "created": "Created",
+            "updated": "Last Updated",
+            "slug": "URL Slug",
+            "tips": "💡 Quick Tips",
+            "tip1": "Use the toolbar above to save and publish",
+            "tip2": "Rich text editor supports headings, lists, and formatting",
+            "tip3": "Required fields are marked with a red asterisk (*)",
+            "tip4": "Changes are auto-saved as drafts"
+        }
+    },
+    "media": {
+        "title": "Media Library",
+        "subtitle": "Manage your images, videos, and documents",
+        "loading": "Loading media library...",
+        "searchPlaceholder": "Search files...",
+        "upload": "Upload File",
+        "uploading": "Uploading...",
+        "empty": {
+            "title": "No media found",
+            "description": "Adjust your filters or upload new files to get started."
+        },
+        "pagination": {
+            "page": "Page {current} of {total}",
+            "previous": "Previous",
+            "next": "Next",
+            "items": "{count} items"
+        },
+        "toolbar": {
+            "searchPlaceholder": "Search assets...",
+            "clearSearch": "Clear search",
+            "updating": "updating",
+            "allMedia": "All media",
+            "newFolder": "New folder",
+            "folderPlaceholder": "folder/name",
+            "create": "Create",
+            "cancel": "Cancel",
+            "delete": "Delete",
+            "deleteConfirm": "Delete folder \"/{folder}\" and all its files from S3? This cannot be undone.",
+            "upload": "Upload media",
+            "uploading": "Uploading...",
+            "sort": {
+                "newest": "Newest",
+                "oldest": "Oldest",
+                "nameAsc": "Name A–Z",
+                "nameDesc": "Name Z–A",
+                "sizeDesc": "Size ↓",
+                "sizeAsc": "Size ↑",
+                "newestHint": "Latest uploads first",
+                "oldestHint": "Chronological order",
+                "nameAscHint": "Alphabetical order",
+                "nameDescHint": "Reverse alphabetical order",
+                "sizeDescHint": "Large files first",
+                "sizeAscHint": "Small files first"
+            }
+        },
+        "grid": {
+            "deleteTitle": "Delete file",
+            "deleteDescription": "Are you sure you want to delete this file from S3 and the media library? This action cannot be undone.",
+            "linkCopiedTitle": "Link copied",
+            "copyFailedTitle": "Copy failed",
+            "copyFailedDesc": "Could not copy link",
+            "details": {
+                "title": "File Details",
+                "type": "Type",
+                "size": "Size",
+                "dimensions": "Dimensions",
+                "folder": "Folder",
+                "root": "root",
+                "uploaded": "Uploaded"
+            },
+            "actions": {
+                "save": "Save file",
+                "copy": "Copy link",
+                "open": "Open in new tab"
+            }
+        },
+        "card": {
+            "select": "Select {name}",
+            "delete": "Delete file",
+            "preview": "Preview",
+            "copyUrl": "Copy URL",
+            "download": "Download",
+            "openInNewTab": "Open in new tab"
+        },
+        "list": {
+            "table": {
+                "file": "File",
+                "details": "Details",
+                "folder": "Folder",
+                "size": "Size",
+                "created": "Created",
+                "actions": "Actions"
+            }
+        }
+    },
+    "users": {
+        "title": "User Management",
+        "subtitle": "Manage access and roles for your team.",
+        "newUser": "New User",
+        "loading": "Loading user management...",
+        "deleteConfirm": "Are you sure you want to delete this user? This action cannot be undone.",
+        "searchPlaceholder": "Search users...",
+        "filters": "Filters",
+        "inviteUser": "Invite User",
+        "createAdmin": "Create User",
+        "createModal": {
+            "title": "Create User",
+            "subtitle": "Add a new team member",
+            "email": "Email Address *",
+            "name": "Name (Optional)",
+            "password": "Password *",
+            "passwordHint": "Min 8 characters",
+            "confirmPassword": "Confirm Password *",
+            "confirmPlaceholder": "Repeat password",
+            "cancel": "Cancel",
+            "submit": "Create User",
+            "submitting": "Creating...",
+            "successTitle": "User created!",
+            "successDesc": "User {email} has been created successfully",
+            "errorTitle": "Failed to create user",
+            "requiredFields": "Required fields",
+            "requiredFieldsDesc": "Email and password are required",
+            "passMismatchTitle": "Passwords do not match",
+            "passMismatchDesc": "Please make sure both passwords are the same",
+            "passShortTitle": "Password too short",
+            "passShortDesc": "Password must be at least 8 characters"
+        },
+        "grid": {
+            "errorTitle": "Error loading users",
+            "errorDesc": "We couldn't fetch the user list. Please check your connection.",
+            "tryAgain": "Try Again",
+            "emptyTitle": "No users found",
+            "emptyDesc": "Get started by inviting your first team member."
+        },
+        "card": {
+            "viewProfile": "View Profile",
+            "deleteAccount": "Delete Account",
+            "joined": "Joined",
+            "unnamedUser": "Unnamed User",
+            "noEmail": "No email",
+            "unknownDate": "Unknown"
+        },
+        "roles": {
+            "admin": "ADMIN",
+            "editor": "EDITOR",
+            "user": "USER"
+        },
+        "details": {
+            "title": "User Details",
+            "name": "Name",
+            "email": "Email",
+            "role": "Role",
+            "status": "Status",
+            "joined": "Joined",
+            "verified": "Verified",
+            "unverified": "Unverified",
+            "banned": "Banned",
+            "active": "Active"
+        },
+        "actions": {
+            "makeAdmin": "Make Admin",
+            "removeAdmin": "Remove Admin Access",
+            "ban": "Ban",
+            "unban": "Unban",
+            "delete": "Delete",
+            "unbanUserTitle": "Unban User",
+            "unbanUserDesc": "Are you sure you want to unban {name}?"
+        },
+        "security": {
+            "cannotRemoveFirstAdmin": "Cannot remove admin role from the first system user for security.",
+            "cannotDeleteFirstUser": "Cannot delete the first system user for security.",
+            "cannotBanFirstUser": "Cannot ban the first system user for security."
+        },
+        "table": {
+            "name": "Name",
+            "email": "Email",
+            "role": "Role",
+            "status": "Status",
+            "actions": "Actions"
+        }
+    },
+    "plugins": {
+        "title": "Plugins & Extensions",
+        "subtitle": "Power up your CMS with new features.",
+        "adminOnlyGest": "Only the primary administrator can manage plugins.",
+        "loading": "Loading available plugins...",
+        "refresh": "Refresh",
+        "refreshing": "Refreshing...",
+        "searchPlaceholder": "Search plugins...",
+        "filters": {
+            "all": "All",
+            "enabled": "Enabled",
+            "disabled": "Disabled"
+        },
+        "empty": {
+            "title": "No plugins available",
+            "desc": "Plugins let you extend your CMS functionality with additional features and integrations."
+        },
+        "noResults": {
+            "title": "No plugins found",
+            "match": "No plugins match \"{query}\".",
+            "status": "No {status} plugins found."
+        },
+        "clearFilters": "Clear filters",
+        "card": {
+            "enabled": "Enabled",
+            "disabled": "Disabled",
+            "configure": "Configure",
+            "notConfigurable": "Not configurable"
+        },
+        "config": {
+            "title": "Configure Plugin",
+            "cancel": "Cancel",
+            "save": "Save Changes",
+            "saving": "Saving..."
+        },
+        "s3": {
+            "title": "Configure S3 Storage",
+            "bucket": "Bucket Name",
+            "region": "Region",
+            "credentials": "AWS Credentials",
+            "showSecrets": "Show Secrets",
+            "hideSecrets": "Hide Secrets",
+            "encMissingTitle": "Encryption Key Missing",
+            "encMissingDesc": "You must set the ENCRYPTION_KEY environment variable (64 hex chars) to securely store credentials. Saving is disabled.",
+            "accessKey": "Access Key ID",
+            "secretKey": "Secret Access Key",
+            "secretPlaceholder": "Enter your secret key",
+            "regions": {
+                "usEast1": "US East (N. Virginia)",
+                "usWest2": "US West (Oregon)",
+                "euWest1": "Europe (Ireland)",
+                "apSoutheast1": "Asia Pacific (Singapore)",
+                "saEast1": "South America (São Paulo)"
+            },
+            "instructions": "Setup Instructions",
+            "corsNotice": "1. Ensure your IAM user has AmazonS3FullAccess or equivalent.\n2. Add the following CORS configuration to your bucket permissions:"
+        },
+        "dynamicNav": {
+            "title": "Dynamic Navigation",
+            "autoMode": "Auto Mode",
+            "autoDesc": "Automatically discover all content types.",
+            "manualMode": "Manual Mode",
+            "manualDesc": "Manually select which types to include.",
+            "navItems": "Navigation Items",
+            "addPathPlaceholder": "Add custom path...",
+            "add": "Add",
+            "options": "Options",
+            "formatLabels": "Format labels as Title Case (e.g. \"Blog Posts\")",
+            "selector": {
+                "autoModeNotice": "In Auto mode, all typePaths defined in your Content Types are used automatically.",
+                "loading": "Loading typePaths...",
+                "error": "Failed to load content types",
+                "noTypes": "No Content Types yet."
+            }
+        }
+    },
+    "settings": {
+        "title": "Settings",
+        "subtitle": "Manage your workspace preferences and system configuration.",
+        "loading": "Loading preferences...",
+        "appearance": {
+            "title": "Appearance",
+            "themes": {
+                "light": "Minimal Light",
+                "dark": "Ink Dark",
+                "blue": "Slate Blue",
+                "green": "Sage Green",
+                "purple": "Iris Purple",
+                "orange": "Amber Orange",
+                "beige": "Parchment Beige"
+            }
+        },
+        "systemInfo": {
+            "title": "System Information",
+            "framework": "Framework",
+            "database": "Database",
+            "auth": "Auth",
+            "version": "Version",
+            "latest": "Latest",
+            "secure": "Secure",
+            "active": "Active"
+        },
+        "pro": {
+            "title": "Pro Workspace",
+            "desc": "You are running the premium version of Nova CMS.",
+            "viewLicense": "View License"
+        },
+        "quickActions": {
+            "title": "Quick Actions",
+            "clearCache": "Clear Cache",
+            "documentation": "Documentation",
+            "support": "Support"
+        }
+    },
+    "dashboard": {
+        "title": "Control Panel",
+        "subtitle": "Overview of your content ecosystem",
+        "systemOnline": "System Online",
+        "loading": "Preparing dashboard...",
+        "greeting": {
+            "morning": "Good morning",
+            "afternoon": "Good afternoon",
+            "evening": "Good evening"
+        },
+        "widgets": {
+            "welcome": {
+                "createContent": "Create Content",
+                "viewAnalytics": "View Analytics"
+            },
+            "activity": {
+                "title": "Recent Activity",
+                "viewAll": "View all",
+                "newPlan": "New plan: {name}",
+                "newUser": "New user: {name}",
+                "noActivity": "No recent activity"
+            },
+            "quickActions": {
+                "media": "Media",
+                "settings": "Settings",
+                "team": "Team"
+            }
+        }
+    },
+    "auth": {
+        "signIn": {
+            "title": "Welcome back",
+            "subtitle": "Enter your credentials to access the panel",
+            "emailLabel": "Email address",
+            "emailPlaceholder": "admin@example.com",
+            "passwordLabel": "Password",
+            "passwordPlaceholder": "••••••••",
+            "button": "Sign In",
+            "buttonLoading": "Signing in...",
+            "noAccount": "Don't have an account?",
+            "createAdmin": "Create the first account",
+            "copyright": "All rights reserved."
+        },
+        "signUp": {
+            "title": "Create Administrator",
+            "subtitle": "Set up the primary system account",
+            "nameLabel": "Full Name",
+            "namePlaceholder": "e.g. John Doe",
+            "emailLabel": "Email address",
+            "passwordLabel": "Password",
+            "button": "Create Account",
+            "buttonLoading": "Creating...",
+            "hasAccount": "Already have an account?",
+            "signIn": "Sign in",
+            "backToHome": "Back to Home",
+            "systemConfigured": "System Configured",
+            "registrationDisabled": "Registration Disabled",
+            "registrationDisabledDesc": "The primary administrator has already been created. Registration of new users is disabled for security.",
+            "createMoreUsers": "Need to create more users? You can do so from the admin panel after signing in.",
+            "messages": {
+                "success": "Administrator created successfully! You can now sign in.",
+                "error": "Error creating administrator",
+                "connectionError": "Connection error. Please try again."
+            }
+        },
+        "validation": {
+            "nameRequired": "Name is required",
+            "emailRequired": "Email is required",
+            "emailInvalid": "Invalid email format",
+            "passwordRequired": "Password is required",
+            "passwordLength": "Password must be at least 6 characters"
+        }
+    }
+}

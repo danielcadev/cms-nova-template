@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     if (!parsed.success) {
       return R.validationError(
         'Invalid data',
-        parsed.error.errors.map((e) => ({
+        parsed.error.issues.map((e) => ({
           field: e.path.join('.'),
           message: e.message,
           code: e.code,

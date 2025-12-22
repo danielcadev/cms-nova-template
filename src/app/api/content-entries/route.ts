@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     if (!parsed.success) {
       return R.validationError(
         'Invalid data',
-        parsed.error.errors.map((e) => ({
+        parsed.error.issues.map((e) => ({
           field: e.path.join('.'),
           message: e.message,
           code: e.code,
@@ -39,7 +39,11 @@ export async function POST(request: Request) {
     if (!contentType) return R.error('Content type not found', 404)
 
     const contentEntry = await prisma.contentEntry.create({
-      data: { contentTypeId, data: JSON.stringify(data), status: 'draft' },
+      data: {
+        contentTypeId,
+        data,
+        status: 'draft'
+      },
     })
 
     return R.success(contentEntry, 'Entry created', 201)

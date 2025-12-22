@@ -167,3 +167,4 @@ export function TemplatesPage() {
 
 // Export additional components
 export { EditTourismTemplate } from './EditTourismTemplate'
+export type { Template } from './data'
