@@ -2,6 +2,7 @@
 
 import { Eye, EyeOff, Globe, Info, Lock, RefreshCw, Save, ShieldAlert, X, Zap } from 'lucide-react'
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -17,6 +18,7 @@ interface PluginConfigModalProps {
 }
 
 export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginConfigModalProps) {
+  const t = useTranslations('plugins')
   const id = useId()
   const titleCaseId = `${id}-title-case`
 
@@ -106,10 +108,10 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
   }, [isS3])
 
   const title = useMemo(() => {
-    if (isS3) return 'Configure S3 Storage'
-    if (isDynamicNav) return 'Dynamic Navigation'
-    return plugin?.name || 'Configure Plugin'
-  }, [isS3, isDynamicNav, plugin])
+    if (isS3) return t('config.titles.s3')
+    if (isDynamicNav) return t('config.titles.dynamicNav')
+    return plugin?.name || t('config.titles.default')
+  }, [isS3, isDynamicNav, plugin, t])
 
   const handleSave = async () => {
     if (!plugin) return
@@ -168,13 +170,13 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                   htmlFor={`${id}-bucket`}
                   className="text-xs font-medium text-zinc-500 uppercase tracking-wider"
                 >
-                  Bucket Name
+                  {t('config.s3.bucket')}
                 </Label>
                 <Input
                   id={`${id}-bucket`}
                   value={s3Config.bucket}
                   onChange={(e) => setS3Config((prev) => ({ ...prev, bucket: e.target.value }))}
-                  placeholder="e.g. my-cms-assets"
+                  placeholder={t('config.s3.bucketPlaceholder')}
                   className="rounded-xl border-zinc-200 bg-zinc-50/50 focus:bg-white transition-all"
                 />
               </div>
@@ -184,7 +186,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                   htmlFor={`${id}-region`}
                   className="text-xs font-medium text-zinc-500 uppercase tracking-wider"
                 >
-                  Region
+                  {t('config.s3.region')}
                 </Label>
                 <select
                   id={`${id}-region`}
@@ -192,11 +194,11 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                   onChange={(e) => setS3Config((prev) => ({ ...prev, region: e.target.value }))}
                   className="w-full px-3 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50/50 focus:bg-white focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 outline-none transition-all text-sm"
                 >
-                  <option value="us-east-1">US East (N. Virginia)</option>
-                  <option value="us-west-2">US West (Oregon)</option>
-                  <option value="eu-west-1">Europe (Ireland)</option>
-                  <option value="ap-southeast-1">Asia Pacific (Singapore)</option>
-                  <option value="sa-east-1">South America (São Paulo)</option>
+                  <option value="us-east-1">{t('config.s3.regions.us-east-1')}</option>
+                  <option value="us-west-2">{t('config.s3.regions.us-west-2')}</option>
+                  <option value="eu-west-1">{t('config.s3.regions.eu-west-1')}</option>
+                  <option value="ap-southeast-1">{t('config.s3.regions.ap-southeast-1')}</option>
+                  <option value="sa-east-1">{t('config.s3.regions.sa-east-1')}</option>
                 </select>
               </div>
             </div>
@@ -205,7 +207,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-medium text-zinc-900 flex items-center gap-2">
                   <Lock className="w-4 h-4 text-zinc-500" />
-                  AWS Credentials
+                  {t('config.s3.credentials')}
                 </h3>
                 <Button
                   type="button"
@@ -219,7 +221,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                   ) : (
                     <Eye className="h-3.5 w-3.5 mr-1.5" />
                   )}
-                  {showSecrets ? 'Hide Secrets' : 'Show Secrets'}
+                  {showSecrets ? t('config.s3.hideSecrets') : t('config.s3.showSecrets')}
                 </Button>
               </div>
 
@@ -227,12 +229,9 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                 <div className="rounded-xl border border-red-200 bg-red-50 p-4 flex gap-3">
                   <ShieldAlert className="w-5 h-5 text-red-600 shrink-0" />
                   <div className="space-y-1">
-                    <p className="text-sm font-medium text-red-900">Encryption Key Missing</p>
+                    <p className="text-sm font-medium text-red-900">{t('config.s3.encryptionMissing')}</p>
                     <p className="text-xs text-red-700 leading-relaxed">
-                      You must set the{' '}
-                      <code className="px-1 py-0.5 bg-red-100 rounded">ENCRYPTION_KEY</code>{' '}
-                      environment variable (64 hex chars) to securely store credentials. Saving is
-                      disabled.
+                      {t('config.s3.encryptionDescription')}
                     </p>
                   </div>
                 </div>
@@ -244,7 +243,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                     htmlFor={`${id}-accessKeyId`}
                     className="text-xs font-medium text-zinc-500 uppercase tracking-wider"
                   >
-                    Access Key ID
+                    {t('config.s3.accessKey')}
                   </Label>
                   <Input
                     id={`${id}-accessKeyId`}
@@ -263,7 +262,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                     htmlFor={`${id}-secretAccessKey`}
                     className="text-xs font-medium text-zinc-500 uppercase tracking-wider"
                   >
-                    Secret Access Key
+                    {t('config.s3.secretKey')}
                   </Label>
                   <Input
                     id={`${id}-secretAccessKey`}
@@ -273,7 +272,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                       setS3Config((prev) => ({ ...prev, secretAccessKey: e.target.value }))
                     }
                     placeholder={
-                      hasExistingConfig ? '••••••••••••••••••••••••' : 'Enter your secret key'
+                      hasExistingConfig ? t('config.s3.secretPlaceholderExisting') : t('config.s3.secretPlaceholder')
                     }
                     disabled={encryptionOk === false}
                     className="rounded-xl border-zinc-200 bg-zinc-50/50 focus:bg-white transition-all font-mono text-sm"
@@ -285,15 +284,13 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
             <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-4 space-y-3">
               <div className="flex items-center gap-2 text-blue-900 font-medium text-sm">
                 <Info className="w-4 h-4" />
-                Setup Instructions
+                {t('config.s3.instructions')}
               </div>
               <div className="space-y-2 text-xs text-blue-800">
                 <p>
-                  1. Ensure your IAM user has{' '}
-                  <code className="px-1 py-0.5 bg-blue-100 rounded">AmazonS3FullAccess</code> or
-                  equivalent.
+                  {t('config.s3.iamNotice')}
                 </p>
-                <p>2. Add the following CORS configuration to your bucket permissions:</p>
+                <p>{t('config.s3.corsNotice')}</p>
                 <pre className="bg-blue-900/5 p-2 rounded-lg overflow-x-auto font-mono text-[10px] text-blue-900 mt-1">
                   {`[
   {
@@ -320,9 +317,9 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                 onClick={() => setNavConfig((p) => ({ ...p, mode: 'auto' }))}
               >
                 <div className="flex items-center gap-2 font-medium text-sm mb-1">
-                  <Zap className="w-4 h-4" /> Auto Mode
+                  <Zap className="w-4 h-4" /> {t('config.dynamicNav.autoMode')}
                 </div>
-                <p className="text-xs text-zinc-500">Automatically discover all content types.</p>
+                <p className="text-xs text-zinc-500">{t('config.dynamicNav.autoDescription')}</p>
               </button>
 
               <button
@@ -331,15 +328,15 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                 onClick={() => setNavConfig((p) => ({ ...p, mode: 'include' }))}
               >
                 <div className="flex items-center gap-2 font-medium text-sm mb-1">
-                  <Globe className="w-4 h-4" /> Manual Mode
+                  <Globe className="w-4 h-4" /> {t('config.dynamicNav.manualMode')}
                 </div>
-                <p className="text-xs text-zinc-500">Manually select which types to include.</p>
+                <p className="text-xs text-zinc-500">{t('config.dynamicNav.manualDescription')}</p>
               </button>
             </div>
 
             <div className="space-y-4">
               <Label className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                Navigation Items
+                {t('config.dynamicNav.navItems')}
               </Label>
               <TypePathsSelector
                 mode={navConfig.mode}
@@ -349,7 +346,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
 
               <div className="flex gap-2">
                 <Input
-                  placeholder="Add custom path..."
+                  placeholder={t('config.dynamicNav.addCustom')}
                   value={manualTypePath}
                   onChange={(e) => setManualTypePath(e.target.value)}
                   className="rounded-xl border-zinc-200 bg-zinc-50/50"
@@ -364,14 +361,14 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                   }}
                   className="rounded-xl border-zinc-200"
                 >
-                  Add
+                  {t('config.dynamicNav.add')}
                 </Button>
               </div>
             </div>
 
             <div className="space-y-4 pt-4 border-t border-zinc-100">
               <Label className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                Options
+                {t('config.dynamicNav.options')}
               </Label>
               <div className="flex items-center gap-2">
                 <input
@@ -382,7 +379,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                   className="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900"
                 />
                 <Label htmlFor={titleCaseId} className="text-sm font-normal">
-                  Format labels as Title Case (e.g. "Blog Posts")
+                  {t('config.dynamicNav.titleCase')}
                 </Label>
               </div>
             </div>
@@ -396,7 +393,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
           onClick={onClose}
           className="rounded-xl border-zinc-200 text-zinc-700 hover:bg-zinc-50"
         >
-          Cancel
+          {t('config.footer.cancel')}
         </Button>
         <Button
           onClick={handleSave}
@@ -408,7 +405,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
           ) : (
             <Save className="w-4 h-4 mr-2" />
           )}
-          {isSaving ? 'Saving...' : 'Save Changes'}
+          {isSaving ? t('config.footer.saving') : t('config.footer.save')}
         </Button>
       </ModalFooter>
     </ModalBase>

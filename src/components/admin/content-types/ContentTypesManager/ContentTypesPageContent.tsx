@@ -3,6 +3,7 @@
 import { Database, FileCode, Plus, Settings } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -34,6 +35,7 @@ export function ContentTypesPageContent({
   searchTerm,
   onSearchChange,
 }: ContentTypesPageContentProps) {
+  const t = useTranslations('contentTypes')
   const [searchValue, setSearchValue] = useState(searchTerm)
 
   const _handleSearchChange = (value: string) => {
@@ -45,8 +47,8 @@ export function ContentTypesPageContent({
     return (
       <div className="px-6 pt-6 relative">
         <AdminLoading
-          title="Content Types"
-          message="Loading your content types..."
+          title={t('title')}
+          message={t('loading')}
           variant="content"
           fullScreen
         />
@@ -59,7 +61,7 @@ export function ContentTypesPageContent({
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <Database className="h-8 w-8 mx-auto mb-4 text-red-500" />
-          <h3 className="text-lg font-medium text-zinc-900 mb-2">Loading error</h3>
+          <h3 className="text-lg font-medium text-zinc-900 mb-2">{t('error.title')}</h3>
           <p className="text-zinc-500 text-sm">{error}</p>
         </div>
       </div>
@@ -72,8 +74,8 @@ export function ContentTypesPageContent({
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">Content Types</h1>
-            <p className="text-zinc-500 mt-1">Define the schema for your content.</p>
+            <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">{t('title')}</h1>
+            <p className="text-zinc-500 mt-1">{t('subtitle')}</p>
           </div>
           <div className="flex items-center gap-3">
             <Button
@@ -83,7 +85,7 @@ export function ContentTypesPageContent({
             >
               <Link href="/admin/dashboard/view-content">
                 <Database className="h-4 w-4 mr-2" />
-                View Content
+                {t('header.viewContent')}
               </Link>
             </Button>
             <Button
@@ -92,7 +94,7 @@ export function ContentTypesPageContent({
             >
               <Link href="/admin/dashboard/content-types/create">
                 <Plus className="h-4 w-4 mr-2" />
-                New Type
+                {t('header.newType')}
               </Link>
             </Button>
           </div>
@@ -106,18 +108,21 @@ export function ContentTypesPageContent({
           <div className="relative z-10">
             <h3 className="font-semibold text-zinc-900 flex items-center gap-2">
               <FileCode className="w-4 h-4 text-zinc-500" />
-              Headless CMS Routes
+              {t('info.title')}
             </h3>
             <p className="text-sm text-zinc-600 mt-2 max-w-2xl leading-relaxed">
-              Your content is automatically accessible via the headless API. Use{' '}
-              <code className="px-1.5 py-0.5 rounded bg-white border border-zinc-200 text-xs font-mono text-zinc-800">
-                /[typePath]
-              </code>{' '}
-              for lists and{' '}
-              <code className="px-1.5 py-0.5 rounded bg-white border border-zinc-200 text-xs font-mono text-zinc-800">
-                /[typePath]/[slug]
-              </code>{' '}
-              for details.
+              {t.rich('info.description', {
+                listRoute: () => (
+                  <code className="px-1.5 py-0.5 rounded bg-white border border-zinc-200 text-xs font-mono text-zinc-800">
+                    /[typePath]
+                  </code>
+                ),
+                detailRoute: () => (
+                  <code className="px-1.5 py-0.5 rounded bg-white border border-zinc-200 text-xs font-mono text-zinc-800">
+                    /[typePath]/[slug]
+                  </code>
+                ),
+              })}
             </p>
           </div>
         </div>
@@ -125,7 +130,7 @@ export function ContentTypesPageContent({
         {/* Search */}
         <div className="relative max-w-md">
           <Input
-            placeholder="Search content types..."
+            placeholder={t('searchPlaceholder')}
             value={searchValue}
             onChange={(e) => _handleSearchChange(e.target.value)}
             className="rounded-xl border-zinc-200 bg-white pl-4 h-11 focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all"
@@ -165,7 +170,7 @@ export function ContentTypesPageContent({
                     {contentType.name}
                   </h3>
                   <p className="text-sm text-zinc-500 line-clamp-2 h-10">
-                    {contentType.description || 'No description provided.'}
+                    {contentType.description || t('card.noDescription')}
                   </p>
                 </div>
 
@@ -176,7 +181,7 @@ export function ContentTypesPageContent({
                     </span>
                   </div>
                   <div className="text-zinc-400 text-xs">
-                    {contentType.fields?.length || 0} fields
+                    {t('card.fields', { count: contentType.fields?.length || 0 })}
                   </div>
                 </div>
 
@@ -184,7 +189,7 @@ export function ContentTypesPageContent({
                   href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content`}
                   className="absolute inset-0 z-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2"
                 >
-                  <span className="sr-only">View entries for {contentType.name}</span>
+                  <span className="sr-only">{t('card.viewEntries', { name: contentType.name })}</span>
                 </Link>
               </div>
             ))}
@@ -194,17 +199,17 @@ export function ContentTypesPageContent({
             <div className="w-16 h-16 mx-auto bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm border border-zinc-100">
               <Database className="w-8 h-8 text-zinc-300" />
             </div>
-            <h3 className="text-lg font-medium text-zinc-900 mb-2">No content types found</h3>
+            <h3 className="text-lg font-medium text-zinc-900 mb-2">{t('empty.title')}</h3>
             <p className="text-zinc-500 text-sm mb-6 max-w-sm mx-auto">
               {searchValue
-                ? `No content types match "${searchValue}"`
-                : 'Create your first content type to start structuring your information.'}
+                ? t('empty.noMatch', { query: searchValue })
+                : t('empty.createFirst')}
             </p>
             {!searchValue && (
               <Button asChild className="rounded-xl bg-zinc-900 text-white hover:bg-zinc-800">
                 <Link href="/admin/dashboard/content-types/create">
                   <Plus className="h-4 w-4 mr-2" />
-                  Create Content Type
+                  {t('empty.button')}
                 </Link>
               </Button>
             )}

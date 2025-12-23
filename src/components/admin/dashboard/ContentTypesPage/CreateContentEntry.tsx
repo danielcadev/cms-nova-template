@@ -1,6 +1,7 @@
 'use client'
 
 import { Save } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -28,6 +29,7 @@ export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps)
     handleSubmit,
     router,
   } = useCreateContentEntry(contentTypeSlug)
+  const t = useTranslations('createEntry')
 
   if (loading) {
     return (
@@ -42,7 +44,7 @@ export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps)
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-          Content type not found
+          {t('notFound')}
         </h3>
       </div>
     )
@@ -54,36 +56,36 @@ export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps)
       <form onSubmit={handleSubmit} className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
-            <CardDescription>Basic details for your content entry</CardDescription>
+            <CardTitle>{t('basicInfo.title')}</CardTitle>
+            <CardDescription>{t('basicInfo.description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor={titleInputId}>Title *</Label>
+                <Label htmlFor={titleInputId}>{t('basicInfo.titleLabel')} *</Label>
                 <Input
                   id={titleInputId}
                   value={formData.title}
                   onChange={(e) => handleInputChange('title', e.target.value)}
-                  placeholder="Enter title"
+                  placeholder={t('basicInfo.titlePlaceholder')}
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor={slugInputId}>Slug *</Label>
+                <Label htmlFor={slugInputId}>{t('basicInfo.slugLabel')} *</Label>
                 <Input
                   id={slugInputId}
                   value={formData.slug}
                   onChange={(e) => handleInputChange('slug', e.target.value)}
-                  placeholder="enter-slug"
+                  placeholder={t('basicInfo.slugPlaceholder')}
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status">{t('status')}</Label>
               <Select
                 value={formData.status}
                 onValueChange={(val) => handleInputChange('status', val)}
@@ -92,8 +94,8 @@ export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps)
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="draft">Draft</SelectItem>
-                  <SelectItem value="published">Published</SelectItem>
+                  <SelectItem value="draft">{t('statusOptions.draft')}</SelectItem>
+                  <SelectItem value="published">{t('statusOptions.published')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -104,8 +106,8 @@ export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps)
         {contentType.fields.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>Content Fields</CardTitle>
-              <CardDescription>Custom fields for this content type</CardDescription>
+              <CardTitle>{t('additionalProperties.title')}</CardTitle>
+              <CardDescription>{t('additionalProperties.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {contentType.fields.map((field) => (
@@ -128,10 +130,10 @@ export function CreateContentEntry({ contentTypeSlug }: CreateContentEntryProps)
         <div className="flex items-center gap-3">
           <Button type="submit" disabled={saving} className="flex items-center gap-2">
             <Save className="h-4 w-4" />
-            {saving ? 'Creating...' : 'Create Entry'}
+            {saving ? t('creating') : t('create')}
           </Button>
           <Button type="button" variant="outline" onClick={() => router.back()}>
-            Cancel
+            {t('cancel')}
           </Button>
         </div>
       </form>

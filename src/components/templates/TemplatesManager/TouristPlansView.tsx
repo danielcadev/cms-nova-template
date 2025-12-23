@@ -10,10 +10,14 @@ import {
   RefreshCw,
   Search,
   Trash2,
+  ArrowLeft,
+  Layout,
+  X,
 } from 'lucide-react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
+import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ConfirmationModal } from '@/components/ui/ConfirmationModal'
 import { Input } from '@/components/ui/input'
@@ -55,6 +59,8 @@ export function TouristPlansView({
   const [duplicatingPlanId, setDuplicatingPlanId] = useState<string | null>(null)
   const [togglingPlanId, setTogglingPlanId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const t = useTranslations('templates.tourism')
+  const baseT = useTranslations('templates.form')
   const router = useRouter()
   const { toast } = useToast()
   const confirmation = useConfirmation()
@@ -65,9 +71,9 @@ export function TouristPlansView({
 
     confirmation.confirm(
       {
-        title: 'Delete Plan',
-        description: `Are you sure you want to delete "${planTitle}"?\n\nThis action cannot be undone and all plan information will be permanently removed.`,
-        confirmText: 'Delete Plan',
+        title: t('delete.title'),
+        description: t('delete.description', { title: planTitle }),
+        confirmText: t('delete.confirm'),
         variant: 'destructive',
         icon: 'delete',
       },
@@ -79,13 +85,13 @@ export function TouristPlansView({
             throw new Error('Delete failed')
           }
           toast({
-            title: 'Plan deleted',
-            description: `"${planTitle}" has been successfully deleted.`,
+            title: t('delete.success'),
+            description: `"${planTitle}"`,
           })
         } catch (_error) {
           toast({
             title: 'Error',
-            description: 'Could not delete the plan. Please try again.',
+            description: t('delete.error'),
             variant: 'destructive',
           })
           throw _error
@@ -111,13 +117,12 @@ export function TouristPlansView({
         throw new Error('Duplicate failed')
       }
       toast({
-        title: 'Plan duplicated',
-        description: `"${planTitle}" was duplicated as a draft.`,
+        title: t('duplicate.success', { title: planTitle }),
       })
     } catch (_error) {
       toast({
         title: 'Error',
-        description: 'Could not duplicate the plan. Please try again.',
+        description: t('duplicate.error'),
         variant: 'destructive',
       })
     } finally {
@@ -134,13 +139,13 @@ export function TouristPlansView({
         throw new Error('Toggle failed')
       }
       toast({
-        title: plan.published ? 'Plan reverted to draft' : 'Plan published',
+        title: plan.published ? t('toggle.draft') : t('toggle.published'),
         description: plan.mainTitle,
       })
     } catch (_error) {
       toast({
         title: 'Error',
-        description: 'Could not update plan status. Please try again.',
+        description: t('toggle.error'),
         variant: 'destructive',
       })
     } finally {
@@ -154,7 +159,7 @@ export function TouristPlansView({
       await onRefresh()
     } catch (_error) {
       toast({
-        title: 'Could not sync list',
+        title: t('errorLoading'),
         description: 'Please try again.',
         variant: 'destructive',
       })
@@ -193,59 +198,66 @@ export function TouristPlansView({
   return (
     <div className="min-h-screen bg-white pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">Tourist Plans</h1>
-            <p className="text-zinc-500 mt-1">
-              Create and manage your tourism plans and itineraries.
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                asChild
+                className="rounded-2xl border-zinc-200 text-zinc-700 hover:bg-zinc-50 h-10 w-10 p-0"
+                title={t('backToTemplates')}
+              >
+                <Link href="/admin/dashboard/templates">
+                  <ArrowLeft className="h-4 w-4" />
+                </Link>
+              </Button>
+              <h1 className="text-3xl font-bold text-zinc-900 tracking-tight">{t('title')}</h1>
+            </div>
+            <p className="text-zinc-500 ml-13">
+              {t('subtitle')}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <Button
-              variant="outline"
-              asChild
-              className="rounded-xl border-zinc-200 text-zinc-700 hover:bg-zinc-50 h-auto px-4"
-            >
-              <Link href="/admin/dashboard/templates">
-                Back to templates
-              </Link>
-            </Button>
-            <Button
               onClick={handleCreatePlan}
-              className="rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-900/20 h-auto px-4"
+              className="rounded-2xl bg-zinc-900 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-900/20 h-11 px-6 font-medium transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Create Plan
+              <Plus className="h-5 w-5 mr-2" />
+              {t('createPlan')}
             </Button>
           </div>
         </div>
 
-        {/* Info Card */}
-        <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-6 relative overflow-hidden group">
+        {/* Info Card - Improved contrast and localized */}
+        <div className="bg-zinc-900/5 border border-zinc-200 rounded-3xl p-6 relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
-            <MapPin className="w-32 h-32 text-zinc-900" />
+            <Layout className="w-32 h-32 text-zinc-900" />
           </div>
-          <div className="relative z-10">
-            <h3 className="font-semibold text-zinc-900 flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-zinc-500" />
-              Tourist Plans
-            </h3>
-            <p className="text-sm text-zinc-600 mt-2 max-w-2xl leading-relaxed">
-              Manage comprehensive travel plans, including itineraries, pricing, and details.
-              These plans are the core of your tourism offerings.
-            </p>
+          <div className="relative z-10 flex items-start gap-4">
+            <div className="bg-white p-3 rounded-2xl shadow-sm border border-zinc-100 hidden sm:block">
+              <Layout className="h-6 w-6 text-zinc-900" />
+            </div>
+            <div>
+              <h3 className="font-bold text-zinc-900 flex items-center gap-2">
+                {t('info.title')}
+              </h3>
+              <p className="text-sm text-zinc-600 mt-1 max-w-2xl leading-relaxed font-medium">
+                {t('info.description')}
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Search and Refresh */}
+        {/* Search and Refresh - Redesigned */}
         <div className="flex flex-col sm:flex-row items-center gap-4">
-          <div className="relative flex-1 w-full sm:max-w-md">
+          <div className="relative flex-1 w-full sm:max-w-md group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-zinc-900 transition-colors" />
             <Input
-              placeholder="Search plans by title..."
+              placeholder={t('searchPlaceholder')}
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="rounded-xl border-zinc-200 bg-white pl-4 h-11 focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+              className="rounded-2xl border-zinc-200 bg-white pl-11 h-12 shadow-sm focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all"
             />
           </div>
 
@@ -254,45 +266,49 @@ export function TouristPlansView({
               variant="outline"
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="rounded-xl border-zinc-200 text-zinc-700 hover:bg-zinc-50 h-11"
+              className="rounded-2xl border-zinc-200 text-zinc-700 hover:bg-zinc-50 h-12 px-6 font-medium shadow-sm transition-all"
             >
               <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-              Refresh
+              {t('refresh')}
             </Button>
           )}
         </div>
 
         {/* Error State */}
         {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 p-6 mb-6">
-            <div className="text-red-800">
-              <h3 className="font-semibold mb-2">Error loading plans</h3>
-              <p className="text-sm">{error}</p>
+          <div className="rounded-2xl border border-red-200 bg-red-50 p-6 shadow-sm">
+            <div className="text-red-800 flex items-center gap-3">
+              <X className="h-5 w-5" />
+              <div>
+                <h3 className="font-bold">{t('errorLoading')}</h3>
+                <p className="text-sm opacity-90">{error}</p>
+              </div>
             </div>
           </div>
         )}
 
-        {/* Plans Content */}
         {isLoading ? (
-          <div className="text-center py-20">
-            <div className="animate-spin w-8 h-8 border-2 border-zinc-900 border-t-transparent rounded-full mx-auto mb-4" />
-            <p className="text-zinc-500">Loading your tourism plans...</p>
+          <div className="text-center py-20 bg-zinc-50/50 rounded-3xl border border-dashed border-zinc-200">
+            <div className="animate-spin w-10 h-10 border-4 border-zinc-200 border-t-zinc-900 rounded-full mx-auto mb-4" />
+            <p className="text-zinc-500 font-medium tracking-tight bounce-in">{t('loading')}</p>
           </div>
         ) : filteredPlans.length === 0 ? (
           <div className="text-center py-20 bg-zinc-50 rounded-3xl border border-dashed border-zinc-200">
-            <div className="w-16 h-16 mx-auto bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm border border-zinc-100">
-              <MapPin className="w-8 h-8 text-zinc-300" />
+            <div className="w-20 h-20 mx-auto bg-white rounded-3xl flex items-center justify-center mb-6 shadow-md border border-zinc-100 group-hover:scale-110 transition-transform duration-500">
+              <MapPin className="w-10 h-10 text-zinc-200" />
             </div>
-            <h3 className="text-lg font-medium text-zinc-900 mb-2">No plans found</h3>
-            <p className="text-zinc-500 text-sm mb-6 max-w-sm mx-auto">
+            <h3 className="text-2xl font-bold text-zinc-900 mb-2">
+              {searchQuery ? t('noPlansMatch', { query: searchQuery }) : t('noPlans')}
+            </h3>
+            <p className="text-zinc-500 font-medium mb-8 max-w-sm mx-auto leading-relaxed">
               {searchQuery
-                ? `No plans match "${searchQuery}".`
-                : 'Create your first tourism plan to get started.'}
+                ? t('noTemplatesDesc')
+                : t('noPlansDesc')}
             </p>
             {!searchQuery && (
-              <Button onClick={handleCreatePlan} className="rounded-xl bg-zinc-900 text-white hover:bg-zinc-800">
-                <Plus className="h-4 w-4 mr-2" />
-                Create Plan
+              <Button onClick={handleCreatePlan} className="rounded-2xl bg-zinc-900 text-white hover:bg-zinc-800 shadow-xl shadow-zinc-900/20 px-10 py-7 text-lg font-bold transition-all hover:scale-[1.05] active:scale-[0.95]">
+                <Plus className="h-6 w-6 mr-3" strokeWidth={3} />
+                {t('createPlan')}
               </Button>
             )}
           </div>
@@ -350,10 +366,10 @@ export function TouristPlansView({
                       variant="ghost"
                       size="sm"
                       onClick={() => handleEditPlan(plan.id)}
-                      className="flex-1 h-8 rounded-lg text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100"
+                      className="flex-1 h-9 rounded-xl text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 font-semibold"
                     >
-                      <Edit className="h-3 w-3 mr-2" />
-                      Edit
+                      <Edit className="h-4 w-4 mr-2" />
+                      {baseT('edit') || 'Edit'}
                     </Button>
 
                     <Button

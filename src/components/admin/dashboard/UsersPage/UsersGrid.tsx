@@ -1,6 +1,7 @@
 'use client'
 
 import { AlertCircle, UserPlus, Users } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import type { User as UserType } from '@/types/user'
 import { UserCard } from './UserCard'
@@ -73,21 +74,22 @@ function LoadingState() {
 }
 
 function ErrorState() {
+  const t = useTranslations('users')
   return (
     <div className="py-12">
       <div className="max-w-md mx-auto text-center p-8 rounded-2xl bg-red-50 border border-red-100">
         <div className="w-12 h-12 mx-auto bg-red-100 rounded-xl flex items-center justify-center mb-4 text-red-600">
           <AlertCircle className="w-6 h-6" />
         </div>
-        <h3 className="text-lg font-bold text-red-900 mb-2">Error loading users</h3>
+        <h3 className="text-lg font-bold text-red-900 mb-2">{t('grid.errorTitle')}</h3>
         <p className="text-sm text-red-600 mb-6">
-          We couldn't fetch the user list. Please check your connection.
+          {t('grid.errorDesc')}
         </p>
         <Button
           variant="outline"
           className="bg-white border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800"
         >
-          Try Again
+          {t('grid.tryAgain')}
         </Button>
       </div>
     </div>
@@ -95,17 +97,18 @@ function ErrorState() {
 }
 
 function EmptyState() {
+  const t = useTranslations('users')
   return (
     <div className="py-20">
       <div className="max-w-md mx-auto text-center">
         <div className="w-20 h-20 mx-auto bg-zinc-50 rounded-2xl flex items-center justify-center mb-6 border border-zinc-100">
           <Users className="w-8 h-8 text-zinc-400" />
         </div>
-        <h3 className="text-xl font-bold text-zinc-900 mb-2">No users found</h3>
-        <p className="text-zinc-500 mb-8">Get started by inviting your first team member.</p>
+        <h3 className="text-xl font-bold text-zinc-900 mb-2">{t('grid.emptyTitle')}</h3>
+        <p className="text-zinc-500 mb-8">{t('grid.emptyDesc')}</p>
         <Button className="rounded-xl bg-zinc-900 text-white px-6 py-2.5 h-auto text-sm font-medium hover:bg-zinc-800 transition-colors">
           <UserPlus className="w-4 h-4 mr-2" />
-          Invite User
+          {t('inviteUser')}
         </Button>
       </div>
     </div>

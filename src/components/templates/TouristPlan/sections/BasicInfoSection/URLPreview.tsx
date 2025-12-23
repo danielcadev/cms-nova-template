@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl'
 import { memo } from 'react'
 
 interface URLPreviewProps {
@@ -11,6 +12,8 @@ export const URLPreview = memo(function URLPreview({
   categoryAlias,
   articleAlias,
 }: URLPreviewProps) {
+  const t = useTranslations('templates.tourism.edit.sections.basic.fields')
+
   return (
     <div className="text-sm font-mono text-zinc-600 bg-zinc-50 p-4 rounded-lg border border-zinc-200 break-all">
       <span className="text-zinc-400">yourdomain.com</span>

@@ -2,17 +2,19 @@
 
 import { Wand2 } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import type { PlanFormValues } from '@/schemas/plan'
 
 export function AutoFillSeasonalPricesButton() {
+  const t = useTranslations('templates.tourism.edit.sections.pricing')
   const { setValue, getValues } = useFormContext<PlanFormValues>()
 
   const handleAutoFill = () => {
     // Check if 3 seasons already exist
     const currentOptions = getValues('priceOptions') || []
     const existingSeasons = currentOptions.filter(
-      (option) =>
+      (option: any) =>
         option && typeof option === 'object' && 'mode' in option && option.mode === 'seasonal',
     )
 
@@ -24,15 +26,14 @@ export function AutoFillSeasonalPricesButton() {
     // Clear all existing options
     setValue('priceOptions', [], { shouldDirty: true, shouldValidate: true })
 
-    // Default accommodations
-    // Create 3 seasons
-    const seasons = ['LOW SEASON', 'MID SEASON', 'HIGH SEASON']
+    // Default accommodations from translations
+    const seasons = [t('seasons.low'), t('seasons.mid'), t('seasons.high')]
 
     const newSeasons = seasons.map((seasonTitle) => {
       const seasonAccommodations = [
-        { id: '1', accommodation: 'Sencilla', price: '', currency: 'COP' as const },
-        { id: '2', accommodation: 'Doble', price: '', currency: 'COP' as const },
-        { id: '3', accommodation: 'Triple', price: '', currency: 'COP' as const },
+        { id: '1', accommodation: t('seasons.single'), price: '', currency: 'COP' as const },
+        { id: '2', accommodation: t('seasons.double'), price: '', currency: 'COP' as const },
+        { id: '3', accommodation: t('seasons.triple'), price: '', currency: 'COP' as const },
       ]
 
       return {
@@ -47,13 +48,13 @@ export function AutoFillSeasonalPricesButton() {
     })
 
     // Set new seasons
-    setValue('priceOptions', newSeasons, { shouldDirty: true, shouldValidate: true })
+    setValue('priceOptions', newSeasons as any, { shouldDirty: true, shouldValidate: true })
   }
 
-  // Check if 3 seasons already exist for the label
+  // Check if 3 seasons already exist
   const currentOptions = getValues('priceOptions') || []
   const existingSeasons = currentOptions.filter(
-    (option) =>
+    (option: any) =>
       option && typeof option === 'object' && 'mode' in option && option.mode === 'seasonal',
   )
   const hasAllSeasons = existingSeasons.length >= 3
@@ -64,13 +65,13 @@ export function AutoFillSeasonalPricesButton() {
       onClick={handleAutoFill}
       variant="outline"
       size="sm"
-      className="h-9 bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900"
+      className="h-9 bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 rounded-2xl"
     >
       <Wand2 className="h-4 w-4 mr-2 text-purple-500" />
       <span className="hidden sm:inline">
-        {hasAllSeasons ? 'Recreate seasons' : 'Auto-fill Seasons'}
+        {hasAllSeasons ? t('autoFill.recreate') : t('autoFill.autoFill')}
       </span>
-      <span className="sm:hidden">Auto-fill</span>
+      <span className="sm:hidden">{t('autoFill.mini')}</span>
     </Button>
   )
 }

@@ -7,6 +7,7 @@ import { ConfirmationModal } from '@/components/ui/ConfirmationModal'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { toast } from '@/hooks/use-toast'
 import { useConfirmation } from '@/hooks/useConfirmation'
+import { useTranslations } from 'next-intl'
 import type { MediaItem } from '../types'
 import { useMediaLibrary } from '../useMediaLibrary'
 import { MediaCard } from './MediaCard'
@@ -55,7 +56,10 @@ export function MediaGrid({
     emptyLabel = 'No media found',
     onConfirmSelect,
 }: MediaGridProps) {
+    const t = useTranslations('media')
     const { items: contextItems, deleteItem, deleting, setSelected, selectedKey } = useMediaLibrary()
+
+    const finalEmptyLabel = emptyLabel === 'No media found' ? t('empty.title') : emptyLabel
 
     const items = useMemo(() => itemsProp ?? contextItems, [itemsProp, contextItems])
     const [preview, setPreview] = useState<MediaItem | null>(null)
@@ -67,10 +71,9 @@ export function MediaGrid({
 
         confirmation.confirm(
             {
-                title: 'Delete file',
-                description:
-                    'Are you sure you want to delete this file from S3 and the media library? This action cannot be undone.',
-                confirmText: 'Delete file',
+                title: t('grid.deleteTitle'),
+                description: t('grid.deleteDescription'),
+                confirmText: t('grid.deleteTitle'),
                 variant: 'destructive',
                 icon: 'delete',
             },
@@ -86,8 +89,8 @@ export function MediaGrid({
         event.stopPropagation()
         navigator.clipboard
             .writeText(item.url)
-            .then(() => toast.success({ title: 'Link copied', description: item.key }))
-            .catch(() => toast.error({ title: 'Copy failed', description: 'Could not copy link' }))
+            .then(() => toast.success({ title: t('grid.linkCopiedTitle'), description: item.key }))
+            .catch(() => toast.error({ title: t('grid.copyFailedTitle'), description: t('grid.copyFailedDesc') }))
     }
 
     const handleDownload = (event: MouseEvent<HTMLElement>, item: MediaItem) => {
@@ -131,7 +134,7 @@ export function MediaGrid({
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-500/10 text-3xl">
                     📁
                 </div>
-                <p className="text-sm font-medium theme-text-secondary">{emptyLabel}</p>
+                <p className="text-sm font-medium theme-text-secondary">{finalEmptyLabel}</p>
             </div>
         )
     }
@@ -187,28 +190,28 @@ export function MediaGrid({
                                     <div className="rounded-2xl border theme-border bg-theme-bg-secondary/60 p-4 text-sm">
                                         <dl className="space-y-2">
                                             <div className="flex justify-between gap-3">
-                                                <dt className="text-neutral-500 dark:text-neutral-400">Type</dt>
+                                                <dt className="text-neutral-500 dark:text-neutral-400">{t('grid.details.type')}</dt>
                                                 <dd className="font-medium theme-text">{preview.mimeType}</dd>
                                             </div>
                                             <div className="flex justify-between gap-3">
-                                                <dt className="text-neutral-500 dark:text-neutral-400">Size</dt>
+                                                <dt className="text-neutral-500 dark:text-neutral-400">{t('grid.details.size')}</dt>
                                                 <dd className="font-medium theme-text">{formatBytes(preview.size)}</dd>
                                             </div>
                                             {preview.width && preview.height && (
                                                 <div className="flex justify-between gap-3">
-                                                    <dt className="text-neutral-500 dark:text-neutral-400">Dimensions</dt>
+                                                    <dt className="text-neutral-500 dark:text-neutral-400">{t('grid.details.dimensions')}</dt>
                                                     <dd className="font-medium theme-text">
                                                         {preview.width} × {preview.height} px
                                                     </dd>
                                                 </div>
                                             )}
                                             <div className="flex justify-between gap-3">
-                                                <dt className="text-neutral-500 dark:text-neutral-400">Folder</dt>
-                                                <dd className="font-medium theme-text">{preview.folder || 'root'}</dd>
+                                                <dt className="text-neutral-500 dark:text-neutral-400">{t('grid.details.folder')}</dt>
+                                                <dd className="font-medium theme-text">{preview.folder || t('grid.details.root')}</dd>
                                             </div>
                                             {preview.createdAt && (
                                                 <div className="flex justify-between gap-3">
-                                                    <dt className="text-neutral-500 dark:text-neutral-400">Uploaded</dt>
+                                                    <dt className="text-neutral-500 dark:text-neutral-400">{t('grid.details.uploaded')}</dt>
                                                     <dd className="font-medium theme-text">
                                                         {formatDate(preview.createdAt)}
                                                     </dd>
@@ -223,14 +226,14 @@ export function MediaGrid({
                                             onClick={(event) => handleDownload(event, preview)}
                                             className="inline-flex items-center gap-2 rounded-xl bg-blue-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-600"
                                         >
-                                            <Download className="h-4 w-4" /> Save file
+                                            <Download className="h-4 w-4" /> {t('grid.actions.saveFile')}
                                         </button>
                                         <button
                                             type="button"
                                             onClick={(event) => handleCopy(event, preview)}
                                             className="inline-flex items-center gap-2 rounded-xl border theme-border px-4 py-2 text-sm font-medium theme-text transition hover:bg-theme-bg-secondary"
                                         >
-                                            <Copy className="h-4 w-4" /> Copy link
+                                            <Copy className="h-4 w-4" /> {t('grid.actions.copyLink')}
                                         </button>
                                         <button
                                             type="button"
@@ -240,7 +243,7 @@ export function MediaGrid({
                                             }}
                                             className="inline-flex items-center gap-2 rounded-xl border theme-border px-4 py-2 text-sm font-medium theme-text transition hover:bg-theme-bg-secondary"
                                         >
-                                            <Link2 className="h-4 w-4" /> Open in new tab
+                                            <Link2 className="h-4 w-4" /> {t('grid.actions.openNewTab')}
                                         </button>
                                     </div>
                                 </div>

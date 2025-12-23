@@ -1,8 +1,9 @@
 'use client'
 
-import { Edit, ExternalLink, MapPin, Plus, RefreshCw, Trash, Wand2 } from 'lucide-react'
+import { Edit, ExternalLink, MapPin, Plus, RefreshCw, Trash, Wand2, ArrowLeft, Layout, X, Check, Search } from 'lucide-react'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { ConfirmationModal } from '@/components/ui/ConfirmationModal'
 import { Input } from '@/components/ui/input'
@@ -22,6 +23,8 @@ const DURATION_LABELS: Record<string, string> = {
 export function ExperiencesView() {
   const { experiences, isLoading, error, refreshExperiences, deleteExperience, togglePublished } =
     useExperiences()
+  const t = useTranslations('templates.experiences')
+  const baseT = useTranslations('templates.form')
   const { toast } = useToast()
   const confirmation = useConfirmation()
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -56,13 +59,13 @@ export function ExperiencesView() {
     const ok = await togglePublished(id, next)
     if (ok) {
       toast({
-        title: next ? 'Experience published' : 'Experience reverted to draft',
+        title: next ? t('toggle.published') : t('toggle.draft'),
         description: title,
       })
     } else {
       toast({
-        title: 'Could not update status',
-        description: 'Try again in a few seconds.',
+        title: 'Error',
+        description: t('toggle.error'),
         variant: 'destructive',
       })
     }
@@ -71,9 +74,9 @@ export function ExperiencesView() {
   const handleDelete = (id: string, title: string) => {
     confirmation.confirm(
       {
-        title: 'Delete experience',
-        description: `Are you sure you want to delete “${title}”? This action cannot be undone.`,
-        confirmText: 'Delete experience',
+        title: t('delete.title'),
+        description: t('delete.description', { title }),
+        confirmText: t('delete.confirm'),
         variant: 'destructive',
         icon: 'delete',
       },
@@ -81,13 +84,13 @@ export function ExperiencesView() {
         const ok = await deleteExperience(id)
         if (ok) {
           toast({
-            title: 'Experience deleted',
-            description: `${title} was removed successfully.`,
+            title: t('delete.success'),
+            description: title,
           })
         } else {
           toast({
-            title: 'Unable to delete experience',
-            description: 'Please try again later.',
+            title: 'Error',
+            description: t('delete.error'),
             variant: 'destructive',
           })
         }
@@ -98,71 +101,78 @@ export function ExperiencesView() {
   return (
     <div className="min-h-screen bg-white pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">Experiences Library</h1>
-            <p className="text-zinc-500 mt-1">
-              Manage story-driven experiences with local hosts.
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                asChild
+                className="rounded-2xl border-zinc-200 text-zinc-700 hover:bg-zinc-50 h-10 w-10 p-0"
+                title={baseT('back')}
+              >
+                <Link href="/admin/dashboard/templates">
+                  <ArrowLeft className="h-4 w-4" />
+                </Link>
+              </Button>
+              <h1 className="text-3xl font-bold text-zinc-900 tracking-tight">{t('title')}</h1>
+            </div>
+            <p className="text-zinc-500 ml-13">
+              {t('subtitle')}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <Button
-              variant="outline"
               asChild
-              className="rounded-xl border-zinc-200 text-zinc-700 hover:bg-zinc-50 h-auto px-4"
-            >
-              <Link href="/admin/dashboard/templates">
-                Back to templates
-              </Link>
-            </Button>
-            <Button
-              asChild
-              className="rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-900/20 h-auto px-4"
+              className="rounded-2xl bg-zinc-900 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-900/20 h-11 px-6 font-medium transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <Link href="/admin/dashboard/templates/experiences/create">
-                <Plus className="h-4 w-4 mr-2" />
-                Create Experience
+                <Plus className="h-5 w-5 mr-2" />
+                {t('createExperience')}
               </Link>
             </Button>
           </div>
         </div>
 
-        {/* Info Card */}
-        <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-6 relative overflow-hidden group">
+        {/* Info Card - Consistent with TouristPlansView */}
+        <div className="bg-zinc-900/5 border border-zinc-200 rounded-3xl p-6 relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
-            <Wand2 className="w-32 h-32 text-zinc-900" />
+            <Layout className="w-32 h-32 text-zinc-900" />
           </div>
-          <div className="relative z-10">
-            <h3 className="font-semibold text-zinc-900 flex items-center gap-2">
-              <Wand2 className="w-4 h-4 text-zinc-500" />
-              Curated Experiences
-            </h3>
-            <p className="text-sm text-zinc-600 mt-2 max-w-2xl leading-relaxed">
-              Create unique, immersive activities led by locals. These experiences are highlighted
-              separately from standard tourist plans and focus on storytelling and cultural exchange.
-            </p>
+          <div className="relative z-10 flex items-start gap-4">
+            <div className="bg-white p-3 rounded-2xl shadow-sm border border-zinc-100 hidden sm:block">
+              <Layout className="h-6 w-6 text-zinc-900" />
+            </div>
+            <div>
+              <h3 className="font-bold text-zinc-900 flex items-center gap-2">
+                {t('info.title')}
+              </h3>
+              <p className="text-sm text-zinc-600 mt-1 max-w-2xl leading-relaxed font-medium">
+                {t('info.description')}
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Search and Refresh */}
+        {/* Search and Refresh - Redesigned */}
         <div className="flex flex-col sm:flex-row items-center gap-4">
-          <div className="relative flex-1 w-full sm:max-w-md">
+          <div className="relative flex-1 w-full sm:max-w-md group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 group-focus-within:text-zinc-900 transition-colors" />
             <Input
               value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search experiences..."
-              className="rounded-xl border-zinc-200 bg-white pl-4 h-11 focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+              placeholder={t('searchPlaceholder')}
+              className="rounded-2xl border-zinc-200 bg-white pl-11 h-12 shadow-sm focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all"
             />
           </div>
           <Button
             variant="outline"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="rounded-xl border-zinc-200 text-zinc-700 hover:bg-zinc-50 h-11"
+            className="rounded-2xl border-zinc-200 text-zinc-700 hover:bg-zinc-50 h-12 px-6 font-medium shadow-sm transition-all"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-            Refresh
+            {baseT('refresh') || 'Refresh'}
           </Button>
         </div>
 
@@ -174,25 +184,26 @@ export function ExperiencesView() {
               <p className="text-zinc-500">Loading experiences...</p>
             </div>
           ) : error ? (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center text-red-600">
+            <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center text-red-600 shadow-sm flex items-center justify-center gap-3 font-medium">
+              <X className="h-5 w-5" />
               {error}
             </div>
           ) : filteredExperiences.length === 0 ? (
             <div className="text-center py-20 bg-zinc-50 rounded-3xl border border-dashed border-zinc-200">
-              <div className="w-16 h-16 mx-auto bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm border border-zinc-100">
-                <Wand2 className="w-8 h-8 text-zinc-300" />
+              <div className="w-20 h-20 mx-auto bg-white rounded-3xl flex items-center justify-center mb-6 shadow-md border border-zinc-100">
+                <Layout className="w-10 h-10 text-zinc-200" />
               </div>
-              <h3 className="text-lg font-medium text-zinc-900 mb-2">No experiences found</h3>
-              <p className="text-zinc-500 text-sm mb-6 max-w-sm mx-auto">
-                {searchTerm
-                  ? `No results for "${searchTerm}".`
-                  : 'Start by creating your first experience to share with travelers.'}
+              <h3 className="text-2xl font-bold text-zinc-900 mb-2">
+                {searchTerm ? t('noResults', { query: searchTerm }) : t('noExperiences')}
+              </h3>
+              <p className="text-zinc-500 font-medium mb-8 max-w-sm mx-auto leading-relaxed">
+                {searchTerm ? t('noResultsDesc') : t('noExperiencesDesc')}
               </p>
               {!searchTerm && (
-                <Button asChild className="rounded-xl bg-zinc-900 text-white hover:bg-zinc-800">
+                <Button asChild className="rounded-2xl bg-zinc-900 text-white hover:bg-zinc-800 shadow-xl shadow-zinc-900/20 px-10 py-7 text-lg font-bold transition-all hover:scale-[1.05] active:scale-[0.95]">
                   <Link href="/admin/dashboard/templates/experiences/create">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create Experience
+                    <Plus className="h-6 w-6 mr-3" strokeWidth={3} />
+                    {t('createExperience')}
                   </Link>
                 </Button>
               )}

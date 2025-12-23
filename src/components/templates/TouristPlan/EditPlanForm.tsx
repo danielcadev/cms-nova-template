@@ -1,12 +1,15 @@
 'use client'
 
+import { Eye } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { useTranslations } from 'next-intl'
 import { publishPlanAction, updatePlanDataAction } from '@/app/actions/plan-actions'
-import { ContentHeader } from '@/components/admin/shared/ContentHeader'
+import { Button } from '@/components/ui/button'
 import { ImageUploadProvider, useImageUpload } from '@/contexts/ImageUploadContext'
+import { TemplateHeader } from '@/components/admin/dashboard/TemplatesPage/TemplateHeader'
 import { useToast } from '@/hooks/use-toast'
 import { type PlanFormValues, planSchema } from '@/schemas/plan'
 import { BasicInfoSection } from './sections/BasicInfoSection'
@@ -24,6 +27,8 @@ interface EditPlanFormProps {
 function EditPlanFormInner({ planId, initialData }: EditPlanFormProps) {
   const router = useRouter()
   const { toast } = useToast()
+  const t = useTranslations('templates.tourism.edit')
+  const formT = useTranslations('templates.form')
   const { isUploading: isAnyImageUploading } = useImageUpload()
   const [isSubmitting, startTransition] = useTransition()
 
@@ -140,20 +145,20 @@ function EditPlanFormInner({ planId, initialData }: EditPlanFormProps) {
           }
           setStatus(saveStatus)
           toast({
-            title: 'Changes saved',
+            title: formT('success.draftSaved'),
             description:
               saveStatus === 'published'
-                ? 'Plan published successfully.'
-                : 'Draft saved successfully.',
+                ? formT('success.publishedDesc')
+                : formT('success.draftSavedDesc'),
           })
         } else {
-          throw new Error(result.error || 'Failed to save plan')
+          throw new Error(result.error || formT('error.saveFailed'))
         }
       } catch (error) {
         toast({
           variant: 'destructive',
-          title: 'Error saving plan',
-          description: error instanceof Error ? error.message : 'Unknown error',
+          title: formT('error.saveFailed'),
+          description: error instanceof Error ? error.message : formT('error.saveFailedDesc'),
         })
       }
     })
@@ -206,78 +211,82 @@ function EditPlanFormInner({ planId, initialData }: EditPlanFormProps) {
   const sections = [
     {
       id: 'basic',
-      title: 'Basic Information',
-      description: 'Title, destination, and main details',
       component: <BasicInfoSection />,
     },
     {
       id: 'includes',
-      title: "What's Included",
-      description: "What's included and excluded in the plan",
       component: <IncludesSection />,
     },
     {
       id: 'itinerary',
-      title: 'Itinerary',
-      description: 'Day by day activities and schedule',
       component: <ItinerarySection />,
     },
     {
       id: 'pricing',
-      title: 'Pricing',
-      description: 'Price options for different group sizes',
       component: <PricingSection />,
     },
     {
       id: 'video',
-      title: 'Video',
-      description: 'Promotional video content',
       component: <VideoSection />,
     },
   ]
 
   return (
-    <div className="min-h-screen bg-zinc-50/50">
+    <div className="min-h-screen pb-20">
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(handleFinalSubmit)}>
-          <div className="max-w-5xl mx-auto px-6 py-4 pb-24">
-            <ContentHeader
-              backUrl="/admin/dashboard/templates/tourism"
-              backLabel="Back"
-              title={`Edit ${initialData.mainTitle || 'Tourism Plan'}`}
-              description={
-                isAutoSaving
-                  ? 'Auto-saving changes...'
-                  : 'Fill in the fields to edit this tourism plan.'
-              }
-              status={status}
-              onStatusChange={setStatus}
-              onSave={handleSave}
-              onPublishAndView={handlePublishAndView}
-              isSaving={isSubmitting || isAutoSaving}
-              isFormValid={validateForm()}
-              showPublishAndView={true}
-              showUrlPreview={false}
-            />
+          <TemplateHeader
+            title={t('editTitle', { title: initialData.mainTitle || 'Tourism Plan' })}
+            subtitle={isAutoSaving ? t('autosaving') : t('headerDesc')}
+            backHref="/admin/dashboard/templates/tourism"
+            status={status}
+            onStatusChange={setStatus}
+            onSave={() => handleSave(status)}
+            isSaving={isSubmitting || isAutoSaving}
+            canSave={validateForm()}
+            statusOptions={{
+              draft: formT('saveDraft'),
+              published: formT('publish'),
+              archived: formT('archived'),
+            }}
+            saveLabel={formT('publish')}
+            savingLabel={formT('saving')}
+            rightActions={
+              <Button
+                variant="outline"
+                onClick={() => handleSave('draft')}
+                disabled={isSubmitting || isAutoSaving}
+                className="rounded-2xl bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50 h-11 px-6 font-medium transition-all shadow-sm"
+              >
+                {formT('saveDraft')}
+              </Button>
+            }
+            onView={handlePublishAndView}
+          />
 
-            {/* Auto-save indicator */}
-            {isAutoSaving && (
-              <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 px-3 py-2 bg-zinc-900 text-white text-sm font-medium rounded-full shadow-lg animate-in fade-in slide-in-from-bottom-2">
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                Auto-saving...
-              </div>
-            )}
+          {/* Auto-save indicator */}
+          {isAutoSaving && (
+            <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 px-3 py-2 bg-zinc-900 text-white text-sm font-medium rounded-full shadow-lg animate-in fade-in slide-in-from-bottom-2">
+              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              {t('autosaving')}
+            </div>
+          )}
 
-            {/* Main content */}
-            <div className="space-y-8 mt-8">
+          {/* Main content */}
+          <div className="max-w-5xl mx-auto px-6 py-8">
+            <div className="space-y-8">
               {sections.map((section) => (
                 <div
                   key={section.id}
-                  className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden"
+                  className="bg-white rounded-3xl border border-zinc-200/50 shadow-sm overflow-hidden"
                 >
                   <div className="px-6 py-4 border-b border-zinc-100 bg-zinc-50/50">
-                    <h2 className="text-lg font-semibold text-zinc-900">{section.title}</h2>
-                    <p className="text-sm text-zinc-500 mt-0.5">{section.description}</p>
+                    <h2 className="text-lg font-semibold text-zinc-900">
+                      {t(`sections.${section.id}.title`)}
+                    </h2>
+                    <p className="text-sm text-zinc-500 mt-0.5">
+                      {t(`sections.${section.id}.description`)}
+                    </p>
                   </div>
                   <div className="p-6">{section.component}</div>
                 </div>

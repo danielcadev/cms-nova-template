@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 type Props = {
   mode: 'auto' | 'include'
@@ -9,6 +10,7 @@ type Props = {
 }
 
 export function TypePathsSelector({ mode, include, setInclude }: Props) {
+  const t = useTranslations('plugins.config.dynamicNav')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [available, setAvailable] = useState<string[]>([])
@@ -43,7 +45,7 @@ export function TypePathsSelector({ mode, include, setInclude }: Props) {
           .filter(Boolean)
         if (active) setAvailable(list)
       } catch (e: any) {
-        if (active) setError(e?.message || 'Error loading type paths')
+        if (active) setError(e?.message || t('error'))
       } finally {
         if (active) setLoading(false)
       }
@@ -68,15 +70,15 @@ export function TypePathsSelector({ mode, include, setInclude }: Props) {
   if (mode !== 'include') {
     return (
       <div className="rounded-lg border theme-border p-3 text-sm theme-text-secondary">
-        In Auto mode, all typePaths defined in your Content Types are used automatically.
+        {t('autoNotice')}
       </div>
     )
   }
 
-  if (loading) return <div className="text-sm theme-text-secondary">Loading typePaths...</div>
+  if (loading) return <div className="text-sm theme-text-secondary">{t('loading')}</div>
   if (error) return <div className="text-sm text-red-600">{error}</div>
   if (!available.length)
-    return <div className="text-sm theme-text-secondary">No Content Types yet.</div>
+    return <div className="text-sm theme-text-secondary">{t('noTypes')}</div>
 
   return (
     <div className="mt-1 flex flex-wrap gap-4">

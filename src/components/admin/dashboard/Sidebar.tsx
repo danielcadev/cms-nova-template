@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { memo, useCallback, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/hooks/use-auth'
@@ -44,6 +45,7 @@ interface NavigationSection {
 
 function SidebarComponent({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname()
+  const t = useTranslations('navigation')
   const { handleLogout } = useAuth()
   const { user } = useCurrentUser()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -101,29 +103,29 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
   const navigationSections = useMemo<NavigationSection[]>(
     () => [
       {
-        title: 'Overview',
+        title: t('sections.overview'),
         items: [
-          { href: '/admin/dashboard', icon: Home, label: 'Home' },
-          { href: '/admin/dashboard/view-content', icon: FileText, label: 'Content' },
-          { href: '/admin/dashboard/media', icon: ImageIcon, label: 'Media' },
+          { href: '/admin/dashboard', icon: Home, label: t('home') },
+          { href: '/admin/dashboard/view-content', icon: FileText, label: t('content') },
+          { href: '/admin/dashboard/media', icon: ImageIcon, label: t('media') },
         ],
       },
       {
-        title: 'Manage',
+        title: t('sections.manage'),
         items: [
-          { href: '/admin/dashboard/users', icon: Users, label: 'Team' },
-          { href: '/admin/dashboard/content-types', icon: Database, label: 'Models' },
+          { href: '/admin/dashboard/users', icon: Users, label: t('team') },
+          { href: '/admin/dashboard/content-types', icon: Database, label: t('models') },
         ],
       },
       {
-        title: 'System',
+        title: t('sections.system'),
         items: [
-          { href: '/admin/dashboard/plugins', icon: Plug, label: 'Plugins' },
-          { href: '/admin/dashboard/settings', icon: Settings, label: 'Settings' },
+          { href: '/admin/dashboard/plugins', icon: Plug, label: t('plugins') },
+          { href: '/admin/dashboard/settings', icon: Settings, label: t('settings') },
         ],
       },
     ],
-    [],
+    [t],
   )
 
   const toggleMobileMenu = () => {
@@ -229,8 +231,8 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
             </div>
 
             <div className="flex flex-1 flex-col overflow-hidden">
-              <span className="truncate text-sm font-bold text-zinc-900">Admin</span>
-              <span className="truncate text-[10px] font-medium text-zinc-400">View Profile</span>
+              <span className="truncate text-sm font-bold text-zinc-900">{t('admin')}</span>
+              <span className="truncate text-[10px] font-medium text-zinc-400">{t('viewProfile')}</span>
             </div>
 
             <Button

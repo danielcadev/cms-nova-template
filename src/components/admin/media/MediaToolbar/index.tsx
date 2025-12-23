@@ -13,6 +13,7 @@ import {
     X,
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import type { SortOption } from '../types'
 import { useMediaLibrary } from '../useMediaLibrary'
@@ -24,14 +25,7 @@ interface MediaToolbarProps {
     showViewToggle?: boolean
 }
 
-const sortOptions: Array<{ value: SortOption; label: string; hint: string }> = [
-    { value: 'newest', label: 'Newest', hint: 'Latest uploads first' },
-    { value: 'oldest', label: 'Oldest', hint: 'Chronological order' },
-    { value: 'name-asc', label: 'Name A–Z', hint: 'Alphabetical order' },
-    { value: 'name-desc', label: 'Name Z–A', hint: 'Reverse alphabetical order' },
-    { value: 'size-desc', label: 'Size ↓', hint: 'Large files first' },
-    { value: 'size-asc', label: 'Size ↑', hint: 'Small files first' },
-]
+// Sort options moved inside the component for localization support
 
 export function MediaToolbar({
     allowFolderManagement = true,
@@ -52,13 +46,26 @@ export function MediaToolbar({
         createFolder,
         removeFolder,
     } = useMediaLibrary()
+    const t = useTranslations('media.toolbar')
+
+    const sortOptions = useMemo(
+        () => [
+            { value: 'newest' as SortOption, label: t('sort.newest'), hint: t('sort.newestHint') },
+            { value: 'oldest' as SortOption, label: t('sort.oldest'), hint: t('sort.oldestHint') },
+            { value: 'name-asc' as SortOption, label: t('sort.nameAsc'), hint: t('sort.nameAscHint') },
+            { value: 'name-desc' as SortOption, label: t('sort.nameDesc'), hint: t('sort.nameDescHint') },
+            { value: 'size-desc' as SortOption, label: t('sort.sizeDesc'), hint: t('sort.sizeDescHint') },
+            { value: 'size-asc' as SortOption, label: t('sort.sizeAsc'), hint: t('sort.sizeAscHint') },
+        ],
+        [t],
+    )
 
     const [newFolder, setNewFolder] = useState('')
     const [showNewFolder, setShowNewFolder] = useState(false)
 
     const prettyFolder = useMemo(
-        () => (folder: string) => (folder ? folder.replace(/^\/+/u, '') : 'All media'),
-        [],
+        () => (folder: string) => (folder ? folder.replace(/^\/+/u, '') : t('allMedia')),
+        [t],
     )
 
     const hasPendingSearch = searchDraft.trim() !== filters.search.trim()
@@ -76,7 +83,7 @@ export function MediaToolbar({
     const handleDeleteFolder = async () => {
         if (!filters.folder) return
         const ok = window.confirm(
-            `Delete folder "/${filters.folder}" and all its files from S3? This cannot be undone.`,
+            t('deleteConfirm', { folder: filters.folder }),
         )
         if (!ok) return
         await removeFolder(filters.folder)
@@ -91,7 +98,7 @@ export function MediaToolbar({
                     <input
                         value={searchDraft}
                         onChange={(event) => setSearchTerm(event.target.value)}
-                        placeholder="Search assets..."
+                        placeholder={t('searchPlaceholder')}
                         className="h-10 w-full rounded-xl border border-zinc-200 bg-white px-10 pr-12 text-sm shadow-sm transition-all focus:border-zinc-400 focus:outline-none focus:ring-4 focus:ring-zinc-100 placeholder:text-zinc-400"
                     />
                     {searchDraft && (
@@ -106,7 +113,7 @@ export function MediaToolbar({
                     )}
                     {hasPendingSearch && (
                         <span className="absolute right-3 bottom-1 text-[10px] uppercase tracking-wide text-blue-500 font-bold">
-                            updating
+                            {t('updating')}
                         </span>
                     )}
                 </div>
@@ -119,7 +126,7 @@ export function MediaToolbar({
                             onChange={(event) => setFolder(event.target.value)}
                             className="h-10 appearance-none rounded-xl border border-zinc-200 bg-white pl-4 pr-10 text-sm font-medium shadow-sm transition-all hover:border-zinc-300 focus:border-zinc-400 focus:outline-none focus:ring-4 focus:ring-zinc-100 text-zinc-700 cursor-pointer"
                         >
-                            <option value="">All media</option>
+                            <option value="">{t('allMedia')}</option>
                             {folders.map((folder) => (
                                 <option key={folder} value={folder}>
                                     {prettyFolder(folder)}
@@ -136,7 +143,7 @@ export function MediaToolbar({
                             className="inline-flex items-center gap-2 rounded-xl border border-dashed border-zinc-300 bg-zinc-50 px-3 py-2 text-sm font-medium text-zinc-600 transition-all hover:border-zinc-400 hover:bg-zinc-100 hover:text-zinc-900"
                         >
                             <FolderPlus className="h-4 w-4" />
-                            New folder
+                            {t('newFolder')}
                         </button>
                     )}
 
@@ -145,7 +152,7 @@ export function MediaToolbar({
                             <input
                                 value={newFolder}
                                 onChange={(event) => setNewFolder(event.target.value)}
-                                placeholder="folder/name"
+                                placeholder={t('folderPlaceholder')}
                                 className="w-[140px] border-none bg-transparent text-sm focus:outline-none px-2 py-1 placeholder:text-zinc-300"
                                 onKeyDown={(event) => {
                                     if (event.key === 'Enter') {
@@ -165,7 +172,7 @@ export function MediaToolbar({
                                 className="rounded-lg bg-zinc-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-zinc-800 disabled:opacity-50 transition-colors"
                                 disabled={!newFolder.trim()}
                             >
-                                Create
+                                {t('create')}
                             </button>
                             <button
                                 type="button"
@@ -175,7 +182,7 @@ export function MediaToolbar({
                                 }}
                                 className="rounded-lg px-2 py-1 text-xs font-medium text-zinc-500 hover:text-zinc-900 transition-colors"
                             >
-                                Cancel
+                                {t('cancel')}
                             </button>
                         </div>
                     )}
@@ -187,7 +194,7 @@ export function MediaToolbar({
                             className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-600 transition-all hover:bg-red-100 hover:border-red-300"
                         >
                             <Trash2 className="h-4 w-4" />
-                            Delete
+                            {t('delete')}
                         </button>
                     )}
                 </div>
@@ -205,7 +212,7 @@ export function MediaToolbar({
                             )}
                         >
                             <UploadCloud className="h-4 w-4" />
-                            <span>{uploading ? 'Uploading…' : 'Upload media'}</span>
+                            <span>{uploading ? t('uploading') : t('upload')}</span>
                             <input
                                 type="file"
                                 multiple

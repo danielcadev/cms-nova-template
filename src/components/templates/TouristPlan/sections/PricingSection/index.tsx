@@ -3,12 +3,14 @@
 import { Plus } from 'lucide-react'
 import { memo, useMemo } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import type { PlanFormValues } from '@/schemas/plan'
 import { AutoFillSeasonalPricesButton } from './AutoFillSeasonalPricesButton'
 import { PriceOptionCard } from './PriceOptionCard'
 
 export const PricingSection = memo(function PricingSection() {
+  const t = useTranslations('templates.tourism.edit.sections.pricing')
   const form = useFormContext<PlanFormValues>()
   const { control, watch } = form
 
@@ -72,20 +74,26 @@ export const PricingSection = memo(function PricingSection() {
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="text-lg font-semibold text-zinc-900">General Price</h3>
-            <p className="text-sm text-zinc-500">One price for the whole plan.</p>
+            <h3 className="text-lg font-semibold text-zinc-900">{t('generalTitle')}</h3>
+            <p className="text-sm text-zinc-500">{t('generalDesc')}</p>
           </div>
           {!hasGeneral && (
-            <Button type="button" onClick={addGeneral} variant="outline" size="sm" className="h-9">
+            <Button
+              type="button"
+              onClick={addGeneral}
+              variant="outline"
+              size="sm"
+              className="h-9 rounded-2xl"
+            >
               <Plus className="h-4 w-4 mr-2" />
-              Add General Price
+              {t('addGeneral')}
             </Button>
           )}
         </div>
         <div className="space-y-4">
           {generalItems.length === 0 ? (
             <div className="bg-zinc-50 rounded-xl p-6 border border-dashed border-zinc-200 text-center">
-              <p className="text-sm text-zinc-500">No general price configured.</p>
+              <p className="text-sm text-zinc-500">{t('noGeneral')}</p>
             </div>
           ) : (
             generalItems.map(({ id, index }) => (
@@ -107,20 +115,24 @@ export const PricingSection = memo(function PricingSection() {
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="text-lg font-semibold text-zinc-900">Specific Prices</h3>
-            <p className="text-sm text-zinc-500">
-              Prices with a custom description (e.g., per person, couple).
-            </p>
+            <h3 className="text-lg font-semibold text-zinc-900">{t('specificTitle')}</h3>
+            <p className="text-sm text-zinc-500">{t('specificDesc')}</p>
           </div>
-          <Button type="button" onClick={addSpecific} variant="outline" size="sm" className="h-9">
+          <Button
+            type="button"
+            onClick={addSpecific}
+            variant="outline"
+            size="sm"
+            className="h-9 rounded-2xl"
+          >
             <Plus className="h-4 w-4 mr-2" />
-            Add Specific Price
+            {t('addSpecific')}
           </Button>
         </div>
         <div className="space-y-4">
           {specificItems.length === 0 ? (
             <div className="bg-zinc-50 rounded-xl p-6 border border-dashed border-zinc-200 text-center">
-              <p className="text-sm text-zinc-500">No specific prices configured.</p>
+              <p className="text-sm text-zinc-500">{t('noSpecific')}</p>
             </div>
           ) : (
             specificItems.map(({ id, index }) => (
@@ -142,13 +154,19 @@ export const PricingSection = memo(function PricingSection() {
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="text-lg font-semibold text-zinc-900">Seasonal Prices</h3>
-            <p className="text-sm text-zinc-500">Different prices per season and accommodation.</p>
+            <h3 className="text-lg font-semibold text-zinc-900">{t('seasonalTitle')}</h3>
+            <p className="text-sm text-zinc-500">{t('seasonalDesc')}</p>
           </div>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <Button type="button" onClick={addSeasonal} variant="outline" size="sm" className="h-9">
+            <Button
+              type="button"
+              onClick={addSeasonal}
+              variant="outline"
+              size="sm"
+              className="h-9 rounded-2xl"
+            >
               <Plus className="h-4 w-4 mr-2" />
-              Add Seasonal Price
+              {t('addSeasonal')}
             </Button>
             <AutoFillSeasonalPricesButton />
           </div>
@@ -156,7 +174,7 @@ export const PricingSection = memo(function PricingSection() {
         <div className="space-y-4">
           {seasonalItems.length === 0 ? (
             <div className="bg-zinc-50 rounded-xl p-6 border border-dashed border-zinc-200 text-center">
-              <p className="text-sm text-zinc-500">No seasonal prices configured.</p>
+              <p className="text-sm text-zinc-500">{t('noSeasonal')}</p>
             </div>
           ) : (
             seasonalItems.map(({ id, index }) => (

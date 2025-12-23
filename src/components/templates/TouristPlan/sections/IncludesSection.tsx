@@ -3,6 +3,7 @@
 import { CheckCircle2, Plus, Trash2, XCircle } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -10,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea'
 import type { IncludeSection, PlanFormValues } from '@/schemas/plan'
 
 export function IncludesSection() {
+  const t = useTranslations('templates.tourism.edit.sections.includes')
   const { control, watch, setValue } = useFormContext<PlanFormValues>()
 
   // Watch includes value
@@ -21,11 +23,11 @@ export function IncludesSection() {
     if (typeof includes === 'string') {
       // Legacy format - convert to single section
       return includes.trim()
-        ? [{ id: 'legacy', title: 'Included Services', content: includes }]
+        ? [{ id: 'legacy', title: t('fields.included'), content: includes }]
         : []
     }
     return includes as IncludeSection[]
-  }, [includes])
+  }, [includes, t])
 
   // Update includes with new sections
   const updateIncludes = useCallback(
@@ -74,17 +76,17 @@ export function IncludesSection() {
               <div className="w-8 h-8 bg-zinc-100 rounded-lg flex items-center justify-center">
                 <CheckCircle2 className="h-4 w-4 text-zinc-900" />
               </div>
-              What's Included
+              {t('fields.included')}
             </h4>
             <Button
               type="button"
               onClick={addSection}
               variant="outline"
               size="sm"
-              className="h-8 text-xs"
+              className="h-8 text-xs rounded-2xl"
             >
               <Plus className="h-3 w-3 mr-1.5" />
-              Add Section
+              {t('fields.addSection')}
             </Button>
           </div>
 
@@ -93,13 +95,17 @@ export function IncludesSection() {
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-zinc-100">
                 <CheckCircle2 className="h-6 w-6 text-zinc-400" />
               </div>
-              <h5 className="text-sm font-medium text-zinc-900 mb-1">No sections yet</h5>
-              <p className="text-xs text-zinc-500 mb-4">
-                Add sections to organize what's included in your plan
-              </p>
-              <Button type="button" onClick={addSection} variant="outline" size="sm">
+              <h5 className="text-sm font-medium text-zinc-900 mb-1">{t('fields.noSections')}</h5>
+              <p className="text-xs text-zinc-500 mb-4">{t('fields.noSectionsDesc')}</p>
+              <Button
+                type="button"
+                onClick={addSection}
+                variant="outline"
+                size="sm"
+                className="rounded-2xl"
+              >
                 <Plus className="h-3 w-3 mr-2" />
-                Add First Section
+                {t('fields.addFirstSection')}
               </Button>
             </div>
           ) : (
@@ -111,7 +117,7 @@ export function IncludesSection() {
                 >
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
-                      Section {index + 1}
+                      {t('fields.sectionTitle')} {index + 1}
                     </span>
                     {includeSections.length > 1 && (
                       <Button
@@ -132,13 +138,13 @@ export function IncludesSection() {
                         htmlFor={`title-${section.id}`}
                         className="block text-xs font-medium text-zinc-700 mb-1.5"
                       >
-                        Section Title
+                        {t('fields.sectionTitle')}
                       </label>
                       <Input
                         id={`title-${section.id}`}
                         value={section.title}
                         onChange={(e) => updateSection(section.id, 'title', e.target.value)}
-                        placeholder="e.g., INCLUDED IN BOGOTÁ"
+                        placeholder={t('fields.sectionTitlePlaceholder')}
                         className="font-medium"
                       />
                     </div>
@@ -148,13 +154,13 @@ export function IncludesSection() {
                         htmlFor={`content-${section.id}`}
                         className="block text-xs font-medium text-zinc-700 mb-1.5"
                       >
-                        Items Included
+                        {t('fields.itemsIncluded')}
                       </label>
                       <Textarea
                         id={`content-${section.id}`}
                         value={section.content}
                         onChange={(e) => updateSection(section.id, 'content', e.target.value)}
-                        placeholder="List items..."
+                        placeholder={t('fields.itemsPlaceholder')}
                         rows={5}
                         className="resize-none text-sm leading-relaxed"
                       />
@@ -172,7 +178,7 @@ export function IncludesSection() {
             <div className="w-8 h-8 bg-zinc-100 rounded-lg flex items-center justify-center">
               <XCircle className="h-4 w-4 text-zinc-900" />
             </div>
-            What is NOT included
+            {t('fields.notIncluded')}
           </h4>
 
           <div className="bg-white rounded-xl p-6 border border-zinc-200 shadow-sm">
@@ -184,13 +190,7 @@ export function IncludesSection() {
                   <FormControl>
                     <Textarea
                       {...field}
-                      placeholder="List what's NOT included in the plan:
-• Personal expenses not specified
-• International medical assistance card
-• Tips for guides and drivers
-• Lunches during the tour
-• Optional activities not mentioned
-• Alcoholic beverages"
+                      placeholder={t('fields.itemsPlaceholder')}
                       rows={12}
                       className="resize-none text-sm leading-relaxed border-0 focus-visible:ring-0 p-0 shadow-none"
                     />

@@ -1,6 +1,7 @@
 'use client'
 
 import { ArrowLeft, Save, Trash2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -30,6 +31,7 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
     handleDelete,
     router,
   } = useEditContentEntry(contentTypeSlug, entryId)
+  const t = useTranslations('createEntry')
 
   if (loading) {
     return (
@@ -44,7 +46,7 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-          Content entry not found
+          {t('entryNotFound')}
         </h3>
       </div>
     )
@@ -61,13 +63,15 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to {contentTypeSlug} Content
+            {t('backToContent', { type: contentTypeSlug })}
           </Button>
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              Edit {entry?.title || 'Entry'}
+              {t('editTitle', { title: entry?.title || t('untitled') })}
             </h1>
-            <p className="text-gray-500 dark:text-gray-400">Edit {contentTypeSlug} content entry</p>
+            <p className="text-gray-500 dark:text-gray-400">
+              {t('editDescription', { type: contentTypeSlug })}
+            </p>
           </div>
         </div>
         {/* Delete Button */}
@@ -78,7 +82,7 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
           className="flex items-center gap-2 text-red-600 hover:text-red-700"
         >
           <Trash2 className="h-4 w-4" />
-          {deleting ? 'Deleting...' : 'Delete'}
+          {deleting ? t('deleting') : t('delete')}
         </Button>
       </div>
 
@@ -86,36 +90,36 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
       <form onSubmit={handleSubmit} className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
-            <CardDescription>Basic details for your content entry</CardDescription>
+            <CardTitle>{t('basicInfo.title')}</CardTitle>
+            <CardDescription>{t('basicInfo.description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor={titleInputId}>Title *</Label>
+                <Label htmlFor={titleInputId}>{t('basicInfo.titleLabel')} *</Label>
                 <Input
                   id={titleInputId}
                   value={formData.title || ''}
                   onChange={(e) => handleInputChange('title', e.target.value)}
-                  placeholder="Enter title"
+                  placeholder={t('basicInfo.titlePlaceholder')}
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor={slugInputId}>Slug *</Label>
+                <Label htmlFor={slugInputId}>{t('basicInfo.slugLabel')} *</Label>
                 <Input
                   id={slugInputId}
                   value={formData.slug || ''}
                   onChange={(e) => handleInputChange('slug', e.target.value)}
-                  placeholder="enter-slug"
+                  placeholder={t('basicInfo.slugPlaceholder')}
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status">{t('status')}</Label>
               <Select
                 value={formData.status || 'draft'}
                 onValueChange={(val) => handleInputChange('status', val)}
@@ -124,8 +128,8 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="draft">Draft</SelectItem>
-                  <SelectItem value="published">Published</SelectItem>
+                  <SelectItem value="draft">{t('statusOptions.draft')}</SelectItem>
+                  <SelectItem value="published">{t('statusOptions.published')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -136,8 +140,8 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
         {entry.contentType && entry.contentType.fields.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>Content Fields</CardTitle>
-              <CardDescription>Custom fields for this content type</CardDescription>
+              <CardTitle>{t('additionalProperties.title')}</CardTitle>
+              <CardDescription>{t('additionalProperties.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {entry.contentType.fields.map((field) => (
@@ -160,10 +164,10 @@ export function EditContentEntry({ contentTypeSlug, entryId }: EditContentEntryP
         <div className="flex items-center gap-3">
           <Button type="submit" disabled={saving} className="flex items-center gap-2">
             <Save className="h-4 w-4" />
-            {saving ? 'Saving...' : 'Save Changes'}
+            {saving ? t('saving') : t('save')}
           </Button>
           <Button type="button" variant="outline" onClick={() => router.back()}>
-            Cancel
+            {t('cancel')}
           </Button>
         </div>
       </form>

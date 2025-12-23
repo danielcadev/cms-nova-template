@@ -3,6 +3,7 @@
 import { Edit, Eye, Plus, Settings, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -29,6 +30,7 @@ interface ContentTypeDetailProps {
 }
 
 export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
+  const t = useTranslations('contentTypes')
   const [contentType, setContentType] = useState<ContentType | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
@@ -43,8 +45,8 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
         setContentType(data)
       } else {
         toast({
-          title: 'Error',
-          description: 'Content type not found',
+          title: t('common.error'),
+          description: t('error.notFound'),
           variant: 'destructive',
         })
         router.push('/admin/dashboard/content-types')
@@ -52,8 +54,8 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
     } catch (error) {
       console.error('Error loading content type:', error)
       toast({
-        title: 'Error',
-        description: 'Failed to load content type',
+        title: t('common.error'),
+        description: t('error.failed'),
         variant: 'destructive',
       })
     } finally {
@@ -79,10 +81,10 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-          Content type not found
+          {t('error.notFound')}
         </h3>
         <p className="text-gray-500 dark:text-gray-400 mt-2">
-          The content type you're looking for doesn't exist.
+          {t('error.notFoundDesc')}
         </p>
       </div>
     )
@@ -97,7 +99,7 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
             {contentType.name}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
-            {contentType.description || 'No description provided'}
+            {contentType.description || t('card.noDescription')}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -106,14 +108,14 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
             className="flex items-center gap-2"
           >
             <Eye className="h-4 w-4" />
-            View Content ({contentType._count.entries})
+            {t('detail.viewContent', { count: contentType._count.entries })}
           </Button>
           <Button
             onClick={() => router.push(`/admin/dashboard/content-types/${slug}/content/create`)}
             className="flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
-            Add Entry
+            {t('detail.addEntry')}
           </Button>
         </div>
       </div>
@@ -122,7 +124,7 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Total Entries</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('detail.stats.totalEntries')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{contentType._count.entries}</div>
@@ -131,7 +133,7 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Fields</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('detail.stats.fields')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{contentType.fields.length}</div>
@@ -140,7 +142,7 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Slug</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('detail.stats.slug')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-sm font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
@@ -153,8 +155,8 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
       {/* Fields */}
       <Card>
         <CardHeader>
-          <CardTitle>Fields</CardTitle>
-          <CardDescription>Fields defined for this content type</CardDescription>
+          <CardTitle>{t('detail.fieldsList.title')}</CardTitle>
+          <CardDescription>{t('detail.fieldsList.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -166,11 +168,13 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
                 <div className="flex items-center gap-3">
                   <div>
                     <h4 className="font-medium">{field.label}</h4>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Type: {field.type}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {t('detail.fieldsList.type', { type: field.type })}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  {field.isRequired && <Badge variant="secondary">Required</Badge>}
+                  {field.isRequired && <Badge variant="secondary">{t('detail.fieldsList.required')}</Badge>}
                   <Button variant="ghost" size="sm">
                     <Edit className="h-4 w-4" />
                   </Button>
@@ -183,7 +187,7 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
 
             {contentType.fields.length === 0 && (
               <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                No fields defined yet
+                {t('detail.fieldsList.noFields')}
               </div>
             )}
           </div>
@@ -194,14 +198,14 @@ export function ContentTypeDetail({ slug }: ContentTypeDetailProps) {
       <div className="flex items-center gap-3">
         <Button variant="outline" className="flex items-center gap-2">
           <Settings className="h-4 w-4" />
-          Edit Content Type
+          {t('detail.actions.edit')}
         </Button>
         <Button
           variant="outline"
           className="flex items-center gap-2 text-red-600 hover:text-red-700"
         >
           <Trash2 className="h-4 w-4" />
-          Delete Content Type
+          {t('detail.actions.delete')}
         </Button>
       </div>
     </div>

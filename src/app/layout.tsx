@@ -2,6 +2,8 @@ import { GeistSans } from 'geist/font/sans'
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 import { cookies } from 'next/headers'
+import { NextIntlClientProvider } from 'next-intl'
+import { getMessages, getLocale } from 'next-intl/server'
 import { Toaster } from '@/components/ui/toaster'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ErrorProvider } from '@/contexts/ErrorContext'
@@ -37,21 +39,25 @@ export default async function RootLayout({
     validTheme = 'light'
   }
 
-  const _isDark = isDarkThemeId(validTheme)
   const _themeClass = `theme-${validTheme}`
 
+  const messages = await getMessages()
+  const locale = await getLocale()
+
   return (
-    <html lang="en" className={`${fontSans.variable} ${GeistSans.variable}`}>
+    <html lang={locale} className={`${fontSans.variable} ${GeistSans.variable}`}>
       <body className="antialiased">
-        <ErrorProvider>
-          {/* Pass initialTheme from server cookie to avoid hydration mismatch */}
-          <ThemeProvider initialTheme={validTheme}>
-            <AuthProvider>
-              {children}
-              <Toaster />
-            </AuthProvider>
-          </ThemeProvider>
-        </ErrorProvider>
+        <NextIntlClientProvider messages={messages} locale={locale}>
+          <ErrorProvider>
+            {/* Pass initialTheme from server cookie to avoid hydration mismatch */}
+            <ThemeProvider initialTheme={validTheme}>
+              <AuthProvider>
+                {children}
+                <Toaster />
+              </AuthProvider>
+            </ThemeProvider>
+          </ErrorProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   )

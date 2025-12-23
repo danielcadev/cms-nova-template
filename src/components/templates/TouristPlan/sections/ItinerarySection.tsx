@@ -2,6 +2,7 @@
 
 import { PlusCircle, Trash2 } from 'lucide-react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { ConfirmationModal } from '@/components/ui/ConfirmationModal'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
@@ -11,6 +12,8 @@ import { confirmationPresets, useConfirmation } from '@/hooks/useConfirmation'
 import { ItineraryDayImage } from '../components/ItineraryDayImage'
 
 export function ItinerarySection() {
+  const t = useTranslations('templates.tourism.edit.sections.itinerary')
+  const commonT = useTranslations('templates.tourism.edit.common')
   const { control } = useFormContext()
   const { fields, append, remove } = useFieldArray({
     control,
@@ -32,8 +35,10 @@ export function ItinerarySection() {
                   {index + 1}
                 </div>
                 <div className="flex-1 sm:flex-initial">
-                  <h4 className="text-lg font-bold text-zinc-900">Day {index + 1}</h4>
-                  <p className="text-sm text-zinc-500">Configure activities for this day</p>
+                  <h4 className="text-lg font-bold text-zinc-900">
+                    {commonT('day')} {index + 1}
+                  </h4>
+                  <p className="text-sm text-zinc-500">{t('fields.dayConfigDesc')}</p>
                 </div>
               </div>
               <Button
@@ -59,12 +64,12 @@ export function ItinerarySection() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-base font-semibold text-zinc-900">
-                        Day Title
+                        {t('fields.dayTitle')}
                       </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
-                          placeholder="e.g., Arrival in Cancun and free afternoon"
+                          placeholder={t('fields.dayTitlePlaceholder')}
                           className="text-base py-2"
                         />
                       </FormControl>
@@ -78,12 +83,12 @@ export function ItinerarySection() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-base font-semibold text-zinc-900">
-                        Description and Activities
+                        {t('fields.dayDescription')}
                       </FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
-                          placeholder="Detail the activities, transfers, meals and other relevant information..."
+                          placeholder={t('fields.dayDescriptionPlaceholder')}
                           rows={6}
                           className="resize-none text-sm leading-relaxed"
                         />
@@ -94,7 +99,7 @@ export function ItinerarySection() {
                 />
               </div>
               <div className="space-y-4">
-                <h5 className="text-base font-semibold text-zinc-900">Day Image</h5>
+                <h5 className="text-base font-semibold text-zinc-900">{t('fields.dayImage')}</h5>
                 <ItineraryDayImage fieldIndex={index} />
               </div>
             </div>
@@ -106,9 +111,9 @@ export function ItinerarySection() {
             <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-zinc-100">
               <PlusCircle className="h-8 w-8 text-zinc-400" />
             </div>
-            <h4 className="text-lg font-semibold text-zinc-900 mb-2">Start your itinerary</h4>
+            <h4 className="text-lg font-semibold text-zinc-900 mb-2">{t('fields.noItinerary')}</h4>
             <p className="text-sm text-zinc-500 max-w-md mx-auto mb-6">
-              Add the first day of your tourist plan. You can add as many days as you need.
+              {t('fields.noItineraryDesc')}
             </p>
           </div>
         )}
@@ -116,11 +121,11 @@ export function ItinerarySection() {
         <Button
           type="button"
           variant="outline"
-          className="w-full bg-white border-dashed border-zinc-300 hover:bg-zinc-50 hover:border-zinc-400 text-zinc-600 py-6 text-base font-medium transition-all duration-200"
+          className="w-full bg-white border-dashed border-zinc-300 hover:bg-zinc-50 hover:border-zinc-400 text-zinc-600 py-6 text-base font-medium transition-all duration-200 rounded-2xl"
           onClick={() => append({ day: fields.length + 1, title: '', description: '', image: '' })}
         >
           <PlusCircle className="mr-2 h-5 w-5" strokeWidth={1.5} />
-          Add Day {fields.length + 1} to Itinerary
+          {t('fields.addDay')} {fields.length + 1}
         </Button>
       </div>
 

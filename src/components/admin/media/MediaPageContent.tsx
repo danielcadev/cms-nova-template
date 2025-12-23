@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
 import { MediaGrid } from './MediaGrid'
 import { MediaList } from './MediaList'
@@ -11,6 +12,7 @@ const GRID_SKELETON_KEYS = Array.from({ length: 12 }, (_, index) => `media-skele
 
 export default function MediaPageContent() {
   const [introLoading, setIntroLoading] = useState(true)
+  const t = useTranslations('media')
 
   useEffect(() => {
     const timer = setTimeout(() => setIntroLoading(false), 200)
@@ -21,8 +23,8 @@ export default function MediaPageContent() {
     return (
       <div className="px-6 pt-6 relative">
         <AdminLoading
-          title="Media"
-          message="Loading media library..."
+          title={t('title')}
+          message={t('loading')}
           variant="content"
           fullScreen
         />
@@ -40,6 +42,7 @@ export default function MediaPageContent() {
 function MediaLibraryLayout() {
   const { items, loading, error, total, totalPages, page, setPage, filters, uploading } =
     useMediaLibrary()
+  const t = useTranslations('media')
 
   const isEmpty = !loading && items.length === 0
 
@@ -49,12 +52,12 @@ function MediaLibraryLayout() {
       <div className="flex items-end justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-zinc-900 flex items-center gap-3">
-            Media Library
+            {t('title')}
             <span className="inline-flex items-center justify-center rounded-full bg-zinc-100 px-3 py-1 text-sm font-medium text-zinc-600">
               {total}
             </span>
           </h1>
-          <p className="text-zinc-500 mt-1">Manage your images, videos, and documents</p>
+          <p className="text-zinc-500 mt-1">{t('subtitle')}</p>
         </div>
       </div>
 
@@ -83,9 +86,9 @@ function MediaLibraryLayout() {
               <div className="w-20 h-20 rounded-full bg-zinc-50 mb-6 flex items-center justify-center text-4xl shadow-sm">
                 {uploading ? '⏳' : '📁'}
               </div>
-              <h3 className="text-xl font-bold text-zinc-900 mb-2">No media found</h3>
+              <h3 className="text-xl font-bold text-zinc-900 mb-2">{t('empty.title')}</h3>
               <p className="text-zinc-500 max-w-md mx-auto">
-                Adjust your filters or upload new files to get started.
+                {t('empty.description')}
               </p>
             </div>
           )}
@@ -100,7 +103,7 @@ function MediaLibraryLayout() {
         {/* Pagination Footer */}
         <div className="border-t border-zinc-100 p-4 bg-zinc-50/50 flex items-center justify-between">
           <div className="text-sm text-zinc-500 font-medium">
-            Page {page} of {totalPages} • {total} items
+            {t('pagination.page', { current: page, total: totalPages })} • {t('pagination.items', { count: total })}
           </div>
           <div className="flex gap-2">
             <button
@@ -109,7 +112,7 @@ function MediaLibraryLayout() {
               onClick={() => setPage(page - 1)}
               className="px-4 py-2 rounded-xl bg-white border border-zinc-200 text-zinc-700 text-sm font-medium hover:bg-zinc-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
             >
-              Previous
+              {t('pagination.previous')}
             </button>
             <button
               type="button"
@@ -117,7 +120,7 @@ function MediaLibraryLayout() {
               onClick={() => setPage(page + 1)}
               className="px-4 py-2 rounded-xl bg-white border border-zinc-200 text-zinc-700 text-sm font-medium hover:bg-zinc-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
             >
-              Next
+              {t('pagination.next')}
             </button>
           </div>
         </div>

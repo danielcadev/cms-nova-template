@@ -1,8 +1,10 @@
 'use client'
 
-import { MapPin, Save, Trash2 } from 'lucide-react'
+import { MapPin, Save, Trash2, ArrowLeft, Check, X, Layout } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useCallback, useEffect, useId, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -16,6 +18,9 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
+import { ConfirmationModal } from '@/components/ui/ConfirmationModal'
+import { useConfirmation } from '@/hooks/useConfirmation'
+import { TemplateHeader } from './TemplateHeader'
 
 interface TourismTemplate {
   id: string
@@ -50,7 +55,10 @@ export function EditTourismTemplate({ templateId }: EditTourismTemplateProps) {
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const router = useRouter()
+  const t = useTranslations('templates.tourism')
+  const baseT = useTranslations('templates.form')
   const { toast } = useToast()
+  const confirmation = useConfirmation()
 
   const loadTemplate = useCallback(async () => {
     try {
@@ -63,7 +71,7 @@ export function EditTourismTemplate({ templateId }: EditTourismTemplateProps) {
       } else {
         toast({
           title: 'Error',
-          description: 'Tourism template not found',
+          description: baseT('error.notFound'),
           variant: 'destructive',
         })
         router.push('/admin/dashboard/templates/tourism')
@@ -170,8 +178,8 @@ export function EditTourismTemplate({ templateId }: EditTourismTemplateProps) {
 
       if (response.ok) {
         toast({
-          title: 'Success',
-          description: 'Tourism template updated successfully',
+          title: baseT('success.draftSaved'),
+          description: formData.title,
         })
         loadTemplate() // Reload to get updated data
       } else {
@@ -195,39 +203,46 @@ export function EditTourismTemplate({ templateId }: EditTourismTemplateProps) {
   }
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this template? This action cannot be undone.')) {
-      return
-    }
-
-    try {
-      setDeleting(true)
-      const response = await fetch(`/api/templates/tourism/${templateId}`, {
-        method: 'DELETE',
-      })
-
-      if (response.ok) {
-        toast({
-          title: 'Success',
-          description: 'Tourism template deleted successfully',
-        })
-        router.push('/admin/dashboard/templates/tourism')
-      } else {
-        toast({
-          title: 'Error',
-          description: 'Failed to delete tourism template',
-          variant: 'destructive',
-        })
-      }
-    } catch (error) {
-      console.error('Error deleting template:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to delete tourism template',
+    confirmation.confirm(
+      {
+        title: t('delete.title'),
+        description: t('delete.description', { title: template?.title || '' }),
+        confirmText: t('delete.confirm'),
         variant: 'destructive',
-      })
-    } finally {
-      setDeleting(false)
-    }
+        icon: 'delete',
+      },
+      async () => {
+        try {
+          setDeleting(true)
+          const response = await fetch(`/api/templates/tourism/${templateId}`, {
+            method: 'DELETE',
+          })
+
+          if (response.ok) {
+            toast({
+              title: t('delete.success'),
+              description: template?.title || '',
+            })
+            router.push('/admin/dashboard/templates/tourism')
+          } else {
+            toast({
+              title: 'Error',
+              description: t('delete.error'),
+              variant: 'destructive',
+            })
+          }
+        } catch (error) {
+          console.error('Error deleting template:', error)
+          toast({
+            title: 'Error',
+            description: t('delete.error'),
+            variant: 'destructive',
+          })
+        } finally {
+          setDeleting(false)
+        }
+      },
+    )
   }
 
   if (loading) {
@@ -250,181 +265,213 @@ export function EditTourismTemplate({ templateId }: EditTourismTemplateProps) {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Delete Button */}
-      <div className="flex justify-end">
-        <Button
-          variant="outline"
-          onClick={handleDelete}
-          disabled={deleting}
-          className="flex items-center gap-2 text-red-600 hover:text-red-700"
-        >
-          <Trash2 className="h-4 w-4" />
-          {deleting ? 'Deleting...' : 'Delete'}
-        </Button>
+    <div className="min-h-screen bg-zinc-50/50 pb-20">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <TemplateHeader
+          title={template.status === 'draft' ? baseT('createTourism') : baseT('editTourism')}
+          subtitle={baseT('subtitleTourism')}
+          backHref="/admin/dashboard/templates/tourism"
+          onSave={() => handleSubmit({ preventDefault: () => { } } as React.FormEvent)}
+          onDelete={handleDelete}
+          isSaving={saving}
+          isDeleting={deleting}
+          saveLabel={baseT('publish')}
+          savingLabel={baseT('publishing')}
+          deleteLabel={baseT('delete')}
+          deletingLabel={baseT('deleting')}
+        />
+
+        <form onSubmit={handleSubmit} className="space-y-8">
+
+          {/* Info Card - Consistent Style */}
+          <div className="bg-zinc-900/5 border border-zinc-200 rounded-3xl p-6 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+              <Layout className="w-32 h-32 text-zinc-900" />
+            </div>
+            <div className="relative z-10 flex items-start gap-4">
+              <div className="bg-white p-3 rounded-2xl shadow-sm border border-zinc-100 hidden sm:block">
+                <Layout className="h-6 w-6 text-zinc-900" />
+              </div>
+              <div>
+                <h3 className="font-bold text-zinc-900 flex items-center gap-2">
+                  {t('info.title')}
+                </h3>
+                <p className="text-sm text-zinc-600 mt-1 max-w-2xl leading-relaxed font-medium">
+                  {t('info.description')}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Basic Information */}
+          <Card className="border-zinc-200/50 shadow-sm rounded-3xl overflow-hidden">
+            <CardHeader>
+              <CardTitle>Basic Information</CardTitle>
+              <CardDescription>Basic details for your tourism template</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor={titleId}>Title *</Label>
+                  <Input
+                    id={titleId}
+                    value={formData.title || ''}
+                    onChange={(e) => handleInputChange('title', e.target.value)}
+                    placeholder="Enter title"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor={slugId}>Slug *</Label>
+                  <Input
+                    id={slugId}
+                    value={formData.slug || ''}
+                    onChange={(e) => handleInputChange('slug', e.target.value)}
+                    placeholder="enter-slug"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor={descId}>Description</Label>
+                <Textarea
+                  id={descId}
+                  value={formData.description || ''}
+                  onChange={(e) => handleInputChange('description', e.target.value)}
+                  placeholder="Enter description"
+                  rows={3}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="status">Status</Label>
+                <Select
+                  value={formData.status || 'draft'}
+                  onValueChange={(val) => handleInputChange('status', val)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="published">Published</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Tourism Details */}
+          <Card className="border-zinc-200/50 shadow-sm rounded-3xl overflow-hidden">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="h-5 w-5" />
+                Tourism Details
+              </CardTitle>
+              <CardDescription>Specific details for the tourism package</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2"></div>
+
+                <div className="space-y-2">
+                  <Label htmlFor={durationId}>Duration</Label>
+                  <Input
+                    id={durationId}
+                    value={formData.duration || ''}
+                    onChange={(e) => handleInputChange('duration', e.target.value)}
+                    placeholder="e.g., 7 days 6 nights"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor={priceId}>Price *</Label>
+                  <Input
+                    id={priceId}
+                    type="number"
+                    value={formData.price || ''}
+                    onChange={(e) => handleInputChange('price', parseFloat(e.target.value))}
+                    placeholder="Enter price"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor={categoryId}>Category</Label>
+                <Select
+                  value={formData.category || ''}
+                  onValueChange={(val) => handleInputChange('category', val)}
+                >
+                  <SelectTrigger id={categoryId}>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="adventure">Adventure</SelectItem>
+                    <SelectItem value="cultural">Cultural</SelectItem>
+                    <SelectItem value="relaxation">Relaxation</SelectItem>
+                    <SelectItem value="family">Family</SelectItem>
+                    <SelectItem value="luxury">Luxury</SelectItem>
+                    <SelectItem value="budget">Budget</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Features */}
+          <Card className="border-zinc-200/50 shadow-sm rounded-3xl overflow-hidden">
+            <CardHeader>
+              <CardTitle>Features</CardTitle>
+              <CardDescription>Key features and highlights of this tourism package</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {(formData.features || []).map((feature, index) => (
+                <div key={feature} className="flex items-center gap-2">
+                  <Input
+                    value={feature}
+                    onChange={(e) => handleArrayChange('features', index, e.target.value)}
+                    placeholder="Enter feature"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => removeArrayItem('features', index)}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              ))}
+              <Button type="button" variant="outline" className="rounded-2xl border-zinc-200" onClick={() => addArrayItem('features')}>
+                Add Feature
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Actions */}
+          <div className="flex items-center gap-3 pt-6">
+            <Button type="submit" disabled={saving} className="rounded-2xl bg-zinc-900 text-white hover:bg-zinc-800 px-8 h-12 font-bold transition-all">
+              <Save className="h-4 w-4 mr-2" />
+              {saving ? 'Saving...' : 'Save Changes'}
+            </Button>
+            <Button type="button" variant="outline" className="rounded-2xl h-12 px-8" onClick={() => router.back()}>
+              Cancel
+            </Button>
+          </div>
+        </form>
       </div>
 
-      {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Basic Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
-            <CardDescription>Basic details for your tourism template</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor={titleId}>Title *</Label>
-                <Input
-                  id={titleId}
-                  value={formData.title || ''}
-                  onChange={(e) => handleInputChange('title', e.target.value)}
-                  placeholder="Enter title"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor={slugId}>Slug *</Label>
-                <Input
-                  id={slugId}
-                  value={formData.slug || ''}
-                  onChange={(e) => handleInputChange('slug', e.target.value)}
-                  placeholder="enter-slug"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor={descId}>Description</Label>
-              <Textarea
-                id={descId}
-                value={formData.description || ''}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-                placeholder="Enter description"
-                rows={3}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <Select
-                value={formData.status || 'draft'}
-                onValueChange={(val) => handleInputChange('status', val)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="draft">Draft</SelectItem>
-                  <SelectItem value="published">Published</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Tourism Details */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MapPin className="h-5 w-5" />
-              Tourism Details
-            </CardTitle>
-            <CardDescription>Specific details for the tourism package</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2"></div>
-
-              <div className="space-y-2">
-                <Label htmlFor={durationId}>Duration</Label>
-                <Input
-                  id={durationId}
-                  value={formData.duration || ''}
-                  onChange={(e) => handleInputChange('duration', e.target.value)}
-                  placeholder="e.g., 7 days 6 nights"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor={priceId}>Price *</Label>
-                <Input
-                  id={priceId}
-                  type="number"
-                  value={formData.price || ''}
-                  onChange={(e) => handleInputChange('price', parseFloat(e.target.value))}
-                  placeholder="Enter price"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor={categoryId}>Category</Label>
-              <Select
-                value={formData.category || ''}
-                onValueChange={(val) => handleInputChange('category', val)}
-              >
-                <SelectTrigger id={categoryId}>
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="adventure">Adventure</SelectItem>
-                  <SelectItem value="cultural">Cultural</SelectItem>
-                  <SelectItem value="relaxation">Relaxation</SelectItem>
-                  <SelectItem value="family">Family</SelectItem>
-                  <SelectItem value="luxury">Luxury</SelectItem>
-                  <SelectItem value="budget">Budget</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Features */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Features</CardTitle>
-            <CardDescription>Key features and highlights of this tourism package</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {(formData.features || []).map((feature, index) => (
-              <div key={feature} className="flex items-center gap-2">
-                <Input
-                  value={feature}
-                  onChange={(e) => handleArrayChange('features', index, e.target.value)}
-                  placeholder="Enter feature"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => removeArrayItem('features', index)}
-                >
-                  Remove
-                </Button>
-              </div>
-            ))}
-            <Button type="button" variant="outline" onClick={() => addArrayItem('features')}>
-              Add Feature
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Actions */}
-        <div className="flex items-center gap-3">
-          <Button type="submit" disabled={saving} className="flex items-center gap-2">
-            <Save className="h-4 w-4" />
-            {saving ? 'Saving...' : 'Save Changes'}
-          </Button>
-          <Button type="button" variant="outline" onClick={() => router.back()}>
-            Cancel
-          </Button>
-        </div>
-      </form>
+      {confirmation.config && (
+        <ConfirmationModal
+          isOpen={confirmation.isOpen}
+          onClose={confirmation.close}
+          onConfirm={confirmation.handleConfirm}
+          config={confirmation.config}
+        />
+      )}
     </div>
   )
 }

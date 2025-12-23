@@ -3,10 +3,14 @@
 import { ArrowLeft, CheckCircle, Loader2, Lock, Mail, Package, Shield, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { LanguageSwitcher } from '@/components/admin/shared/LanguageSwitcher'
 
 export default function SignUp() {
+  const t = useTranslations('auth.signUp')
+  const vt = useTranslations('auth.validation')
   const router = useRouter()
 
   const nameId = useId()
@@ -51,25 +55,25 @@ export default function SignUp() {
 
     // Validate name
     if (!formData.name) {
-      newErrors.name = 'Name is required'
+      newErrors.name = vt('nameRequired')
       isValid = false
     }
 
     // Validate email
     if (!formData.email) {
-      newErrors.email = 'Email is required'
+      newErrors.email = vt('emailRequired')
       isValid = false
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is not valid'
+      newErrors.email = vt('emailInvalid')
       isValid = false
     }
 
     // Validate password
     if (!formData.password) {
-      newErrors.password = 'Password is required'
+      newErrors.password = vt('passwordRequired')
       isValid = false
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters'
+      newErrors.password = vt('passwordLength')
       isValid = false
     }
 
@@ -115,15 +119,15 @@ export default function SignUp() {
 
       if (response.ok) {
         // Success - redirect to login
-        alert('Administrator created successfully! You can now sign in.')
+        alert(t('messages.success'))
         router.push('/admin/login')
       } else {
         // Server error
-        alert(data.error || 'Error creating administrator')
+        alert(data.error || t('messages.error'))
       }
     } catch (error) {
       console.error('Error:', error)
-      alert('Connection error. Please try again.')
+      alert(t('messages.connectionError'))
     } finally {
       setIsLoading(false)
     }
@@ -145,6 +149,11 @@ export default function SignUp() {
   if (hasAdmin) {
     return (
       <div className="min-h-screen bg-zinc-50 relative">
+        {/* Language Switcher Overlay */}
+        <div className="absolute top-8 right-8 z-20">
+          <LanguageSwitcher />
+        </div>
+
         {/* Back to home button */}
         <div className="absolute top-8 left-8 z-20">
           <a
@@ -152,7 +161,7 @@ export default function SignUp() {
             className="inline-flex items-center gap-2 px-4 py-2 text-sm text-zinc-500 hover:text-zinc-900 transition-colors bg-white/50 backdrop-blur-sm rounded-lg border border-zinc-200/50 hover:bg-white hover:border-zinc-200"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to home
+            {t('backToHome')}
           </a>
         </div>
 
@@ -165,7 +174,7 @@ export default function SignUp() {
                 </div>
                 <div className="text-left">
                   <h1 className="text-xl font-bold text-zinc-900 tracking-tight">Nova CMS</h1>
-                  <p className="text-sm text-zinc-500 font-medium">System Configured</p>
+                  <p className="text-sm text-zinc-500 font-medium">{t('systemConfigured')}</p>
                 </div>
               </div>
             </div>
@@ -176,23 +185,22 @@ export default function SignUp() {
                   <Shield className="h-8 w-8 text-zinc-400" />
                 </div>
 
-                <h2 className="text-xl font-bold text-zinc-900 mb-3">Registration Disabled</h2>
+                <h2 className="text-xl font-bold text-zinc-900 mb-3">{t('registrationDisabled')}</h2>
 
                 <p className="text-zinc-500 mb-8 text-sm leading-relaxed">
-                  The main administrator has already been created. Registration of new users is
-                  disabled for security.
+                  {t('registrationDisabledDesc')}
                 </p>
 
                 <div className="space-y-4">
-                  <a
-                    href="/admin/login"
+                  <button
+                    onClick={() => router.push('/admin/login')}
                     className="w-full inline-flex items-center justify-center px-4 py-3 bg-zinc-900 text-white rounded-xl hover:bg-zinc-800 transition-all shadow-lg shadow-zinc-900/10 font-medium"
                   >
-                    Sign In to Dashboard
-                  </a>
+                    {t('signIn')}
+                  </button>
 
                   <p className="text-xs text-zinc-400">
-                    Need to create more users? You can do it from the admin panel after signing in.
+                    {t('createMoreUsers')}
                   </p>
                 </div>
               </div>
@@ -206,6 +214,11 @@ export default function SignUp() {
   // Registration form (only if no admin exists) - BENTO DESIGN
   return (
     <div className="min-h-screen bg-zinc-50 relative">
+      {/* Language Switcher Overlay */}
+      <div className="absolute top-8 right-8 z-20">
+        <LanguageSwitcher />
+      </div>
+
       {/* Back to home button */}
       <div className="absolute top-8 left-8 z-20">
         <a
@@ -213,7 +226,7 @@ export default function SignUp() {
           className="inline-flex items-center gap-2 px-4 py-2 text-sm text-zinc-500 hover:text-zinc-900 transition-colors bg-white/50 backdrop-blur-sm rounded-lg border border-zinc-200/50 hover:bg-white hover:border-zinc-200"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to home
+          {t('backToHome')}
         </a>
       </div>
 
@@ -227,11 +240,11 @@ export default function SignUp() {
               </div>
               <div className="text-left">
                 <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">Nova CMS</h1>
-                <p className="text-sm text-zinc-500 font-medium">Create First Administrator</p>
+                <p className="text-sm text-zinc-500 font-medium">{t('title')}</p>
               </div>
             </div>
-            <h2 className="text-xl font-semibold text-zinc-900">Set up your account</h2>
-            <p className="text-sm text-zinc-500 mt-2">Create the main administrator account</p>
+            <h2 className="text-xl font-semibold text-zinc-900">{t('subtitle')}</h2>
+            <p className="text-sm text-zinc-500 mt-2">{t('subtitle')}</p>
           </div>
 
           {/* Form Card */}
@@ -240,7 +253,7 @@ export default function SignUp() {
               {/* Name Field */}
               <div className="space-y-2">
                 <label htmlFor={nameId} className="text-sm font-medium text-zinc-900">
-                  Full name
+                  {t('nameLabel')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -250,12 +263,11 @@ export default function SignUp() {
                     id={nameId}
                     name="name"
                     type="text"
-                    placeholder="Your full name"
+                    placeholder={t('namePlaceholder')}
                     value={formData.name}
                     onChange={handleChange}
-                    className={`pl-10 bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 ${
-                      errors.name ? 'border-red-300 focus:border-red-400 focus:ring-red-400' : ''
-                    }`}
+                    className={`pl-10 bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 ${errors.name ? 'border-red-300 focus:border-red-400 focus:ring-red-400' : ''
+                      }`}
                     autoComplete="name"
                     disabled={isLoading}
                   />
@@ -266,7 +278,7 @@ export default function SignUp() {
               {/* Email Field */}
               <div className="space-y-2">
                 <label htmlFor={emailId} className="text-sm font-medium text-zinc-900">
-                  Email address
+                  {t('emailLabel')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -276,12 +288,11 @@ export default function SignUp() {
                     id={emailId}
                     name="email"
                     type="email"
-                    placeholder="admin@example.com"
+                    placeholder={t('emailPlaceholder')}
                     value={formData.email}
                     onChange={handleChange}
-                    className={`pl-10 bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 ${
-                      errors.email ? 'border-red-300 focus:border-red-400 focus:ring-red-400' : ''
-                    }`}
+                    className={`pl-10 bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 ${errors.email ? 'border-red-300 focus:border-red-400 focus:ring-red-400' : ''
+                      }`}
                     autoComplete="email"
                     disabled={isLoading}
                   />
@@ -292,7 +303,7 @@ export default function SignUp() {
               {/* Password Field */}
               <div className="space-y-2">
                 <label htmlFor={passwordId} className="text-sm font-medium text-zinc-900">
-                  Password
+                  {t('passwordLabel')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -302,14 +313,13 @@ export default function SignUp() {
                     id={passwordId}
                     name="password"
                     type="password"
-                    placeholder="••••••••"
+                    placeholder={t('passwordPlaceholder')}
                     value={formData.password}
                     onChange={handleChange}
-                    className={`pl-10 bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 ${
-                      errors.password
+                    className={`pl-10 bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 ${errors.password
                         ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
                         : ''
-                    }`}
+                      }`}
                     autoComplete="new-password"
                     disabled={isLoading}
                   />
@@ -327,10 +337,10 @@ export default function SignUp() {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating account...
+                    {t('buttonLoading')}
                   </>
                 ) : (
-                  'Create administrator account'
+                  t('button')
                 )}
               </Button>
             </form>
@@ -339,13 +349,13 @@ export default function SignUp() {
           {/* Footer */}
           <div className="text-center mt-8">
             <p className="text-sm text-zinc-500">
-              Already have an account?{' '}
+              {t('hasAccount')}{' '}
               <button
                 type="button"
                 onClick={() => router.push('/admin/login')}
                 className="text-zinc-900 font-medium hover:underline decoration-zinc-900/30 underline-offset-4"
               >
-                Sign in
+                {t('signIn')}
               </button>
             </p>
           </div>

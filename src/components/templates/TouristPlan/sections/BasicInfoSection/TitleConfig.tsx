@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Combobox as OriginalCombobox } from '@/components/ui/combobox'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -7,6 +8,7 @@ import { URLPreview } from './URLPreview'
 import { useBasicInfo } from './useBasicInfo'
 
 export function TitleConfig() {
+  const t = useTranslations('templates.tourism.edit.sections.basic')
   const {
     control,
     setValue,
@@ -28,11 +30,8 @@ export function TitleConfig() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
       <div className="lg:col-span-1">
-        <h3 className="text-lg font-semibold text-zinc-900 mb-2">Title and Web Address</h3>
-        <p className="text-sm text-zinc-500 leading-relaxed">
-          The name of your plan and how it will appear in the browser's address bar. Essential for
-          SEO.
-        </p>
+        <h3 className="text-lg font-semibold text-zinc-900 mb-2">{t('title')}</h3>
+        <p className="text-sm text-zinc-500 leading-relaxed">{t('description')}</p>
       </div>
       <div className="lg:col-span-2 space-y-6">
         <FormField
@@ -40,11 +39,11 @@ export function TitleConfig() {
           name="mainTitle"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-zinc-900 font-medium">Main Plan Title</FormLabel>
+              <FormLabel className="text-zinc-900 font-medium">{t('fields.title')}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
-                  placeholder="e.g., Magical Circuit through the Riviera Maya"
+                  placeholder={t('fields.titlePlaceholder')}
                   className="text-lg py-6 bg-white border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900"
                 />
               </FormControl>
@@ -55,10 +54,8 @@ export function TitleConfig() {
 
         <div className="bg-zinc-50/50 rounded-xl p-6 border border-zinc-200 space-y-6">
           <div>
-            <h4 className="text-sm font-semibold text-zinc-900 mb-1">URL Configuration</h4>
-            <p className="text-xs text-zinc-500">
-              Configure how your plan will appear in the URL structure.
-            </p>
+            <h4 className="text-sm font-semibold text-zinc-900 mb-1">{t('fields.urlConfig')}</h4>
+            <p className="text-xs text-zinc-500">{t('fields.urlConfigDesc')}</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -68,9 +65,9 @@ export function TitleConfig() {
               render={({ field }) => (
                 <FormItem className="sm:col-span-2 lg:col-span-1">
                   <FormLabel className="text-sm font-medium text-zinc-700">
-                    Section
+                    {t('fields.section')}
                     <span className="text-xs text-zinc-400 block font-normal mt-0.5">
-                      Main category
+                      {t('fields.sectionDesc')}
                     </span>
                   </FormLabel>
                   <FormControl>
@@ -81,7 +78,7 @@ export function TitleConfig() {
                         { label: 'Planes', value: 'planes' },
                         { label: 'Circuitos', value: 'circuitos' },
                       ]}
-                      placeholder="Choose section..."
+                      placeholder={t('fields.section')}
                     />
                   </FormControl>
                   <FormMessage />
@@ -94,9 +91,9 @@ export function TitleConfig() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-medium text-zinc-700">
-                    Destination
+                    {t('fields.destination')}
                     <span className="text-xs text-zinc-400 block font-normal mt-0.5">
-                      Specific destination
+                      {t('fields.destinationDesc')}
                     </span>
                   </FormLabel>
                   <FormControl>
@@ -113,10 +110,10 @@ export function TitleConfig() {
                             CATEGORY_KEY,
                             JSON.stringify(categoryOptions.filter((o) => o.value !== val)),
                           )
-                        } catch {}
+                        } catch { }
                       }}
-                      placeholder="Search or create..."
-                      emptyMessage="No options"
+                      placeholder={t('fields.destination')}
+                      emptyMessage="..."
                       clearable
                     />
                   </FormControl>
@@ -133,9 +130,9 @@ export function TitleConfig() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm font-medium text-zinc-700">
-                    Plan Slug
+                    {t('fields.slug')}
                     <span className="text-xs text-zinc-400 block font-normal mt-0.5">
-                      URL identifier
+                      {t('fields.slugDesc')}
                     </span>
                   </FormLabel>
                   <FormControl>
@@ -152,10 +149,10 @@ export function TitleConfig() {
                             SLUG_KEY,
                             JSON.stringify(planSlugOptions.filter((o) => o.value !== val)),
                           )
-                        } catch {}
+                        } catch { }
                       }}
-                      placeholder="Search or create..."
-                      emptyMessage="No options"
+                      placeholder={t('fields.slug')}
+                      emptyMessage="..."
                       clearable
                     />
                   </FormControl>
@@ -168,7 +165,7 @@ export function TitleConfig() {
 
           <div>
             <FormLabel className="text-sm font-medium text-zinc-700 mb-3 block">
-              URL Preview
+              {t('fields.urlPreview')}
             </FormLabel>
             <URLPreview
               section={section || 'planes'}

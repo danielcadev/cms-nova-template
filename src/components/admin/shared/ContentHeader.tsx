@@ -17,6 +17,12 @@ interface ContentHeaderProps {
   // Status management
   status: string
   onStatusChange: (status: string) => void
+  statusLabel?: string
+  statusOptions?: {
+    draft: string
+    published: string
+    archived?: string
+  }
 
   // Optional URL preview (read-only)
   currentUrl?: string
@@ -26,6 +32,12 @@ interface ContentHeaderProps {
   onPublishAndView?: () => void
   isSaving: boolean
   isFormValid: boolean
+
+  // Localization labels
+  saveDraftLabel?: string
+  publishLabel?: string
+  savingLabel?: string
+  viewLabel?: string
 
   // Optional customization
   showPublishAndView?: boolean
@@ -39,11 +51,17 @@ export function ContentHeader({
   description,
   status,
   onStatusChange,
+  statusLabel = 'Status:',
+  statusOptions,
   currentUrl,
   onSave,
   onPublishAndView,
   isSaving,
   isFormValid,
+  saveDraftLabel = 'Save Draft',
+  publishLabel = 'Publish',
+  savingLabel = 'Saving...',
+  viewLabel = 'View',
   showPublishAndView = true,
   showUrlPreview = false,
 }: ContentHeaderProps) {
@@ -52,63 +70,62 @@ export function ContentHeader({
   return (
     <div className="space-y-6">
       {/* Main Header */}
-      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
         <div className="flex-1 min-w-0 space-y-4">
-          <div className="flex items-center gap-2">
-            <Link href={backUrl}>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 -ml-2 h-8 px-2"
-              >
-                <ArrowLeft className="h-4 w-4 mr-1" />
-                {backLabel}
-              </Button>
-            </Link>
-          </div>
-
-          <div>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              asChild
+              className="rounded-2xl border-zinc-200 text-zinc-700 hover:bg-zinc-50 h-10 w-10 p-0 shadow-sm transition-all"
+              title={backLabel}
+            >
+              <Link href={backUrl}>
+                <ArrowLeft className="h-4 w-4" />
+              </Link>
+            </Button>
             <h1 className="text-3xl font-bold text-zinc-900 tracking-tight">{title}</h1>
-            <p className="mt-2 text-zinc-500 text-lg max-w-3xl">{description}</p>
           </div>
+          <p className="text-zinc-500 text-lg max-w-3xl ml-13 leading-relaxed">
+            {description}
+          </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 lg:pt-12">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 md:pt-2">
           {/* Status Selector */}
-          <div className="flex items-center gap-3 bg-white border border-zinc-200 rounded-lg px-3 py-1.5 shadow-sm">
-            <label htmlFor={statusId} className="text-sm font-medium text-zinc-500">
-              Status:
+          <div className="flex items-center gap-3 bg-white border border-zinc-200 rounded-2xl px-4 py-2 shadow-sm transition-all hover:border-zinc-300">
+            <label htmlFor={statusId} className="text-sm font-medium text-zinc-500 whitespace-nowrap">
+              {statusLabel}
             </label>
             <select
               id={statusId}
               value={status}
               onChange={(e) => onStatusChange(e.target.value)}
-              className="bg-transparent border-none text-sm font-semibold text-zinc-900 focus:ring-0 cursor-pointer py-0 pl-0 pr-8"
+              className="bg-transparent border-none text-sm font-bold text-zinc-900 focus:ring-0 cursor-pointer py-0 pl-0 pr-8"
             >
-              <option value="draft">Draft</option>
-              <option value="published">Published</option>
-              <option value="archived">Archived</option>
+              <option value="draft">{statusOptions?.draft || 'Draft'}</option>
+              <option value="published">{statusOptions?.published || 'Published'}</option>
+              {statusOptions?.archived && <option value="archived">{statusOptions.archived}</option>}
             </select>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Button
               variant="outline"
               onClick={() => onSave('draft')}
               disabled={isSaving}
-              className="bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900"
+              className="rounded-2xl bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 h-11 px-6 font-medium transition-all shadow-sm"
             >
-              {isSaving ? 'Saving...' : 'Save Draft'}
+              {isSaving ? savingLabel : saveDraftLabel}
             </Button>
 
             <Button
               onClick={() => onSave('published')}
               disabled={isSaving || !isFormValid}
-              className="bg-zinc-900 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-900/20"
+              className="rounded-2xl bg-zinc-900 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-900/20 h-11 px-8 font-bold transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
-              <Save className="h-4 w-4 mr-2" />
-              {isSaving ? 'Saving...' : 'Publish'}
+              <Save className="h-5 w-5 mr-2" />
+              {isSaving ? savingLabel : publishLabel}
             </Button>
 
             {showPublishAndView && onPublishAndView && (
@@ -116,10 +133,10 @@ export function ContentHeader({
                 variant="outline"
                 onClick={onPublishAndView}
                 disabled={isSaving || !isFormValid}
-                className="border-zinc-200 text-zinc-700 hover:bg-zinc-50"
+                className="rounded-2xl border-zinc-200 text-zinc-700 hover:bg-zinc-50 h-11 px-5 font-medium transition-all shadow-sm"
               >
-                <Eye className="h-4 w-4 mr-2" />
-                View
+                <Eye className="h-5 w-5 mr-2" />
+                {viewLabel}
               </Button>
             )}
           </div>

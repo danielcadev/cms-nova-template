@@ -2,6 +2,7 @@
 
 import { Ban, CheckCircle, Crown, Edit, Mail, Trash2, User } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { ConfirmationModal } from '@/components/ui/ConfirmationModal'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -29,6 +30,7 @@ export function UserDetailModal({
   isFirstUser = false,
 }: UserDetailModalProps) {
   const [isUpdating, setIsUpdating] = useState(false)
+  const t = useTranslations('users')
   const confirmation = useConfirmation()
 
   // Safety cleanup for body lock
@@ -55,7 +57,7 @@ export function UserDetailModal({
     if (!onUpdateRole || !user) return
 
     if (isFirstUser && newRole === 'USER') {
-      alert('Cannot remove admin role from the first system user for security.')
+      alert(t('security.cannotRemoveFirstAdmin'))
       return
     }
 
@@ -74,7 +76,7 @@ export function UserDetailModal({
     if (!onDeleteUser || !user) return
 
     if (isFirstUser) {
-      alert('Cannot delete the first system user for security.')
+      alert(t('security.cannotDeleteFirstUser'))
       return
     }
 
@@ -98,19 +100,19 @@ export function UserDetailModal({
     const shouldBan = !user.banned
 
     if (isFirstUser && shouldBan) {
-      alert('Cannot ban the first system user for security.')
+      alert(t('security.cannotBanFirstUser'))
       return
     }
 
     const config = shouldBan
       ? confirmationPresets.banUser(user.name || user.email)
       : {
-          title: 'Unban User',
-          description: `Are you sure you want to unban ${user.name || user.email}?`,
-          confirmText: 'Unban User',
-          variant: 'info' as const,
-          icon: 'shield' as const,
-        }
+        title: t('actions.unbanUserTitle'),
+        description: t('actions.unbanUserDesc', { name: user.name || user.email }),
+        confirmText: t('actions.unban'),
+        variant: 'info' as const,
+        icon: 'shield' as const,
+      }
 
     confirmation.confirm(config, async () => {
       setIsUpdating(true)
@@ -136,18 +138,18 @@ export function UserDetailModal({
         ) : (
           <>
             <DialogHeader className="p-6 border-b border-zinc-100">
-              <DialogTitle className="text-xl font-bold text-zinc-900">User Details</DialogTitle>
+              <DialogTitle className="text-xl font-bold text-zinc-900">{t('details.title')}</DialogTitle>
             </DialogHeader>
 
             <div className="p-6 space-y-8">
               {/* User Profile */}
               <div className="flex flex-col items-center text-center">
                 <div className="w-24 h-24 rounded-2xl flex items-center justify-center text-3xl font-bold bg-zinc-100 text-zinc-500 mb-4 border border-zinc-200">
-                  {getInitials(user.name || 'User')}
+                  {getInitials(user.name || 'U')}
                 </div>
 
                 <h3 className="text-xl font-bold text-zinc-900 mb-1">
-                  {user.name || 'Unnamed User'}
+                  {user.name || t('card.unnamedUser')}
                 </h3>
 
                 <div className="flex items-center gap-2 text-zinc-500 text-sm mb-4">
@@ -163,13 +165,13 @@ export function UserDetailModal({
                     ) : (
                       <User className="w-3.5 h-3.5" />
                     )}
-                    {user.role}
+                    {t(`roles.${(user.role || 'user').toLowerCase()}`)}
                   </div>
 
                   {user.banned && (
                     <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-900 text-white text-xs font-medium uppercase tracking-wide">
                       <Ban className="w-3.5 h-3.5" />
-                      Banned
+                      {t('details.banned')}
                     </div>
                   )}
                 </div>
@@ -179,18 +181,18 @@ export function UserDetailModal({
               <div className="grid grid-cols-2 gap-4 py-6 border-t border-b border-zinc-100">
                 <div className="text-center">
                   <div className="text-xs text-zinc-400 uppercase tracking-wider font-medium mb-1">
-                    Joined
+                    {t('details.joined')}
                   </div>
                   <div className="text-sm font-medium text-zinc-900">
-                    {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown'}
+                    {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : t('card.unknownDate')}
                   </div>
                 </div>
                 <div className="text-center">
                   <div className="text-xs text-zinc-400 uppercase tracking-wider font-medium mb-1">
-                    Status
+                    {t('details.status')}
                   </div>
                   <div className="text-sm font-medium text-zinc-900">
-                    {user.emailVerified ? 'Verified' : 'Unverified'}
+                    {user.emailVerified ? t('details.verified') : t('details.unverified')}
                   </div>
                 </div>
               </div>
@@ -203,7 +205,7 @@ export function UserDetailModal({
                   className="w-full rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 h-11"
                 >
                   <Edit className="w-4 h-4 mr-2" />
-                  {user.role === 'ADMIN' ? 'Remove Admin Access' : 'Make Admin'}
+                  {user.role === 'ADMIN' ? t('actions.removeAdmin') : t('actions.makeAdmin')}
                 </Button>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -214,7 +216,7 @@ export function UserDetailModal({
                     className="w-full rounded-xl border-zinc-200 text-zinc-700 hover:bg-zinc-50 h-11"
                   >
                     <Ban className="w-4 h-4 mr-2" />
-                    {user.banned ? 'Unban' : 'Ban'}
+                    {user.banned ? t('actions.unban') : t('actions.ban')}
                   </Button>
 
                   <Button
@@ -224,7 +226,7 @@ export function UserDetailModal({
                     className="w-full rounded-xl border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:text-red-600 hover:border-red-200 h-11"
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
-                    Delete
+                    {t('actions.delete')}
                   </Button>
                 </div>
               </div>

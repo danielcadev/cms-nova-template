@@ -1,6 +1,7 @@
 'use client'
 
 import { Filter, Search, UserPlus } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -10,13 +11,14 @@ interface UsersHeaderProps {
 }
 
 export function UsersHeader({ searchTerm, onSearchChange }: UsersHeaderProps) {
+  const t = useTranslations('users')
   return (
     <div className="space-y-6">
       {/* Top Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-900">Users</h1>
-          <p className="text-sm text-zinc-500 mt-1">Manage team members and permissions</p>
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-900">{t('title')}</h1>
+          <p className="text-sm text-zinc-500 mt-1">{t('subtitle')}</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -25,11 +27,11 @@ export function UsersHeader({ searchTerm, onSearchChange }: UsersHeaderProps) {
             className="h-9 rounded-lg border-zinc-200 text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 text-sm"
           >
             <Filter className="w-4 h-4 mr-2" />
-            Filters
+            {t('filters')}
           </Button>
           <Button className="h-9 rounded-lg bg-zinc-900 text-white hover:bg-zinc-800 shadow-sm text-sm">
             <UserPlus className="w-4 h-4 mr-2" />
-            Invite User
+            {t('inviteUser')}
           </Button>
         </div>
       </div>
@@ -41,7 +43,7 @@ export function UsersHeader({ searchTerm, onSearchChange }: UsersHeaderProps) {
         </div>
         <Input
           type="search"
-          placeholder="Search users..."
+          placeholder={t('searchPlaceholder')}
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           className="pl-9 h-10 rounded-lg border-zinc-200 bg-white shadow-sm focus:border-zinc-300 focus:ring-0 transition-all placeholder:text-zinc-400 text-sm"

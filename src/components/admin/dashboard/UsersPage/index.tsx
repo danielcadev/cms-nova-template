@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import type { User } from '@/types/user'
 import { AdminLoading } from '../AdminLoading'
 import { UserDetailModal } from './UserDetailModal'
@@ -11,6 +12,7 @@ import { useUsers } from './useUsers'
 export function UsersPage() {
   const { users, loading, error, currentUserId, updateUserRole, deleteUser, refreshUsers } =
     useUsers()
+  const t = useTranslations('users')
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -33,7 +35,7 @@ export function UsersPage() {
 
   const handleDeleteUser = async (user: User) => {
     if (
-      window.confirm('Are you sure you want to delete this user? This action cannot be undone.')
+      window.confirm(t('deleteConfirm'))
     ) {
       await deleteUser(user.id)
     }
@@ -43,8 +45,8 @@ export function UsersPage() {
     return (
       <div className="px-6 pt-6 relative">
         <AdminLoading
-          title="Users"
-          message="Loading user management..."
+          title={t('title')}
+          message={t('loading')}
           variant="content"
           fullScreen
         />
@@ -77,7 +79,7 @@ export function UsersPage() {
           const user = users.find((u) => u.id === userId)
           if (user) await handleDeleteUser(user)
         }}
-        onToggleBan={async () => {}}
+        onToggleBan={async () => { }}
         isFirstUser={false}
       />
     </div>

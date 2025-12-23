@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useCallback, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { useTranslations } from 'next-intl'
 import { MediaPicker } from '@/components/admin/media/MediaPicker'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -19,6 +20,7 @@ interface ItineraryDayImageProps {
 }
 
 export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
+  const t = useTranslations('templates.tourism.edit.components.itineraryImage')
   const form = useFormContext<PlanFormValues>()
   const { loading, isConfigured, error: configError, refresh } = useS3Config()
   const [planSlug, planTitle] = form.watch(['articleAlias', 'mainTitle'])
@@ -98,12 +100,12 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
   // Loading config state
   if (loading) {
     return (
-      <Card>
+      <Card className="rounded-2xl overflow-hidden">
         <CardContent className="p-4 sm:p-6">
           <div className="flex items-center justify-center h-24 sm:h-32">
             <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500">
               <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
-              Loading image configuration...
+              {t('loading')}
             </div>
           </div>
         </CardContent>
@@ -114,25 +116,25 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
   // S3 not configured state
   if (configError) {
     return (
-      <Card className="border-red-200 bg-red-50">
+      <Card className="border-red-200 bg-red-50 rounded-2xl overflow-hidden">
         <CardContent className="p-4 sm:p-6">
           <div className="flex items-start gap-2 sm:gap-3">
             <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-red-600 mt-0.5 flex-shrink-0" />
             <div className="flex-1 space-y-2">
-              <h4 className="font-medium text-red-800 text-sm sm:text-base">Unable to verify S3</h4>
+              <h4 className="font-medium text-red-800 text-sm sm:text-base">{t('s3ErrorTitle')}</h4>
               <p className="text-xs sm:text-sm text-red-700">{configError}</p>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={refresh}
-                  className="text-red-700 border-red-300"
+                  className="text-red-700 border-red-300 rounded-xl"
                 >
-                  Retry
+                  {t('retry')}
                 </Button>
                 <Link href="/admin/dashboard/plugins">
-                  <Button variant="ghost" size="sm" className="text-red-700">
-                    Open Plugins
+                  <Button variant="ghost" size="sm" className="text-red-700 rounded-xl">
+                    {t('openPlugins')}
                   </Button>
                 </Link>
               </div>
@@ -145,24 +147,24 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
 
   if (!isConfigured) {
     return (
-      <Card className="border-amber-200 bg-amber-50">
+      <Card className="border-amber-200 bg-amber-50 rounded-2xl overflow-hidden">
         <CardContent className="p-4 sm:p-6">
           <div className="flex items-start gap-2 sm:gap-3">
             <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-amber-600 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
               <h4 className="font-medium text-amber-800 mb-1 text-sm sm:text-base">
-                S3 Configuration Required
+                {t('s3RequiredTitle')}
               </h4>
               <p className="text-xs sm:text-sm text-amber-700 mb-2 sm:mb-3">
-                To upload images for itinerary days, S3 storage must be configured.
+                {t('s3RequiredDesc')}
               </p>
               <Link href="/admin/dashboard/plugins">
                 <Button
                   variant="outline"
                   size="sm"
-                  className="text-amber-700 border-amber-300 text-xs sm:text-sm"
+                  className="text-amber-700 border-amber-300 text-xs sm:text-sm rounded-xl"
                 >
-                  Configure S3
+                  {t('configureS3')}
                 </Button>
               </Link>
             </div>
@@ -173,10 +175,10 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
   }
 
   return (
-    <Card>
+    <Card className="rounded-2xl overflow-hidden">
       <CardContent className="p-3 sm:p-4 space-y-3 sm:space-y-4">
         {imageUrl ? (
-          <div className="relative group w-full aspect-video rounded-lg overflow-hidden bg-gray-100">
+          <div className="relative group w-full aspect-video rounded-xl overflow-hidden bg-gray-100">
             <Image
               src={imageUrl}
               alt={`Image for day ${fieldIndex + 1}`}
@@ -207,7 +209,7 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
               <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                 <div className="flex items-center gap-2 text-white text-xs sm:text-sm">
                   <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
-                  Uploading...
+                  {t('uploading')}
                 </div>
               </div>
             )}
@@ -220,7 +222,7 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
               onDragOver={handleDragOver}
               onClick={handleTriggerPicker}
               className={cn(
-                'flex flex-col items-center justify-center w-full h-36 sm:h-48 border-2 border-dashed rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/60',
+                'flex flex-col items-center justify-center w-full h-36 sm:h-48 border-2 border-dashed rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/60',
                 isUploading
                   ? 'border-blue-300 bg-blue-50 cursor-not-allowed'
                   : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50 cursor-pointer',
@@ -230,16 +232,16 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
               {isUploading ? (
                 <div className="flex flex-col items-center gap-2">
                   <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 animate-spin" />
-                  <p className="text-xs sm:text-sm text-blue-600 font-medium">Uploading image...</p>
+                  <p className="text-xs sm:text-sm text-blue-600 font-medium">{t('uploadingDesc')}</p>
                 </div>
               ) : (
                 <>
                   <Upload className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400 mb-2" />
                   <p className="text-xs sm:text-sm text-gray-600 font-medium mb-1">
-                    Upload day image
+                    {t('uploadImage')}
                   </p>
                   <p className="text-xs text-gray-500 text-center px-2">
-                    Drag and drop or click to select
+                    {t('uploadDesc')}
                   </p>
                 </>
               )}
@@ -250,10 +252,10 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="cursor-pointer w-full sm:w-auto text-xs sm:text-sm"
+                  className="cursor-pointer w-full sm:w-auto text-xs sm:text-sm rounded-xl"
                   disabled={isUploading}
                 >
-                  Choose File
+                  {t('chooseFile')}
                 </Button>
                 <input
                   id={fileInputId}
@@ -270,20 +272,20 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
                 size="sm"
                 onClick={() => setPickerOpen(true)}
                 disabled={isUploading}
-                className="w-full sm:w-auto text-xs sm:text-sm"
+                className="w-full sm:w-auto text-xs sm:text-sm rounded-xl"
               >
                 <ImageIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                Gallery
+                {t('gallery')}
               </Button>
             </div>
           </>
         )}
 
         {error && (
-          <div className="flex items-start gap-2 p-2 sm:p-3 rounded-lg bg-red-50 border border-red-200">
+          <div className="flex items-start gap-2 p-2 sm:p-3 rounded-xl bg-red-50 border border-red-200">
             <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4 text-red-600 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
-              <p className="text-xs sm:text-sm text-red-800 font-medium">Upload Error</p>
+              <p className="text-xs sm:text-sm text-red-800 font-medium">{t('errorTitle')}</p>
               <p className="text-xs sm:text-sm text-red-700">{error}</p>
             </div>
           </div>

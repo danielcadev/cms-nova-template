@@ -8,6 +8,7 @@ import { toast } from '@/hooks/use-toast'
 import { useConfirmation } from '@/hooks/useConfirmation'
 import type { MediaItem } from '../types'
 import { useMediaLibrary } from '../useMediaLibrary'
+import { useTranslations } from 'next-intl'
 
 interface MediaListProps {
     items?: MediaItem[]
@@ -26,7 +27,10 @@ export function MediaList({
     emptyLabel = 'No media found',
     onConfirmSelect,
 }: MediaListProps) {
+    const t = useTranslations('media')
     const { items: contextItems, selectedKey, setSelected, deleteItem, deleting } = useMediaLibrary()
+
+    const finalEmptyLabel = emptyLabel === 'No media found' ? t('empty.title') : emptyLabel
 
     const confirmation = useConfirmation()
     const items = useMemo(() => itemsProp ?? contextItems, [itemsProp, contextItems])
@@ -39,9 +43,9 @@ export function MediaList({
     const handleDelete = (item: MediaItem) => {
         confirmation.confirm(
             {
-                title: 'Delete file',
-                description: `This will remove "${item.key}" permanently from storage and the media library. Continue?`,
-                confirmText: 'Delete file',
+                title: t('grid.deleteTitle'),
+                description: t('list.deleteConfirm', { key: item.key }),
+                confirmText: t('grid.deleteTitle'),
                 variant: 'destructive',
                 icon: 'delete',
             },
@@ -57,8 +61,8 @@ export function MediaList({
         event.stopPropagation()
         navigator.clipboard
             .writeText(item.url)
-            .then(() => toast.success({ title: 'Link copied', description: item.key }))
-            .catch(() => toast.error({ title: 'Copy failed', description: 'Could not copy link' }))
+            .then(() => toast.success({ title: t('grid.linkCopiedTitle'), description: item.key }))
+            .catch(() => toast.error({ title: t('grid.copyFailedTitle'), description: t('grid.copyFailedDesc') }))
     }
 
     const handleDownload = (event: MouseEvent<HTMLButtonElement>, item: MediaItem) => {
@@ -80,7 +84,7 @@ export function MediaList({
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-violet-500/10 text-3xl">
                     🗂️
                 </div>
-                <p className="text-sm font-medium theme-text-secondary">{emptyLabel}</p>
+                <p className="text-sm font-medium theme-text-secondary">{finalEmptyLabel}</p>
             </div>
         )
     }
@@ -90,12 +94,12 @@ export function MediaList({
             <table className="min-w-full text-sm">
                 <thead className="bg-theme-bg-secondary/80 text-left uppercase tracking-wide text-xs text-neutral-500 dark:text-neutral-400">
                     <tr>
-                        <th className="px-5 py-3 font-semibold">File</th>
-                        <th className="px-5 py-3 font-semibold">Details</th>
-                        <th className="px-5 py-3 font-semibold">Folder</th>
-                        <th className="px-5 py-3 font-semibold">Size</th>
-                        <th className="px-5 py-3 font-semibold">Created</th>
-                        <th className="px-5 py-3 font-semibold text-right">Actions</th>
+                        <th className="px-5 py-3 font-semibold">{t('list.table.file')}</th>
+                        <th className="px-5 py-3 font-semibold">{t('list.table.details')}</th>
+                        <th className="px-5 py-3 font-semibold">{t('list.table.folder')}</th>
+                        <th className="px-5 py-3 font-semibold">{t('list.table.size')}</th>
+                        <th className="px-5 py-3 font-semibold">{t('list.table.created')}</th>
+                        <th className="px-5 py-3 font-semibold text-right">{t('list.table.actions')}</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y theme-border text-sm">
@@ -110,8 +114,8 @@ export function MediaList({
                                 onClick={() => handleSelect(item)}
                                 onDoubleClick={() => onConfirmSelect?.(item)}
                                 className={`cursor-pointer transition ${isSelected
-                                        ? 'bg-blue-50/80 shadow-inner dark:bg-blue-500/10'
-                                        : 'hover:bg-theme-bg-secondary/60'
+                                    ? 'bg-blue-50/80 shadow-inner dark:bg-blue-500/10'
+                                    : 'hover:bg-theme-bg-secondary/60'
                                     }`}
                             >
                                 <td className="px-5 py-3">
@@ -153,12 +157,12 @@ export function MediaList({
                                             onClick={(event) => handleCopy(event, item)}
                                             className="inline-flex w-max items-center gap-1 rounded-full bg-neutral-200/70 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-neutral-600 transition hover:bg-neutral-300 dark:bg-neutral-700/60 dark:text-neutral-300"
                                         >
-                                            <Copy className="h-3 w-3" /> Copy URL
+                                            <Copy className="h-3 w-3" /> {t('list.copyUrl')}
                                         </button>
                                     </div>
                                 </td>
                                 <td className="px-5 py-3 text-neutral-600 dark:text-neutral-300">
-                                    {item.folder || 'root'}
+                                    {item.folder || t('grid.details.root')}
                                 </td>
                                 <td className="px-5 py-3 text-neutral-600 dark:text-neutral-300">
                                     {formatBytes(item.size)}
@@ -171,12 +175,11 @@ export function MediaList({
                                         <button
                                             type="button"
                                             onClick={(event) => {
-                                                event.preventDefault()
                                                 event.stopPropagation()
                                                 window.open(item.url, '_blank', 'noopener,noreferrer')
                                             }}
                                             className="rounded-full border theme-border p-1.5 text-neutral-500 transition hover:bg-theme-bg-secondary"
-                                            aria-label="Open in new tab"
+                                            aria-label={t('card.openInNewTab')}
                                         >
                                             <Link2 className="h-4 w-4" />
                                         </button>
@@ -184,7 +187,7 @@ export function MediaList({
                                             type="button"
                                             onClick={(event) => handleDownload(event, item)}
                                             className="rounded-full border theme-border p-1.5 text-neutral-500 transition hover:bg-theme-bg-secondary"
-                                            aria-label="Download"
+                                            aria-label={t('card.download')}
                                         >
                                             <Download className="h-4 w-4" />
                                         </button>
@@ -197,7 +200,7 @@ export function MediaList({
                                                 onSelect?.(item)
                                             }}
                                             className="rounded-full border theme-border p-1.5 text-neutral-500 transition hover:bg-theme-bg-secondary"
-                                            aria-label="Preview"
+                                            aria-label={t('card.preview')}
                                         >
                                             <Eye className="h-4 w-4" />
                                         </button>
@@ -211,7 +214,7 @@ export function MediaList({
                                                     handleDelete(item)
                                                 }}
                                                 className="rounded-full border border-red-200 bg-red-50 p-1.5 text-red-500 transition hover:bg-red-100 disabled:opacity-50 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300"
-                                                aria-label="Delete"
+                                                aria-label={t('card.delete')}
                                             >
                                                 <Trash2 className="h-4 w-4" />
                                             </button>

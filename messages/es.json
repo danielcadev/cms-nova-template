@@ -66,479 +66,60 @@
             "button": "Explorar Plantillas"
         }
     },
-    "templates": {
-        "title": "Librería de Plantillas",
-        "subtitle": "Selecciona una plantilla para crear contenido estructurado rápidamente.",
-        "loading": "Cargando plantillas...",
-        "searchPlaceholder": "Buscar plantillas...",
-        "refresh": "Actualizar",
-        "newTemplate": "Nueva Plantilla",
-        "noTemplates": {
-            "title": "No se encontraron plantillas",
-            "description": "Intenta ajustar tu búsqueda o crea un nuevo tipo de contenido."
-        },
-        "sidebar": {
-            "infoTitle": "Plantillas de Contenido",
-            "infoDescription": "Las plantillas te ayudan a mantener la consistencia en el diseño y la estructura de tu sitio.",
-            "recentActivity": "Actividad Reciente",
-            "viewAll": "Ver todo"
-        },
-        "card": {
-            "status": {
-                "active": "Activo",
-                "comingSoon": "Próximamente",
-                "draft": "Borrador"
-            },
-            "category": "Categoría",
-            "items": "{count} elementos",
-            "manage": "Gestionar",
-            "notAvailable": "No disponible"
-        },
-        "items": {
-            "tourismPlans": {
-                "name": "Planes Turísticos",
-                "description": "Plantilla optimizada para tours, precios por temporada e itinerarios."
-            },
-            "experiences": {
-                "name": "Experiencias Locales",
-                "description": "Enfocada en narrativa, anfitriones y actividades inmersivas."
-            },
-            "flexibleContent": {
-                "name": "Contenido Flexible",
-                "description": "Estructura modular para páginas genéricas y artículos de blog."
-            },
-            "restaurants": {
-                "name": "Guía Gastronómica",
-                "description": "Gestión de menús, reservas y reseñas de restaurantes."
-            }
-        },
-        "categories": {
-            "tourism": "Turismo",
-            "general": "General",
-            "foodBeverage": "Gastronomía"
-        },
-        "tourism": {
-            "title": "Librería de Planes Turísticos",
-            "subtitle": "Gestiona y organiza tus ofertas de viaje.",
-            "back": "Volver",
-            "create": "Crear Nuevo Plan",
-            "searchPlaceholder": "Buscar planes...",
-            "loading": "Cargando planes...",
-            "refresh": "Actualizar",
-            "infoTitle": "Planes de Viaje",
-            "infoDescription": "Define destinos, itinerarios y precios detallados para tus paquetes turísticos.",
-            "status": {
-                "published": "Publicado",
-                "draft": "Borrador"
-            },
-            "actions": {
-                "edit": "Editar",
-                "delete": "Eliminar",
-                "duplicate": "Duplicar"
-            },
-            "messages": {
-                "deleteConfirmTitle": "¿Eliminar Plan?",
-                "deleteConfirmDesc": "¿Estás seguro de que deseas eliminar \"{title}\"? Esta acción no se puede deshacer.",
-                "deleteSuccess": "Plan \"{title}\" eliminado con éxito.",
-                "duplicateSuccess": "Plan \"{title}\" duplicado con éxito.",
-                "error": "Ha ocurrido un error inesperado.",
-                "retry": "Por favor, inténtalo de nuevo."
-            },
-            "noPlans": {
-                "title": "No se encontraron planes",
-                "description": "Comienza creando tu primer plan turístico."
-            },
-            "createForm": {
-                "back": "Volver",
-                "templates": "Plantillas",
-                "tourism": "Turismo",
-                "createTitle": "Crear Nuevo Plan",
-                "ready": "Listo para crear",
-                "creating": "Creando borrador...",
-                "preparing": "Por favor espera, estamos preparando todo para el guardado automático.",
-                "draftCreated": "¡Borrador creado!",
-                "autoSaveActive": "Ahora todos tus cambios se guardarán automáticamente.",
-                "errorCreating": "Error al crear el borrador",
-                "creatingWorkspace": "Configurando el autoguardado y preparando tu espacio de trabajo",
-                "sections": {
-                    "basic": {
-                        "title": "Información Básica",
-                        "description": "Título, destino y detalles principales"
-                    },
-                    "includes": {
-                        "title": "Qué incluye",
-                        "description": "Servicios incluidos y excluidos en el plan"
-                    },
-                    "itinerary": {
-                        "title": "Itinerario",
-                        "description": "Actividades y cronograma día a día"
-                    },
-                    "pricing": {
-                        "title": "Precios",
-                        "description": "Opciones de precio para diferentes grupos"
-                    },
-                    "video": {
-                        "title": "Video",
-                        "description": "Contenido de video promocional"
-                    }
-                }
-            },
-            "edit": {
-                "title": "Editar Plan Turístico",
-                "basicInfo": {
-                    "header": "Información Básica",
-                    "description": "Configura los detalles principales del plan, incluyendo su título y estructura de URL.",
-                    "mainTitleLabel": "Título Principal",
-                    "mainTitlePlaceholder": "ej. Circuito Mágico por la Riviera Maya",
-                    "urlConfig": "Configuración de URL",
-                    "urlConfigDesc": "Define cómo se verá el enlace de este plan en tu sitio web.",
-                    "sectionLabel": "Sección",
-                    "sectionPlaceholder": "Selecciona la sección...",
-                    "destinationLabel": "Destino / Categoría",
-                    "destinationPlaceholder": "Alias de categoría (ej. mexico)",
-                    "slugLabel": "Slug del Artículo",
-                    "slugPlaceholder": "ID único (ej. riviera-maya-magica)",
-                    "urlPreview": "Vista Previa de la URL",
-                    "searchOrCreate": "Buscar o crear...",
-                    "noOptions": "No hay opciones",
-                    "sections": {
-                        "planes": "Planes",
-                        "circuitos": "Circuitos"
-                    }
-                },
-                "transport": {
-                    "title": "Transporte Terrestre",
-                    "description": "Configura las opciones de transporte para este plan.",
-                    "label": "Habilitar Transporte Terrestre",
-                    "helpText": "Permite a los usuarios ver y seleccionar opciones de transporte terrestre."
-                },
-                "coverImage": {
-                    "title": "Imagen de Portada",
-                    "description": "Sube o selecciona una imagen que represente el plan en los listados.",
-                    "mainImageLabel": "Imagen Principal / Portada",
-                    "dimensions": "{width} × {height} px",
-                    "s3Error": "Error de S3",
-                    "s3ErrorDesc": "Hubo un problema al cargar la configuración: {error}",
-                    "retry": "Reintentar",
-                    "openPlugins": "Ver Plugins",
-                    "s3Warning": "S3 No Configurado",
-                    "s3WarningDesc": "Para cargar imágenes directamente, necesitas configurar un almacenamiento S3.",
-                    "configS3": "Configurar S3",
-                    "uploading": "Subiendo imagen...",
-                    "selectImage": "Seleccionar Imagen",
-                    "openMedia": "Biblioteca de Medios",
-                    "uploadHelp": "Sube una imagen de alta calidad para la portada.",
-                    "sizeRecommended": "Tamaño recomendado: 1200 x 630 px",
-                    "removeImage": "Eliminar imagen",
-                    "altLabel": "Texto Alternativo (Alt)",
-                    "altPlaceholder": "Describe la imagen para accesibilidad y SEO...",
-                    "captionLabel": "Leyenda de la Imagen",
-                    "captionPlaceholder": "Título o descripción corta que aparecerá bajo la imagen..."
-                },
-                "includes": {
-                    "mainLabel": "Servicios Incluidos",
-                    "addSection": "Agregar Sección",
-                    "emptyTitle": "No hay inclusiones todavía",
-                    "emptyDesc": "Agrega detalles sobre lo que los viajeros recibirán con este plan.",
-                    "addFirstSection": "Agregar Primera Sección",
-                    "sectionHeader": "Sección {index}",
-                    "sectionTitleLabel": "Título de la Sección",
-                    "sectionTitlePlaceholder": "ej. Alimentación, Alojamiento...",
-                    "itemsIncludedLabel": "Ítems Incluidos",
-                    "itemsIncludedPlaceholder": "ej. Desayunos diarios, 3 noches de hotel...",
-                    "notIncludedLabel": "Qué NO incluye",
-                    "notIncludedPlaceholder": "ej. Gastos personales, Propinas...",
-                    "preview": "Vista Previa de Inclusiones"
-                },
-                "itinerary": {
-                    "title": "Itinerario",
-                    "description": "Define las actividades día por día para los viajeros.",
-                    "dayLabel": "Día {index}",
-                    "dayConfigDesc": "Configura las actividades e imagen para este día.",
-                    "dayTitleLabel": "Título del Día",
-                    "dayTitlePlaceholder": "ej. Llegada y Cóctel de Bienvenida",
-                    "dayDescLabel": "Descripción de Actividades",
-                    "dayDescPlaceholder": "Describe detalladamente lo que ocurrirá este día...",
-                    "dayImageLabel": "Imagen del Día",
-                    "emptyTitle": "El itinerario está vacío",
-                    "emptyDesc": "Agrega días para mostrar la ruta y actividades del plan.",
-                    "addDayButton": "Agregar Día {index}",
-                    "deleteDayConfirmTitle": "Eliminar Día {index}",
-                    "deleteDayConfirmDesc": "¿Estás seguro de que deseas eliminar este día? Esta acción no se puede deshacer.",
-                    "deleteDayConfirmText": "Eliminar Día"
-                },
-                "pricing": {
-                    "general": {
-                        "title": "Tarifa General",
-                        "description": "El precio base que se mostrará por defecto.",
-                        "addBtn": "Agregar Tarifa General",
-                        "empty": "No hay tarifa general definida."
-                    },
-                    "specific": {
-                        "title": "Tarifas Específicas",
-                        "description": "Opciones de precios adicionales según el tipo de servicio o acomodación.",
-                        "addBtn": "Agregar Tarifa Específica",
-                        "empty": "No hay tarifas específicas definidas."
-                    },
-                    "seasonal": {
-                        "title": "Tarifas por Temporada",
-                        "description": "Precios que varían según la fecha del año (Baja, Media, Alta).",
-                        "addBtn": "Agregar Tarifa de Temporada",
-                        "empty": "No hay tarifas de temporada definidas."
-                    },
-                    "card": {
-                        "mode": {
-                            "general": "General",
-                            "specific": "Específica",
-                            "seasonal": "Por Temporada"
-                        },
-                        "labels": {
-                            "description": "Descripción",
-                            "descriptionPlaceholder": "ej. Precio por persona en acomodación doble",
-                            "currency": "Moneda",
-                            "price": "Precio",
-                            "pricePlaceholder": "0.00",
-                            "seasonTitle": "Título de la Temporada",
-                            "seasonTitlePlaceholder": "ej. Temporada Alta - Fin de Año",
-                            "accommodationsTitle": "Precios por Acomodación",
-                            "addAccommodationBtn": "Agregar Acomodación",
-                            "noAccommodations": "No hay acomodaciones. Agrega una para definir precios.",
-                            "accommodationLabel": "Tipo de Acomodación",
-                            "accommodationPlaceholder": "ej. Sencilla, Doble, Triple..."
-                        }
-                    },
-                    "autoFill": {
-                        "recreate": "Recrear temporadas",
-                        "fill": "Auto-completar Temporadas",
-                        "short": "Auto-completar",
-                        "seasons": {
-                            "low": "TEMPORADA BAJA",
-                            "mid": "TEMPORADA MEDIA",
-                            "high": "TEMPORADA ALTA"
-                        },
-                        "accommodations": {
-                            "single": "SENCILLA",
-                            "double": "DOBLE",
-                            "triple": "TRIPLE",
-                            "quadruple": "CUÁDRUPLE",
-                            "quintuple": "QUÍNTUPLE",
-                            "child": "NIÑO 3 A 10 AÑOS",
-                            "infant": "INFANTE 0 A 2 AÑOS"
-                        }
-                    }
-                },
-                "video": {
-                    "title": "Video Promocional",
-                    "description": "Enlaza un video de YouTube para mostrar en la página del plan.",
-                    "urlLabel": "URL del Video",
-                    "urlPlaceholder": "https://www.youtube.com/watch?v=...",
-                    "tipsTitle": "Consejos para tu video",
-                    "tips": "• Asegúrate de que el video sea público.\n• Los videos cortos (1-2 min) funcionan mejor.\n• Muestra los mejores paisajes y actividades del tour.",
-                    "previewTitle": "Vista Previa",
-                    "previewEmptyTitle": "Sin Video",
-                    "previewEmptyDesc": "Ingresa una URL de YouTube válida para ver la vista previa aquí.",
-                    "iframeTitle": "Video del Plan"
-                },
-                "form": {
-                    "back": "Volver",
-                    "edit": "Editar",
-                    "defaultTitle": "Plan Turístico",
-                    "autoSaving": "Auto-guardando cambios...",
-                    "fillFields": "Completa los campos para editar este plan turístico.",
-                    "toasts": {
-                        "savedTitle": "Cambios guardados",
-                        "publishedDesc": "Plan publicado con éxito.",
-                        "draftDesc": "Borrador guardado con éxito.",
-                        "errorTitle": "Error al guardar el plan",
-                        "publishError": "Error al publicar el plan"
-                    },
-                    "sections": {
-                        "basic": {
-                            "title": "Información Básica",
-                            "description": "Título, destino y detalles principales"
-                        },
-                        "includes": {
-                            "title": "Qué incluye",
-                            "description": "Servicios incluidos y excluidos en el plan"
-                        },
-                        "itinerary": {
-                            "title": "Itinerario",
-                            "description": "Actividades y cronograma día a día"
-                        },
-                        "pricing": {
-                            "title": "Precios",
-                            "description": "Opciones de precio para diferentes grupos"
-                        },
-                        "video": {
-                            "title": "Video",
-                            "description": "Contenido de video promocional"
-                        }
-                    }
-                }
-            }
-        },
-        "experiences": {
-            "title": "Librería de Experiencias",
-            "subtitle": "Gestiona experiencias narrativas con anfitriones locales.",
-            "back": "Volver",
-            "create": "Crear Experiencia",
-            "refresh": "Actualizar",
-            "infoTitle": "Experiencias Seleccionadas",
-            "infoDescription": "Crea actividades únicas e inmersivas dirigidas por locales.",
-            "searchPlaceholder": "Buscar experiencias...",
-            "loading": "Cargando experiencias...",
-            "status": {
-                "published": "Publicado",
-                "draft": "Borrador"
-            },
-            "messages": {
-                "deleteConfirmTitle": "¿Eliminar Experiencia?",
-                "deleteConfirmDesc": "¿Estás seguro de que deseas eliminar \"{title}\"? Esta acción no se puede deshacer.",
-                "deleteSuccess": "Experiencia \"{title}\" eliminada con éxito.",
-                "error": "Error al procesar la solicitud.",
-                "retry": "Por favor, inténtalo de nuevo."
-            },
-            "noExperiences": {
-                "title": "No se encontraron experiencias",
-                "description": "Comienza creando tu primera experiencia para compartir con viajeros.",
-                "searchNoMatch": "No se encontraron experiencias para \"{term}\"."
-            },
-            "card": {
-                "host": "Anfitrión: {name}",
-                "view": "Ver",
-                "edit": "Editar",
-                "delete": "Eliminar"
-            },
-            "duration": {
-                "flexible": "Flexible",
-                "singleDay": "Un día",
-                "multiDay": "Varios días",
-                "hourly": "Por horas"
-            },
-            "days": {
-                "monday": "Lunes",
-                "tuesday": "Martes",
-                "wednesday": "Miércoles",
-                "thursday": "Jueves",
-                "friday": "Viernes",
-                "saturday": "Sábado",
-                "sunday": "Domingo"
-            },
-            "edit": {
-                "createTitle": "Crear Experiencia",
-                "editTitle": "Editar Experiencia",
-                "headerDesc": "Captura la historia, actividades y logística.",
-                "back": "Volver",
-                "saveDraft": "Guardar Borrador",
-                "publish": "Publicar",
-                "publishing": "Publicando...",
-                "basics": {
-                    "title": "Configuración Básica",
-                    "desc": "Define los detalles principales que identifican esta experiencia.",
-                    "fields": {
-                        "title": "Título de la Experiencia",
-                        "titlePlaceholder": "ej. Barranquilla, tierra de Shakira",
-                        "slug": "Slug",
-                        "slugPlaceholder": "auto-generado si se deja vacío",
-                        "slugDesc": "Usado para URL públicas.",
-                        "location": "Ubicación / Región",
-                        "locationPlaceholder": "Ciudad o región",
-                        "hostName": "Nombre del Anfitrión",
-                        "hostNamePlaceholder": "Guía o narrador opcional",
-                        "hostBio": "Historia del Anfitrión",
-                        "hostBioPlaceholder": "Comparte el trasfondo del anfitrión",
-                        "optional": "(opcional)"
-                    }
-                },
-                "gallery": {
-                    "title": "Galería de Imágenes",
-                    "desc": "Almacena hasta cuatro imágenes. Aparecerán en una cuadrícula de 2 x 2 en la página pública.",
-                    "checking": "Comprobando almacenamiento de medios...",
-                    "s3ErrorTitle": "Error de configuración S3",
-                    "s3ErrorRetry": "Reintentar",
-                    "s3NotConfigured": "Configura S3 en el área de plugins para subir imágenes directamente.",
-                    "emptySlot": "Espacio Vacío",
-                    "select": "Seleccionar",
-                    "remove": "Eliminar"
-                },
-                "storytelling": {
-                    "title": "Narrativa",
-                    "desc": "Describe la experiencia para inspirar a los viajeros.",
-                    "fields": {
-                        "summary": "Resumen",
-                        "summaryPlaceholder": "Descripción breve de una o dos líneas",
-                        "narrative": "Narrativa Completa",
-                        "narrativePlaceholder": "Cuenta la historia completa de la experiencia",
-                        "activities": "Actividades",
-                        "activitiesPlaceholder": "Lista de actividades, una por línea"
-                    }
-                },
-                "logistics": {
-                    "title": "Logística",
-                    "desc": "Captura información práctica para planificadores e invitados.",
-                    "fields": {
-                        "durationType": "Tipo de Duración",
-                        "durationPlaceholder": "Selecciona la duración",
-                        "durationDetails": "Detalles de Duración",
-                        "durationDetailsPlaceholder": "ej. 6 horas o 2 días / 1 noche",
-                        "availableDays": "Días Disponibles",
-                        "availableDaysDesc": "Selecciona los días recurrentes en que se realiza el tour.",
-                        "schedule": "Horario / Frecuencia",
-                        "schedulePlaceholder": "ej. Salidas a las 9am y 2pm",
-                        "scheduleNote": "Notas de Horario",
-                        "scheduleNotePlaceholder": "Fechas de cierre, excepciones por festivos, etc.",
-                        "price": "Precio de Referencia",
-                        "pricePlaceholder": "ej. 1.500.000",
-                        "currency": "Moneda",
-                        "currencyPlaceholder": "Selecciona moneda",
-                        "inclusions": "Inclusiones",
-                        "inclusionsPlaceholder": "Lo que está incluido",
-                        "exclusions": "Exclusiones",
-                        "exclusionsPlaceholder": "Lo que no está incluido"
-                    }
-                },
-                "toasts": {
-                    "publishedTitle": "Experiencia publicada",
-                    "publishedDesc": "Tu experiencia ya está disponible con los últimos detalles.",
-                    "draftTitle": "Borrador guardado",
-                    "draftDesc": "Borrador guardado con éxito. Puedes continuar editando más tarde.",
-                    "errorTitle": "Error al guardar",
-                    "errorDesc": "Por favor, inténtalo de nuevo una vez que la API esté conectada."
-                }
-            }
-        }
-    },
     "contentTypes": {
         "title": "Tipos de Contenido",
         "subtitle": "Define el esquema para tu contenido.",
         "searchPlaceholder": "Buscar tipos de contenido...",
         "loading": "Cargando tus tipos de contenido...",
-        "noContentTypes": {
-            "title": "No se encontraron tipos de contenido",
-            "description": "Crea tu primer tipo de contenido para empezar a estructurar tu información."
+        "error": {
+            "title": "Error de carga",
+            "notFound": "Tipo de contenido no encontrado",
+            "notFoundDesc": "El tipo de contenido que buscas no existe.",
+            "failed": "Fallo al cargar el tipo de contenido"
         },
         "info": {
             "title": "Rutas Headless CMS",
-            "description": "Tu contenido es accesible automáticamente a través de la API headless.",
-            "forLists": "para listas y",
-            "forDetails": "para detalles"
+            "description": "Tu contenido es accesible automáticamente vía API. Usa <listRoute /> para listas y <detailRoute /> para detalles."
+        },
+        "empty": {
+            "title": "No se encontraron tipos de contenido",
+            "noMatch": "No se encontraron tipos de contenido que coincidan con \"{query}\"",
+            "createFirst": "Crea tu primer tipo de contenido para empezar a estructurar tu información.",
+            "button": "Crear Tipo de Contenido"
         },
         "card": {
-            "noDescription": "No se proporcionó descripción.",
+            "noDescription": "Sin descripción proporcionada.",
             "fields": "{count} campos",
             "viewEntries": "Ver entradas de {name}"
-        },
-        "button": {
-            "viewContent": "Ver Contenido",
-            "newType": "Nuevo Tipo",
-            "createType": "Crear Tipo de Contenido"
         },
         "header": {
             "back": "Volver a Tipos de Contenido",
             "createTitle": "Crear Tipo de Contenido",
             "editTitle": "Editar Tipo de Contenido",
             "createDesc": "Define la estructura y campos personalizados para tu nuevo tipo de contenido. Configura validaciones, tipos de datos y organización.",
-            "editDesc": "Modifica la estructura y campos de tu tipo de contenido. Actualiza validaciones, tipos de datos y organización."
+            "editDesc": "Modifica la estructura y campos de tu tipo de contenido. Actualiza validaciones, tipos de datos y organización.",
+            "viewContent": "Ver Contenido",
+            "newType": "Nuevo Tipo"
+        },
+        "detail": {
+            "addEntry": "Añadir Entrada",
+            "viewContent": "Ver Contenido ({count})",
+            "stats": {
+                "totalEntries": "Entradas Totales",
+                "fields": "Campos",
+                "slug": "Slug"
+            },
+            "fieldsList": {
+                "title": "Campos",
+                "description": "Campos definidos para este tipo de contenido",
+                "type": "Tipo: {type}",
+                "required": "Obligatorio",
+                "noFields": "Aún no hay campos definidos"
+            },
+            "actions": {
+                "edit": "Editar Tipo de Contenido",
+                "delete": "Eliminar Tipo de Contenido"
+            }
         },
         "tabs": {
             "fields": "Campos",
@@ -684,24 +265,38 @@
         }
     },
     "contentEntries": {
-        "back": "Tipos de Contenido",
-        "title": "Entradas de {name}",
-        "description": "Gestionar entradas para {name}",
-        "newEntry": "Nueva {name}",
-        "createEntry": "Crear {name}",
+        "back": "Volver a {type}",
+        "title": "Contenido de {name}",
+        "description": "Gestionar las entradas de contenido para {name}",
+        "newEntry": "Crear Entrada",
         "searchPlaceholder": "Buscar entradas...",
+        "stats": {
+            "total": "Entradas Totales",
+            "published": "Publicadas",
+            "drafts": "Borradores",
+            "thisMonth": "Este Mes"
+        },
+        "listTitle": "Entradas de Contenido",
+        "info": {
+            "count": "{filtered} de {total} entradas"
+        },
+        "fields": {
+            "slug": "Slug",
+            "author": "Por",
+            "updated": "Actualizado"
+        },
+        "noEntries": {
+            "title": "Aún no hay entradas",
+            "description": "Crea tu primera entrada de contenido para empezar.",
+            "noMatch": "No se encontraron entradas",
+            "noMatchDesc": "Intenta ajustar tus términos de búsqueda",
+            "button": "Crear Primera Entrada"
+        },
         "filters": {
             "all": "Todos los estados",
             "published": "Publicado",
             "draft": "Borrador",
             "archived": "Archivado"
-        },
-        "noEntries": {
-            "title": "No se encontraron entradas",
-            "description": "Comienza creando tu primera entrada de {name}."
-        },
-        "row": {
-            "edit": "Editar entrada"
         }
     },
     "createEntry": {
@@ -897,7 +492,9 @@
                 "size": "Tamaño",
                 "created": "Creado",
                 "actions": "Acciones"
-            }
+            },
+            "copyUrl": "Copiar URL",
+            "deleteConfirm": "Esto eliminará \"{key}\" permanentemente del almacenamiento y la biblioteca de medios. ¿Continuar?"
         }
     },
     "users": {
@@ -987,28 +584,25 @@
         }
     },
     "plugins": {
-        "title": "Plugins y Extensiones",
-        "subtitle": "Potencia tu CMS con nuevas funcionalidades.",
-        "adminOnlyGest": "Solo el administrador principal puede gestionar complementos.",
+        "title": "Plugins",
+        "subtitle": "Extiende las capacidades de tu CMS.",
         "loading": "Cargando plugins disponibles...",
-        "refresh": "Actualizar",
-        "refreshing": "Actualizando...",
-        "searchPlaceholder": "Buscar plugins...",
+        "refresh": "Refrescar",
+        "refreshing": "Refrescando...",
+        "search": "Buscar plugins...",
         "filters": {
             "all": "Todos",
             "enabled": "Activados",
-            "disabled": "Desactivados"
+            "disabled": "Desactivados",
+            "clear": "Limpiar filtros"
         },
         "empty": {
-            "title": "No hay plugins disponibles",
-            "desc": "Los plugins te permiten extender la funcionalidad de tu CMS con características e integraciones adicionales."
+            "noAvailable": "No hay plugins disponibles",
+            "description": "Los plugins te permiten extender la funcionalidad de tu CMS con características e integraciones adicionales.",
+            "noFound": "No se encontraron plugins",
+            "noMatch": "No se encontraron plugins que coincidan con \"{query}\".",
+            "noStatus": "No se encontraron plugins {status}."
         },
-        "noResults": {
-            "title": "No se encontraron plugins",
-            "match": "No hay plugins que coincidan con \"{query}\".",
-            "status": "No se encontraron plugins {status}."
-        },
-        "clearFilters": "Limpiar filtros",
         "card": {
             "enabled": "Activado",
             "disabled": "Desactivado",
@@ -1016,81 +610,86 @@
             "notConfigurable": "No configurable"
         },
         "config": {
-            "title": "Configurar Plugin",
-            "cancel": "Cancelar",
-            "save": "Guardar Cambios",
-            "saving": "Guardando..."
-        },
-        "s3": {
-            "title": "Configurar Almacenamiento S3",
-            "bucket": "Nombre del Bucket",
-            "region": "Región",
-            "credentials": "Credenciales de AWS",
-            "showSecrets": "Mostrar Secretos",
-            "hideSecrets": "Ocultar Secretos",
-            "encMissingTitle": "Falta la Llave de Cifrado",
-            "encMissingDesc": "Debes configurar la variable de entorno ENCRYPTION_KEY (64 caracteres hex) para almacenar credenciales de forma segura. El guardado está desactivado.",
-            "accessKey": "ID de Llave de Acceso",
-            "secretKey": "Llave de Acceso Secreta",
-            "secretPlaceholder": "Ingresa tu llave secreta",
-            "regions": {
-                "usEast1": "EE.UU. Este (N. Virginia)",
-                "usWest2": "EE.UU. Oeste (Oregón)",
-                "euWest1": "Europa (Irlanda)",
-                "apSoutheast1": "Asia Pacífico (Singapur)",
-                "saEast1": "Sudamérica (São Paulo)"
+            "titles": {
+                "s3": "Configurar Almacenamiento S3",
+                "dynamicNav": "Navegación Dinámica",
+                "default": "Configurar Plugin"
             },
-            "instructions": "Instrucciones de Configuración",
-            "corsNotice": "1. Asegúrate de que tu usuario IAM tenga AmazonS3FullAccess o equivalente.\n2. Agrega la siguiente configuración CORS a los permisos de tu bucket:"
-        },
-        "dynamicNav": {
-            "title": "Navegación Dinámica",
-            "autoMode": "Modo Automático",
-            "autoDesc": "Descubrir automáticamente todos los tipos de contenido.",
-            "manualMode": "Modo Manual",
-            "manualDesc": "Seleccionar manualmente qué tipos incluir.",
-            "navItems": "Elementos de Navegación",
-            "addPathPlaceholder": "Agregar ruta personalizada...",
-            "add": "Agregar",
-            "options": "Opciones",
-            "formatLabels": "Formatear etiquetas como Title Case (ej. \"Entradas de Blog\")",
-            "selector": {
-                "autoModeNotice": "En modo Automático, se utilizan automáticamente todos los typePaths definidos en tus Tipos de Contenido.",
-                "loading": "Cargando typePaths...",
-                "error": "Error al cargar los tipos de contenido",
+            "s3": {
+                "bucket": "Nombre del Bucket",
+                "bucketPlaceholder": "ej. mis-assets-cms",
+                "region": "Región",
+                "credentials": "Credenciales AWS",
+                "showSecrets": "Mostrar Secretos",
+                "hideSecrets": "Ocultar Secretos",
+                "accessKey": "ID de Llave de Acceso",
+                "secretKey": "Llave de Acceso Secreta",
+                "secretPlaceholder": "Introduce tu llave secreta",
+                "secretPlaceholderExisting": "••••••••••••••••••••••••",
+                "encryptionMissing": "Falta la Llave de Cifrado",
+                "encryptionDescription": "Debes configurar la variable de entorno ENCRYPTION_KEY (64 caracteres hex) para almacenar credenciales de forma segura. El guardado está desactivado.",
+                "instructions": "Instrucciones de Configuración",
+                "iamNotice": "1. Asegúrate de que tu usuario IAM tenga AmazonS3FullAccess o equivalente.",
+                "corsNotice": "2. Añade la configuración CORS de abajo a los permisos de tu bucket:",
+                "regions": {
+                    "us-east-1": "EE.UU. Este (N. Virginia)",
+                    "us-west-2": "EE.UU. Oeste (Oregon)",
+                    "eu-west-1": "Europa (Irlanda)",
+                    "ap-southeast-1": "Asia Pacífico (Singapur)",
+                    "sa-east-1": "Sudamérica (São Paulo)"
+                }
+            },
+            "dynamicNav": {
+                "autoMode": "Modo Automático",
+                "autoDescription": "Descubrir automáticamente todos los tipos de contenido.",
+                "manualMode": "Modo Manual",
+                "manualDescription": "Seleccionar manualmente qué tipos incluir.",
+                "navItems": "Items de Navegación",
+                "addCustom": "Añadir ruta personalizada...",
+                "add": "Añadir",
+                "options": "Opciones",
+                "titleCase": "Formatear etiquetas como Title Case (ej. \"Entradas de Blog\")",
+                "autoNotice": "En modo Automático, se utilizan automáticamente todas las rutas de tipo (typePaths) definidas en tus Tipos de Contenido.",
+                "loading": "Cargando rutas de tipo...",
+                "error": "Error al cargar las rutas de tipo",
                 "noTypes": "Aún no hay Tipos de Contenido."
+            },
+            "footer": {
+                "cancel": "Cancelar",
+                "save": "Guardar Cambios",
+                "saving": "Guardando..."
             }
         }
     },
     "settings": {
-        "title": "Configuración",
-        "subtitle": "Administra las preferencias de tu espacio de trabajo y la configuración del sistema.",
+        "title": "Ajustes",
+        "subtitle": "Gestiona tus preferencias de espacio de trabajo y configuración del sistema.",
         "loading": "Cargando preferencias...",
         "appearance": {
             "title": "Apariencia",
             "themes": {
-                "light": "Luz Mínima",
+                "light": "Luz Minimalista",
                 "dark": "Oscuro Tinta",
-                "blue": "Azul Pizarra",
-                "green": "Verde Salvia",
-                "purple": "Púrpura Iris",
-                "orange": "Naranja Ámbar",
-                "beige": "Beige Pergamino"
+                "blue": "Pizarra",
+                "green": "Salvia",
+                "purple": "Iris",
+                "orange": "Ámbar",
+                "beige": "Pergamino"
             }
         },
-        "systemInfo": {
+        "system": {
             "title": "Información del Sistema",
             "framework": "Framework",
             "database": "Base de Datos",
             "auth": "Autenticación",
             "version": "Versión",
+            "versionInfo": "Nova CMS v{version}",
             "latest": "Última",
-            "secure": "Seguro",
-            "active": "Activo"
+            "secure": "Seguro"
         },
         "pro": {
             "title": "Espacio Pro",
-            "desc": "Estás utilizando la versión premium de Nova CMS.",
+            "description": "Estás ejecutando la versión premium de Nova CMS.",
             "viewLicense": "Ver Licencia"
         },
         "quickActions": {
@@ -1171,6 +770,349 @@
             "emailInvalid": "Formato de correo inválido",
             "passwordRequired": "La contraseña es obligatoria",
             "passwordLength": "La contraseña debe tener al menos 6 caracteres"
+        }
+    },
+    "templates": {
+        "hub": {
+            "title": "Plantillas",
+            "subtitle": "Gestiona la estructura de tu contenido y crea nuevas entradas.",
+            "loading": "Cargando biblioteca de plantillas...",
+            "searchPlaceholder": "Buscar plantillas...",
+            "refresh": "Actualizar",
+            "newTemplate": "Nueva Plantilla",
+            "noTemplates": "No se encontraron plantillas",
+            "noTemplatesDesc": "Intenta ajustar tus términos de búsqueda o crea una nueva plantilla.",
+            "structure": {
+                "title": "Estructura de Plantillas",
+                "description": "Las plantillas definen la estructura de tu contenido. Puedes usar plantillas estándar como Planes Turísticos o crear Tipos de Contenido personalizados."
+            },
+            "recentActivity": {
+                "title": "Actividad Reciente",
+                "viewAll": "Ver todo"
+            }
+        },
+        "tourism": {
+            "title": "Planes Turísticos",
+            "subtitle": "Crea y gestiona tus planes turísticos e itinerarios.",
+            "backToTemplates": "Volver a plantillas",
+            "createPlan": "Crear Plan",
+            "info": {
+                "title": "Planes Turísticos",
+                "description": "Gestiona planes de viaje completos, incluyendo itinerarios, precios y detalles. Estos planes son el núcleo de tu oferta turística."
+            },
+            "searchPlaceholder": "Buscar planes por título...",
+            "refresh": "Actualizar",
+            "loading": "Cargando planes turísticos...",
+            "noPlans": "No se encontraron planes",
+            "noPlansDesc": "Crea tu primer plan turístico para empezar.",
+            "noPlansMatch": "No hay planes que coincidan con \"{query}\".",
+            "errorLoading": "Error al cargar los planes",
+            "delete": {
+                "title": "Eliminar Plan",
+                "description": "¿Estás seguro de que quieres eliminar \"{title}\"? Esta acción no se puede deshacer.",
+                "confirm": "Eliminar Plan",
+                "success": "Plan eliminado correctamente",
+                "error": "No se pudo eliminar el plan. Inténtalo de nuevo."
+            },
+            "duplicate": {
+                "success": "\"{title}\" ha sido duplicado como borrador.",
+                "error": "No se pudo duplicar el plan. Inténtalo de nuevo."
+            },
+            "toggle": {
+                "published": "Plan publicado",
+                "draft": "Plan vuelto a borrador",
+                "error": "No se pudo actualizar el estado del plan. Inténtalo de nuevo."
+            },
+            "edit": {
+                "createTitle": "Crear Nuevo Plan",
+                "editTitle": "Editar {title}",
+                "headerDesc": "Completa los campos para editar este plan turístico.",
+                "autosaving": "Guardando cambios automáticamente...",
+                "readyToCreate": "Listo para crear",
+                "creatingDraft": "Creando borrador...",
+                "creatingDraftDesc": "Por favor espera, estamos preparando todo para el autoguardado.",
+                "draftCreated": "¡Borrador creado!",
+                "draftCreatedDesc": "Ahora todos tus cambios se guardarán automáticamente.",
+                "sections": {
+                    "basic": {
+                        "title": "Información Básica",
+                        "description": "Título, destino y detalles principales",
+                        "fields": {
+                            "title": "Título del Plan",
+                            "titlePlaceholder": "ej. Circuito Mágico por la Riviera Maya",
+                            "urlConfig": "Configuración de URL",
+                            "urlConfigDesc": "Configura cómo aparecerá tu plan en la estructura de la URL.",
+                            "section": "Sección",
+                            "sectionDesc": "Categoría principal",
+                            "destination": "Destino",
+                            "destinationDesc": "Destino específico",
+                            "slug": "Slug del Plan",
+                            "slugDesc": "Identificador de URL",
+                            "urlPreview": "Vista Previa de URL"
+                        }
+                    },
+                    "transport": {
+                        "title": "Transporte",
+                        "description": "Especifica si este plan utiliza transporte terrestre para llegar al destino.",
+                        "fields": {
+                            "groundTransport": "Plan con Transporte Terrestre",
+                            "groundTransportDesc": "Activa si el transporte principal es por tierra (bus, carro, etc.)."
+                        }
+                    },
+                    "includes": {
+                        "title": "Lo que Incluye",
+                        "description": "Lo que está incluido y excluido en el plan",
+                        "fields": {
+                            "included": "Lo que Incluye",
+                            "notIncluded": "Lo que NO incluye",
+                            "addSection": "Añadir Sección",
+                            "noSections": "Aún no hay secciones",
+                            "noSectionsDesc": "Añade secciones para organizar lo que incluye tu plan",
+                            "addFirstSection": "Añadir Primera Sección",
+                            "sectionTitle": "Título de la Sección",
+                            "sectionTitlePlaceholder": "ej. INCLUIDO EN BOGOTÁ",
+                            "itemsIncluded": "Items Incluidos",
+                            "itemsPlaceholder": "Lista de items..."
+                        }
+                    },
+                    "itinerary": {
+                        "title": "Itinerario",
+                        "description": "Actividades y horario día por día",
+                        "fields": {
+                            "dayConfigDesc": "Configura las actividades para este día",
+                            "dayTitle": "Título del Día",
+                            "dayTitlePlaceholder": "ej. Llegada a Cancún y tarde libre",
+                            "dayDescription": "Descripción y Actividades",
+                            "dayDescriptionPlaceholder": "Detalla las actividades, traslados, comidas y otra información relevante...",
+                            "dayImage": "Imagen del Día",
+                            "noItinerary": "Comienza tu itinerario",
+                            "noItineraryDesc": "Añade el primer día de tu plan turístico. Puedes añadir tantos días como necesites.",
+                            "addDay": "Añadir Día"
+                        }
+                    },
+                    "pricing": {
+                        "title": "Precios",
+                        "description": "Opciones de precio para diferentes tamaños de grupo",
+                        "generalTitle": "Precio General",
+                        "generalDesc": "Un solo precio para todo el plan.",
+                        "addGeneral": "Añadir Precio General",
+                        "noGeneral": "No hay un precio general configurado.",
+                        "specificTitle": "Precios Específicos",
+                        "specificDesc": "Precios con una descripción personalizada (ej. por persona, pareja).",
+                        "addSpecific": "Añadir Precio Específico",
+                        "noSpecific": "No hay precios específicos configurados.",
+                        "seasonalTitle": "Precios por Temporada",
+                        "seasonalDesc": "Diferentes precios por temporada y acomodación.",
+                        "addSeasonal": "Añadir Precio por Temporada",
+                        "noSeasonal": "No hay precios por temporada configurados.",
+                        "fields": {
+                            "modes": {
+                                "simple": "General",
+                                "advanced": "Específico",
+                                "seasonal": "Por Temporada"
+                            },
+                            "description": "Descripción",
+                            "descriptionPlaceholder": "ej. 2 pasajeros",
+                            "currency": "Moneda",
+                            "price": "Precio",
+                            "seasonTitle": "Título de la temporada",
+                            "seasonTitlePlaceholder": "ej. TEMPORADA BAJA - Miércoles a Domingo",
+                            "accommodationsTitle": "Acomodaciones y precios",
+                            "addAccommodation": "Añadir Acomodación",
+                            "noAccommodations": "Aún no hay acomodaciones. Haz clic en \"Añadir\" para crear una.",
+                            "accommodation": "Acomodación",
+                            "accommodationPlaceholder": "ej. Sencilla, Doble, Triple"
+                        },
+                        "autoFill": {
+                            "recreate": "Recrear temporadas",
+                            "autoFill": "Auto-completar Temporadas",
+                            "mini": "Auto-completar"
+                        },
+                        "seasons": {
+                            "low": "TEMPORADA BAJA",
+                            "mid": "TEMPORADA MEDIA",
+                            "high": "TEMPORADA ALTA",
+                            "single": "Sencilla",
+                            "double": "Doble",
+                            "triple": "Triple"
+                        }
+                    },
+                    "video": {
+                        "title": "Configuración de Video",
+                        "description": "Contenido de video promocional",
+                        "fields": {
+                            "videoUrl": "URL del Video de YouTube",
+                            "tipsTitle": "Consejos para el video:",
+                            "tipsList": "• Duración ideal: 1-3 minutos\n• Muestra los mejores momentos del destino\n• Incluye testimonios de clientes si es posible\n• Asegúrate de que tenga buena calidad de imagen",
+                            "preview": "Vista Previa",
+                            "previewPlaceholder": "Pega una URL de YouTube válida para ver el video aquí"
+                        }
+                    },
+                    "components": {
+                        "itineraryImage": {
+                            "loading": "Cargando configuración de imagen...",
+                            "s3ErrorTitle": "No se pudo verificar S3",
+                            "s3RequiredTitle": "Configuración S3 Requerida",
+                            "s3RequiredDesc": "Para subir imágenes del itinerario, el almacenamiento S3 debe estar configurado.",
+                            "configureS3": "Configurar S3",
+                            "uploadImage": "Subir imagen del día",
+                            "uploadDesc": "Arrastra y suelta o haz clic para seleccionar",
+                            "uploading": "Subiendo...",
+                            "uploadingDesc": "Subiendo imagen...",
+                            "gallery": "Galería",
+                            "retry": "Reintentar",
+                            "openPlugins": "Abrir Plugins",
+                            "errorTitle": "Error de Subida",
+                            "chooseFile": "Elegir Archivo"
+                        }
+                    }
+                }
+            }
+        },
+        "experiences": {
+            "title": "Biblioteca de Experiencias",
+            "subtitle": "Gestiona experiencias narrativas con anfitriones locales.",
+            "createExperience": "Crear Experiencia",
+            "info": {
+                "title": "Experiencias Curadas",
+                "description": "Crea actividades únicas e inmersivas lideradas por locales. Se centran en la narración de historias y el intercambio cultural."
+            },
+            "searchPlaceholder": "Buscar experiencias...",
+            "loading": "Cargando experiencias...",
+            "noExperiences": "No se encontraron experiencias",
+            "noExperiencesDesc": "Empieza creando tu primera experiencia para compartir con los viajeros.",
+            "noResults": "No hay resultados para \"{query}\".",
+            "delete": {
+                "title": "Eliminar experiencia",
+                "description": "¿Estás seguro de que deseas eliminar \"{title}\"? Esta acción no se puede deshacer.",
+                "confirm": "Eliminar experiencia",
+                "success": "Experiencia eliminada correctamente",
+                "error": "No se pudo eliminar la experiencia. Inténtalo de nuevo."
+            },
+            "toggle": {
+                "published": "Experiencia publicada",
+                "draft": "Experiencia vuelta a borrador",
+                "error": "No se pudo actualizar el estado. Inténtalo de nuevo."
+            },
+            "duration": {
+                "flexible": "Flexible",
+                "singleDay": "Un día",
+                "multiDay": "Varios días",
+                "hourly": "Por horas"
+            },
+            "days": {
+                "monday": "Lunes",
+                "tuesday": "Martes",
+                "wednesday": "Miércoles",
+                "thursday": "Jueves",
+                "friday": "Viernes",
+                "saturday": "Sábado",
+                "sunday": "Domingo"
+            },
+            "edit": {
+                "createTitle": "Crear Experiencia",
+                "editTitle": "Editar Experiencia",
+                "headerDesc": "Captura la historia, actividades y logística.",
+                "basics": {
+                    "title": "Configuración Básica",
+                    "desc": "Define los detalles principales que identifican esta experiencia.",
+                    "hostBio": "Biografía del Anfitrión",
+                    "fields": {
+                        "title": "Título de la Experiencia",
+                        "titlePlaceholder": "ej. Barranquilla, tierra de Shakira",
+                        "slug": "Slug",
+                        "slugPlaceholder": "auto-generado si se deja vacío",
+                        "slugDesc": "Usado para URLs públicas.",
+                        "location": "Ubicación / Región",
+                        "locationPlaceholder": "Ciudad o región",
+                        "hostName": "Nombre del Anfitrión",
+                        "hostNamePlaceholder": "Guía o narrador opcional",
+                        "hostBioPlaceholder": "Comparte el trasfondo del anfitrión",
+                        "optional": "(opcional)"
+                    }
+                },
+                "gallery": {
+                    "title": "Galería de Imágenes",
+                    "desc": "Almacena hasta cuatro imágenes. Aparecerán en una cuadrícula de 2 x 2 en la página pública.",
+                    "checking": "Comprobando almacenamiento de medios...",
+                    "s3ErrorTitle": "Error de configuración S3",
+                    "s3ErrorRetry": "Reintentar",
+                    "s3NotConfigured": "Configura S3 en el área de plugins para subir imágenes directamente.",
+                    "emptySlot": "Espacio Vacío",
+                    "select": "Seleccionar",
+                    "remove": "Eliminar"
+                },
+                "storytelling": {
+                    "title": "Narrativa",
+                    "desc": "Describe la experiencia para inspirar a los viajeros.",
+                    "fields": {
+                        "summary": "Resumen",
+                        "summaryPlaceholder": "Descripción breve de una o dos líneas",
+                        "narrative": "Narrativa Completa",
+                        "narrativePlaceholder": "Cuenta la historia completa de la experiencia",
+                        "activities": "Actividades",
+                        "activitiesPlaceholder": "Lista de actividades, una por línea"
+                    }
+                },
+                "logistics": {
+                    "title": "Logística",
+                    "desc": "Captura información práctica para planificadores e invitados.",
+                    "fields": {
+                        "durationType": "Tipo de Duración",
+                        "durationPlaceholder": "Selecciona duración",
+                        "durationDetails": "Detalles de Duración",
+                        "durationDetailsPlaceholder": "ej. 6 horas o 2 días / 1 noche",
+                        "availableDays": "Días Disponibles",
+                        "availableDaysDesc": "Selecciona los días recurrentes en que se realiza el tour.",
+                        "timeWindowFrequency": "Horario / Frecuencia",
+                        "timeWindowFrequencyPlaceholder": "ej. Salidas a las 9am y 2pm",
+                        "scheduleNote": "Notas de Horario",
+                        "scheduleNotePlaceholder": "Fechas de cierre, excepciones por festivos, etc.",
+                        "referencePrice": "Precio de Referencia",
+                        "referencePricePlaceholder": "ej. 1.500.000",
+                        "currency": "Moneda",
+                        "currencyPlaceholder": "Selecciona moneda",
+                        "inclusions": "Inclusiones",
+                        "inclusionsPlaceholder": "Lo que está incluido",
+                        "exclusions": "Exclusiones",
+                        "exclusionsPlaceholder": "Lo que no está incluido"
+                    }
+                }
+            }
+        },
+        "form": {
+            "back": "Volver",
+            "createExperience": "Crear Experiencia",
+            "editExperience": "Editar Experiencia",
+            "createTourism": "Crear Plan Turístico",
+            "editTourism": "Editar Plan Turístico",
+            "subtitleExperience": "Captura la historia, actividades y logística.",
+            "subtitle": "Gestiona los detalles de tu paquete turístico.",
+            "edit": "Editar",
+            "refresh": "Actualizar",
+            "saveDraft": "Guardar Borrador",
+            "publish": "Publicar",
+            "published": "Publicado",
+            "archived": "Archivado",
+            "status": "Estado:",
+            "view": "Ver",
+            "cancel": "Cancelar",
+            "saveChanges": "Guardar Cambios",
+            "publishing": "Publicando...",
+            "deleting": "Eliminando...",
+            "delete": "Eliminar",
+            "saving": "Guardando...",
+            "success": {
+                "published": "Experiencia publicada",
+                "draftSaved": "Borrador guardado",
+                "publishedDesc": "Tu experiencia ya está disponible con los últimos detalles.",
+                "draftSavedDesc": "Borrador guardado correctamente. Puedes seguir editando más tarde."
+            },
+            "error": {
+                "saveFailed": "Error al guardar",
+                "saveFailedDesc": "Por favor, inténtalo de nuevo una vez conectada la API.",
+                "notFound": "Plantilla no encontrada"
+            }
         }
     }
 }

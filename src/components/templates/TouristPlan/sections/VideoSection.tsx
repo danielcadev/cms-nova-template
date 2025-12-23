@@ -3,6 +3,7 @@
 import { CheckCircle2, XCircle, Youtube } from 'lucide-react'
 import { memo } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { useTranslations } from 'next-intl'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
@@ -23,6 +24,7 @@ const getYoutubeEmbedUrl = (url: string) => {
 }
 
 export const VideoSection = memo(function VideoSection() {
+  const t = useTranslations('templates.tourism.edit.sections.video')
   const { control, watch } = useFormContext()
   // Use watch array to get stable reference instead of useWatch
   const [videoUrl] = watch(['videoUrl'])
@@ -39,7 +41,7 @@ export const VideoSection = memo(function VideoSection() {
               <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
                 <Youtube className="h-5 w-5 text-red-600" />
               </div>
-              <h4 className="text-xl font-semibold text-zinc-900">Video Configuration</h4>
+              <h4 className="text-xl font-semibold text-zinc-900">{t('title')}</h4>
             </div>
 
             <FormField
@@ -48,7 +50,7 @@ export const VideoSection = memo(function VideoSection() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-base font-semibold text-zinc-900">
-                    YouTube Video URL
+                    {t('fields.videoUrl')}
                   </FormLabel>
                   <FormControl>
                     <div className="relative">
@@ -59,9 +61,9 @@ export const VideoSection = memo(function VideoSection() {
                         className={cn(
                           'pl-12 text-base py-3',
                           currentVideoUrl &&
-                            (isValid
-                              ? 'border-green-500 focus:border-green-500 focus:ring-green-500'
-                              : 'border-red-500 focus:border-red-500 focus:ring-red-500'),
+                          (isValid
+                            ? 'border-green-500 focus:border-green-500 focus:ring-green-500'
+                            : 'border-red-500 focus:border-red-500 focus:ring-red-500'),
                         )}
                       />
                       {currentVideoUrl && (
@@ -82,18 +84,15 @@ export const VideoSection = memo(function VideoSection() {
 
             <div className="bg-zinc-50 rounded-lg p-4 border border-zinc-100">
               <p className="text-sm text-zinc-600 leading-relaxed">
-                <strong className="text-zinc-900">Video tips:</strong>
-                <br />• Ideal duration: 1-3 minutes
-                <br />• Show the best moments of the destination
-                <br />• Include customer testimonials if possible
-                <br />• Make sure it has good image quality
+                <strong className="text-zinc-900">{t('fields.tipsTitle')}</strong>
+                <br />{t('fields.tipsList')}
               </p>
             </div>
           </div>
 
           <div className="w-full">
             <div className="space-y-4">
-              <h4 className="text-lg font-semibold text-zinc-900">Preview</h4>
+              <h4 className="text-lg font-semibold text-zinc-900">{t('fields.preview')}</h4>
               {embedUrl && isValid ? (
                 <div className="aspect-video w-full rounded-xl overflow-hidden border border-zinc-200 shadow-lg bg-black">
                   <iframe
@@ -108,9 +107,9 @@ export const VideoSection = memo(function VideoSection() {
                 <div className="aspect-video w-full rounded-xl bg-zinc-50 flex items-center justify-center border border-zinc-200">
                   <div className="text-center px-4">
                     <Youtube className="h-12 w-12 text-zinc-300 mx-auto mb-3" />
-                    <p className="text-zinc-500 font-medium text-base">Video preview</p>
+                    <p className="text-zinc-500 font-medium text-base">{t('fields.preview')}</p>
                     <p className="text-sm text-zinc-400 mt-1">
-                      Paste a valid YouTube URL to see the video here
+                      {t('fields.previewPlaceholder')}
                     </p>
                   </div>
                 </div>

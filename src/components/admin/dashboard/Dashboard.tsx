@@ -1,9 +1,10 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import { es } from 'date-fns/locale'
+import { es, enUS } from 'date-fns/locale'
 import { Calendar, FileText, Image as ImageIcon, Settings, UserPlus, Users } from 'lucide-react'
 import Link from 'next/link'
+import { useTranslations, useLocale } from 'next-intl'
 import { useMemo } from 'react'
 import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
 import { useCurrentUser } from '@/hooks/use-current-user'
@@ -12,29 +13,36 @@ import { usePlans } from '@/hooks/usePlans'
 import { cn } from '@/lib/utils'
 
 export function Dashboard() {
+  const t = useTranslations('dashboard')
+  const locale = useLocale()
   const { user } = useCurrentUser()
   const { plans, isLoading: plansLoading } = usePlans()
   const { users, loading: usersLoading } = useUsers()
 
   const userName = user?.name || 'Administrator'
   const currentHour = new Date().getHours()
-  const greeting =
-    currentHour < 12 ? 'Good morning' : currentHour < 18 ? 'Good afternoon' : 'Good evening'
 
+  const greeting = useMemo(() => {
+    if (currentHour < 12) return t('greeting.morning')
+    if (currentHour < 18) return t('greeting.afternoon')
+    return t('greeting.evening')
+  }, [currentHour, t])
+
+  const dateLocale = locale === 'es' ? es : enUS
   const isLoading = plansLoading || usersLoading
 
   const activities = useMemo(() => {
     const allActivities = [
       ...plans.map((plan) => ({
         id: `plan-${plan.id}`,
-        text: `New plan "${plan.mainTitle}" created`,
+        text: t('widgets.activity.newPlan', { name: plan.mainTitle }),
         date: new Date(plan.createdAt),
         color: 'bg-emerald-500',
         icon: FileText,
       })),
       ...users.map((user) => ({
         id: `user-${user.id}`,
-        text: `New user ${user.name || user.email} registered`,
+        text: t('widgets.activity.newUser', { name: user.name || user.email }),
         date: new Date(user.createdAt),
         color: 'bg-purple-500',
         icon: UserPlus,
@@ -54,8 +62,8 @@ export function Dashboard() {
     return (
       <div className="relative min-h-screen">
         <AdminLoading
-          title="Dashboard"
-          message="Preparing dashboard..."
+          title={t('title')}
+          message={t('loading')}
           variant="content"
           fullScreen
         />
@@ -68,13 +76,13 @@ export function Dashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-900">Dashboard</h1>
-          <p className="text-zinc-500">Overview of your workspace</p>
+          <h1 className="text-3xl font-bold tracking-tight text-zinc-900">{t('title')}</h1>
+          <p className="text-zinc-500">{t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-zinc-200 shadow-sm">
             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs font-medium text-zinc-600">System Online</span>
+            <span className="text-xs font-medium text-zinc-600">{t('systemOnline')}</span>
           </div>
         </div>
       </div>
@@ -99,14 +107,14 @@ export function Dashboard() {
                   type="button"
                   className="px-6 py-3 rounded-xl bg-white text-zinc-900 font-semibold text-sm hover:bg-zinc-100 transition-colors"
                 >
-                  Create Content
+                  {t('widgets.welcome.createContent')}
                 </button>
               </Link>
               <button
                 type="button"
                 className="px-6 py-3 rounded-xl bg-white/10 text-white font-semibold text-sm backdrop-blur-md hover:bg-white/20 transition-colors"
               >
-                View Analytics
+                {t('widgets.welcome.viewAnalytics')}
               </button>
             </div>
           </div>
@@ -119,12 +127,12 @@ export function Dashboard() {
         {/* Activity Feed (Tall - Right Side) */}
         <div className="col-span-1 md:col-span-1 lg:col-span-1 row-span-3 rounded-3xl bg-white p-6 border border-zinc-100 shadow-xl shadow-zinc-200/40 flex flex-col">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-zinc-900">Activity</h3>
+            <h3 className="text-lg font-bold text-zinc-900">{t('widgets.activity.title')}</h3>
             <button
               type="button"
               className="text-xs font-medium text-zinc-400 hover:text-zinc-900 transition-colors"
             >
-              View All
+              {t('widgets.activity.viewAll')}
             </button>
           </div>
           <div className="flex-1 overflow-y-auto space-y-6 pr-2 scrollbar-none">
@@ -148,7 +156,7 @@ export function Dashboard() {
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-zinc-400">
                 <Calendar className="h-8 w-8 mb-2 opacity-50" />
-                <p className="text-sm">No recent activity</p>
+                <p className="text-sm">{t('widgets.activity.noActivity')}</p>
               </div>
             )}
           </div>
@@ -162,7 +170,7 @@ export function Dashboard() {
                 <ImageIcon className="h-6 w-6" />
               </div>
               <span className="text-sm font-semibold text-zinc-600 group-hover:text-zinc-900">
-                Media Library
+                {t('widgets.quickActions.media')}
               </span>
             </div>
           </Link>
@@ -172,7 +180,7 @@ export function Dashboard() {
                 <Settings className="h-6 w-6" />
               </div>
               <span className="text-sm font-semibold text-zinc-600 group-hover:text-zinc-900">
-                Settings
+                {t('widgets.quickActions.settings')}
               </span>
             </div>
           </Link>
@@ -182,7 +190,7 @@ export function Dashboard() {
                 <Users className="h-6 w-6" />
               </div>
               <span className="text-sm font-semibold text-zinc-600 group-hover:text-zinc-900">
-                Team Members
+                {t('widgets.quickActions.team')}
               </span>
             </div>
           </Link>

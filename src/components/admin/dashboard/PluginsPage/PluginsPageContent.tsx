@@ -2,6 +2,7 @@
 
 import { Puzzle, RefreshCw, Search, Settings } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
@@ -25,6 +26,7 @@ export function PluginsPageContent({
   handleRefresh,
   onConfigurePlugin,
 }: PluginsPageContentProps) {
+  const t = useTranslations('plugins')
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
   const [refreshing, setRefreshing] = useState(false)
@@ -62,8 +64,8 @@ export function PluginsPageContent({
     return (
       <div className="relative">
         <AdminLoading
-          title="Plugins"
-          message="Loading available plugins..."
+          title={t('title')}
+          message={t('loading')}
           variant="content"
           fullScreen
         />
@@ -76,8 +78,8 @@ export function PluginsPageContent({
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">Plugins</h1>
-            <p className="text-zinc-500 mt-1">Extend your CMS capabilities.</p>
+            <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">{t('title')}</h1>
+            <p className="text-zinc-500 mt-1">{t('subtitle')}</p>
           </div>
           <Button
             onClick={handleRefreshClick}
@@ -86,7 +88,7 @@ export function PluginsPageContent({
             className="rounded-xl border-zinc-200 text-zinc-700 hover:bg-zinc-50"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-            {refreshing ? 'Refreshing...' : 'Refresh'}
+            {refreshing ? t('refreshing') : t('refresh')}
           </Button>
         </div>
 
@@ -96,7 +98,7 @@ export function PluginsPageContent({
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
               <Input
-                placeholder="Search plugins..."
+                placeholder={t('search')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 rounded-xl border-zinc-200 bg-white h-11 focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all"
@@ -109,13 +111,12 @@ export function PluginsPageContent({
                   type="button"
                   key={status}
                   onClick={() => setFilterStatus(status)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
-                    filterStatus === status
-                      ? 'bg-white text-zinc-900 shadow-sm'
-                      : 'text-zinc-500 hover:text-zinc-700'
-                  }`}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${filterStatus === status
+                    ? 'bg-white text-zinc-900 shadow-sm'
+                    : 'text-zinc-500 hover:text-zinc-700'
+                    }`}
                 >
-                  {status === 'all' ? 'All' : status === 'enabled' ? 'Enabled' : 'Disabled'}
+                  {t(`filters.${status}`)}
                 </button>
               ))}
             </div>
@@ -128,10 +129,9 @@ export function PluginsPageContent({
             <div className="w-16 h-16 mx-auto bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm border border-zinc-100">
               <Puzzle className="w-8 h-8 text-zinc-300" />
             </div>
-            <h3 className="text-lg font-medium text-zinc-900 mb-2">No plugins available</h3>
+            <h3 className="text-lg font-medium text-zinc-900 mb-2">{t('empty.noAvailable')}</h3>
             <p className="text-zinc-500 text-sm max-w-sm mx-auto">
-              Plugins let you extend your CMS functionality with additional features and
-              integrations.
+              {t('empty.description')}
             </p>
           </div>
         ) : filteredPlugins.length === 0 ? (
@@ -139,11 +139,11 @@ export function PluginsPageContent({
             <div className="w-16 h-16 mx-auto bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm border border-zinc-100">
               <Search className="w-8 h-8 text-zinc-300" />
             </div>
-            <h3 className="text-lg font-medium text-zinc-900 mb-2">No plugins found</h3>
+            <h3 className="text-lg font-medium text-zinc-900 mb-2">{t('empty.noFound')}</h3>
             <p className="text-zinc-500 text-sm mb-6 max-w-sm mx-auto">
               {searchQuery
-                ? `No plugins match "${searchQuery}".`
-                : `No ${filterStatus} plugins found.`}
+                ? t('empty.noMatch', { query: searchQuery })
+                : t('empty.noStatus', { status: t(`filters.${filterStatus}`).toLowerCase() })}
             </p>
             <Button
               variant="outline"
@@ -153,7 +153,7 @@ export function PluginsPageContent({
               }}
               className="rounded-xl border-zinc-200"
             >
-              Clear filters
+              {t('filters.clear')}
             </Button>
           </div>
         ) : (
@@ -168,13 +168,12 @@ export function PluginsPageContent({
                     {plugin.icon}
                   </div>
                   <div
-                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${
-                      plugin.enabled
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
-                        : 'bg-zinc-50 text-zinc-500 border-zinc-100'
-                    }`}
+                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${plugin.enabled
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                      : 'bg-zinc-50 text-zinc-500 border-zinc-100'
+                      }`}
                   >
-                    {plugin.enabled ? 'Enabled' : 'Disabled'}
+                    {plugin.enabled ? t('card.enabled') : t('card.disabled')}
                   </div>
                 </div>
 
@@ -195,10 +194,10 @@ export function PluginsPageContent({
                         className="h-8 px-2 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 rounded-lg"
                       >
                         <Settings className="h-4 w-4 mr-1.5" />
-                        Configure
+                        {t('card.configure')}
                       </Button>
                     ) : (
-                      <span className="text-xs text-zinc-400 px-2">Not configurable</span>
+                      <span className="text-xs text-zinc-400 px-2">{t('card.notConfigurable')}</span>
                     )}
                   </div>
 

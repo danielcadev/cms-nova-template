@@ -1,5 +1,6 @@
 import { ArrowRight, Database, Edit3, Eye, FileText, Layout, Plus } from 'lucide-react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
 export interface ContentType {
   id: string
@@ -29,13 +30,14 @@ export function ViewContentComponent({
   plans: _plans,
   allContentEntries,
 }: ViewContentProps) {
+  const t = useTranslations('viewContent')
   return (
     <div className="min-h-screen p-6 space-y-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-900">Content Management</h1>
-          <p className="text-zinc-500 mt-1">Organize and manage your digital assets</p>
+          <h1 className="text-3xl font-bold tracking-tight text-zinc-900">{t('title')}</h1>
+          <p className="text-zinc-500 mt-1">{t('subtitle')}</p>
         </div>
         <div className="flex gap-3">
           <Link href="/admin/dashboard/content-types/create">
@@ -44,7 +46,7 @@ export function ViewContentComponent({
               className="inline-flex h-10 items-center justify-center rounded-xl bg-zinc-900 px-4 text-sm font-medium text-white transition-transform hover:scale-105 hover:bg-zinc-800 active:scale-95 shadow-lg shadow-zinc-200"
             >
               <Plus className="mr-2 h-4 w-4" />
-              New Type
+              {t('newType')}
             </button>
           </Link>
         </div>
@@ -55,12 +57,12 @@ export function ViewContentComponent({
         {/* Left Column: Content Types (Bento Grid) */}
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-zinc-900">Content Models</h2>
+            <h2 className="text-lg font-semibold text-zinc-900">{t('contentModels')}</h2>
             <Link
               href="/admin/dashboard/content-types"
               className="text-sm font-medium text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-1"
             >
-              View All <ArrowRight className="h-3 w-3" />
+              {t('viewAll')} <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
 
@@ -69,16 +71,16 @@ export function ViewContentComponent({
               <div className="mx-auto h-12 w-12 rounded-xl bg-zinc-50 flex items-center justify-center mb-4">
                 <Database className="h-6 w-6 text-zinc-400" />
               </div>
-              <h3 className="text-lg font-medium text-zinc-900">No content models</h3>
+              <h3 className="text-lg font-medium text-zinc-900">{t('noModels.title')}</h3>
               <p className="text-zinc-500 text-sm mt-1 mb-6">
-                Create your first content type to start.
+                {t('noModels.description')}
               </p>
               <Link href="/admin/dashboard/content-types/create">
                 <button
                   type="button"
                   className="px-4 py-2 rounded-lg bg-zinc-100 text-zinc-900 text-sm font-medium hover:bg-zinc-200 transition-colors"
                 >
-                  Create Model
+                  {t('noModels.button')}
                 </button>
               </Link>
             </div>
@@ -108,13 +110,13 @@ export function ViewContentComponent({
 
                   <div className="flex items-center justify-between mt-auto pt-4 border-t border-zinc-50">
                     <span className="text-xs font-medium text-zinc-500 bg-zinc-50 px-2 py-1 rounded-md">
-                      {type._count.entries} entries
+                      {t('modelCard.entries', { count: type._count.entries })}
                     </span>
                     <Link
                       href={`/admin/dashboard/content-types/${type.apiIdentifier}/content`}
                       className="text-xs font-semibold text-zinc-900 flex items-center gap-1 hover:gap-2 transition-all"
                     >
-                      Manage <ArrowRight className="h-3 w-3" />
+                      {t('modelCard.manage')} <ArrowRight className="h-3 w-3" />
                     </Link>
                   </div>
                 </div>
@@ -128,7 +130,7 @@ export function ViewContentComponent({
           {/* Recent Entries */}
           <div className="rounded-3xl bg-white p-6 border border-zinc-100 shadow-xl shadow-zinc-200/40">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold text-zinc-900">Recent Entries</h2>
+              <h2 className="text-lg font-bold text-zinc-900">{t('recentEntries.title')}</h2>
             </div>
             <div className="space-y-4">
               {allContentEntries.length > 0 ? (
@@ -142,7 +144,7 @@ export function ViewContentComponent({
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-zinc-900 truncate">
-                        {entry.contentType?.name || 'Untitled Entry'}
+                        {entry.contentType?.name || t('recentEntries.untitled')}
                       </p>
                       <p className="text-xs text-zinc-400">
                         {new Date(entry.createdAt).toLocaleDateString(undefined, {
@@ -160,7 +162,7 @@ export function ViewContentComponent({
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-zinc-400 text-center py-4">No recent entries found.</p>
+                <p className="text-sm text-zinc-400 text-center py-4">{t('recentEntries.noEntries')}</p>
               )}
             </div>
           </div>
@@ -172,17 +174,17 @@ export function ViewContentComponent({
                 <div className="p-2 rounded-lg bg-white/10 backdrop-blur-md">
                   <Layout className="h-5 w-5" />
                 </div>
-                <h3 className="font-bold text-lg">Templates</h3>
+                <h3 className="font-bold text-lg">{t('templates.title')}</h3>
               </div>
               <p className="text-zinc-400 text-sm mb-6">
-                Start with a pre-built structure for your content.
+                {t('templates.description')}
               </p>
               <Link href="/admin/dashboard/templates">
                 <button
                   type="button"
                   className="w-full py-3 rounded-xl bg-white text-zinc-900 font-semibold text-sm hover:bg-zinc-100 transition-colors"
                 >
-                  Browse Templates
+                  {t('templates.button')}
                 </button>
               </Link>
             </div>

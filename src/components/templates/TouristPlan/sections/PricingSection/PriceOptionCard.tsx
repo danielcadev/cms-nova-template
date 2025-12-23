@@ -4,6 +4,7 @@
 import { X } from 'lucide-react'
 import type React from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -31,6 +32,7 @@ export function PriceOptionCard({
   hasOtherGeneralPrice = false,
   fieldName = 'priceOptions',
 }: PriceOptionCardProps) {
+  const t = useTranslations('templates.tourism.edit.sections.pricing.fields')
   const { control, setValue, watch, trigger } = useFormContext<PlanFormValues>()
   // Use watch with array to get stable references and reduce re-renders
   const [mode, label, seasonTitle, seasonAccommodations] = watch([
@@ -142,36 +144,33 @@ export function PriceOptionCard({
         <div className="inline-flex rounded-lg border border-zinc-200 p-1 bg-zinc-50 w-full sm:w-auto">
           <button
             type="button"
-            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
-              currentMode === 'simple'
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${currentMode === 'simple'
                 ? 'bg-white text-zinc-900 shadow-sm'
                 : 'text-zinc-500 hover:text-zinc-900'
-            } ${hasOtherGeneralPrice && currentMode !== 'simple' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              } ${hasOtherGeneralPrice && currentMode !== 'simple' ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={() => !hasOtherGeneralPrice && handleModeChange('simple')}
           >
-            General
+            {t('modes.simple')}
           </button>
           <button
             type="button"
-            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
-              currentMode === 'advanced'
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${currentMode === 'advanced'
                 ? 'bg-white text-zinc-900 shadow-sm'
                 : 'text-zinc-500 hover:text-zinc-900'
-            }`}
+              }`}
             onClick={() => handleModeChange('advanced')}
           >
-            Specific
+            {t('modes.advanced')}
           </button>
           <button
             type="button"
-            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
-              currentMode === 'seasonal'
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${currentMode === 'seasonal'
                 ? 'bg-white text-zinc-900 shadow-sm'
                 : 'text-zinc-500 hover:text-zinc-900'
-            }`}
+              }`}
             onClick={() => handleModeChange('seasonal')}
           >
-            Seasonal
+            {t('modes.seasonal')}
           </button>
         </div>
 
@@ -199,10 +198,10 @@ export function PriceOptionCard({
                 render={({ field }) => (
                   <FormItem className="sm:col-span-2 lg:col-span-1">
                     <FormLabel className="text-xs font-semibold text-zinc-900 uppercase tracking-wide">
-                      Description
+                      {t('description')}
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="e.g., 2 passengers" className="text-sm" />
+                      <Input {...field} placeholder={t('descriptionPlaceholder')} className="text-sm" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -216,12 +215,12 @@ export function PriceOptionCard({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs font-semibold text-zinc-900 uppercase tracking-wide">
-                    Currency
+                    {t('currency')}
                   </FormLabel>
                   <FormControl>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger className="text-sm">
-                        <SelectValue placeholder="Currency" />
+                        <SelectValue placeholder={t('currency')} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="COP">COP</SelectItem>
@@ -241,7 +240,7 @@ export function PriceOptionCard({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs font-semibold text-zinc-900 uppercase tracking-wide">
-                    Price
+                    {t('price')}
                   </FormLabel>
                   <FormControl>
                     <div className="relative">
@@ -273,12 +272,12 @@ export function PriceOptionCard({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs font-semibold text-zinc-900 uppercase tracking-wide">
-                    Season title
+                    {t('seasonTitle')}
                   </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="e.g., LOW SEASON - Wednesday to Sunday"
+                      placeholder={t('seasonTitlePlaceholder')}
                       className="text-sm"
                     />
                   </FormControl>
@@ -290,7 +289,7 @@ export function PriceOptionCard({
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-100 pb-2">
                 <FormLabel className="text-sm font-semibold text-zinc-900">
-                  Accommodations & prices
+                  {t('accommodationsTitle')}
                 </FormLabel>
                 <Button
                   type="button"
@@ -304,15 +303,15 @@ export function PriceOptionCard({
                       currency: 'COP',
                     })
                   }
-                  className="w-full sm:w-auto text-xs h-8"
+                  className="w-full sm:w-auto text-xs h-8 rounded-2xl"
                 >
-                  Add Accommodation
+                  {t('addAccommodation')}
                 </Button>
               </div>
 
               {accommodationFields.length === 0 && (
                 <div className="text-sm text-zinc-500 text-center py-4 bg-zinc-50 rounded-lg border border-dashed border-zinc-200">
-                  No accommodations yet. Click "Add" to create one.
+                  {t('noAccommodations')}
                 </div>
               )}
 
@@ -330,11 +329,11 @@ export function PriceOptionCard({
                         }
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-xs text-zinc-500">Accommodation</FormLabel>
+                            <FormLabel className="text-xs text-zinc-500">{t('accommodation')}</FormLabel>
                             <FormControl>
                               <Input
                                 {...field}
-                                placeholder="e.g., Double, Triple"
+                                placeholder={t('accommodationPlaceholder')}
                                 className="text-sm bg-white"
                               />
                             </FormControl>
@@ -349,7 +348,7 @@ export function PriceOptionCard({
                         name={`${fieldName}.${index}.seasonAccommodations.${accIndex}.price` as any}
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-xs text-zinc-500">Price</FormLabel>
+                            <FormLabel className="text-xs text-zinc-500">{t('price')}</FormLabel>
                             <FormControl>
                               <div className="relative">
                                 <span className="absolute left-2 top-1/2 -translate-y-1/2 text-zinc-400 text-xs select-none">
@@ -376,7 +375,7 @@ export function PriceOptionCard({
                       <Button
                         type="button"
                         variant="ghost"
-                        className="text-zinc-400 hover:text-red-600 hover:bg-red-50 w-full h-10"
+                        className="text-zinc-400 hover:text-red-600 hover:bg-red-50 w-full h-10 rounded-lg"
                         onClick={() => removeAccommodation(accIndex)}
                       >
                         <X className="h-4 w-4" />
