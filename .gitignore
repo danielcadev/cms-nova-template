@@ -101,3 +101,4 @@ prisma/migrations/migration_lock.toml
 
 # Local development
 .turbo
+src/lib/plugins/store.json

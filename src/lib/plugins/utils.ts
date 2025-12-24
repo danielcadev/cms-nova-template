@@ -20,7 +20,22 @@ export async function getPluginSettings(id: string): Promise<{
         const states = raw?.states || {}
 
         const enabled = states[id] ?? plugin?.enabled ?? false
-        const config = configs[id] ?? plugin?.settings ?? {}
+        let config = configs[id] ?? plugin?.settings ?? {}
+
+        // Auto-decrypt sensitive values if encryption is configured
+        const encryptionKey = process.env.ENCRYPTION_KEY || ''
+        const isHex64 = /^[0-9a-fA-F]{64}$/.test(encryptionKey)
+
+        if (isHex64 && config && typeof config === 'object') {
+            const { decrypt } = await import('@/lib/encryption')
+            const decryptedConfig = { ...config }
+            for (const [k, v] of Object.entries(decryptedConfig)) {
+                if (typeof v === 'string' && v.split(':').length === 3) {
+                    decryptedConfig[k] = decrypt(v)
+                }
+            }
+            config = decryptedConfig
+        }
 
         return { enabled, config, plugin }
     } catch {

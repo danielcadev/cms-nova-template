@@ -1,8 +1,14 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { getPluginSettings } from '@/lib/plugins/utils'
+import { getAdminSession } from '@/lib/server-session'
 
 export async function POST(req: NextRequest) {
     try {
+        const session = await getAdminSession()
+        if (!session) {
+            return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+        }
+
         const { prompt, type } = await req.json()
 
         // Get AI configuration

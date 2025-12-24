@@ -56,6 +56,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
     openRouterApiKey: '',
     openRouterModel: 'google/gemini-2.0-flash-001',
   })
+  const [hasExistingAiConfig, setHasExistingAiConfig] = useState(false)
 
   const pluginId = plugin?.id || ''
   const isS3 = pluginId === 's3' || pluginId === 's3-storage'
@@ -86,11 +87,12 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
     if (isGemini) {
       setAiConfig({
         provider: (plugin.settings?.provider as 'google' | 'openrouter') || 'google',
-        googleApiKey: plugin.settings?.googleApiKey || plugin.settings?.apiKey || '',
+        googleApiKey: '', // Don't pre-fill
         googleModel: plugin.settings?.googleModel || plugin.settings?.model || 'gemini-1.5-flash',
-        openRouterApiKey: plugin.settings?.openRouterApiKey || '',
+        openRouterApiKey: '', // Don't pre-fill
         openRouterModel: plugin.settings?.openRouterModel || 'google/gemini-2.0-flash-001',
       })
+      setHasExistingAiConfig(!!(plugin.settings?.googleApiKey || plugin.settings?.openRouterApiKey))
     }
   }, [plugin, isS3, isDynamicNav, isGemini])
 
@@ -98,7 +100,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
   useEffect(() => {
     let ignore = false
     async function check() {
-      if (!isS3) {
+      if (!isS3 && !isGemini) {
         setEncryptionOk(null)
         return
       }
@@ -148,7 +150,15 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
       } else if (isDynamicNav) {
         await onSave(navConfig)
       } else if (isGemini) {
-        await onSave(aiConfig)
+        const payload = { ...aiConfig }
+        // Handle masking logic for Gemini
+        if (aiConfig.provider === 'google' && !payload.googleApiKey && hasExistingAiConfig) {
+          payload.googleApiKey = '••••••••'
+        }
+        if (aiConfig.provider === 'openrouter' && !payload.openRouterApiKey && hasExistingAiConfig) {
+          payload.openRouterApiKey = '••••••••'
+        }
+        await onSave(payload)
       } else {
         await onSave(plugin.settings || {})
       }
@@ -443,6 +453,18 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                 </div>
               </div>
 
+              {encryptionOk === false && (
+                <div className="rounded-xl border border-red-200 bg-red-50 p-4 flex gap-3">
+                  <ShieldAlert className="w-5 h-5 text-red-600 shrink-0" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-red-900">{t('config.s3.encryptionMissing')}</p>
+                    <p className="text-xs text-red-700 leading-relaxed">
+                      {t('config.s3.encryptionDescription')}
+                    </p>
+                  </div>
+                </div>
+              )}
+
               {aiConfig.provider === 'google' ? (
                 <div className="space-y-4 pt-4 border-t border-zinc-100">
                   <div className="space-y-2">
@@ -460,7 +482,10 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                         onChange={(e) =>
                           setAiConfig((prev) => ({ ...prev, googleApiKey: e.target.value }))
                         }
-                        placeholder={t('config.gemini.googleApiKeyPlaceholder')}
+                        placeholder={
+                          hasExistingAiConfig ? t('config.s3.secretPlaceholderExisting') : t('config.gemini.googleApiKeyPlaceholder')
+                        }
+                        disabled={encryptionOk === false}
                         className="rounded-xl border-zinc-200 bg-zinc-50/50 focus:bg-white transition-all font-mono text-sm pr-10"
                       />
                       <button
@@ -526,7 +551,10 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                         onChange={(e) =>
                           setAiConfig((prev) => ({ ...prev, openRouterApiKey: e.target.value }))
                         }
-                        placeholder={t('config.gemini.openRouterApiKeyPlaceholder')}
+                        placeholder={
+                          hasExistingAiConfig ? t('config.s3.secretPlaceholderExisting') : t('config.gemini.openRouterApiKeyPlaceholder')
+                        }
+                        disabled={encryptionOk === false}
                         className="rounded-xl border-zinc-200 bg-zinc-50/50 focus:bg-white transition-all font-mono text-sm pr-10"
                       />
                       <button
@@ -578,8 +606,8 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                           type="button"
                           onClick={() => setAiConfig((prev) => ({ ...prev, openRouterModel: m }))}
                           className={`px-2 py-1 text-[10px] rounded-md border transition-all ${aiConfig.openRouterModel === m
-                              ? 'bg-zinc-900 border-zinc-900 text-white font-medium'
-                              : 'bg-white border-zinc-200 text-zinc-500 hover:border-zinc-400'
+                            ? 'bg-zinc-900 border-zinc-900 text-white font-medium'
+                            : 'bg-white border-zinc-200 text-zinc-500 hover:border-zinc-400'
                             }`}
                         >
                           {m.split('/')[1]}
@@ -614,7 +642,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
         </Button>
         <Button
           onClick={handleSave}
-          disabled={isSaving || (isS3 && encryptionOk === false)}
+          disabled={isSaving || ((isS3 || isGemini) && encryptionOk === false)}
           className="rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-900/20"
         >
           {isSaving ? (

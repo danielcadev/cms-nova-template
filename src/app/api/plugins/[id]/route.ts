@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { type NextRequest, NextResponse } from 'next/server'
 import { AVAILABLE_PLUGINS } from '@/lib/plugins/config'
+import { getAdminSession } from '@/lib/server-session'
 
 const STORE_DIR = join(process.cwd(), 'src', 'lib', 'plugins')
 const STORE_PATH = join(STORE_DIR, 'store.json')
@@ -31,11 +32,14 @@ async function readStore(): Promise<{
 async function writeStore(data: { configs: Record<string, any>; states: Record<string, boolean> }) {
   try {
     await mkdir(STORE_DIR, { recursive: true })
-  } catch {}
+  } catch { }
   await writeFile(STORE_PATH, JSON.stringify(data, null, 2), 'utf-8')
 }
 
 export async function GET(req: NextRequest) {
+  const session = await getAdminSession()
+  if (!session) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+
   const url = new URL(req.url)
   const id = url.pathname.split('/').pop() || ''
   try {
@@ -56,6 +60,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const session = await getAdminSession()
+  if (!session) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+
   const url = new URL(req.url)
   const id = url.pathname.split('/').pop() || ''
   try {
@@ -71,6 +78,48 @@ export async function POST(req: NextRequest) {
     // If there are other keys besides enabled, treat them as config updates
     const { enabled: _omit, ...configPatch } = incoming
     if (Object.keys(configPatch).length > 0) {
+      // Logic for sensitive fields (encryption)
+      const sensitiveKeys = ['key', 'secret', 'token', 'password']
+      const hasSensitive = Object.keys(configPatch).some((k) =>
+        sensitiveKeys.some((sk) => k.toLowerCase().includes(sk)),
+      )
+
+      if (hasSensitive) {
+        const encryptionKey = process.env.ENCRYPTION_KEY || ''
+        const isHex64 = /^[0-9a-fA-F]{64}$/.test(encryptionKey)
+        if (!isHex64) {
+          return NextResponse.json(
+            {
+              success: false,
+              error: 'Encryption key not configured. Set ENCRYPTION_KEY (64 hex chars).',
+            },
+            { status: 400 },
+          )
+        }
+
+        const { encrypt } = await import('@/lib/encryption')
+        for (const [k, v] of Object.entries(configPatch)) {
+          if (
+            sensitiveKeys.some((sk) => k.toLowerCase().includes(sk)) &&
+            typeof v === 'string' &&
+            v.trim() &&
+            !v.includes('••••') // Don't encrypt if it's the UI mask
+          ) {
+            configPatch[k] = encrypt(v)
+          } else if (
+            sensitiveKeys.some((sk) => k.toLowerCase().includes(sk)) &&
+            v === '' // Clearing secret
+          ) {
+            configPatch[k] = ''
+          } else if (
+            sensitiveKeys.some((sk) => k.toLowerCase().includes(sk)) &&
+            v.includes('••••') // UI placeholder, don't overwrite the stored secret
+          ) {
+            delete configPatch[k]
+          }
+        }
+      }
+
       const current = store.configs[id] || {}
       store.configs[id] = { ...current, ...configPatch }
     }
