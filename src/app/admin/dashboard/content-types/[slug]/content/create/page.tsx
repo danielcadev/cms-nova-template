@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { CreateContentEntryPage } from '@/components/admin/content-types/CreateContentEntryPage'
+import { AdminLayout } from '@/components/admin/AdminLayout'
 import { prisma } from '@/lib/prisma'
 
 async function getContentType(slug: string) {
@@ -25,17 +26,20 @@ async function getContentType(slug: string) {
 }
 
 interface CreateContentEntryPageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 export default async function CreateContentEntryPageRoute({ params }: CreateContentEntryPageProps) {
-  const contentType = await getContentType(params.slug)
+  const { slug } = await params
+  const contentType = await getContentType(slug)
 
   if (!contentType) {
     notFound()
   }
 
-  return <CreateContentEntryPage contentType={contentType} />
+  return (
+    <CreateContentEntryPage contentType={contentType} />
+  )
 }

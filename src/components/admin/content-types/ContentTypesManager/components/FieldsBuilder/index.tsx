@@ -12,6 +12,7 @@ import {
 } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Plus } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useFieldArray, useFormContext } from 'react-hook-form'
@@ -24,6 +25,7 @@ import { SortableFieldRow } from './SortableFieldRow'
 
 // Componente para la zona de drop vacía
 function EmptyDropZone({ activeId }: { activeId: string | null }) {
+  const t = useTranslations('contentTypes.form.builder')
   const { setNodeRef, isOver } = useDroppable({
     id: 'empty-drop-zone',
   })
@@ -40,18 +42,17 @@ function EmptyDropZone({ activeId }: { activeId: string | null }) {
         <Plus className="h-6 w-6 text-zinc-400" />
       </div>
       <h4 className="text-lg font-semibold text-zinc-900 mb-2">
-        {activeId?.startsWith('palette-') ? 'Drop field here' : 'Start building'}
+        {activeId?.startsWith('palette-') ? t('emptyTitleDrop') : t('emptyTitle')}
       </h4>
       <p className="text-sm text-zinc-500 max-w-md mx-auto">
-        {activeId?.startsWith('palette-')
-          ? 'Drop the field to add it to your content structure.'
-          : 'Drag field types from the palette above to add them to your content type.'}
+        {activeId?.startsWith('palette-') ? t('emptyDescDrop') : t('emptyDesc')}
       </p>
     </div>
   )
 }
 
 export default function FieldsBuilder() {
+  const t = useTranslations('contentTypes.form.builder')
   const { control, setValue } = useFormContext<ContentTypeFormValues>()
   const { fields, append, remove, move } = useFieldArray({ control, name: 'fields' })
   const [activeId, setActiveId] = useState<string | null>(null)
@@ -152,7 +153,7 @@ export default function FieldsBuilder() {
         {/* Field Types Palette */}
         <div className="bg-zinc-50 rounded-xl border border-zinc-200 p-5">
           <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-4">
-            Available Field Types
+            {t('availableTypes')}
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
             {fieldTypes.map((ft) => (
@@ -166,7 +167,7 @@ export default function FieldsBuilder() {
         {/* Fields List */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-zinc-900">Fields ({fields.length})</h3>
+            <h3 className="text-sm font-semibold text-zinc-900">{t('fieldsCount', { count: fields.length })}</h3>
             {fields.length > 0 && <span className="text-xs text-zinc-500">Drag to reorder</span>}
           </div>
 

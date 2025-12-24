@@ -1613,6 +1613,7 @@ export const FieldScalarFieldEnum = {
   apiIdentifier: 'apiIdentifier',
   type: 'type',
   isRequired: 'isRequired',
+  metadata: 'metadata',
   contentTypeId: 'contentTypeId'
 } as const
 
@@ -1622,8 +1623,15 @@ export type FieldScalarFieldEnum = (typeof FieldScalarFieldEnum)[keyof typeof Fi
 export const ContentEntryScalarFieldEnum = {
   id: 'id',
   contentTypeId: 'contentTypeId',
-  data: 'data',
+  slug: 'slug',
+  title: 'title',
+  seoOptions: 'seoOptions',
   status: 'status',
+  isFeatured: 'isFeatured',
+  category: 'category',
+  tags: 'tags',
+  publishedAt: 'publishedAt',
+  data: 'data',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

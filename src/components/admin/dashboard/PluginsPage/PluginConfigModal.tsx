@@ -1,7 +1,8 @@
 'use client'
 
-import { Eye, EyeOff, Globe, Info, Lock, RefreshCw, Save, ShieldAlert, X, Zap } from 'lucide-react'
+import { Eye, EyeOff, Globe, Info, Lock, RefreshCw, Save, ShieldAlert, Sparkles, X, Zap } from 'lucide-react'
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -47,9 +48,19 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
   })
   const [manualTypePath, setManualTypePath] = useState('')
 
+  // AI Assistant state
+  const [aiConfig, setAiConfig] = useState({
+    provider: 'google' as 'google' | 'openrouter',
+    googleApiKey: '',
+    googleModel: 'gemini-1.5-flash',
+    openRouterApiKey: '',
+    openRouterModel: 'google/gemini-2.0-flash-001',
+  })
+
   const pluginId = plugin?.id || ''
   const isS3 = pluginId === 's3' || pluginId === 's3-storage'
   const isDynamicNav = pluginId === 'dynamic-nav'
+  const isGemini = pluginId === 'google-gemini'
 
   useEffect(() => {
     if (!plugin) return
@@ -71,7 +82,17 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
         templates: (plugin.settings?.templates as Record<string, boolean>) || {},
       })
     }
-  }, [plugin, isS3, isDynamicNav])
+
+    if (isGemini) {
+      setAiConfig({
+        provider: (plugin.settings?.provider as 'google' | 'openrouter') || 'google',
+        googleApiKey: plugin.settings?.googleApiKey || plugin.settings?.apiKey || '',
+        googleModel: plugin.settings?.googleModel || plugin.settings?.model || 'gemini-1.5-flash',
+        openRouterApiKey: plugin.settings?.openRouterApiKey || '',
+        openRouterModel: plugin.settings?.openRouterModel || 'google/gemini-2.0-flash-001',
+      })
+    }
+  }, [plugin, isS3, isDynamicNav, isGemini])
 
   // Check encryption status for S3
   useEffect(() => {
@@ -126,6 +147,8 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
         await onSave(payload)
       } else if (isDynamicNav) {
         await onSave(navConfig)
+      } else if (isGemini) {
+        await onSave(aiConfig)
       } else {
         await onSave(plugin.settings || {})
       }
@@ -381,6 +404,200 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                 <Label htmlFor={titleCaseId} className="text-sm font-normal">
                   {t('config.dynamicNav.titleCase')}
                 </Label>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* AI ASSISTANT CONFIG */}
+        {isGemini && (
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                  {t('config.gemini.provider')}
+                </Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setAiConfig((p) => ({ ...p, provider: 'google' }))}
+                    className={`flex items-center gap-2 p-3 rounded-xl border transition-all text-sm font-medium ${aiConfig.provider === 'google'
+                      ? 'border-zinc-900 bg-zinc-900 text-white'
+                      : 'border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-600'
+                      }`}
+                  >
+                    <Sparkles className={`w-4 h-4 ${aiConfig.provider === 'google' ? 'text-zinc-100' : 'text-zinc-400'}`} />
+                    {t('config.gemini.providerGoogle')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAiConfig((p) => ({ ...p, provider: 'openrouter' }))}
+                    className={`flex items-center gap-2 p-3 rounded-xl border transition-all text-sm font-medium ${aiConfig.provider === 'openrouter'
+                      ? 'border-zinc-900 bg-zinc-900 text-white'
+                      : 'border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-600'
+                      }`}
+                  >
+                    <Globe className="w-4 h-4" />
+                    {t('config.gemini.providerOpenRouter')}
+                  </button>
+                </div>
+              </div>
+
+              {aiConfig.provider === 'google' ? (
+                <div className="space-y-4 pt-4 border-t border-zinc-100">
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor={`${id}-google-key`}
+                      className="text-xs font-medium text-zinc-500 uppercase tracking-wider"
+                    >
+                      {t('config.gemini.googleApiKey')}
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        id={`${id}-google-key`}
+                        type={showSecrets ? 'text' : 'password'}
+                        value={aiConfig.googleApiKey}
+                        onChange={(e) =>
+                          setAiConfig((prev) => ({ ...prev, googleApiKey: e.target.value }))
+                        }
+                        placeholder={t('config.gemini.googleApiKeyPlaceholder')}
+                        className="rounded-xl border-zinc-200 bg-zinc-50/50 focus:bg-white transition-all font-mono text-sm pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowSecrets(!showSecrets)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600"
+                      >
+                        {showSecrets ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                    <p className="text-[10px] text-zinc-400">
+                      {t('config.gemini.instructions')}{' '}
+                      <a
+                        href="https://aistudio.google.com/app/apikey"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-zinc-900 underline"
+                      >
+                        Google AI Studio
+                      </a>
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor={`${id}-google-model`}
+                      className="text-xs font-medium text-zinc-500 uppercase tracking-wider"
+                    >
+                      {t('config.gemini.model')}
+                    </Label>
+                    <select
+                      id={`${id}-google-model`}
+                      value={aiConfig.googleModel}
+                      onChange={(e) => setAiConfig((prev) => ({ ...prev, googleModel: e.target.value }))}
+                      className="w-full px-3 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50/50 focus:bg-white focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 outline-none transition-all text-sm"
+                    >
+                      <option value="gemini-3-pro-preview">{t('config.gemini.model3Pro')}</option>
+                      <option value="gemini-3-flash-preview">{t('config.gemini.model3Flash')}</option>
+                      <option value="gemini-2.5-pro">{t('config.gemini.model25Pro')}</option>
+                      <option value="gemini-2.5-flash">{t('config.gemini.model25Flash')}</option>
+                      <option value="gemini-2.5-flash-lite">{t('config.gemini.model25FlashLite')}</option>
+                      <option value="gemini-2.0-flash">{t('config.gemini.model20Flash')}</option>
+                      <option value="gemini-2.0-flash-lite">{t('config.gemini.model20FlashLite')}</option>
+                      <option value="gemini-1.5-pro">{t('config.gemini.model15Pro')}</option>
+                      <option value="gemini-1.5-flash">{t('config.gemini.model15Flash')}</option>
+                    </select>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4 pt-4 border-t border-zinc-100">
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor={`${id}-openrouter-key`}
+                      className="text-xs font-medium text-zinc-500 uppercase tracking-wider"
+                    >
+                      {t('config.gemini.openRouterApiKey')}
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        id={`${id}-openrouter-key`}
+                        type={showSecrets ? 'text' : 'password'}
+                        value={aiConfig.openRouterApiKey}
+                        onChange={(e) =>
+                          setAiConfig((prev) => ({ ...prev, openRouterApiKey: e.target.value }))
+                        }
+                        placeholder={t('config.gemini.openRouterApiKeyPlaceholder')}
+                        className="rounded-xl border-zinc-200 bg-zinc-50/50 focus:bg-white transition-all font-mono text-sm pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowSecrets(!showSecrets)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600"
+                      >
+                        {showSecrets ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                    <p className="text-[10px] text-zinc-400">
+                      {t('config.gemini.instructions')}{' '}
+                      <a
+                        href="https://openrouter.ai/keys"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-zinc-900 underline"
+                      >
+                        OpenRouter Dashboard
+                      </a>
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor={`${id}-openrouter-model`}
+                      className="text-xs font-medium text-zinc-500 uppercase tracking-wider"
+                    >
+                      {t('config.gemini.model')}
+                    </Label>
+                    <Input
+                      id={`${id}-openrouter-model`}
+                      value={aiConfig.openRouterModel}
+                      onChange={(e) =>
+                        setAiConfig((prev) => ({ ...prev, openRouterModel: e.target.value }))
+                      }
+                      placeholder={t('config.gemini.openRouterModelPlaceholder')}
+                      className="rounded-xl border-zinc-200 bg-zinc-50/50 focus:bg-white transition-all text-sm"
+                    />
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {[
+                        'google/gemini-2.0-flash-001',
+                        'openai/gpt-4o-mini',
+                        'anthropic/claude-3.5-haiku',
+                        'deepseek/deepseek-chat',
+                      ].map((m) => (
+                        <button
+                          key={m}
+                          type="button"
+                          onClick={() => setAiConfig((prev) => ({ ...prev, openRouterModel: m }))}
+                          className={`px-2 py-1 text-[10px] rounded-md border transition-all ${aiConfig.openRouterModel === m
+                              ? 'bg-zinc-900 border-zinc-900 text-white font-medium'
+                              : 'bg-white border-zinc-200 text-zinc-500 hover:border-zinc-400'
+                            }`}
+                        >
+                          {m.split('/')[1]}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex gap-3">
+              <Zap className="w-5 h-5 text-emerald-600 shrink-0" />
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-emerald-900">{t('config.gemini.featuresTitle')}</p>
+                <p className="text-xs text-emerald-700 leading-relaxed">
+                  {t('config.gemini.featuresDesc')}
+                </p>
               </div>
             </div>
           </div>

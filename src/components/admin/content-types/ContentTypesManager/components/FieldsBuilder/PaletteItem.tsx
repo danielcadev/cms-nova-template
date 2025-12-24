@@ -2,12 +2,13 @@
 
 import React from 'react'
 import { useDraggable } from '@dnd-kit/core'
+import { useTranslations } from 'next-intl'
 
 interface FieldType {
   type: string
-  label: string
+  labelKey: string
+  descKey: string
   icon: React.JSX.Element
-  description: string
 }
 
 interface PaletteItemProps {
@@ -15,6 +16,7 @@ interface PaletteItemProps {
 }
 
 export function PaletteItem({ fieldType }: PaletteItemProps) {
+  const t = useTranslations('contentTypes.form')
   const { attributes, listeners, setNodeRef } = useDraggable({
     id: `palette-${fieldType.type}`,
   })
@@ -32,10 +34,10 @@ export function PaletteItem({ fieldType }: PaletteItemProps) {
       </div>
       <div>
         <h4 className="font-medium text-gray-900 dark:text-gray-100 text-sm mb-1">
-          {fieldType.label}
+          {t(fieldType.labelKey)}
         </h4>
         <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-          {fieldType.description}
+          {t(fieldType.descKey)}
         </p>
       </div>
     </button>

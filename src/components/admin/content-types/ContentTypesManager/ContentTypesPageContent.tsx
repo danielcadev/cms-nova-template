@@ -1,12 +1,14 @@
 'use client'
 
-import { Database, FileCode, Plus, Settings } from 'lucide-react'
+import { Database, FileCode, Plus, Settings, Trash2 } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useToast } from '@/hooks/use-toast'
 
 interface ContentType {
   id: string
@@ -36,11 +38,60 @@ export function ContentTypesPageContent({
   onSearchChange,
 }: ContentTypesPageContentProps) {
   const t = useTranslations('contentTypes')
+  const router = useRouter()
+  const { toast } = useToast()
   const [searchValue, setSearchValue] = useState(searchTerm)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const _handleSearchChange = (value: string) => {
     setSearchValue(value)
     onSearchChange(value)
+  }
+
+  const handleDelete = async (contentType: ContentType, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (deletingId) return
+
+    const confirmed = confirm(
+      `¿Estás seguro de que quieres eliminar "${contentType.name}"?\n\nEsta acción no se puede deshacer y eliminará todas las entradas asociadas.`
+    )
+
+    if (!confirmed) return
+
+    try {
+      setDeletingId(contentType.id)
+
+      const response = await fetch(`/api/admin/content-types/${contentType.id}`, {
+        method: 'DELETE',
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        toast({
+          title: 'Tipo de contenido eliminado',
+          description: `"${contentType.name}" ha sido eliminado exitosamente.`,
+        })
+        router.refresh()
+      } else {
+        toast({
+          title: 'Error',
+          description: result.message || 'No se pudo eliminar el tipo de contenido.',
+          variant: 'destructive',
+        })
+      }
+    } catch (error) {
+      console.error('Error deleting content type:', error)
+      toast({
+        title: 'Error',
+        description: 'Ocurrió un error al eliminar el tipo de contenido.',
+        variant: 'destructive',
+      })
+    } finally {
+      setDeletingId(null)
+    }
   }
 
   if (loading) {
@@ -154,13 +205,22 @@ export function ContentTypesPageContent({
                       variant="ghost"
                       size="icon"
                       asChild
-                      className="h-8 w-8 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-900"
+                      className="h-8 w-8 rounded-lg hover:bg-zinc-100 text-zinc-400 hover:text-zinc-900 relative z-10"
                     >
                       <Link
                         href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/edit`}
                       >
                         <Settings className="w-4 h-4" />
                       </Link>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => handleDelete(contentType, e)}
+                      disabled={deletingId === contentType.id}
+                      className="h-8 w-8 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-600 relative z-10 disabled:opacity-50"
+                    >
+                      <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>

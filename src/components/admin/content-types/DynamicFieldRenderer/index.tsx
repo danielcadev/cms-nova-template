@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { NumberField } from '@/components/admin/content-types/fields/NumberField'
 import RichTextField from '@/components/admin/content-types/fields/RichTextField'
 import { TextField } from '@/components/admin/content-types/fields/TextField'
+import { SlugField } from '@/components/admin/content-types/fields/SlugField'
 import { Switch } from '@/components/ui/switch'
 import { ThemedButton } from '@/components/ui/ThemedButton'
 import { ImageDropZone } from './ImageDropZone'
@@ -18,6 +19,7 @@ export function DynamicFieldRenderer({
   onChange,
   variant = 'default',
   fieldId,
+  onAutoGenerate,
 }: DynamicFieldRendererProps) {
   // Translate common Spanish labels to English for display only
   const normalizeLabel = (label: string): string => {
@@ -118,6 +120,7 @@ export function DynamicFieldRenderer({
 
   switch (field.type) {
     case 'TEXT': {
+      // Legacy check for slug in text fields, can keep for backward compatibility
       const isSlug = /slug|alias|url/i.test(field.apiIdentifier)
       return (
         <TextField
@@ -125,6 +128,19 @@ export function DynamicFieldRenderer({
           onChange={onChange}
           placeholder={`Enter ${normalizeLabel(field.label).toLowerCase()}`}
           isSlug={isSlug}
+          id={fieldId}
+          onAutoGenerate={onAutoGenerate}
+        />
+      )
+    }
+
+    case 'SLUG': {
+      return (
+        <SlugField
+          value={value}
+          onChange={onChange}
+          onAutoGenerate={onAutoGenerate}
+          placeholder={field.label || 'url-slug'}
           id={fieldId}
         />
       )
@@ -136,6 +152,7 @@ export function DynamicFieldRenderer({
           value={value}
           onChange={onChange}
           placeholder={`Enter ${normalizeLabel(field.label).toLowerCase()}`}
+          onAutoGenerate={onAutoGenerate}
         />
       )
     }

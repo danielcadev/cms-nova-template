@@ -52,31 +52,22 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     // Extract data and status from body
-    const { data, status } = body
-    const { slug: entrySlug, typePath: _typePath, ...fieldData } = data || {}
-
-    // Try to extract title from field data (look for common title field patterns)
-    const titleField = contentType.fields.find(
-      (f) =>
-        f.type === 'TEXT' &&
-        (/(title|titulo|headline|heading)/i.test(f.apiIdentifier) ||
-          /(title|t[íi]tulo|titulo|headline|heading)/i.test(f.label)),
-    )
-    const title = titleField ? fieldData[titleField.apiIdentifier] : entrySlug
+    const { data: rawData, status } = body
+    const { slug: entrySlug, title: entryTitle, seoOptions, isFeatured, category, tags, ...fieldData } = rawData || {}
 
     // Validate required fields
     if (!entrySlug) {
       return NextResponse.json({ error: 'Slug is required' }, { status: 400 })
     }
+    if (!entryTitle) {
+      return NextResponse.json({ error: 'Title is required' }, { status: 400 })
+    }
 
-    // Check if slug already exists
+    // Check if slug already exists using the new column
     const existingEntry = await prisma.contentEntry.findFirst({
       where: {
         contentTypeId: contentType.id,
-        data: {
-          path: ['slug'],
-          equals: entrySlug,
-        } as any,
+        slug: entrySlug,
       },
     })
 
@@ -84,12 +75,19 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return NextResponse.json({ error: 'Slug already exists' }, { status: 400 })
     }
 
-    // Create the entry
+    // Create the entry with dedicated columns
     const entry = await prisma.contentEntry.create({
       data: {
         status: status || 'draft',
+        slug: entrySlug,
+        title: entryTitle,
+        seoOptions: seoOptions || {},
+        isFeatured: !!isFeatured,
+        category: category || null,
+        tags: Array.isArray(tags) ? tags : [],
         data: fieldData,
         contentTypeId: contentType.id,
+        publishedAt: status === 'published' ? new Date() : null,
       },
     })
 

@@ -74,38 +74,45 @@ export async function PUT(
     const rawData = hasDataEnvelope ? (body.data ?? {}) : (body ?? {})
     const newStatus = hasDataEnvelope ? body.status : body.status
 
-    // Expect slug to live in JSON data
-    const entrySlug = rawData?.slug
+    const { slug: entrySlug, title: entryTitle, seoOptions, isFeatured, category, tags, ...dataToStore } = rawData || {}
 
     // Validate
     if (!entrySlug) {
       return NextResponse.json({ error: 'Slug is required' }, { status: 400 })
     }
 
-    // Unique slug check within this content type (excluding current entry)
+    // Unique slug check within this content type (excluding current entry) using the new column
     const slugExists = await prisma.contentEntry.findFirst({
       where: {
         id: { not: id },
         contentTypeId: contentType.id,
-        // JSON path filter for slug
-        data: {
-          path: ['slug'],
-          equals: entrySlug,
-        } as any,
+        slug: entrySlug,
       },
     })
     if (slugExists) {
       return NextResponse.json({ error: 'Slug already exists' }, { status: 400 })
     }
 
-    // Clean data: remove typePath from stored JSON if you don't want it persisted
-    const { typePath: _typePath, ...dataToStore } = rawData || {}
+    // Determine publishedAt
+    let publishedAt = existingEntry.publishedAt
+    if (newStatus === 'published' && existingEntry.status !== 'published') {
+      publishedAt = new Date()
+    } else if (newStatus !== 'published') {
+      publishedAt = null
+    }
 
-    // Update only JSON data and status (schema doesn't have top-level slug/title)
+    // Update with dedicated columns
     const updatedEntry = await prisma.contentEntry.update({
       where: { id },
       data: {
         status: newStatus || 'draft',
+        slug: entrySlug,
+        title: entryTitle || existingEntry.title,
+        seoOptions: seoOptions || existingEntry.seoOptions,
+        isFeatured: isFeatured !== undefined ? !!isFeatured : existingEntry.isFeatured,
+        category: category !== undefined ? category : existingEntry.category,
+        tags: Array.isArray(tags) ? tags : existingEntry.tags,
+        publishedAt,
         data: dataToStore,
         updatedAt: new Date(),
       },

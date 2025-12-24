@@ -12,6 +12,7 @@ export interface DynamicFieldRendererProps {
     onChange: (value: any) => void
     variant?: 'default' | 'compact'
     fieldId?: string
+    onAutoGenerate?: () => void
 }
 
 export interface ImageDropZoneProps {

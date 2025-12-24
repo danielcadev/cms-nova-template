@@ -60,7 +60,21 @@ export async function createExperienceAction(
   payload: ExperienceFormValues,
   options: { mode?: ExperienceActionMode } = {},
 ): Promise<CreateExperienceResult> {
-  const parsed = experienceSchema.safeParse(payload)
+  const mode = options.mode ?? 'draft'
+  const isDraft = mode === 'draft'
+
+  // Only validate strictly if not a draft
+  // For drafts, we remove empty strings for fields that have min-length requirements to avoid validation errors
+  const processedPayload = isDraft
+    ? Object.fromEntries(
+      Object.entries(payload).filter(([_, v]) => v !== '')
+    )
+    : payload
+
+  const parsed = isDraft
+    ? experienceSchema.partial().safeParse(processedPayload)
+    : experienceSchema.safeParse(processedPayload)
+
   if (!parsed.success) {
     const first = parsed.error.issues.at(0)
     return {
@@ -70,8 +84,9 @@ export async function createExperienceAction(
   }
 
   const data = parsed.data
-  const mode = options.mode ?? 'draft'
-  const slugBase = data.slug?.trim() || data.title
+  // Ensure title is present for drafts even if partial
+  const title = data.title || payload.title || 'Draft Experience'
+  const slugBase = (data as any).slug?.trim() || title
   const slug = slugify(slugBase, { lower: true, strict: true })
   const locationAlias = data.location
     ? slugify(data.location, { lower: true, strict: true })
@@ -81,15 +96,15 @@ export async function createExperienceAction(
   try {
     const experience = await (prisma as any).experience.create({
       data: {
-        title: data.title,
+        title: title,
         slug,
         location: data.location?.trim() || null,
         locationAlias,
         durationType: data.durationType || 'flexible',
         hostName: data.hostName?.trim() || null,
         hostBio: data.hostBio?.trim() || null,
-        summary: data.summary,
-        narrative: data.narrative,
+        summary: data.summary || '',
+        narrative: data.narrative || '',
         activities: data.activities?.trim() || null,
         duration: data.duration?.trim() || null,
         schedule: data.schedule?.trim() || null,
@@ -100,7 +115,7 @@ export async function createExperienceAction(
         inclusions: data.inclusions?.trim() || null,
         exclusions: data.exclusions?.trim() || null,
         gallery: normalizeGallery(data.gallery),
-        tags: generateExperienceTags(data, locationAlias),
+        tags: generateExperienceTags(data as any, locationAlias),
         featured: data.featured ?? false,
         published: shouldPublish,
       },

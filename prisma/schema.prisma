@@ -215,6 +215,7 @@ model Field {
   apiIdentifier   String      // Identificador para la API (ej: "title")
   type            FieldType   // El tipo de campo (Texto, Número, etc.)
   isRequired      Boolean     @default(false)
+  metadata        Json?       // Metadata adicional para el campo (ej: rutas del slug)
   
   contentTypeId   String
   contentType     ContentType @relation(fields: [contentTypeId], references: [id], onDelete: Cascade)
@@ -229,11 +230,21 @@ model ContentEntry {
   contentTypeId   String
   contentType     ContentType @relation(fields: [contentTypeId], references: [id], onDelete: Cascade)
   
-  // Los datos reales se guardan como un objeto JSON flexible.
-  // La estructura de este JSON será validada contra los Fields de su ContentType.
+  // SEO Optimized columns
+  slug            String      @unique
+  title           String
+  seoOptions      Json?       // Meta Title, Description, Canonical, Featured Image
+  
+  // Metadata and State
+  status          String      @default("draft") // draft, published, archived
+  isFeatured      Boolean     @default(false)
+  category        String?
+  tags            String[]
+  publishedAt     DateTime?
+  
+  // Dynamic fields
   data            Json
   
-  status          String      @default("draft") // draft, published, archived
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   
@@ -248,4 +259,5 @@ enum FieldType {
   BOOLEAN
   DATE
   MEDIA
+  SLUG
 } 

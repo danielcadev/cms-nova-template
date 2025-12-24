@@ -179,9 +179,13 @@ export function PluginsPageContent({
 
                 <div className="mb-4">
                   <h3 className="text-lg font-bold text-zinc-900 mb-1 group-hover:text-zinc-700 transition-colors">
-                    {plugin.name}
+                    {t.has(`list.${plugin.id}.name`) ? t(`list.${plugin.id}.name`) : plugin.name}
                   </h3>
-                  <p className="text-sm text-zinc-500 line-clamp-2 h-10">{plugin.description}</p>
+                  <p className="text-sm text-zinc-500 line-clamp-2 h-10">
+                    {t.has(`list.${plugin.id}.description`)
+                      ? t(`list.${plugin.id}.description`)
+                      : plugin.description}
+                  </p>
                 </div>
 
                 <div className="mt-auto pt-4 border-t border-zinc-100 flex items-center justify-between gap-3">

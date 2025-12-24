@@ -2,12 +2,14 @@
 
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, Trash2 } from 'lucide-react'
-import { useEffect } from 'react'
+import { GripVertical, Link2, RefreshCw, Trash2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useEffect, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { toCamelCase } from '@/utils/formatters'
 import type { ContentTypeFormValues } from '../ContentTypeForm'
 import { fieldTypes } from './constants'
@@ -20,6 +22,7 @@ interface SortableFieldRowProps {
 
 export function SortableFieldRow({ field, index, remove }: SortableFieldRowProps) {
   const { control, setValue } = useFormContext<ContentTypeFormValues>()
+  const t = useTranslations('contentTypes.form')
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: field.id,
   })
@@ -28,10 +31,27 @@ export function SortableFieldRow({ field, index, remove }: SortableFieldRowProps
     transition: transition || 'transform 250ms ease',
   }
   const labelValue = useWatch({ control, name: `fields.${index}.label` })
+  const [routes, setRoutes] = useState<{ value: string; label: string }[]>([])
+  const [loadingRoutes, setLoadingRoutes] = useState(false)
 
   useEffect(() => {
     if (labelValue) setValue(`fields.${index}.apiIdentifier`, toCamelCase(labelValue))
   }, [labelValue, index, setValue])
+
+  const fetchRoutes = async () => {
+    setLoadingRoutes(true)
+    try {
+      const response = await fetch('/api/admin/system/routes')
+      const data = await response.json()
+      if (data.success && data.routes) {
+        setRoutes(data.routes)
+      }
+    } catch (error) {
+      console.error('Error fetching routes:', error)
+    } finally {
+      setLoadingRoutes(false)
+    }
+  }
 
   const fieldTypeInfo = fieldTypes.find((ft) => ft.type === field.type)
 
@@ -116,6 +136,64 @@ export function SortableFieldRow({ field, index, remove }: SortableFieldRowProps
                 </FormItem>
               )}
             />
+
+            {/* SLUG Route Discovery */}
+            {fieldTypeInfo?.type === 'SLUG' && (
+              <div className="space-y-4 pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Link2 className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                    <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{t('slugRouteMapping')}</span>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={fetchRoutes}
+                    disabled={loadingRoutes}
+                    className="h-8 px-3 text-xs font-medium"
+                  >
+                    {loadingRoutes ? (
+                      <RefreshCw className="h-3 w-3 mr-1.5 animate-spin" />
+                    ) : (
+                      <RefreshCw className="h-3 w-3 mr-1.5" />
+                    )}
+                    Scan Routes
+                  </Button>
+                </div>
+                <FormField
+                  control={control}
+                  name={`fields.${index}.slugRoute` as any}
+                  render={({ field: slugField }) => (
+                    <FormItem>
+                      <Select onValueChange={slugField.onChange} value={slugField.value}>
+                        <FormControl>
+                          <SelectTrigger className="h-10 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
+                            <SelectValue placeholder={routes.length === 0 ? t('scanRoutesPlaceholder') : t('selectRoute')} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="max-h-[300px]">
+                          {routes.length === 0 ? (
+                            <SelectItem value="__placeholder__" disabled className="text-gray-500 italic">
+                              {t('noRoutesFound')}
+                            </SelectItem>
+                          ) : (
+                            routes.map((route) => (
+                              <SelectItem key={route.value} value={route.value} className="font-mono text-sm">
+                                {route.label}
+                              </SelectItem>
+                            ))
+                          )}
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5">
+                        {t('routeMappingHelp')}
+                      </p>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

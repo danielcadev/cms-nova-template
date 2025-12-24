@@ -136,6 +136,25 @@ export const AVAILABLE_PLUGINS: Plugin[] = [
     configurable: false,
   },
   {
+    id: 'google-gemini',
+    name: 'AI Assistant',
+    description:
+      'Powerful AI generation for SEO, content assistance, and automatic field filling using Google Gemini or OpenRouter.',
+    version: '1.1.0',
+    category: 'integration',
+    enabled: false,
+    author: 'CMS Team',
+    icon: '✨',
+    configurable: true,
+    settings: {
+      provider: 'google',
+      googleApiKey: process.env.GOOGLE_GEMINI_API_KEY || '',
+      googleModel: 'gemini-1.5-flash',
+      openRouterApiKey: process.env.OPENROUTER_API_KEY || '',
+      openRouterModel: 'google/gemini-2.0-flash-001',
+    },
+  },
+  {
     id: 'social',
     name: 'Social Media',
     description: 'Coming soon: Social media integration and automatic publishing.',

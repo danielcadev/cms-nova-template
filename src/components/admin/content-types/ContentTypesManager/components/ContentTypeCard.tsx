@@ -2,6 +2,9 @@
 
 import { Calendar, Database, Edit, Eye, Layers, Trash2 } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { useToast } from '@/hooks/use-toast'
 
 interface ContentType {
   id: string
@@ -19,6 +22,53 @@ interface ContentTypeCardProps {
 }
 
 export function ContentTypeCard({ contentType, index }: ContentTypeCardProps) {
+  const router = useRouter()
+  const { toast } = useToast()
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  const handleDelete = async () => {
+    if (isDeleting) return
+
+    const confirmed = confirm(
+      `¿Estás seguro de que quieres eliminar "${contentType.name}"?\n\nEsta acción no se puede deshacer y eliminará todas las entradas asociadas.`
+    )
+
+    if (!confirmed) return
+
+    try {
+      setIsDeleting(true)
+
+      const response = await fetch(`/api/admin/content-types/${contentType.id}`, {
+        method: 'DELETE',
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        toast({
+          title: 'Tipo de contenido eliminado',
+          description: `"${contentType.name}" ha sido eliminado exitosamente.`,
+        })
+        router.refresh()
+      } else {
+        toast({
+          title: 'Error',
+          description: result.message || 'No se pudo eliminar el tipo de contenido.',
+          variant: 'destructive',
+        })
+      }
+    } catch (error) {
+      console.error('Error deleting content type:', error)
+      toast({
+        title: 'Error',
+        description: 'Ocurrió un error al eliminar el tipo de contenido.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
   return (
     <div
       className="group cursor-pointer animate-in fade-in slide-in-from-bottom-4 duration-700"
@@ -125,7 +175,9 @@ export function ContentTypeCard({ contentType, index }: ContentTypeCardProps) {
             </Link>
             <button
               type="button"
-              className="px-4 py-2.5 bg-[#FF3B30]/10 backdrop-blur-sm text-[#FF3B30] rounded-2xl hover:bg-[#FF3B30]/20 transition-all font-medium text-sm border border-[#FF3B30]/20 hover:border-[#FF3B30]/30 shadow-sm hover:shadow-md"
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="px-4 py-2.5 bg-[#FF3B30]/10 backdrop-blur-sm text-[#FF3B30] rounded-2xl hover:bg-[#FF3B30]/20 transition-all font-medium text-sm border border-[#FF3B30]/20 hover:border-[#FF3B30]/30 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Trash2 className="h-4 w-4" strokeWidth={1.5} />
             </button>

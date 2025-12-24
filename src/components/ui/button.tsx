@@ -5,23 +5,24 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-ios-xl ios-callout font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/10 dark:focus-visible:ring-gray-100/10 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 ios-interactive font-sf-text shrink-0 min-w-fit',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 active:scale-[0.98]',
   {
     variants: {
       variant: {
-        default: 'theme-accent-bg theme-text shadow-ios hover:theme-accent-hover',
+        default: 'bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 shadow-sm border border-transparent',
         destructive:
-          'bg-gradient-to-r from-ios-danger to-red-600 text-white shadow-ios hover:from-red-600 hover:to-red-700',
-        outline: 'theme-card theme-text border theme-border hover:theme-card-hover shadow-ios',
+          'bg-red-500 text-zinc-50 hover:bg-red-500/90 shadow-sm border border-transparent',
+        outline:
+          'border border-zinc-200 bg-white hover:bg-zinc-100 hover:text-zinc-900 shadow-sm text-zinc-700',
         secondary:
-          'theme-bg-secondary theme-text border theme-border hover:theme-card-hover shadow-ios',
-        ghost: 'theme-text hover:ios-glass hover:shadow-ios',
-        link: 'theme-accent underline-offset-4 hover:underline',
+          'bg-zinc-100 text-zinc-900 hover:bg-zinc-200/80 border border-transparent',
+        ghost: 'hover:bg-zinc-100 hover:text-zinc-900 text-zinc-600',
+        link: 'text-zinc-900 underline-offset-4 hover:underline',
       },
       size: {
-        default: 'h-auto min-h-10 px-ios py-2',
-        sm: 'h-8 rounded-ios px-ios text-xs',
-        lg: 'h-12 rounded-ios-xl px-ios-lg ios-headline',
+        default: 'h-10 px-4 py-2',
+        sm: 'h-9 rounded-lg px-3 text-xs',
+        lg: 'h-11 rounded-xl px-8',
         icon: 'h-10 w-10',
       },
     },

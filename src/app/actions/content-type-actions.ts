@@ -7,8 +7,9 @@ import { prisma } from '@/lib/prisma'
 const fieldSchema = z.object({
   label: z.string().min(3, 'Label is required.'),
   apiIdentifier: z.string(),
-  type: z.enum(['TEXT', 'RICH_TEXT', 'NUMBER', 'BOOLEAN', 'DATE', 'MEDIA']),
+  type: z.enum(['TEXT', 'RICH_TEXT', 'NUMBER', 'BOOLEAN', 'DATE', 'MEDIA', 'SLUG']),
   isRequired: z.boolean().optional().default(false),
+  slugRoute: z.string().optional(),
 })
 
 const contentTypeSchema = z.object({
@@ -45,6 +46,7 @@ export async function createContentTypeAction(data: ContentTypeFormValues) {
             apiIdentifier: field.apiIdentifier,
             type: field.type,
             isRequired: field.isRequired,
+            metadata: field.slugRoute ? { slugRoute: field.slugRoute } : undefined,
           })),
         },
       },
@@ -120,6 +122,7 @@ export async function updateContentTypeAction(id: string, data: ContentTypeFormV
               apiIdentifier: fieldData.apiIdentifier,
               type: fieldData.type,
               isRequired: fieldData.isRequired,
+              metadata: (fieldData as any).slugRoute ? { slugRoute: (fieldData as any).slugRoute } : undefined,
             },
           })
         } else {
@@ -131,6 +134,7 @@ export async function updateContentTypeAction(id: string, data: ContentTypeFormV
               apiIdentifier: fieldData.apiIdentifier,
               type: fieldData.type,
               isRequired: fieldData.isRequired,
+              metadata: (fieldData as any).slugRoute ? { slugRoute: (fieldData as any).slugRoute } : undefined,
             },
           })
         }

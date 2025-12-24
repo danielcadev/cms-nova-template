@@ -48,6 +48,7 @@ export type FieldCountAggregateOutputType = {
   apiIdentifier: number
   type: number
   isRequired: number
+  metadata: number
   contentTypeId: number
   _all: number
 }
@@ -77,6 +78,7 @@ export type FieldCountAggregateInputType = {
   apiIdentifier?: true
   type?: true
   isRequired?: true
+  metadata?: true
   contentTypeId?: true
   _all?: true
 }
@@ -159,6 +161,7 @@ export type FieldGroupByOutputType = {
   apiIdentifier: string
   type: $Enums.FieldType
   isRequired: boolean
+  metadata: runtime.JsonValue | null
   contentTypeId: string
   _count: FieldCountAggregateOutputType | null
   _min: FieldMinAggregateOutputType | null
@@ -189,6 +192,7 @@ export type FieldWhereInput = {
   apiIdentifier?: Prisma.StringFilter<"Field"> | string
   type?: Prisma.EnumFieldTypeFilter<"Field"> | $Enums.FieldType
   isRequired?: Prisma.BoolFilter<"Field"> | boolean
+  metadata?: Prisma.JsonNullableFilter<"Field">
   contentTypeId?: Prisma.StringFilter<"Field"> | string
   contentType?: Prisma.XOR<Prisma.ContentTypeScalarRelationFilter, Prisma.ContentTypeWhereInput>
 }
@@ -199,6 +203,7 @@ export type FieldOrderByWithRelationInput = {
   apiIdentifier?: Prisma.SortOrder
   type?: Prisma.SortOrder
   isRequired?: Prisma.SortOrder
+  metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   contentTypeId?: Prisma.SortOrder
   contentType?: Prisma.ContentTypeOrderByWithRelationInput
 }
@@ -213,6 +218,7 @@ export type FieldWhereUniqueInput = Prisma.AtLeast<{
   apiIdentifier?: Prisma.StringFilter<"Field"> | string
   type?: Prisma.EnumFieldTypeFilter<"Field"> | $Enums.FieldType
   isRequired?: Prisma.BoolFilter<"Field"> | boolean
+  metadata?: Prisma.JsonNullableFilter<"Field">
   contentTypeId?: Prisma.StringFilter<"Field"> | string
   contentType?: Prisma.XOR<Prisma.ContentTypeScalarRelationFilter, Prisma.ContentTypeWhereInput>
 }, "id" | "contentTypeId_apiIdentifier">
@@ -223,6 +229,7 @@ export type FieldOrderByWithAggregationInput = {
   apiIdentifier?: Prisma.SortOrder
   type?: Prisma.SortOrder
   isRequired?: Prisma.SortOrder
+  metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   contentTypeId?: Prisma.SortOrder
   _count?: Prisma.FieldCountOrderByAggregateInput
   _max?: Prisma.FieldMaxOrderByAggregateInput
@@ -238,6 +245,7 @@ export type FieldScalarWhereWithAggregatesInput = {
   apiIdentifier?: Prisma.StringWithAggregatesFilter<"Field"> | string
   type?: Prisma.EnumFieldTypeWithAggregatesFilter<"Field"> | $Enums.FieldType
   isRequired?: Prisma.BoolWithAggregatesFilter<"Field"> | boolean
+  metadata?: Prisma.JsonNullableWithAggregatesFilter<"Field">
   contentTypeId?: Prisma.StringWithAggregatesFilter<"Field"> | string
 }
 
@@ -247,6 +255,7 @@ export type FieldCreateInput = {
   apiIdentifier: string
   type: $Enums.FieldType
   isRequired?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   contentType: Prisma.ContentTypeCreateNestedOneWithoutFieldsInput
 }
 
@@ -256,6 +265,7 @@ export type FieldUncheckedCreateInput = {
   apiIdentifier: string
   type: $Enums.FieldType
   isRequired?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   contentTypeId: string
 }
 
@@ -265,6 +275,7 @@ export type FieldUpdateInput = {
   apiIdentifier?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumFieldTypeFieldUpdateOperationsInput | $Enums.FieldType
   isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   contentType?: Prisma.ContentTypeUpdateOneRequiredWithoutFieldsNestedInput
 }
 
@@ -274,6 +285,7 @@ export type FieldUncheckedUpdateInput = {
   apiIdentifier?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumFieldTypeFieldUpdateOperationsInput | $Enums.FieldType
   isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   contentTypeId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -283,6 +295,7 @@ export type FieldCreateManyInput = {
   apiIdentifier: string
   type: $Enums.FieldType
   isRequired?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   contentTypeId: string
 }
 
@@ -292,6 +305,7 @@ export type FieldUpdateManyMutationInput = {
   apiIdentifier?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumFieldTypeFieldUpdateOperationsInput | $Enums.FieldType
   isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type FieldUncheckedUpdateManyInput = {
@@ -300,6 +314,7 @@ export type FieldUncheckedUpdateManyInput = {
   apiIdentifier?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumFieldTypeFieldUpdateOperationsInput | $Enums.FieldType
   isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   contentTypeId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -324,6 +339,7 @@ export type FieldCountOrderByAggregateInput = {
   apiIdentifier?: Prisma.SortOrder
   type?: Prisma.SortOrder
   isRequired?: Prisma.SortOrder
+  metadata?: Prisma.SortOrder
   contentTypeId?: Prisma.SortOrder
 }
 
@@ -397,6 +413,7 @@ export type FieldCreateWithoutContentTypeInput = {
   apiIdentifier: string
   type: $Enums.FieldType
   isRequired?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type FieldUncheckedCreateWithoutContentTypeInput = {
@@ -405,6 +422,7 @@ export type FieldUncheckedCreateWithoutContentTypeInput = {
   apiIdentifier: string
   type: $Enums.FieldType
   isRequired?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type FieldCreateOrConnectWithoutContentTypeInput = {
@@ -442,6 +460,7 @@ export type FieldScalarWhereInput = {
   apiIdentifier?: Prisma.StringFilter<"Field"> | string
   type?: Prisma.EnumFieldTypeFilter<"Field"> | $Enums.FieldType
   isRequired?: Prisma.BoolFilter<"Field"> | boolean
+  metadata?: Prisma.JsonNullableFilter<"Field">
   contentTypeId?: Prisma.StringFilter<"Field"> | string
 }
 
@@ -451,6 +470,7 @@ export type FieldCreateManyContentTypeInput = {
   apiIdentifier: string
   type: $Enums.FieldType
   isRequired?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type FieldUpdateWithoutContentTypeInput = {
@@ -459,6 +479,7 @@ export type FieldUpdateWithoutContentTypeInput = {
   apiIdentifier?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumFieldTypeFieldUpdateOperationsInput | $Enums.FieldType
   isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type FieldUncheckedUpdateWithoutContentTypeInput = {
@@ -467,6 +488,7 @@ export type FieldUncheckedUpdateWithoutContentTypeInput = {
   apiIdentifier?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumFieldTypeFieldUpdateOperationsInput | $Enums.FieldType
   isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type FieldUncheckedUpdateManyWithoutContentTypeInput = {
@@ -475,6 +497,7 @@ export type FieldUncheckedUpdateManyWithoutContentTypeInput = {
   apiIdentifier?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumFieldTypeFieldUpdateOperationsInput | $Enums.FieldType
   isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 
@@ -485,6 +508,7 @@ export type FieldSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   apiIdentifier?: boolean
   type?: boolean
   isRequired?: boolean
+  metadata?: boolean
   contentTypeId?: boolean
   contentType?: boolean | Prisma.ContentTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["field"]>
@@ -495,6 +519,7 @@ export type FieldSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   apiIdentifier?: boolean
   type?: boolean
   isRequired?: boolean
+  metadata?: boolean
   contentTypeId?: boolean
   contentType?: boolean | Prisma.ContentTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["field"]>
@@ -505,6 +530,7 @@ export type FieldSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   apiIdentifier?: boolean
   type?: boolean
   isRequired?: boolean
+  metadata?: boolean
   contentTypeId?: boolean
   contentType?: boolean | Prisma.ContentTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["field"]>
@@ -515,10 +541,11 @@ export type FieldSelectScalar = {
   apiIdentifier?: boolean
   type?: boolean
   isRequired?: boolean
+  metadata?: boolean
   contentTypeId?: boolean
 }
 
-export type FieldOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "label" | "apiIdentifier" | "type" | "isRequired" | "contentTypeId", ExtArgs["result"]["field"]>
+export type FieldOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "label" | "apiIdentifier" | "type" | "isRequired" | "metadata" | "contentTypeId", ExtArgs["result"]["field"]>
 export type FieldInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   contentType?: boolean | Prisma.ContentTypeDefaultArgs<ExtArgs>
 }
@@ -540,6 +567,7 @@ export type $FieldPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     apiIdentifier: string
     type: $Enums.FieldType
     isRequired: boolean
+    metadata: runtime.JsonValue | null
     contentTypeId: string
   }, ExtArgs["result"]["field"]>
   composites: {}
@@ -970,6 +998,7 @@ export interface FieldFieldRefs {
   readonly apiIdentifier: Prisma.FieldRef<"Field", 'String'>
   readonly type: Prisma.FieldRef<"Field", 'FieldType'>
   readonly isRequired: Prisma.FieldRef<"Field", 'Boolean'>
+  readonly metadata: Prisma.FieldRef<"Field", 'Json'>
   readonly contentTypeId: Prisma.FieldRef<"Field", 'String'>
 }
     

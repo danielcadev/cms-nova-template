@@ -34,6 +34,10 @@ export async function POST(request: Request) {
     }
 
     const { contentTypeId, data } = parsed.data
+    const { slug, title, ...fieldData } = data || {}
+
+    if (!slug) return R.error('Slug is required', 400)
+    if (!title) return R.error('Title is required', 400)
 
     const contentType = await prisma.contentType.findUnique({ where: { id: contentTypeId } })
     if (!contentType) return R.error('Content type not found', 404)
@@ -41,8 +45,14 @@ export async function POST(request: Request) {
     const contentEntry = await prisma.contentEntry.create({
       data: {
         contentTypeId,
-        data,
-        status: 'draft'
+        slug,
+        title,
+        data: fieldData,
+        status: 'draft',
+        seoOptions: data.seoOptions || {},
+        isFeatured: data.isFeatured || false,
+        category: data.category || null,
+        tags: data.tags || [],
       },
     })
 

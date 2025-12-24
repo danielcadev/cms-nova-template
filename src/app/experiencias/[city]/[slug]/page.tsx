@@ -15,11 +15,11 @@ async function loadExperience(city: string, slug: string) {
 }
 
 interface ExperiencePageProps {
-  params: { city: string; slug: string }
+  params: Promise<{ city: string; slug: string }>
 }
 
 export default async function ExperiencePage({ params }: ExperiencePageProps) {
-  const { city, slug } = params
+  const { city, slug } = await params
   const experience = await loadExperience(city, slug)
 
   if (!experience) {
@@ -50,8 +50,8 @@ export default async function ExperiencePage({ params }: ExperiencePageProps) {
   const durationTypeLabel = durationLabelMap[experience.durationType ?? 'flexible'] ?? 'Flexible'
   const galleryImages = Array.isArray(experience.gallery)
     ? (experience.gallery as string[]).filter(
-        (value) => typeof value === 'string' && value.trim().length > 0,
-      )
+      (value) => typeof value === 'string' && value.trim().length > 0,
+    )
     : []
 
   return (
@@ -109,46 +109,46 @@ export default async function ExperiencePage({ params }: ExperiencePageProps) {
             experience.duration ||
             experience.schedule ||
             scheduleDays.length > 0) && (
-            <div className="rounded-xl border border-slate-200 bg-white/70 p-6 dark:border-slate-700 dark:bg-slate-900/70">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Plan</h2>
-              <div className="mt-3 space-y-3 text-sm text-slate-600 dark:text-slate-300">
-                {experience.durationType && (
-                  <p>
-                    <strong>Duration type:</strong> {durationTypeLabel}
-                  </p>
-                )}
-                {experience.duration && (
-                  <p>
-                    <strong>Duration details:</strong> {experience.duration}
-                  </p>
-                )}
-                {experience.activities && (
-                  <p>
-                    <strong>Activities:</strong>
-                    <br />
-                    {experience.activities}
-                  </p>
-                )}
-                {scheduleDays.length > 0 && (
-                  <p>
-                    <strong>Available days:</strong> {scheduleDayLabel}
-                  </p>
-                )}
-                {experience.schedule && (
-                  <p>
-                    <strong>Time window:</strong> {experience.schedule}
-                  </p>
-                )}
-                {experience.scheduleNote && (
-                  <p>
-                    <strong>Schedule notes:</strong>
-                    <br />
-                    {experience.scheduleNote}
-                  </p>
-                )}
+              <div className="rounded-xl border border-slate-200 bg-white/70 p-6 dark:border-slate-700 dark:bg-slate-900/70">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Plan</h2>
+                <div className="mt-3 space-y-3 text-sm text-slate-600 dark:text-slate-300">
+                  {experience.durationType && (
+                    <p>
+                      <strong>Duration type:</strong> {durationTypeLabel}
+                    </p>
+                  )}
+                  {experience.duration && (
+                    <p>
+                      <strong>Duration details:</strong> {experience.duration}
+                    </p>
+                  )}
+                  {experience.activities && (
+                    <p>
+                      <strong>Activities:</strong>
+                      <br />
+                      {experience.activities}
+                    </p>
+                  )}
+                  {scheduleDays.length > 0 && (
+                    <p>
+                      <strong>Available days:</strong> {scheduleDayLabel}
+                    </p>
+                  )}
+                  {experience.schedule && (
+                    <p>
+                      <strong>Time window:</strong> {experience.schedule}
+                    </p>
+                  )}
+                  {experience.scheduleNote && (
+                    <p>
+                      <strong>Schedule notes:</strong>
+                      <br />
+                      {experience.scheduleNote}
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {(experience.price || experience.inclusions || experience.exclusions) && (
             <div className="rounded-xl border border-slate-200 bg-white/70 p-6 dark:border-slate-700 dark:bg-slate-900/70">

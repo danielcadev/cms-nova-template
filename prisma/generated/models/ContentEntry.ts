@@ -27,7 +27,12 @@ export type AggregateContentEntry = {
 export type ContentEntryMinAggregateOutputType = {
   id: string | null
   contentTypeId: string | null
+  slug: string | null
+  title: string | null
   status: string | null
+  isFeatured: boolean | null
+  category: string | null
+  publishedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -35,7 +40,12 @@ export type ContentEntryMinAggregateOutputType = {
 export type ContentEntryMaxAggregateOutputType = {
   id: string | null
   contentTypeId: string | null
+  slug: string | null
+  title: string | null
   status: string | null
+  isFeatured: boolean | null
+  category: string | null
+  publishedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -43,8 +53,15 @@ export type ContentEntryMaxAggregateOutputType = {
 export type ContentEntryCountAggregateOutputType = {
   id: number
   contentTypeId: number
-  data: number
+  slug: number
+  title: number
+  seoOptions: number
   status: number
+  isFeatured: number
+  category: number
+  tags: number
+  publishedAt: number
+  data: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -54,7 +71,12 @@ export type ContentEntryCountAggregateOutputType = {
 export type ContentEntryMinAggregateInputType = {
   id?: true
   contentTypeId?: true
+  slug?: true
+  title?: true
   status?: true
+  isFeatured?: true
+  category?: true
+  publishedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -62,7 +84,12 @@ export type ContentEntryMinAggregateInputType = {
 export type ContentEntryMaxAggregateInputType = {
   id?: true
   contentTypeId?: true
+  slug?: true
+  title?: true
   status?: true
+  isFeatured?: true
+  category?: true
+  publishedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -70,8 +97,15 @@ export type ContentEntryMaxAggregateInputType = {
 export type ContentEntryCountAggregateInputType = {
   id?: true
   contentTypeId?: true
-  data?: true
+  slug?: true
+  title?: true
+  seoOptions?: true
   status?: true
+  isFeatured?: true
+  category?: true
+  tags?: true
+  publishedAt?: true
+  data?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -152,8 +186,15 @@ export type ContentEntryGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 export type ContentEntryGroupByOutputType = {
   id: string
   contentTypeId: string
-  data: runtime.JsonValue
+  slug: string
+  title: string
+  seoOptions: runtime.JsonValue | null
   status: string
+  isFeatured: boolean
+  category: string | null
+  tags: string[]
+  publishedAt: Date | null
+  data: runtime.JsonValue
   createdAt: Date
   updatedAt: Date
   _count: ContentEntryCountAggregateOutputType | null
@@ -182,8 +223,15 @@ export type ContentEntryWhereInput = {
   NOT?: Prisma.ContentEntryWhereInput | Prisma.ContentEntryWhereInput[]
   id?: Prisma.StringFilter<"ContentEntry"> | string
   contentTypeId?: Prisma.StringFilter<"ContentEntry"> | string
-  data?: Prisma.JsonFilter<"ContentEntry">
+  slug?: Prisma.StringFilter<"ContentEntry"> | string
+  title?: Prisma.StringFilter<"ContentEntry"> | string
+  seoOptions?: Prisma.JsonNullableFilter<"ContentEntry">
   status?: Prisma.StringFilter<"ContentEntry"> | string
+  isFeatured?: Prisma.BoolFilter<"ContentEntry"> | boolean
+  category?: Prisma.StringNullableFilter<"ContentEntry"> | string | null
+  tags?: Prisma.StringNullableListFilter<"ContentEntry">
+  publishedAt?: Prisma.DateTimeNullableFilter<"ContentEntry"> | Date | string | null
+  data?: Prisma.JsonFilter<"ContentEntry">
   createdAt?: Prisma.DateTimeFilter<"ContentEntry"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ContentEntry"> | Date | string
   contentType?: Prisma.XOR<Prisma.ContentTypeScalarRelationFilter, Prisma.ContentTypeWhereInput>
@@ -192,8 +240,15 @@ export type ContentEntryWhereInput = {
 export type ContentEntryOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   contentTypeId?: Prisma.SortOrder
-  data?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  title?: Prisma.SortOrder
+  seoOptions?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
+  category?: Prisma.SortOrderInput | Prisma.SortOrder
+  tags?: Prisma.SortOrder
+  publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  data?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   contentType?: Prisma.ContentTypeOrderByWithRelationInput
@@ -201,22 +256,36 @@ export type ContentEntryOrderByWithRelationInput = {
 
 export type ContentEntryWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  slug?: string
   AND?: Prisma.ContentEntryWhereInput | Prisma.ContentEntryWhereInput[]
   OR?: Prisma.ContentEntryWhereInput[]
   NOT?: Prisma.ContentEntryWhereInput | Prisma.ContentEntryWhereInput[]
   contentTypeId?: Prisma.StringFilter<"ContentEntry"> | string
-  data?: Prisma.JsonFilter<"ContentEntry">
+  title?: Prisma.StringFilter<"ContentEntry"> | string
+  seoOptions?: Prisma.JsonNullableFilter<"ContentEntry">
   status?: Prisma.StringFilter<"ContentEntry"> | string
+  isFeatured?: Prisma.BoolFilter<"ContentEntry"> | boolean
+  category?: Prisma.StringNullableFilter<"ContentEntry"> | string | null
+  tags?: Prisma.StringNullableListFilter<"ContentEntry">
+  publishedAt?: Prisma.DateTimeNullableFilter<"ContentEntry"> | Date | string | null
+  data?: Prisma.JsonFilter<"ContentEntry">
   createdAt?: Prisma.DateTimeFilter<"ContentEntry"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ContentEntry"> | Date | string
   contentType?: Prisma.XOR<Prisma.ContentTypeScalarRelationFilter, Prisma.ContentTypeWhereInput>
-}, "id">
+}, "id" | "slug">
 
 export type ContentEntryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   contentTypeId?: Prisma.SortOrder
-  data?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  title?: Prisma.SortOrder
+  seoOptions?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
+  category?: Prisma.SortOrderInput | Prisma.SortOrder
+  tags?: Prisma.SortOrder
+  publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  data?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ContentEntryCountOrderByAggregateInput
@@ -230,16 +299,30 @@ export type ContentEntryScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ContentEntryScalarWhereWithAggregatesInput | Prisma.ContentEntryScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"ContentEntry"> | string
   contentTypeId?: Prisma.StringWithAggregatesFilter<"ContentEntry"> | string
-  data?: Prisma.JsonWithAggregatesFilter<"ContentEntry">
+  slug?: Prisma.StringWithAggregatesFilter<"ContentEntry"> | string
+  title?: Prisma.StringWithAggregatesFilter<"ContentEntry"> | string
+  seoOptions?: Prisma.JsonNullableWithAggregatesFilter<"ContentEntry">
   status?: Prisma.StringWithAggregatesFilter<"ContentEntry"> | string
+  isFeatured?: Prisma.BoolWithAggregatesFilter<"ContentEntry"> | boolean
+  category?: Prisma.StringNullableWithAggregatesFilter<"ContentEntry"> | string | null
+  tags?: Prisma.StringNullableListFilter<"ContentEntry">
+  publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ContentEntry"> | Date | string | null
+  data?: Prisma.JsonWithAggregatesFilter<"ContentEntry">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ContentEntry"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ContentEntry"> | Date | string
 }
 
 export type ContentEntryCreateInput = {
   id?: string
-  data: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  slug: string
+  title: string
+  seoOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: string
+  isFeatured?: boolean
+  category?: string | null
+  tags?: Prisma.ContentEntryCreatetagsInput | string[]
+  publishedAt?: Date | string | null
+  data: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   contentType: Prisma.ContentTypeCreateNestedOneWithoutEntriesInput
@@ -248,16 +331,30 @@ export type ContentEntryCreateInput = {
 export type ContentEntryUncheckedCreateInput = {
   id?: string
   contentTypeId: string
-  data: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  slug: string
+  title: string
+  seoOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: string
+  isFeatured?: boolean
+  category?: string | null
+  tags?: Prisma.ContentEntryCreatetagsInput | string[]
+  publishedAt?: Date | string | null
+  data: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type ContentEntryUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  seoOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tags?: Prisma.ContentEntryUpdatetagsInput | string[]
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   contentType?: Prisma.ContentTypeUpdateOneRequiredWithoutEntriesNestedInput
@@ -266,8 +363,15 @@ export type ContentEntryUpdateInput = {
 export type ContentEntryUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   contentTypeId?: Prisma.StringFieldUpdateOperationsInput | string
-  data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  seoOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tags?: Prisma.ContentEntryUpdatetagsInput | string[]
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -275,16 +379,30 @@ export type ContentEntryUncheckedUpdateInput = {
 export type ContentEntryCreateManyInput = {
   id?: string
   contentTypeId: string
-  data: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  slug: string
+  title: string
+  seoOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: string
+  isFeatured?: boolean
+  category?: string | null
+  tags?: Prisma.ContentEntryCreatetagsInput | string[]
+  publishedAt?: Date | string | null
+  data: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type ContentEntryUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  seoOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tags?: Prisma.ContentEntryUpdatetagsInput | string[]
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -292,8 +410,15 @@ export type ContentEntryUpdateManyMutationInput = {
 export type ContentEntryUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   contentTypeId?: Prisma.StringFieldUpdateOperationsInput | string
-  data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  seoOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tags?: Prisma.ContentEntryUpdatetagsInput | string[]
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -308,11 +433,26 @@ export type ContentEntryOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
+}
+
 export type ContentEntryCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   contentTypeId?: Prisma.SortOrder
-  data?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  title?: Prisma.SortOrder
+  seoOptions?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  tags?: Prisma.SortOrder
+  publishedAt?: Prisma.SortOrder
+  data?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -320,7 +460,12 @@ export type ContentEntryCountOrderByAggregateInput = {
 export type ContentEntryMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   contentTypeId?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  title?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  publishedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -328,7 +473,12 @@ export type ContentEntryMaxOrderByAggregateInput = {
 export type ContentEntryMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   contentTypeId?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  title?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  publishedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -375,18 +525,41 @@ export type ContentEntryUncheckedUpdateManyWithoutContentTypeNestedInput = {
   deleteMany?: Prisma.ContentEntryScalarWhereInput | Prisma.ContentEntryScalarWhereInput[]
 }
 
+export type ContentEntryCreatetagsInput = {
+  set: string[]
+}
+
+export type ContentEntryUpdatetagsInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
 export type ContentEntryCreateWithoutContentTypeInput = {
   id?: string
-  data: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  slug: string
+  title: string
+  seoOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: string
+  isFeatured?: boolean
+  category?: string | null
+  tags?: Prisma.ContentEntryCreatetagsInput | string[]
+  publishedAt?: Date | string | null
+  data: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type ContentEntryUncheckedCreateWithoutContentTypeInput = {
   id?: string
-  data: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  slug: string
+  title: string
+  seoOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: string
+  isFeatured?: boolean
+  category?: string | null
+  tags?: Prisma.ContentEntryCreatetagsInput | string[]
+  publishedAt?: Date | string | null
+  data: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -423,40 +596,75 @@ export type ContentEntryScalarWhereInput = {
   NOT?: Prisma.ContentEntryScalarWhereInput | Prisma.ContentEntryScalarWhereInput[]
   id?: Prisma.StringFilter<"ContentEntry"> | string
   contentTypeId?: Prisma.StringFilter<"ContentEntry"> | string
-  data?: Prisma.JsonFilter<"ContentEntry">
+  slug?: Prisma.StringFilter<"ContentEntry"> | string
+  title?: Prisma.StringFilter<"ContentEntry"> | string
+  seoOptions?: Prisma.JsonNullableFilter<"ContentEntry">
   status?: Prisma.StringFilter<"ContentEntry"> | string
+  isFeatured?: Prisma.BoolFilter<"ContentEntry"> | boolean
+  category?: Prisma.StringNullableFilter<"ContentEntry"> | string | null
+  tags?: Prisma.StringNullableListFilter<"ContentEntry">
+  publishedAt?: Prisma.DateTimeNullableFilter<"ContentEntry"> | Date | string | null
+  data?: Prisma.JsonFilter<"ContentEntry">
   createdAt?: Prisma.DateTimeFilter<"ContentEntry"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ContentEntry"> | Date | string
 }
 
 export type ContentEntryCreateManyContentTypeInput = {
   id?: string
-  data: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  slug: string
+  title: string
+  seoOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: string
+  isFeatured?: boolean
+  category?: string | null
+  tags?: Prisma.ContentEntryCreatetagsInput | string[]
+  publishedAt?: Date | string | null
+  data: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type ContentEntryUpdateWithoutContentTypeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  seoOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tags?: Prisma.ContentEntryUpdatetagsInput | string[]
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ContentEntryUncheckedUpdateWithoutContentTypeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  seoOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tags?: Prisma.ContentEntryUpdatetagsInput | string[]
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ContentEntryUncheckedUpdateManyWithoutContentTypeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  seoOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tags?: Prisma.ContentEntryUpdatetagsInput | string[]
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  data?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -466,8 +674,15 @@ export type ContentEntryUncheckedUpdateManyWithoutContentTypeInput = {
 export type ContentEntrySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   contentTypeId?: boolean
-  data?: boolean
+  slug?: boolean
+  title?: boolean
+  seoOptions?: boolean
   status?: boolean
+  isFeatured?: boolean
+  category?: boolean
+  tags?: boolean
+  publishedAt?: boolean
+  data?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   contentType?: boolean | Prisma.ContentTypeDefaultArgs<ExtArgs>
@@ -476,8 +691,15 @@ export type ContentEntrySelect<ExtArgs extends runtime.Types.Extensions.Internal
 export type ContentEntrySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   contentTypeId?: boolean
-  data?: boolean
+  slug?: boolean
+  title?: boolean
+  seoOptions?: boolean
   status?: boolean
+  isFeatured?: boolean
+  category?: boolean
+  tags?: boolean
+  publishedAt?: boolean
+  data?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   contentType?: boolean | Prisma.ContentTypeDefaultArgs<ExtArgs>
@@ -486,8 +708,15 @@ export type ContentEntrySelectCreateManyAndReturn<ExtArgs extends runtime.Types.
 export type ContentEntrySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   contentTypeId?: boolean
-  data?: boolean
+  slug?: boolean
+  title?: boolean
+  seoOptions?: boolean
   status?: boolean
+  isFeatured?: boolean
+  category?: boolean
+  tags?: boolean
+  publishedAt?: boolean
+  data?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   contentType?: boolean | Prisma.ContentTypeDefaultArgs<ExtArgs>
@@ -496,13 +725,20 @@ export type ContentEntrySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
 export type ContentEntrySelectScalar = {
   id?: boolean
   contentTypeId?: boolean
-  data?: boolean
+  slug?: boolean
+  title?: boolean
+  seoOptions?: boolean
   status?: boolean
+  isFeatured?: boolean
+  category?: boolean
+  tags?: boolean
+  publishedAt?: boolean
+  data?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ContentEntryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "contentTypeId" | "data" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["contentEntry"]>
+export type ContentEntryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "contentTypeId" | "slug" | "title" | "seoOptions" | "status" | "isFeatured" | "category" | "tags" | "publishedAt" | "data" | "createdAt" | "updatedAt", ExtArgs["result"]["contentEntry"]>
 export type ContentEntryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   contentType?: boolean | Prisma.ContentTypeDefaultArgs<ExtArgs>
 }
@@ -521,8 +757,15 @@ export type $ContentEntryPayload<ExtArgs extends runtime.Types.Extensions.Intern
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     contentTypeId: string
-    data: runtime.JsonValue
+    slug: string
+    title: string
+    seoOptions: runtime.JsonValue | null
     status: string
+    isFeatured: boolean
+    category: string | null
+    tags: string[]
+    publishedAt: Date | null
+    data: runtime.JsonValue
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["contentEntry"]>
@@ -951,8 +1194,15 @@ export interface Prisma__ContentEntryClient<T, Null = never, ExtArgs extends run
 export interface ContentEntryFieldRefs {
   readonly id: Prisma.FieldRef<"ContentEntry", 'String'>
   readonly contentTypeId: Prisma.FieldRef<"ContentEntry", 'String'>
-  readonly data: Prisma.FieldRef<"ContentEntry", 'Json'>
+  readonly slug: Prisma.FieldRef<"ContentEntry", 'String'>
+  readonly title: Prisma.FieldRef<"ContentEntry", 'String'>
+  readonly seoOptions: Prisma.FieldRef<"ContentEntry", 'Json'>
   readonly status: Prisma.FieldRef<"ContentEntry", 'String'>
+  readonly isFeatured: Prisma.FieldRef<"ContentEntry", 'Boolean'>
+  readonly category: Prisma.FieldRef<"ContentEntry", 'String'>
+  readonly tags: Prisma.FieldRef<"ContentEntry", 'String[]'>
+  readonly publishedAt: Prisma.FieldRef<"ContentEntry", 'DateTime'>
+  readonly data: Prisma.FieldRef<"ContentEntry", 'Json'>
   readonly createdAt: Prisma.FieldRef<"ContentEntry", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ContentEntry", 'DateTime'>
 }

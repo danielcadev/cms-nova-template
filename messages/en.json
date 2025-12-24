@@ -565,6 +565,52 @@
             "noMatch": "No plugins match \"{query}\".",
             "noStatus": "No {status} plugins found."
         },
+        "list": {
+            "s3-storage": {
+                "name": "AWS S3 Storage",
+                "description": "Store files and media on Amazon S3 with automatic CDN configuration and cost optimization."
+            },
+            "dynamic-nav": {
+                "name": "Dynamic TypePath Nav",
+                "description": "Adds navigation items based on content types (typePath)."
+            },
+            "public-typepaths": {
+                "name": "Public Type Paths",
+                "description": "Publicly exposes headless routes /typePath and /typePath/slug based on Content Types."
+            },
+            "analytics": {
+                "name": "Google Analytics",
+                "description": "Coming soon: Full integration with Google Analytics for advanced metrics."
+            },
+            "email": {
+                "name": "Email Marketing",
+                "description": "Coming soon: Email marketing system with templates and automation."
+            },
+            "cdn": {
+                "name": "CDN Integration",
+                "description": "Coming soon: Content Delivery Network to optimize speed."
+            },
+            "backup": {
+                "name": "Auto Backup",
+                "description": "Coming soon: Scheduled automatic backups and restoration."
+            },
+            "seo": {
+                "name": "SEO Optimizer",
+                "description": "Coming soon: Advanced SEO optimization tools."
+            },
+            "security": {
+                "name": "Security Shield",
+                "description": "Coming soon: Advanced protection against threats and vulnerabilities."
+            },
+            "google-gemini": {
+                "name": "AI Assistant",
+                "description": "Powerful AI generation for SEO, content assistance, and automatic field filling using Google Gemini or OpenRouter."
+            },
+            "social": {
+                "name": "Social Media",
+                "description": "Coming soon: Social media integration and automatic publishing."
+            }
+        },
         "card": {
             "enabled": "Enabled",
             "disabled": "Disabled",
@@ -575,6 +621,7 @@
             "titles": {
                 "s3": "Configure S3 Storage",
                 "dynamicNav": "Dynamic Navigation",
+                "gemini": "Configure AI Assistant",
                 "default": "Configure Plugin"
             },
             "s3": {
@@ -615,6 +662,56 @@
                 "loading": "Loading typePaths...",
                 "error": "Error loading type paths",
                 "noTypes": "No Content Types yet."
+            },
+            "gemini": {
+                "provider": "AI Provider",
+                "providerGoogle": "Google App (Gemini)",
+                "providerOpenRouter": "OpenRouter (Multi-model)",
+                "googleApiKey": "API Key from Google AI Studio",
+                "googleApiKeyPlaceholder": "Provide your Gemini API key",
+                "openRouterApiKey": "OpenRouter API Key",
+                "openRouterApiKeyPlaceholder": "Enter your OpenRouter API key",
+                "instructions": "You can get a free API key at",
+                "model": "Model",
+                "model3Pro": "Gemini 3 Pro (Preview)",
+                "model3Flash": "Gemini 3 Flash (Preview)",
+                "model25Pro": "Gemini 2.5 Pro",
+                "model25Flash": "Gemini 2.5 Flash",
+                "model25FlashLite": "Gemini 2.5 Flash-Lite",
+                "model20Flash": "Gemini 2.0 Flash (Subject to quota)",
+                "model20FlashLite": "Gemini 2.0 Flash-Lite",
+                "model15Pro": "Gemini 1.5 Pro",
+                "model15Flash": "Gemini 1.5 Flash (Recommended)",
+                "openRouterModelPlaceholder": "Model name e.g., openai/gpt-4o",
+                "featuresTitle": "AI Powered Features",
+                "featuresDesc": "Once configured, you will see a sparkle icon ✨ in SEO and Slug fields to generate content automatically.",
+                "assistant": {
+                    "title": "AI Assistant",
+                    "generatingFor": "Generating for",
+                    "quickTemplates": "Quick Templates",
+                    "yourPrompt": "Your Prompt",
+                    "placeholder": "e.g. Write a catchy headline about sustainability...",
+                    "generate": "Generate",
+                    "generating": "Generating...",
+                    "response": "AI Response",
+                    "ready": "Ready to apply",
+                    "cancel": "Cancel",
+                    "apply": "Apply Content",
+                    "templates": {
+                        "blog": "Blog Article",
+                        "story": "Creative Story",
+                        "product": "Product Desc",
+                        "summary": "Short Summary",
+                        "seo": "SEO Optimizer"
+                    },
+                    "prompts": {
+                        "blog": "Write a professional, SEO-optimized blog article (800-1000 words) about: [TOPIC]. \n\nIMPORTANT: Return ONLY the content in clean HTML format. Do NOT include conversational filler, introductory phrases (like \"Of course\"), titles like \"Author\", dates, or meta-comments. Start directly with the first paragraph or H1 header.",
+                        "story": "Write an engaging and immersive creative story (approx 1000 words) about: [TOPIC]. \n\nIMPORTANT: Return ONLY the story content. No summaries, no introductory remarks, and no conversational filler. Start exactly where the story begins.",
+                        "product": "Write a compelling, sales-oriented product description (500-800 words) for: [TOPIC]. \n\nIMPORTANT: Return ONLY the description block. Do NOT include labels like \"Description:\", \"Features:\", or any conversational filler. Clean output only.",
+                        "summary": "Write a concise but deep summary (300 words) of: [TOPIC]. \n\nIMPORTANT: Return ONLY the summary text. No labels, no introductory phrases.",
+                        "seo": "Rewrite the following topic/content to be perfectly optimized for SEO with a length of 800 words: [TOPIC]. \n\nIMPORTANT: Return ONLY the optimized text. No preamble, no explanation of what you did."
+                    }
+                }
             },
             "footer": {
                 "cancel": "Cancel",
@@ -782,6 +879,13 @@
                 "published": "Plan published",
                 "draft": "Plan reverted to draft",
                 "error": "Could not update plan status. Please try again."
+            },
+            "create": {
+                "title": "Create New Plan",
+                "creating": "Creating draft...",
+                "creatingDesc": "Please wait, we are preparing the editing environment.",
+                "success": "Draft ready",
+                "successDesc": "The plan has been started successfully."
             },
             "edit": {
                 "createTitle": "Create New Plan",
@@ -967,6 +1071,7 @@
             "editExperience": "Edit Experience",
             "createTourism": "Create Tourist Plan",
             "editTourism": "Edit Tourist Plan",
+            "readyToCreate": "Ready to create",
             "subtitleExperience": "Capture the story, activities, and logistics.",
             "subtitleTourism": "Manage the details of your tourism package.",
             "saveDraft": "Save Draft",

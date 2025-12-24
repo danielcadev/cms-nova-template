@@ -7,9 +7,9 @@ import { prisma } from '@/lib/prisma'
 export const revalidate = 60
 
 interface PlansByCategoryPageProps {
-  params: {
+  params: Promise<{
     categoria: string
-  }
+  }>
 }
 
 async function getPlansByCategory(categoria: string) {
@@ -56,7 +56,8 @@ export default async function PlansByCategoryPage({ params }: PlansByCategoryPag
     notFound()
   }
 
-  const categoria = decodeURIComponent(params.categoria)
+  const { categoria: rawCategoria } = await params
+  const categoria = decodeURIComponent(rawCategoria)
   const plans = await getPlansByCategory(categoria)
 
   // 404 if no published entries for this category

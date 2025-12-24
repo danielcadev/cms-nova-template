@@ -8,45 +8,31 @@ import type { ContentEntry } from './data'
 export function useEditContentEntry(entry: ContentEntry) {
     const [formData, setFormData] = useState<Record<string, any>>(entry.data || {})
     const [status, setStatus] = useState(entry.status)
-    const [slug, setSlug] = useState<string>(() => String(entry.data?.slug || ''))
+    const [legacySlug, setLegacySlug] = useState<string>(() => String((entry as any).slug || ''))
     const [typePath, setTypePath] = useState<string>(() =>
         String(entry.data?.typePath || entry.contentType.apiIdentifier),
     )
     const [isSaving, setIsSaving] = useState(false)
     const [isDeleting, setIsDeleting] = useState(false)
+
+    // AI Modal State
+    const [aiModal, setAiModal] = useState<{
+        isOpen: boolean
+        fieldId: string
+        fieldLabel: string
+        initialPrompt: string
+    }>({
+        isOpen: false,
+        fieldId: '',
+        fieldLabel: '',
+        initialPrompt: '',
+    })
+
     const router = useRouter()
 
-    // Generate unique IDs for form elements
     const statusId = useId()
-    const pathPrefixId = useId()
-    const slugId = useId()
-
     const getFieldId = (fieldId: string) => `field-${fieldId}`
 
-    // Translate common Spanish labels to English for display only
-    const normalizeLabel = (label: string): string => {
-        const l = (label || '')
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-        const rules: { re: RegExp; out: string }[] = [
-            { re: /(titulo del post|titulo de la entrada|post title)/, out: 'Post title' },
-            { re: /(titulo|headline|heading)/, out: 'Title' },
-            { re: /(imagen principal|main image|cover image)/, out: 'Main image' },
-            { re: /(imagen destacada|featured image|thumbnail)/, out: 'Featured image' },
-            { re: /(imagen|image|foto|photo)/, out: 'Image' },
-            { re: /(descripcion|description)/, out: 'Description' },
-            { re: /(contenido|content)/, out: 'Content' },
-            { re: /(fecha|date)/, out: 'Date' },
-            { re: /(autor|author)/, out: 'Author' },
-            { re: /(categoria|categor[ií]a|category)/, out: 'Category' },
-            { re: /(etiquetas|tags|tag)/, out: 'Tags' },
-        ]
-        for (const r of rules) if (r.re.test(l)) return r.out
-        return label
-    }
-
-    // Highlighted fields
     const titleField = entry.contentType.fields.find(
         (f) =>
             (f.type === 'TEXT' || f.type === 'RICH_TEXT') &&
@@ -59,6 +45,37 @@ export function useEditContentEntry(entry: ContentEntry) {
             (/(mainimage|image|imagen|cover|thumbnail|featured)/i.test(f.apiIdentifier) ||
                 /(imagen|image|cover|thumbnail|principal|destacada)/i.test(f.label)),
     )
+    const slugField = entry.contentType.fields.find((f) => f.type === 'SLUG')
+
+    // SEO/Specialized Fields Detection
+    const metaTitleField = entry.contentType.fields.find(
+        (f) => f.type === 'TEXT' && /(metaTitle|meta_title|seoTitle|seo_title)/i.test(f.apiIdentifier),
+    )
+    const metaDescriptionField = entry.contentType.fields.find(
+        (f) => (f.type === 'TEXT' || f.type === 'RICH_TEXT') && /(metaDescription|meta_description|seoDescription|seo_desc)/i.test(f.apiIdentifier),
+    )
+    const imageAltField = entry.contentType.fields.find(
+        (f) => f.type === 'TEXT' && /(altText|imageAlt|alt_text|alt)/i.test(f.apiIdentifier),
+    )
+    const tagsField = entry.contentType.fields.find(
+        (f) => (f.type === 'TEXT' || f.type === 'RICH_TEXT') && /(tags|etiquetas|tag)/i.test(f.apiIdentifier),
+    )
+
+    const getPayload = () => {
+        const payload: Record<string, any> = { ...formData, typePath }
+
+        if (slugField) {
+            payload.slug = formData[slugField.apiIdentifier]
+        } else {
+            payload.slug = legacySlug
+        }
+
+        if (titleField) {
+            payload.title = formData[titleField.apiIdentifier]
+        }
+
+        return payload
+    }
 
     const handleFieldChange = (fieldId: string, value: any) => {
         setFormData((prev) => ({
@@ -67,27 +84,96 @@ export function useEditContentEntry(entry: ContentEntry) {
         }))
     }
 
+    // Helper for AI generation
+    const callAI = async (prompt: string, fallback: () => void) => {
+        try {
+            const response = await fetch('/api/admin/ai/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt }),
+            })
+            const data = await response.json()
+            if (data.success && data.text) {
+                return data.text
+            }
+        } catch (e) {
+            console.error('AI Call failed, using fallback', e)
+        }
+        fallback()
+        return null
+    }
+
+    // Generation actions
+    const generateMetaTitle = async () => {
+        if (titleField && metaTitleField) {
+            const val = formData[titleField.apiIdentifier]
+            if (!val) return
+            const aiVal = await callAI(
+                `Generate a short, catchy SEO Meta Title for this post: "${val}". Return ONLY the title, no quotes.`,
+                () => handleFieldChange(metaTitleField.apiIdentifier, val)
+            )
+            if (aiVal) handleFieldChange(metaTitleField.apiIdentifier, aiVal)
+        }
+    }
+
+    const generateMetaDescription = async () => {
+        if (titleField && metaDescriptionField) {
+            const val = formData[titleField.apiIdentifier]
+            if (!val) return
+            const aiVal = await callAI(
+                `Write a compelling SEO Meta Description (max 155 characters) for a post titled: "${val}". Return ONLY the description.`,
+                () => {
+                    const desc = `Learn more about ${val}. Comprehensive guide and details inside.`
+                    handleFieldChange(metaDescriptionField.apiIdentifier, desc)
+                }
+            )
+            if (aiVal) handleFieldChange(metaDescriptionField.apiIdentifier, aiVal)
+        }
+    }
+
+    const generateImageAlt = async () => {
+        if (titleField && imageAltField) {
+            const val = formData[titleField.apiIdentifier]
+            if (!val) return
+            const aiVal = await callAI(
+                `Write a short, descriptive Alt Text for an image representing: "${val}". Return ONLY the text.`,
+                () => handleFieldChange(imageAltField.apiIdentifier, `Image of ${val}`)
+            )
+            if (aiVal) handleFieldChange(imageAltField.apiIdentifier, aiVal)
+        }
+    }
+
+    const generateTags = async () => {
+        if (titleField && tagsField) {
+            const val = formData[titleField.apiIdentifier]
+            if (!val) return
+            const aiVal = await callAI(
+                `Extract 5 relevant keyword tags for this post title: "${val}". Return ONLY a comma-separated list of tags. No numbering.`,
+                () => {
+                    const tags = (val as string).split(' ').filter((w: string) => w.length > 3).map((w: string) => w.toLowerCase()).slice(0, 5).join(', ')
+                    handleFieldChange(tagsField.apiIdentifier, tags)
+                }
+            )
+            if (aiVal) handleFieldChange(tagsField.apiIdentifier, aiVal)
+        }
+    }
+
     const handleSave = async (saveStatus: string = status) => {
         setIsSaving(true)
-
         try {
             const response = await fetch(
                 `/api/content-types/${entry.contentType.apiIdentifier}/entries/${entry.id}`,
                 {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        data: { ...formData, slug, typePath },
+                        data: getPayload(),
                         status: saveStatus,
                     }),
                 },
             )
 
-            if (response.ok) {
-                // Success logic if needed
-            } else {
+            if (!response.ok) {
                 throw new Error('Error updating entry')
             }
         } catch (error) {
@@ -102,15 +188,11 @@ export function useEditContentEntry(entry: ContentEntry) {
         if (!confirm('Are you sure you want to delete this entry? This action cannot be undone.')) {
             return
         }
-
         setIsDeleting(true)
-
         try {
             const response = await fetch(
                 `/api/content-types/${entry.contentType.apiIdentifier}/entries/${entry.id}`,
-                {
-                    method: 'DELETE',
-                },
+                { method: 'DELETE' },
             )
 
             if (response.ok) {
@@ -135,9 +217,10 @@ export function useEditContentEntry(entry: ContentEntry) {
     }
 
     const isFormValid = validateForm()
+    const currentSlug = slugField ? formData[slugField.apiIdentifier] : legacySlug
 
     const handlePublishAndView = async () => {
-        if (!slug) return
+        if (!currentSlug) return
         setIsSaving(true)
         try {
             const response = await fetch(
@@ -145,12 +228,12 @@ export function useEditContentEntry(entry: ContentEntry) {
                 {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: { ...formData, slug, typePath }, status: 'published' }),
+                    body: JSON.stringify({ data: { ...getPayload() }, status: 'published' }),
                 },
             )
             if (response.ok) {
-                const target = `/${typePath || entry.contentType.apiIdentifier}/${slug}`
-                router.push(target)
+                const target = `/${typePath || entry.contentType.apiIdentifier}/${currentSlug}`
+                window.open(target, '_blank')
             } else {
                 throw new Error('Error publishing entry')
             }
@@ -162,20 +245,36 @@ export function useEditContentEntry(entry: ContentEntry) {
         }
     }
 
-    const handleSlugChange = (value: string) => {
-        setSlug(slugify(value, { lower: true, strict: true }))
-    }
-
-    const handleTypePathChange = (value: string) => {
-        setTypePath(slugify(value, { lower: true, strict: true }))
-    }
-
     const generateSlugFromTitle = () => {
         if (titleField) {
             const titleValue = formData[titleField.apiIdentifier]
             if (typeof titleValue === 'string') {
-                setSlug(slugify(titleValue, { lower: true, strict: true }))
+                const newSlug = slugify(titleValue, { lower: true, strict: true })
+                if (slugField) {
+                    handleFieldChange(slugField.apiIdentifier, newSlug)
+                } else {
+                    setLegacySlug(newSlug)
+                }
             }
+        }
+    }
+
+    const openAIModal = (fieldId: string, label: string) => {
+        setAiModal({
+            isOpen: true,
+            fieldId,
+            fieldLabel: label,
+            initialPrompt: '',
+        })
+    }
+
+    const closeAIModal = () => {
+        setAiModal((prev) => ({ ...prev, isOpen: false }))
+    }
+
+    const handleAIApply = (text: string) => {
+        if (aiModal.fieldId) {
+            handleFieldChange(aiModal.fieldId, text)
         }
     }
 
@@ -183,24 +282,25 @@ export function useEditContentEntry(entry: ContentEntry) {
         state: {
             formData,
             status,
-            slug,
+            slug: currentSlug,
             typePath,
             isSaving,
             isDeleting,
             isFormValid,
+            aiModal,
         },
         ids: {
             statusId,
-            pathPrefixId,
-            slugId,
             getFieldId,
         },
         fields: {
             titleField,
             imageField,
-        },
-        helpers: {
-            normalizeLabel,
+            slugField,
+            metaTitleField,
+            metaDescriptionField,
+            imageAltField,
+            tagsField,
         },
         actions: {
             setStatus,
@@ -208,9 +308,14 @@ export function useEditContentEntry(entry: ContentEntry) {
             handleSave,
             handleDelete,
             handlePublishAndView,
-            handleSlugChange,
-            handleTypePathChange,
             generateSlugFromTitle,
+            generateMetaTitle,
+            generateMetaDescription,
+            generateImageAlt,
+            generateTags,
+            openAIModal,
+            closeAIModal,
+            handleAIApply,
         },
     }
 }

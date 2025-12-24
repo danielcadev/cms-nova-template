@@ -41,16 +41,16 @@ async function getContentEntry(slug: string, entryId: string) {
 }
 
 interface EditContentEntryPageRouteProps {
-  params: {
+  params: Promise<{
     slug: string
     id: string
-  }
+  }>
 }
 
 export default async function EditContentEntryPageRoute({
   params,
 }: EditContentEntryPageRouteProps) {
-  const { slug, id } = params
+  const { slug, id } = await params
   const entry = await getContentEntry(slug, id)
 
   if (!entry) {

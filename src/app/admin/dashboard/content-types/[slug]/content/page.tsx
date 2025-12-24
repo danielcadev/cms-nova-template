@@ -33,13 +33,14 @@ async function getContentTypeWithEntries(slug: string) {
 }
 
 interface ContentEntriesPageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 export default async function ContentEntriesPageRoute({ params }: ContentEntriesPageProps) {
-  const contentType = await getContentTypeWithEntries(params.slug)
+  const { slug } = await params
+  const contentType = await getContentTypeWithEntries(slug)
 
   if (!contentType) {
     notFound()

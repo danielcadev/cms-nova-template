@@ -2,13 +2,13 @@ import { ContentTypeDetail } from '@/components/admin/dashboard/ContentTypesPage
 import { PageLayout } from '@/components/admin/shared/PageLayout'
 
 interface ContentTypeDetailPageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
-export default function ContentTypeDetailPage({ params }: ContentTypeDetailPageProps) {
-  const { slug } = params
+export default async function ContentTypeDetailPage({ params }: ContentTypeDetailPageProps) {
+  const { slug } = await params
 
   return (
     <PageLayout

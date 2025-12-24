@@ -8,11 +8,11 @@ import { prisma } from '@/lib/prisma'
 export const revalidate = 60
 
 interface PlanDetailPageProps {
-  params: {
+  params: Promise<{
     categoria: string
     slug: string
-  }
-  searchParams?: { [key: string]: string | string[] | undefined }
+  }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 async function getPlan(categoria: string, slug: string) {
@@ -74,13 +74,16 @@ export default async function PlanDetailPage({ params, searchParams }: PlanDetai
     notFound()
   }
 
-  const categoria = decodeURIComponent(params.categoria)
-  const slug = decodeURIComponent(params.slug)
+  const { categoria: rawCategoria, slug: rawSlug } = await params
+  const categoria = decodeURIComponent(rawCategoria)
+  const slug = decodeURIComponent(rawSlug)
   const plan = await getPlan(categoria, slug)
 
   if (!plan) {
     notFound()
   }
+
+  const spData = await searchParams
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
@@ -266,7 +269,7 @@ export default async function PlanDetailPage({ params, searchParams }: PlanDetai
                     const getSymbol = (c?: string) =>
                       c === 'USD' ? 'US$' : c === 'EUR' ? '€' : '$'
                     const options = Array.isArray(plan.priceOptions) ? plan.priceOptions : []
-                    const sp = searchParams || {}
+                    const sp = spData || {}
                     const byId = sp?.priceId
                       ? options.find((o: any) => o?.id === sp.priceId)
                       : undefined
