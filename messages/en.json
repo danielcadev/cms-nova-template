@@ -201,66 +201,30 @@
                 "successText": "The content type has been {action} successfully.",
                 "error": "Error",
                 "errorText": "Could not save the content type."
-            }
-        },
-        "fieldTypes": {
-            "TEXT": "Short Text",
-            "TEXTAREA": "Long Text",
-            "RICH_TEXT": "Rich Editor",
-            "NUMBER": "Number",
-            "BOOLEAN": "True/False",
-            "DATE": "Date",
-            "DATETIME": "Date & Time",
-            "EMAIL": "Email",
-            "PHONE": "Phone",
-            "URL": "Web Link",
-            "RATING": "Rating",
-            "PRICE": "Price",
-            "COLOR": "Color",
-            "LOCATION": "Location",
-            "IMAGE": "Image",
-            "GALLERY": "Gallery",
-            "FILE": "File",
-            "descriptions": {
-                "TEXT": "Simple text field for titles or names",
-                "TEXTAREA": "Text area for extensive descriptions",
-                "RICH_TEXT": "Formatted editor for rich content",
-                "NUMBER": "Numeric field for prices or quantities",
-                "BOOLEAN": "Switch for boolean values",
-                "DATE": "Date and time picker",
-                "DATETIME": "Picker with specific date and time",
-                "EMAIL": "Email field with validation",
-                "PHONE": "Phone number field",
-                "URL": "Field for URLs with validation",
-                "RATING": "Star system for ratings",
-                "PRICE": "Monetary field with currency formatting",
-                "COLOR": "Visual color picker",
-                "LOCATION": "Address or GPS coordinates field",
-                "IMAGE": "Image upload with preview",
-                "GALLERY": "Multiple organized images",
-                "FILE": "Document and file upload"
-            }
-        },
-        "fieldCategories": {
-            "basic": "Basic Fields",
-            "advanced": "Advanced Fields",
-            "media": "Media"
-        },
-        "fieldsBuilder": {
-            "availableTypes": "Available Field Types",
-            "fieldCount": "Fields ({count})",
-            "reorder": "Drag to reorder",
-            "empty": {
-                "title": "Start building",
-                "desc": "Drag field types from the palette above to add them to your content type.",
-                "dropTitle": "Drop field here",
-                "dropDesc": "Drop the field to add it to your content structure."
             },
-            "row": {
-                "required": "Required",
-                "optional": "Optional",
-                "placeholder": "Field label",
-                "moving": "Moving..."
+            "fieldTypes": {
+                "text": "Short Text",
+                "richText": "Rich Editor",
+                "number": "Number",
+                "boolean": "True/False",
+                "date": "Date",
+                "media": "Media",
+                "slug": "Slug / URL"
+            },
+            "builder": {
+                "availableTypes": "Available Field Types",
+                "fieldsCount": "Fields ({count})",
+                "dragToReorder": "Drag to reorder",
+                "emptyTitle": "Start building",
+                "emptyTitleDrop": "Drop field here",
+                "emptyDesc": "Drag field types from the palette above to add them to your content type.",
+                "emptyDescDrop": "Drop the field to add it to your content structure.",
+                "row": {
+                    "required": "Required",
+                    "optional": "Optional",
+                    "placeholder": "Field label",
+                    "moving": "Moving..."
+                }
             }
         }
     },

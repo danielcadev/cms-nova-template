@@ -81,7 +81,7 @@ export function SortableFieldRow({ field, index, remove }: SortableFieldRowProps
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {fieldTypeInfo?.label || field.type}
+                  {fieldTypeInfo ? t(fieldTypeInfo.labelKey) : field.type}
                 </span>
                 <span className="text-xs text-gray-500 dark:text-gray-400 font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
                   {field.apiIdentifier}

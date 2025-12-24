@@ -201,8 +201,12 @@ export default function FieldsBuilder() {
                   <span className="text-zinc-600">{(activeItem as any)?.icon}</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-semibold text-zinc-900 text-sm">{activeItem?.label}</span>
-                  <span className="text-xs text-zinc-500">Moving...</span>
+                  <span className="font-semibold text-zinc-900 text-sm">
+                    {activeId?.startsWith('palette-') && (activeItem as any)?.labelKey
+                      ? useTranslations('contentTypes.form')((activeItem as any).labelKey)
+                      : (activeItem as any)?.label}
+                  </span>
+                  <span className="text-xs text-zinc-500">{t('row.moving')}</span>
                 </div>
               </div>
             ) : null}
