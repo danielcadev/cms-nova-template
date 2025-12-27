@@ -1088,182 +1088,158 @@
                 "saveFailed": "Error al guardar",
                 "saveFailedDesc": "Por favor, inténtalo de nuevo una vez conectada la API.",
                 "notFound": "Plantilla no encontrada"
-            }
-        }
-    }
-},
-"plugins": {
-    "title": "Plugins",
-    "subtitle": "Extiende las capacidades de tu CMS.",
-    "loading": "Cargando plugins disponibles...",
-    "refresh": "Refrescar",
-    "refreshing": "Refrescando...",
-    "search": "Buscar plugins...",
-    "filters": {
-        "all": "Todos",
-        "enabled": "Activados",
-        "disabled": "Desactivados",
-        "clear": "Limpiar filtros"
-    },
-    "empty": {
-        "noAvailable": "No hay plugins disponibles",
-        "description": "Los plugins te permiten extender la funcionalidad de tu CMS con características e integraciones adicionales.",
-        "noFound": "No se encontraron plugins",
-        "noMatch": "No se encontraron plugins que coincidan con \"{query}\".",
-        "noStatus": "No se encontraron plugins {status}."
-    },
-    "list": {
-        "s3-storage": {
-            "name": "Almacenamiento AWS S3",
-            "description": "Almacena archivos y medios en Amazon S3 con configuración automática de CDN y optimización de costes."
-        },
-        "dynamic-nav": {
-            "name": "Navegación Dinámica",
-            "description": "Añade elementos de navegación basados en los tipos de contenido (typePath)."
-        },
-        "public-typepaths": {
-            "name": "Rutas Públicas",
-            "description": "Expone públicamente las rutas headless /typePath y /typePath/slug basadas en los tipos de contenido."
-        },
-        "analytics": {
-            "name": "Google Analytics",
-            "description": "Próximamente: Integración completa con Google Analytics para métricas avanzadas."
-        },
-        "email": {
-            "name": "Email Marketing",
-            "description": "Próximamente: Sistema de email marketing con plantillas y automatización."
-        },
-        "cdn": {
-            "name": "Integración CDN",
-            "description": "Próximamente: Red de entrega de contenido para optimizar la velocidad."
-        },
-        "backup": {
-            "name": "Backup Automático",
-            "description": "Próximamente: Copias de seguridad automáticas programadas y restauración."
-        },
-        "seo": {
-            "name": "Optimización SEO",
-            "description": "Próximamente: Herramientas avanzadas de optimización SEO."
-        },
-        "security": {
-            "name": "Escudo de Seguridad",
-            "description": "Próximamente: Protección avanzada contra amenazas y vulnerabilidades."
-        },
-        "google-gemini": {
-            "name": "Asistente de IA",
-            "description": "Potente generación por IA para SEO, asistencia en contenido y llenado automático de campos usando Google Gemini u OpenRouter."
-        },
-        "social": {
-            "name": "Redes Sociales",
-            "description": "Próximamente: Integración con redes sociales y publicación automática."
+            },
+            "seoArticle": "Artículo SEO",
+            "seoArticleDesc": "Estructura optimizada para motores de búsqueda.",
+            "seoBlog": "Blog SEO",
+            "seoBlogDesc": "Plantilla completa para blogs con galerías y video."
         }
     },
-    "card": {
-        "enabled": "Activado",
-        "disabled": "Desactivado",
-        "configure": "Configurar",
-        "notConfigurable": "No configurable"
-    },
-    "config": {
-        "titles": {
-            "s3": "Configurar Almacenamiento S3",
-            "dynamicNav": "Navegación Dinámica",
-            "gemini": "Configurar Asistente de IA",
-            "default": "Configurar Plugin"
+    "plugins": {
+        "title": "Complementos",
+        "subtitle": "Extiende las capacidades de tu CMS.",
+        "loading": "Cargando complementos disponibles...",
+        "refresh": "Refrescar",
+        "refreshing": "Refrescando...",
+        "search": "Buscar complementos...",
+        "filters": {
+            "all": "Todos",
+            "enabled": "Activados",
+            "disabled": "Desactivados",
+            "clear": "Limpiar filtros"
         },
-        "s3": {
-            "bucket": "Nombre del Bucket",
-            "bucketPlaceholder": "ej. mis-assets-cms",
-            "region": "Región",
-            "credentials": "Credenciales AWS",
-            "showSecrets": "Mostrar Secretos",
-            "hideSecrets": "Ocultar Secretos",
-            "accessKey": "ID de Llave de Acceso",
-            "secretKey": "Llave de Acceso Secreta",
-            "secretPlaceholder": "Introduce tu llave secreta",
-            "secretPlaceholderExisting": "••••••••••••••••••••••••",
-            "encryptionMissing": "Falta la Llave de Cifrado",
-            "encryptionDescription": "Debes configurar la variable de entorno ENCRYPTION_KEY (64 caracteres hex) para almacenar credenciales de forma segura. El guardado está desactivado.",
-            "instructions": "Instrucciones de Configuración",
-            "iamNotice": "1. Asegúrate de que tu usuario IAM tenga AmazonS3FullAccess o equivalente.",
-            "corsNotice": "2. Añade la configuración CORS de abajo a los permisos de tu bucket:",
-            "regions": {
-                "us-east-1": "EE.UU. Este (N. Virginia)",
-                "us-west-2": "EE.UU. Oeste (Oregon)",
-                "eu-west-1": "Europa (Irlanda)",
-                "ap-southeast-1": "Asia Pacífico (Singapur)",
-                "sa-east-1": "Sudamérica (São Paulo)"
+        "empty": {
+            "noAvailable": "No hay complementos disponibles",
+            "description": "Los complementos te permiten extender la funcionalidad de tu CMS con características e integraciones adicionales.",
+            "noFound": "No se encontraron complementos",
+            "noMatch": "No se encontraron complementos que coincidan con \"{query}\".",
+            "noStatus": "No se encontraron complementos {status}."
+        },
+        "list": {
+            "s3-storage": {
+                "name": "Almacenamiento AWS S3",
+                "description": "Almacena archivos y medios en Amazon S3 con configuración automática de CDN y optimización de costes."
+            },
+            "dynamic-nav": {
+                "name": "Navegación Dinámica",
+                "description": "Añade elementos de navegación basados en los tipos de contenido (typePath)."
+            },
+            "public-typepaths": {
+                "name": "Rutas Públicas",
+                "description": "Expone públicamente las rutas headless /typePath y /typePath/slug basadas en los tipos de contenido."
+            },
+            "google-gemini": {
+                "name": "Asistente de IA",
+                "description": "Potente generación por IA para SEO, asistencia en contenido y llenado automático de campos usando Google Gemini u OpenRouter."
             }
         },
-        "dynamicNav": {
-            "autoMode": "Modo Automático",
-            "autoDescription": "Descubrir automáticamente todos los tipos de contenido.",
-            "manualMode": "Modo Manual",
-            "manualDescription": "Seleccionar manualmente qué tipos incluir.",
-            "navItems": "Items de Navegación",
-            "addCustom": "Añadir ruta personalizada...",
-            "add": "Añadir",
-            "options": "Opciones",
-            "titleCase": "Formatear etiquetas como Title Case (ej. \"Entradas de Blog\")",
-            "autoNotice": "En modo Automático, se utilizan automáticamente todas las rutas de tipo (typePaths) definidas en tus Tipos de Contenido.",
-            "loading": "Cargando rutas de tipo...",
-            "error": "Error al cargar las rutas de tipo",
-            "noTypes": "Aún no hay Tipos de Contenido."
+        "card": {
+            "enabled": "Activado",
+            "disabled": "Desactivado",
+            "configure": "Configurar",
+            "notConfigurable": "No configurable"
         },
-        "gemini": {
-            "provider": "Proveedor de IA",
-            "providerGoogle": "Google App (Gemini)",
-            "providerOpenRouter": "OpenRouter (Multi-modelo)",
-            "googleApiKey": "Llave API de Google AI Studio",
-            "googleApiKeyPlaceholder": "Introduce tu llave API de Gemini",
-            "openRouterApiKey": "Llave API de OpenRouter",
-            "openRouterApiKeyPlaceholder": "Introduce tu llave API de OpenRouter",
-            "instructions": "Puedes obtener una llave API gratuita en",
-            "model": "Modelo",
-            "model3Pro": "Gemini 3 Pro (Preview)",
-            "model3Flash": "Gemini 3 Flash (Preview)",
-            "model25Pro": "Gemini 2.5 Pro",
-            "model25Flash": "Gemini 2.5 Flash",
-            "model25FlashLite": "Gemini 2.5 Flash-Lite",
-            "model20Flash": "Gemini 2.0 Flash (Sujeto a cuota)",
-            "model20FlashLite": "Gemini 2.0 Flash-Lite",
-            "model15Pro": "Gemini 1.5 Pro",
-            "model15Flash": "Gemini 1.5 Flash (Recomendado)",
-            "openRouterModelPlaceholder": "Nombre del modelo ej. openai/gpt-4o",
-            "featuresTitle": "Funciones potenciadas por IA",
-            "featuresDesc": "Una vez configurado, verás un icono de chispa ✨ en los campos de SEO y Slug para generar contenido automáticamente.",
-            "assistant": {
-                "title": "Asistente de IA",
-                "generatingFor": "Generando para",
-                "quickTemplates": "Plantillas Rápidas",
-                "yourPrompt": "Tu Instrucción (Prompt)",
-                "placeholder": "ej. Escribe un titular llamativo sobre sostenibilidad...",
-                "generate": "Generar",
-                "generating": "Generando...",
-                "response": "Respuesta de la IA",
-                "ready": "Listo para aplicar",
-                "cancel": "Cancelar",
-                "apply": "Aplicar Contenido",
-                "templates": {
-                    "blog": "Artículo de Blog",
-                    "story": "Historia Creativa",
-                    "product": "Desc. de Producto",
-                    "summary": "Resumen Corto",
-                    "seo": "Optimizar SEO"
-                },
-                "prompts": {
-                    "blog": "Escribe un artículo de blog profesional y optimizado para SEO (800-1000 palabras) sobre: [TOPIC]. \n\nIMPORTANTE: Devuelve ÚNICAMENTE el contenido en formato HTML limpio. NO incluyas frases de cortesía, introducciones (como \"Por supuesto\"), títulos como \"Autor\", fechas o comentarios meta. Comienza directamente con el primer párrafo o encabezado H1.",
-                    "story": "Escribe una historia creativa e inmersiva (aprox 1000 palabras) sobre: [TOPIC]. \n\nIMPORTANTE: Devuelve ÚNICAMENTE el contenido de la historia. Sin resúmenes, sin comentarios introductorios y sin frases de relleno. Comienza exactamente donde empieza la historia.",
-                    "product": "Escribe una descripción de producto persuasiva y orientada a ventas (500-800 palabras) para: [TOPIC]. \n\nIMPORTANTE: Devuelve ÚNICAMENTE el bloque de descripción. NO incluyas etiquetas como \"Descripción:\", \"Características:\" ni frases de cortesía. Solo contenido limpio.",
-                    "summary": "Escribe un resumen conciso pero profundo (300 palabras) de: [TOPIC]. \n\nIMPORTANTE: Devuelve ÚNICAMENTE el texto del resumen. Sin etiquetas ni frases introductorias.",
-                    "seo": "Reescribe el siguiente tema/contenido para que esté perfectamente optimizado para SEO con una longitud de 800 palabras: [TOPIC]. \n\nIMPORTANTE: Devuelve ÚNICAMENTE el texto optimizado. Sin preámbulos ni explicaciones de lo que hiciste."
+        "config": {
+            "titles": {
+                "s3": "Configurar Almacenamiento S3",
+                "dynamicNav": "Navegación Dinámica",
+                "gemini": "Configurar Asistente de IA",
+                "default": "Configurar Plugin"
+            },
+            "s3": {
+                "bucket": "Nombre del Bucket",
+                "bucketPlaceholder": "ej. mis-assets-cms",
+                "region": "Región",
+                "credentials": "Credenciales AWS",
+                "showSecrets": "Mostrar Secretos",
+                "hideSecrets": "Ocultar Secretos",
+                "accessKey": "ID de Llave de Acceso",
+                "secretKey": "Llave de Acceso Secreta",
+                "secretPlaceholder": "Introduce tu llave secreta",
+                "secretPlaceholderExisting": "••••••••••••••••••••••••",
+                "encryptionMissing": "Falta la Llave de Cifrado",
+                "encryptionDescription": "Debes configurar la variable de entorno ENCRYPTION_KEY (64 caracteres hex) para almacenar credenciales de forma segura. El guardado está desactivado.",
+                "instructions": "Instrucciones de Configuración",
+                "iamNotice": "1. Asegúrate de que tu usuario IAM tenga AmazonS3FullAccess o equivalente.",
+                "corsNotice": "2. Añade la configuración CORS de abajo a los permisos de tu bucket:",
+                "regions": {
+                    "us-east-1": "EE.UU. Este (N. Virginia)",
+                    "us-west-2": "EE.UU. Oeste (Oregon)",
+                    "eu-west-1": "Europa (Irlanda)",
+                    "ap-southeast-1": "Asia Pacífico (Singapur)",
+                    "sa-east-1": "Sudamérica (São Paulo)"
                 }
+            },
+            "dynamicNav": {
+                "autoMode": "Modo Automático",
+                "autoDescription": "Descubrir automáticamente todos los tipos de contenido.",
+                "manualMode": "Modo Manual",
+                "manualDescription": "Seleccionar manualmente qué tipos incluir.",
+                "navItems": "Items de Navegación",
+                "addCustom": "Añadir ruta personalizada...",
+                "add": "Añadir",
+                "options": "Opciones",
+                "titleCase": "Formatear etiquetas como Title Case (ej. \"Entradas de Blog\")",
+                "autoNotice": "En modo Automático, se utilizan automáticamente todas las rutas de tipo (typePaths) definidas en tus Tipos de Contenido.",
+                "loading": "Cargando rutas de tipo...",
+                "error": "Error al cargar las rutas de tipo",
+                "noTypes": "Aún no hay Tipos de Contenido."
+            },
+            "gemini": {
+                "provider": "Proveedor de IA",
+                "providerGoogle": "Google App (Gemini)",
+                "providerOpenRouter": "OpenRouter (Multi-modelo)",
+                "googleApiKey": "Llave API de Google AI Studio",
+                "googleApiKeyPlaceholder": "Introduce tu llave API de Gemini",
+                "openRouterApiKey": "Llave API de OpenRouter",
+                "openRouterApiKeyPlaceholder": "Introduce tu llave API de OpenRouter",
+                "instructions": "Puedes obtener una llave API gratuita en",
+                "model": "Modelo",
+                "model3Pro": "Gemini 3 Pro (Preview)",
+                "model3Flash": "Gemini 3 Flash (Preview)",
+                "model25Pro": "Gemini 2.5 Pro",
+                "model25Flash": "Gemini 2.5 Flash",
+                "model25FlashLite": "Gemini 2.5 Flash-Lite",
+                "model20Flash": "Gemini 2.0 Flash (Sujeto a cuota)",
+                "model20FlashLite": "Gemini 2.0 Flash-Lite",
+                "model15Pro": "Gemini 1.5 Pro",
+                "model15Flash": "Gemini 1.5 Flash (Recomendado)",
+                "openRouterModelPlaceholder": "Nombre del modelo ej. openai/gpt-4o",
+                "featuresTitle": "Funciones potenciadas por IA",
+                "featuresDesc": "Una vez configurado, verás un icono de chispa ✨ en los campos de SEO y Slug para generar contenido automáticamente.",
+                "assistant": {
+                    "title": "Asistente de IA",
+                    "generatingFor": "Generando para",
+                    "quickTemplates": "Plantillas Rápidas",
+                    "yourPrompt": "Tu Instrucción (Prompt)",
+                    "placeholder": "ej. Escribe un titular llamativo sobre sostenibilidad...",
+                    "generate": "Generar",
+                    "generating": "Generando...",
+                    "response": "Respuesta de la IA",
+                    "ready": "Listo para aplicar",
+                    "cancel": "Cancelar",
+                    "apply": "Aplicar Contenido",
+                    "templates": {
+                        "blog": "Artículo de Blog",
+                        "story": "Historia Creativa",
+                        "product": "Desc. de Producto",
+                        "summary": "Resumen Corto",
+                        "seo": "Optimizar SEO"
+                    },
+                    "prompts": {
+                        "blog": "Escribe un artículo de blog profesional y optimizado para SEO (800-1000 palabras) sobre: [TOPIC]. \n\nIMPORTANTE: Devuelve ÚNICAMENTE el contenido en formato HTML limpio. NO incluyas frases de cortesía, introducciones (como \"Por supuesto\"), títulos como \"Autor\", fechas o comentarios meta. Comienza directamente con el primer párrafo o encabezado H1.",
+                        "story": "Escribe una historia creativa e inmersiva (aprox 1000 palabras) sobre: [TOPIC]. \n\nIMPORTANTE: Devuelve ÚNICAMENTE el contenido de la historia. Sin resúmenes, sin comentarios introductorios y sin frases de relleno. Comienza exactamente donde empieza la historia.",
+                        "product": "Escribe una descripción de producto persuasiva y orientada a ventas (500-800 palabras) para: [TOPIC]. \n\nIMPORTANTE: Devuelve ÚNICAMENTE el bloque de descripción. NO incluyas etiquetas como \"Descripción:\", \"Características:\" ni frases de cortesía. Solo contenido limpio.",
+                        "summary": "Escribe un resumen conciso pero profundo (300 palabras) de: [TOPIC]. \n\nIMPORTANTE: Devuelve ÚNICAMENTE el texto del resumen. Sin etiquetas ni frases introductorias.",
+                        "seo": "Reescribe el siguiente tema/contenido para que esté perfectamente optimizado para SEO con una longitud de 800 palabras: [TOPIC]. \n\nIMPORTANTE: Devuelve ÚNICAMENTE el texto optimizado. Sin preámbulos ni explicaciones de lo que hiciste."
+                    }
+                }
+            },
+            "footer": {
+                "cancel": "Cancelar",
+                "save": "Guardar Cambios",
+                "saving": "Guardando..."
             }
-        },
-        "footer": {
-            "cancel": "Cancelar",
-            "save": "Guardar Cambios",
-            "saving": "Guardando..."
         }
     }
 }

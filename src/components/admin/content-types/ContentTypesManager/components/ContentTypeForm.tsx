@@ -84,7 +84,7 @@ export default function ContentTypeForm({
     }
   }, [nameValue, setValue, initialData?.apiIdentifier])
 
-  const applyPreset = (presetType: 'seo-article') => {
+  const applyPreset = (presetType: 'seo-article' | 'seo-blog') => {
     if (presetType === 'seo-article') {
       const seoFields = [
         { id: Math.random().toString(36).slice(2, 9), label: 'Title', apiIdentifier: 'title', type: 'TEXT', isRequired: true },
@@ -108,6 +108,45 @@ export default function ContentTypeForm({
       toast({
         title: 'Preset applied',
         description: 'The SEO Article structure has been loaded.',
+      })
+    } else if (presetType === 'seo-blog') {
+      const blogFields = [
+        // Core Info
+        { id: Math.random().toString(36).slice(2, 9), label: 'Title', apiIdentifier: 'title', type: 'TEXT', isRequired: true },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Slug', apiIdentifier: 'slug', type: 'SLUG', isRequired: true },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Main Image', apiIdentifier: 'mainImage', type: 'MEDIA', isRequired: true }, // Changed to MEDIA
+
+        // Content Block 1 (Intro)
+        { id: Math.random().toString(36).slice(2, 9), label: 'Introduction (Content 1)', apiIdentifier: 'content1', type: 'RICH_TEXT', isRequired: true },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Gallery 1', apiIdentifier: 'image1', type: 'MEDIA', isRequired: false }, // Multiple images handled by mapping later if needed, but MEDIA type supports it
+
+        // Content Block 2 (Deep Dive)
+        { id: Math.random().toString(36).slice(2, 9), label: 'Deep Dive (Content 2)', apiIdentifier: 'content2', type: 'RICH_TEXT', isRequired: false },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Gallery 2', apiIdentifier: 'image2', type: 'MEDIA', isRequired: false },
+
+        // Content Block 3 (Conclusion)
+        { id: Math.random().toString(36).slice(2, 9), label: 'Conclusion (Content 3)', apiIdentifier: 'content3', type: 'RICH_TEXT', isRequired: false },
+
+        // Extra
+        { id: Math.random().toString(36).slice(2, 9), label: 'Video URL', apiIdentifier: 'videoUrl', type: 'TEXT', isRequired: false },
+
+        // Standard SEO & Metadata
+        { id: Math.random().toString(36).slice(2, 9), label: 'Meta Title', apiIdentifier: 'metaTitle', type: 'TEXT', isRequired: false },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Meta Description', apiIdentifier: 'metaDescription', type: 'TEXT', isRequired: false },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Category', apiIdentifier: 'category', type: 'TEXT', isRequired: false },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Tags', apiIdentifier: 'tags', type: 'TEXT', isRequired: false },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Publish Date', apiIdentifier: 'publishDate', type: 'DATE', isRequired: false },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Updated Date', apiIdentifier: 'updatedDate', type: 'DATE', isRequired: false },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Is Published', apiIdentifier: 'isPublished', type: 'BOOLEAN', isRequired: false },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Canonical URL', apiIdentifier: 'canonicalUrl', type: 'TEXT', isRequired: false },
+      ]
+
+      setValue('fields', blogFields as any, { shouldDirty: true, shouldValidate: true })
+      setValue('name', 'SEO Blog', { shouldDirty: true, shouldValidate: true })
+
+      toast({
+        title: 'Preset applied',
+        description: 'The SEO Blog structure has been loaded.',
       })
     }
   }
@@ -285,6 +324,22 @@ export default function ContentTypeForm({
                       <span className="block font-bold text-sm tracking-tight mb-0.5">{t('seoArticle')}</span>
                       <p className="text-[10px] text-zinc-500 group-hover:text-zinc-400 leading-normal font-medium">
                         {t('seoArticleDesc')}
+                      </p>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => applyPreset('seo-blog')}
+                    className="w-full flex items-start p-4 rounded-2xl border border-zinc-100 bg-zinc-50/50 hover:bg-zinc-900 hover:text-white group transition-all duration-300 text-left"
+                  >
+                    <div className="mr-3 mt-0.5 p-2 bg-white rounded-xl text-zinc-400 group-hover:bg-white/10 group-hover:text-white transition-colors">
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <span className="block font-bold text-sm tracking-tight mb-0.5">{t('seoBlog')}</span>
+                      <p className="text-[10px] text-zinc-500 group-hover:text-zinc-400 leading-normal font-medium">
+                        {t('seoBlogDesc')}
                       </p>
                     </div>
                   </button>
