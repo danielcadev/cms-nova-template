@@ -81,7 +81,8 @@ export async function PUT(
       return NextResponse.json({ error: 'Slug is required' }, { status: 400 })
     }
 
-    // Unique slug check within this content type (excluding current entry) using the new column
+    // Check for existing slug (excluding current entry)
+    let finalSlug = entrySlug
     const slugExists = await prisma.contentEntry.findFirst({
       where: {
         id: { not: id },
@@ -89,8 +90,15 @@ export async function PUT(
         slug: entrySlug,
       },
     })
+
     if (slugExists) {
-      return NextResponse.json({ error: 'Slug already exists' }, { status: 400 })
+      // If updating a draft, auto-resolve collision by appending timestamp suffix
+      // This mirrors the behavior in POST/create to ensure autosaves or draft updates never fail due to collision
+      if (!newStatus || newStatus === 'draft') {
+        finalSlug = `${entrySlug}-${Date.now().toString().slice(-6)}`
+      } else {
+        return NextResponse.json({ error: 'Slug already exists' }, { status: 400 })
+      }
     }
 
     // Determine publishedAt
@@ -106,7 +114,7 @@ export async function PUT(
       where: { id },
       data: {
         status: newStatus || 'draft',
-        slug: entrySlug,
+        slug: finalSlug,
         title: entryTitle || existingEntry.title,
         seoOptions: seoOptions || existingEntry.seoOptions,
         isFeatured: isFeatured !== undefined ? !!isFeatured : existingEntry.isFeatured,

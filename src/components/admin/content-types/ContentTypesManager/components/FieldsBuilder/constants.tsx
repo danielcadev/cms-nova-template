@@ -1,13 +1,16 @@
 import React from 'react'
-import { Calendar, Hash, ImageIcon, Link2, Pilcrow, Text, ToggleRight } from 'lucide-react'
+import { Calendar, Hash, ImageIcon, Link2, Pilcrow, Text, ToggleRight, List } from 'lucide-react'
 import * as z from 'zod'
 
 // Schema para validar campos
 export const fieldSchema = z.object({
-  type: z.enum(['TEXT', 'RICH_TEXT', 'NUMBER', 'BOOLEAN', 'DATE', 'MEDIA', 'SLUG']),
+  type: z.enum(['TEXT', 'RICH_TEXT', 'NUMBER', 'BOOLEAN', 'DATE', 'MEDIA', 'SLUG', 'SELECT']),
   label: z.string(),
   apiIdentifier: z.string(),
   isRequired: z.boolean().default(false),
+  isList: z.boolean().default(false).optional(),
+  slugRoute: z.string().optional(),
+  options: z.string().optional(), // For SELECT fields (comma separated)
 })
 
 export const fieldTypes: {
@@ -65,5 +68,12 @@ export const fieldTypes: {
       descKey: 'fieldTypes.slugDesc',
       icon: <Link2 className="h-5 w-5" />,
       color: 'from-amber-500 to-amber-600',
+    },
+    {
+      type: 'SELECT',
+      labelKey: 'fieldTypes.select',
+      descKey: 'fieldTypes.selectDesc',
+      icon: <List className="h-5 w-5" />,
+      color: 'from-cyan-500 to-cyan-600',
     },
   ]

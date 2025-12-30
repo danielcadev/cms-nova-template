@@ -13,6 +13,7 @@ import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { AdminLoading } from '../AdminLoading'
+import { TemplateHeader } from '@/components/admin/shared/TemplateHeader'
 import { TemplateCard } from './TemplateCard'
 import { useTemplatesPage } from './useTemplatesPage'
 

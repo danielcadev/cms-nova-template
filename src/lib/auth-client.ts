@@ -25,5 +25,5 @@ export const authClient = createAuthClient({
 
 // Debug info para verificar la URL en uso
 if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-  console.log('🔗 Auth Client Base URL:', baseURL)
+  // Debug log removed
 }

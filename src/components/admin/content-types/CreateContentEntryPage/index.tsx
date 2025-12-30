@@ -1,15 +1,17 @@
 'use client'
 
-import { TemplateHeader } from '@/components/admin/dashboard/TemplatesPage/TemplateHeader'
+import { useTranslations } from 'next-intl'
+import { TemplateHeader } from '@/components/admin/shared/TemplateHeader'
 import { Button } from '@/components/ui/button'
 import { DynamicFieldRenderer } from '../DynamicFieldRenderer'
 import type { CreateContentEntryPageProps } from './data'
 import { useCreateContentEntry } from './useCreateContentEntry'
 import { PremiumLoading } from '@/components/admin/dashboard/PremiumLoading'
-import { Save, Eye } from 'lucide-react'
+import { Save, Eye, Loader2 } from 'lucide-react'
 import { AIPromptModal } from '../AIPromptModal'
 
 export function CreateContentEntryPage({ contentType }: CreateContentEntryPageProps) {
+  const t = useTranslations('createEntry')
   const { state, ids, fields, actions } = useCreateContentEntry(contentType)
   const { formData, status, isSaving, mounted, isFormValid, slug, aiModal } = state
   const { statusId, getFieldId } = ids
@@ -29,37 +31,38 @@ export function CreateContentEntryPage({ contentType }: CreateContentEntryPagePr
     handleAIApply,
   } = actions
 
+
   if (state.isCreatingDraft) {
     return (
       <PremiumLoading
-        title={`Creating ${contentType.name}...`}
-        subtitle="Setting up your new content entry draft."
+        title={t('loadingTitle', { name: contentType.name })}
+        subtitle={t('loadingSubtitle')}
       />
     )
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50/50 pb-20">
+    <div className="min-h-screen bg-white pb-20">
       <TemplateHeader
-        title={`Create ${contentType.name}`}
-        subtitle="Fill in the fields to create a new entry."
+        title={t('createTitle', { name: contentType.name })}
+        subtitle={t('createSubtitle')}
         backHref={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content`}
         status={status}
         onStatusChange={setStatus}
         statusOptions={{
-          draft: 'Draft',
-          published: 'Published',
-          archived: 'Archived'
+          draft: t('statusOptions.draft'),
+          published: t('statusOptions.published'),
+          archived: t('statusOptions.archived')
         }}
         rightActions={
           <>
             <Button
               onClick={() => handleSave(status)}
-              disabled={isSaving || !isFormValid}
+              disabled={isSaving || state.isCreatingDraft || !isFormValid}
               className="bg-zinc-900 text-white hover:bg-zinc-800 rounded-xl"
             >
-              <Save className="h-4 w-4 mr-2" />
-              {isSaving ? 'Saving...' : 'Save'}
+              {(isSaving || state.isCreatingDraft) ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+              {isSaving || state.isCreatingDraft ? t('saving') : t('saveDraft')}
             </Button>
             <Button
               variant="outline"
@@ -68,7 +71,7 @@ export function CreateContentEntryPage({ contentType }: CreateContentEntryPagePr
               className="rounded-xl"
             >
               <Eye className="h-4 w-4 mr-2" />
-              View
+              {t('view')}
             </Button>
           </>
         }

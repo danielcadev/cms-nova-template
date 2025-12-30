@@ -4,6 +4,7 @@ export interface Field {
     apiIdentifier: string
     type: string
     isRequired: boolean
+    metadata?: any
 }
 
 export interface ContentType {
@@ -16,8 +17,15 @@ export interface ContentType {
 
 export interface ContentEntry {
     id: string
-    data: any
+    title: string
+    slug: string
+    seoOptions?: any
     status: string
+    isFeatured: boolean
+    category?: string | null
+    tags: string[]
+    publishedAt?: string | null
+    data: any
     createdAt: string
     updatedAt: string
     contentType: ContentType

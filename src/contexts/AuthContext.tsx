@@ -53,11 +53,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Check if user has admin permissions
         try {
           const adminCheck = await authClient.admin.listUsers({ query: { limit: 1 } })
-          console.log('👑 Admin check result:', adminCheck)
           setUser(session.data?.user || null)
           setIsAuthenticated(true)
         } catch (adminError) {
-          console.log('❌ User does not have admin permissions:', adminError)
           setUser(null)
           setIsAuthenticated(false)
           return false
@@ -67,7 +65,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsAuthenticated(false)
       }
 
-      console.log('👤 Session check:', { hasUser, user: session.data?.user })
       return hasUser
     } catch (_error) {
       setUser(null)
@@ -102,7 +99,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!formData.email || !formData.password) throw new Error('Please fill in all fields')
         if (!formData.email.includes('@')) throw new Error('Please enter a valid email')
 
-        console.log('🔐 Attempting sign in with:', { email: formData.email })
 
         // Intentar directamente sign in (usuarios deben crearse desde /admin/users)
 
@@ -111,7 +107,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           password: formData.password,
         })) as BetterAuthResponse<UserResponse>
 
-        console.log('📥 Sign in response:', signInResponse)
         if (signInResponse.error)
           throw new Error(signInResponse.error.message || 'Failed to sign in')
 

@@ -41,7 +41,7 @@ import {
   experienceSchema,
 } from '@/schemas/experience'
 import { getExperienceMediaFolder } from '@/utils/experience-media'
-import { TemplateHeader } from '@/components/admin/dashboard/TemplatesPage/TemplateHeader'
+import { TemplateHeader } from '@/components/admin/shared/TemplateHeader'
 
 interface ExperienceFormProps {
   mode?: 'create' | 'edit'

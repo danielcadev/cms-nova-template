@@ -30,9 +30,9 @@ function getDynamicRoutes(dir: string, baseRoute = ''): string[] {
                 continue
             }
 
-            // If this directory is [slug] or similar, the parent is a sluggable route
+            // If this directory is [slug] or similar, include it as a valid entry route
             if (item.name.startsWith('[') && item.name.endsWith(']')) {
-                results.push(baseRoute || '/')
+                results.push(currentRoute)
             }
 
             results.push(...getDynamicRoutes(fullPath, currentRoute))

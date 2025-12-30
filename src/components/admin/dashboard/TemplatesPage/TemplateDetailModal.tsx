@@ -4,6 +4,7 @@ import { AlertCircle, Calendar, CheckCircle, Clock, Copy, Edit, Tag, Trash2, X }
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { TemplateHeader } from '@/components/admin/shared/TemplateHeader'
 import type { Template } from './index'
 
 interface TemplateDetailModalProps {

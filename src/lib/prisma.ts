@@ -15,7 +15,6 @@ const createPrismaClient = () => {
   const adapter = new PrismaPg(pool)
   return new PrismaClient({
     adapter,
-    log: ['query'],
   })
 }
 

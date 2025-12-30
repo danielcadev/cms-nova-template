@@ -63,7 +63,10 @@ export const ModelName = {
   Asset: 'Asset',
   ContentType: 'ContentType',
   Field: 'Field',
-  ContentEntry: 'ContentEntry'
+  ContentEntry: 'ContentEntry',
+  Region: 'Region',
+  SubRegion: 'SubRegion',
+  Zone: 'Zone'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -302,6 +305,38 @@ export const ContentEntryScalarFieldEnum = {
 } as const
 
 export type ContentEntryScalarFieldEnum = (typeof ContentEntryScalarFieldEnum)[keyof typeof ContentEntryScalarFieldEnum]
+
+
+export const RegionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RegionScalarFieldEnum = (typeof RegionScalarFieldEnum)[keyof typeof RegionScalarFieldEnum]
+
+
+export const SubRegionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  regionId: 'regionId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SubRegionScalarFieldEnum = (typeof SubRegionScalarFieldEnum)[keyof typeof SubRegionScalarFieldEnum]
+
+
+export const ZoneScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  subRegionId: 'subRegionId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ZoneScalarFieldEnum = (typeof ZoneScalarFieldEnum)[keyof typeof ZoneScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -2,7 +2,7 @@
 
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, Link2, RefreshCw, Trash2 } from 'lucide-react'
+import { GripVertical, Link2, RefreshCw, Trash2, List } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
@@ -34,12 +34,8 @@ export function SortableFieldRow({ field, index, remove }: SortableFieldRowProps
   const [routes, setRoutes] = useState<{ value: string; label: string }[]>([])
   const [loadingRoutes, setLoadingRoutes] = useState(false)
 
-  useEffect(() => {
-    if (labelValue) setValue(`fields.${index}.apiIdentifier`, toCamelCase(labelValue))
-  }, [labelValue, index, setValue])
-
-  const fetchRoutes = async () => {
-    setLoadingRoutes(true)
+  const fetchRoutes = async (silent = false) => {
+    if (!silent) setLoadingRoutes(true)
     try {
       const response = await fetch('/api/admin/system/routes')
       const data = await response.json()
@@ -49,11 +45,23 @@ export function SortableFieldRow({ field, index, remove }: SortableFieldRowProps
     } catch (error) {
       console.error('Error fetching routes:', error)
     } finally {
-      setLoadingRoutes(false)
+      if (!silent) setLoadingRoutes(false)
     }
   }
 
   const fieldTypeInfo = fieldTypes.find((ft) => ft.type === field.type)
+  const slugRouteValue = useWatch({ control, name: `fields.${index}.slugRoute` })
+
+  useEffect(() => {
+    // Auto-fetch routes if a value is already selected so the label appears correctly
+    if (fieldTypeInfo?.type === 'SLUG' && slugRouteValue) {
+      fetchRoutes(true)
+    }
+  }, [fieldTypeInfo?.type, slugRouteValue])
+
+  useEffect(() => {
+    if (labelValue) setValue(`fields.${index}.apiIdentifier`, toCamelCase(labelValue))
+  }, [labelValue, index, setValue])
 
   return (
     <div ref={setNodeRef} style={style} className="group">
@@ -80,11 +88,15 @@ export function SortableFieldRow({ field, index, remove }: SortableFieldRowProps
             {/* Header with type and actions */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {fieldTypeInfo ? t(fieldTypeInfo.labelKey) : field.type}
+                <span className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                  {labelValue || field.label || 'Untitled'}
                 </span>
-                <span className="text-xs text-gray-500 dark:text-gray-400 font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
-                  {field.apiIdentifier}
+                <span className="text-xs text-gray-500 dark:text-gray-400 font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded flex items-center gap-2">
+                  <span className="font-semibold text-gray-400 uppercase tracking-wider text-[10px]">
+                    {fieldTypeInfo ? t(fieldTypeInfo.labelKey) : field.type}
+                  </span>
+                  <span className="w-px h-3 bg-gray-300 dark:bg-gray-600"></span>
+                  <span>{field.apiIdentifier}</span>
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -149,7 +161,7 @@ export function SortableFieldRow({ field, index, remove }: SortableFieldRowProps
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={fetchRoutes}
+                    onClick={() => fetchRoutes()}
                     disabled={loadingRoutes}
                     className="h-8 px-3 text-xs font-medium"
                   >
@@ -180,7 +192,7 @@ export function SortableFieldRow({ field, index, remove }: SortableFieldRowProps
                           ) : (
                             routes.map((route) => (
                               <SelectItem key={route.value} value={route.value} className="font-mono text-sm">
-                                {route.label}
+                                {route.value}
                               </SelectItem>
                             ))
                           )}

@@ -10,7 +10,7 @@ interface RichTextFieldProps {
   onAutoGenerate?: () => void
 }
 
-export default function RichTextField({
+export function RichTextField({
   value,
   onChange,
   placeholder,

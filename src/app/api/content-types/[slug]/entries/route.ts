@@ -64,6 +64,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     // Check if slug already exists using the new column
+    let finalSlug = entrySlug
     const existingEntry = await prisma.contentEntry.findFirst({
       where: {
         contentTypeId: contentType.id,
@@ -72,14 +73,21 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     })
 
     if (existingEntry) {
-      return NextResponse.json({ error: 'Slug already exists' }, { status: 400 })
+      if (!status || status === 'draft') {
+        finalSlug = `${entrySlug}-${Date.now().toString().slice(-6)}`
+      } else {
+        return NextResponse.json({ error: 'Slug already exists' }, { status: 400 })
+      }
     }
+
+    // Check if new finalSlug also collides (unlikely with timestamp but good practice? No, timestamp is enough for now)
 
     // Create the entry with dedicated columns
     const entry = await prisma.contentEntry.create({
       data: {
         status: status || 'draft',
-        slug: entrySlug,
+        slug: finalSlug,
+
         title: entryTitle,
         seoOptions: seoOptions || {},
         isFeatured: !!isFeatured,

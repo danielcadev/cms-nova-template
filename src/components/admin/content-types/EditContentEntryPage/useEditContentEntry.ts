@@ -1,12 +1,69 @@
 'use client'
 
-import { useId, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useState, useId } from 'react'
 import { useRouter } from 'next/navigation'
 import slugify from 'slugify'
+import { useToast } from "@/hooks/use-toast"
 import type { ContentEntry } from './data'
 
 export function useEditContentEntry(entry: ContentEntry) {
-    const [formData, setFormData] = useState<Record<string, any>>(entry.data || {})
+    const { toast } = useToast()
+
+    // Field Definitions - Moved up to use for defaultValues
+    const titleField = entry.contentType.fields.find((f) => f.apiIdentifier === 'title' || f.apiIdentifier === 'name' || f.apiIdentifier === 'headline' || f.apiIdentifier === 'titulo' || f.apiIdentifier === 'nombre')
+    const imageField = entry.contentType.fields.find((f) => f.type === 'MEDIA' && (f.apiIdentifier === 'mainImage' || f.apiIdentifier === 'image' || f.apiIdentifier === 'cover' || f.apiIdentifier === 'featuredImage' || f.apiIdentifier === 'imagen'))
+    const slugField = entry.contentType.fields.find((f) => f.type === 'SLUG')
+
+    // SEO Fields
+    const metaTitleField = entry.contentType.fields.find((f) => f.apiIdentifier === 'metaTitle' || f.apiIdentifier === 'seoTitle' || f.apiIdentifier === 'meta_title')
+    const metaDescriptionField = entry.contentType.fields.find((f) => f.apiIdentifier === 'metaDescription' || f.apiIdentifier === 'seoDescription' || f.apiIdentifier === 'meta_description')
+    const imageAltField = entry.contentType.fields.find((f) => f.apiIdentifier === 'imageAlt' || f.apiIdentifier === 'altText' || f.apiIdentifier === 'alt_text')
+    const tagsField = entry.contentType.fields.find((f) => f.apiIdentifier === 'tags' || f.apiIdentifier === 'keywords')
+
+    const form = useForm({
+        defaultValues: {
+            ...(entry.data || {}),
+            // Map specialized columns back to form fields
+            ...(titleField ? { [titleField.apiIdentifier]: entry.title } : {}),
+            ...(slugField ? { [slugField.apiIdentifier]: entry.slug } : {}),
+            ...(metaTitleField && entry.seoOptions ? { [metaTitleField.apiIdentifier]: (entry.seoOptions as any).metaTitle } : {}),
+            ...(metaDescriptionField && entry.seoOptions ? { [metaDescriptionField.apiIdentifier]: (entry.seoOptions as any).metaDescription } : {}),
+            ...(imageAltField && entry.seoOptions ? { [imageAltField.apiIdentifier]: (entry.seoOptions as any).imageAlt } : {}),
+            ...(tagsField ? { [tagsField.apiIdentifier]: (Array.isArray(entry.tags) ? entry.tags.join(', ') : entry.tags) } : {}),
+            // If category matches a field, map it back
+            ...((() => {
+                const catField = entry.contentType.fields.find(f => f.apiIdentifier === 'category' || f.apiIdentifier === 'categoria')
+                return catField ? { [catField.apiIdentifier]: entry.category } : {}
+            })())
+        },
+        mode: 'onChange'
+    })
+    const { watch, setValue, getValues } = form
+
+    // Watch all fields to keep compatibility with existing code relying on formData
+    const formData = watch()
+
+    // NEW: Manual validation check for required fields
+    const isFormValid = (() => {
+        // Find all required fields in the content type
+        const requiredFields = entry.contentType.fields.filter(f => f.isRequired)
+
+        return requiredFields.every(field => {
+            const val = formData[field.apiIdentifier]
+
+            // Check based on field type if needed, but generally non-empty string/object
+            if (val === undefined || val === null || val === '') return false
+
+            // Special check for MEDIA (must have a URL)
+            if (field.type === 'MEDIA') {
+                return !!(val as any)?.url
+            }
+
+            return true
+        })
+    })()
+
     const [status, setStatus] = useState(entry.status)
     const [legacySlug, setLegacySlug] = useState<string>(() => String((entry as any).slug || ''))
     const [typePath, setTypePath] = useState<string>(() =>
@@ -15,13 +72,7 @@ export function useEditContentEntry(entry: ContentEntry) {
     const [isSaving, setIsSaving] = useState(false)
     const [isDeleting, setIsDeleting] = useState(false)
 
-    // AI Modal State
-    const [aiModal, setAiModal] = useState<{
-        isOpen: boolean
-        fieldId: string
-        fieldLabel: string
-        initialPrompt: string
-    }>({
+    const [aiModal, setAiModal] = useState({
         isOpen: false,
         fieldId: '',
         fieldLabel: '',
@@ -29,59 +80,62 @@ export function useEditContentEntry(entry: ContentEntry) {
     })
 
     const router = useRouter()
-
     const statusId = useId()
     const getFieldId = (fieldId: string) => `field-${fieldId}`
 
-    const titleField = entry.contentType.fields.find(
-        (f) =>
-            (f.type === 'TEXT' || f.type === 'RICH_TEXT') &&
-            (/(title|titulo|headline|heading)/i.test(f.apiIdentifier) ||
-                /(title|t[íi]tulo|titulo|headline|heading)/i.test(f.label)),
-    )
-    const imageField = entry.contentType.fields.find(
-        (f) =>
-            f.type === 'MEDIA' &&
-            (/(mainimage|image|imagen|cover|thumbnail|featured)/i.test(f.apiIdentifier) ||
-                /(imagen|image|cover|thumbnail|principal|destacada)/i.test(f.label)),
-    )
-    const slugField = entry.contentType.fields.find((f) => f.type === 'SLUG')
-
-    // SEO/Specialized Fields Detection
-    const metaTitleField = entry.contentType.fields.find(
-        (f) => f.type === 'TEXT' && /(metaTitle|meta_title|seoTitle|seo_title)/i.test(f.apiIdentifier),
-    )
-    const metaDescriptionField = entry.contentType.fields.find(
-        (f) => (f.type === 'TEXT' || f.type === 'RICH_TEXT') && /(metaDescription|meta_description|seoDescription|seo_desc)/i.test(f.apiIdentifier),
-    )
-    const imageAltField = entry.contentType.fields.find(
-        (f) => f.type === 'TEXT' && /(altText|imageAlt|alt_text|alt)/i.test(f.apiIdentifier),
-    )
-    const tagsField = entry.contentType.fields.find(
-        (f) => (f.type === 'TEXT' || f.type === 'RICH_TEXT') && /(tags|etiquetas|tag)/i.test(f.apiIdentifier),
-    )
+    // Rest of helper functions...
 
     const getPayload = () => {
-        const payload: Record<string, any> = { ...formData, typePath }
+        // Use the current watched values (formData) to construct the payload
+        const payload: any = { ...formData }
 
+        // Ensure slug is present
         if (slugField) {
-            payload.slug = formData[slugField.apiIdentifier]
+            if (!payload[slugField.apiIdentifier]) {
+                payload[slugField.apiIdentifier] = entry.slug || legacySlug
+            }
+            payload.slug = payload[slugField.apiIdentifier]
         } else {
             payload.slug = legacySlug
         }
 
+        // Normalize Title
         if (titleField) {
             payload.title = formData[titleField.apiIdentifier]
+        }
+
+        // Normalize SEO Options
+        const seo: any = {}
+        if (metaTitleField) seo.metaTitle = formData[metaTitleField.apiIdentifier]
+        if (metaDescriptionField) seo.metaDescription = formData[metaDescriptionField.apiIdentifier]
+        if (imageAltField) seo.imageAlt = formData[imageAltField.apiIdentifier]
+        if (Object.keys(seo).length > 0) {
+            payload.seoOptions = seo
+        }
+
+        // Normalize Tags
+        if (tagsField) {
+            const tagVal = formData[tagsField.apiIdentifier]
+            payload.tags = typeof tagVal === 'string'
+                ? tagVal.split(',').map((t: string) => t.trim()).filter((t: string) => t.length > 0)
+                : tagVal
+        }
+
+        // Normalize Category
+        const catField = entry.contentType.fields.find(f => f.apiIdentifier === 'category' || f.apiIdentifier === 'categoria')
+        if (catField) {
+            payload.category = formData[catField.apiIdentifier]
         }
 
         return payload
     }
 
     const handleFieldChange = (fieldId: string, value: any) => {
-        setFormData((prev) => ({
-            ...prev,
-            [fieldId]: value,
-        }))
+        setValue(fieldId, value, {
+            shouldDirty: true,
+            shouldValidate: true,
+            shouldTouch: true
+        })
     }
 
     // Helper for AI generation
@@ -176,9 +230,16 @@ export function useEditContentEntry(entry: ContentEntry) {
             if (!response.ok) {
                 throw new Error('Error updating entry')
             }
+            toast.success({
+                title: "Entry updated",
+                description: "Changes have been saved successfully.",
+            })
         } catch (error) {
             console.error('Error updating entry:', error)
-            alert('Error updating entry')
+            toast.error({
+                title: "Error",
+                description: "Failed to update entry. Please try again.",
+            })
         } finally {
             setIsSaving(false)
         }
@@ -208,19 +269,13 @@ export function useEditContentEntry(entry: ContentEntry) {
         }
     }
 
-    const validateForm = () => {
-        const requiredFields = entry.contentType.fields.filter((field) => field.isRequired)
-        return requiredFields.every((field) => {
-            const value = formData[field.apiIdentifier]
-            return value !== undefined && value !== null && value !== ''
-        })
-    }
-
-    const isFormValid = validateForm()
+    // const isFormValid = validateForm() // replaced by formState.isValid
     const currentSlug = slugField ? formData[slugField.apiIdentifier] : legacySlug
 
     const handlePublishAndView = async () => {
-        if (!currentSlug) return
+        const payload = getPayload()
+        if (!payload.slug) return
+
         setIsSaving(true)
         try {
             const response = await fetch(
@@ -228,18 +283,61 @@ export function useEditContentEntry(entry: ContentEntry) {
                 {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: { ...getPayload() }, status: 'published' }),
+                    body: JSON.stringify({ data: payload, status: 'published' }),
                 },
             )
+
             if (response.ok) {
-                const target = `/${typePath || entry.contentType.apiIdentifier}/${currentSlug}`
+                const updatedEntry = await response.json()
+                const finalSlug = updatedEntry.slug
+
+                // Sync local state
+                if (slugField) {
+                    handleFieldChange(slugField.apiIdentifier, finalSlug)
+                } else {
+                    setLegacySlug(finalSlug)
+                }
+
+                // Determine the correct route segment
+                const slugRoute = (slugField?.metadata as any)?.slugRoute
+                let routeSegment = slugRoute || typePath || entry.contentType.apiIdentifier
+
+                // Interpolate dynamic segments
+                if (routeSegment && routeSegment.includes('[')) {
+                    routeSegment = routeSegment.split('/').map((segment: string) => {
+                        if (segment.startsWith('[') && segment.endsWith(']')) {
+                            const paramKey = segment.slice(1, -1)
+                            // Skip slug/currentField as they are handled at the end
+                            if (paramKey === 'slug' || paramKey === '...slug' || paramKey === slugField?.apiIdentifier) {
+                                return ''
+                            }
+                            const value = formData[paramKey] || entry.data?.[paramKey] || 'undefined'
+                            return slugify(String(value), { lower: true, strict: true })
+                        }
+                        return segment
+                    }).filter(Boolean).join('/')
+                }
+
+                // Construct target URL
+                // If routeSegment already includes the slug placeholder, it will have been cleared or needs replacement
+                // Let's be smart: if routeSegment is "Regiones/x/y/z", it becomes "/Regiones/x/y/z/slug"
+                const target = `/${routeSegment}/${finalSlug}`.replace(/\/+/g, '/')
+
+                toast.success({
+                    title: "Entry published",
+                    description: `Opening live view: ${target}`,
+                })
+
                 window.open(target, '_blank')
             } else {
                 throw new Error('Error publishing entry')
             }
         } catch (error) {
             console.error('Error publishing entry:', error)
-            alert('Error publishing entry')
+            toast.error({
+                title: "Error",
+                description: "Failed to publish entry.",
+            })
         } finally {
             setIsSaving(false)
         }
@@ -288,6 +386,7 @@ export function useEditContentEntry(entry: ContentEntry) {
             isDeleting,
             isFormValid,
             aiModal,
+            form,
         },
         ids: {
             statusId,

@@ -12,6 +12,14 @@ async function getContentType(slug: string) {
     return {
       ...contentType,
       description: contentType.description ?? undefined,
+      fields: contentType.fields.map((field) => ({
+        ...field,
+        slugRoute: (field.metadata as any)?.slugRoute,
+        isList: (field.metadata as any)?.isList,
+        options: Array.isArray((field.metadata as any)?.options)
+          ? ((field.metadata as any).options as string[]).join(', ')
+          : undefined,
+      })),
       createdAt: contentType.createdAt.toISOString(),
       updatedAt: contentType.updatedAt.toISOString(),
     }

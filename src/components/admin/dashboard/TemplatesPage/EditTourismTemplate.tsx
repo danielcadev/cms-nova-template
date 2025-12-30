@@ -20,7 +20,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
 import { ConfirmationModal } from '@/components/ui/ConfirmationModal'
 import { useConfirmation } from '@/hooks/useConfirmation'
-import { TemplateHeader } from './TemplateHeader'
+import { TemplateHeader } from '@/components/admin/shared/TemplateHeader'
 
 interface TourismTemplate {
   id: string

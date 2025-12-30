@@ -104,3 +104,18 @@ export type Field = Prisma.FieldModel
  * 
  */
 export type ContentEntry = Prisma.ContentEntryModel
+/**
+ * Model Region
+ * 
+ */
+export type Region = Prisma.RegionModel
+/**
+ * Model SubRegion
+ * 
+ */
+export type SubRegion = Prisma.SubRegionModel
+/**
+ * Model Zone
+ * 
+ */
+export type Zone = Prisma.ZoneModel

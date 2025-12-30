@@ -16,7 +16,8 @@ export const FieldType = {
   BOOLEAN: 'BOOLEAN',
   DATE: 'DATE',
   MEDIA: 'MEDIA',
-  SLUG: 'SLUG'
+  SLUG: 'SLUG',
+  SELECT: 'SELECT'
 } as const
 
 export type FieldType = (typeof FieldType)[keyof typeof FieldType]

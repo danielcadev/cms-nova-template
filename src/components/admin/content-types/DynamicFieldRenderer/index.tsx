@@ -1,17 +1,35 @@
 'use client'
 
-import { AlertCircle, Image as ImageIcon, Settings, X } from 'lucide-react'
-import Image from 'next/image'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
-import { NumberField } from '@/components/admin/content-types/fields/NumberField'
-import RichTextField from '@/components/admin/content-types/fields/RichTextField'
-import { TextField } from '@/components/admin/content-types/fields/TextField'
-import { SlugField } from '@/components/admin/content-types/fields/SlugField'
+import Image from 'next/image'
+import { useFormContext } from 'react-hook-form'
+
+import type { Field } from '../EditContentEntryPage/data'
+import { AlertCircle, Image as ImageIcon, Settings, X } from 'lucide-react'
+
 import { Switch } from '@/components/ui/switch'
+import { Combobox } from '@/components/ui/combobox'
 import { ThemedButton } from '@/components/ui/ThemedButton'
+
+import { TextField } from '../fields/TextField'
+import { RichTextField } from '../fields/RichTextField'
+import { NumberField } from '../fields/NumberField'
+import { SlugField } from '../fields/SlugField'
+
 import { ImageDropZone } from './ImageDropZone'
-import type { DynamicFieldRendererProps } from './data'
+import { SmartSlugRenderer } from './SmartSlugRenderer'
+import { useTranslations } from 'next-intl'
+
+export interface DynamicFieldRendererProps {
+  field: Field
+  value: any
+  onChange: (value: any) => void
+  variant?: 'default' | 'compact'
+  fieldId?: string
+  onAutoGenerate?: () => void
+  allFields?: Field[] // New prop
+}
 
 export function DynamicFieldRenderer({
   field,
@@ -20,27 +38,36 @@ export function DynamicFieldRenderer({
   variant = 'default',
   fieldId,
   onAutoGenerate,
+  allFields, // Destructure
 }: DynamicFieldRendererProps) {
+  const t = useTranslations('dynamicFields')
+
   // Translate common Spanish labels to English for display only
   const normalizeLabel = (label: string): string => {
     const l = (label || '')
       .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
-    const rules: { re: RegExp; out: string }[] = [
-      { re: /(titulo del post|titulo de la entrada|post title)/, out: 'Post title' },
-      { re: /(titulo|headline|heading)/, out: 'Title' },
-      { re: /(imagen principal|main image|cover image)/, out: 'Main image' },
-      { re: /(imagen destacada|featured image|thumbnail)/, out: 'Featured image' },
-      { re: /(imagen|image|foto|photo)/, out: 'Image' },
-      { re: /(descripcion|description)/, out: 'Description' },
-      { re: /(contenido|content)/, out: 'Content' },
-      { re: /(fecha|date)/, out: 'Date' },
-      { re: /(autor|author)/, out: 'Author' },
-      { re: /(categoria|categor[ií]a|category)/, out: 'Category' },
-      { re: /(etiquetas|tags|tag)/, out: 'Tags' },
-    ]
-    for (const r of rules) if (r.re.test(l)) return r.out
+
+    // Check our translations for a match
+    const mapping: Record<string, string> = {
+      '(titulo del post|titulo de la entrada|post title)': t('labels.postTitle'),
+      '(titulo|headline|heading)': t('labels.title'),
+      '(imagen principal|main image|cover image)': t('labels.mainImage'),
+      '(imagen destacada|featured image|thumbnail)': t('labels.featuredImage'),
+      '(imagen|image|foto|photo)': t('labels.image'),
+      '(descripcion|description)': t('labels.description'),
+      '(contenido|content)': t('labels.content'),
+      '(fecha|date)': t('labels.date'),
+      '(autor|author)': t('labels.author'),
+      '(categoria|categor[ií]a|category)': t('labels.category'),
+      '(etiquetas|tags|tag)': t('labels.tags'),
+    }
+
+    for (const [pattern, translated] of Object.entries(mapping)) {
+      if (new RegExp(pattern, 'i').test(l)) return translated
+    }
+
     return label
   }
   const [isUploading, setIsUploading] = useState(false)
@@ -126,7 +153,7 @@ export function DynamicFieldRenderer({
         <TextField
           value={value}
           onChange={onChange}
-          placeholder={`Enter ${normalizeLabel(field.label).toLowerCase()}`}
+          placeholder={t('placeholders.text', { label: normalizeLabel(field.label).toLowerCase() })}
           isSlug={isSlug}
           id={fieldId}
           onAutoGenerate={onAutoGenerate}
@@ -135,6 +162,21 @@ export function DynamicFieldRenderer({
     }
 
     case 'SLUG': {
+      const formContext = useFormContext()
+
+      if (formContext) {
+        return (
+          <SmartSlugRenderer
+            field={field}
+            value={value}
+            onChange={onChange}
+            onAutoGenerate={onAutoGenerate}
+            fieldId={fieldId}
+            allFields={allFields}
+          />
+        )
+      }
+
       return (
         <SlugField
           value={value}
@@ -151,7 +193,7 @@ export function DynamicFieldRenderer({
         <RichTextField
           value={value}
           onChange={onChange}
-          placeholder={`Enter ${normalizeLabel(field.label).toLowerCase()}`}
+          placeholder={t('placeholders.richText', { label: normalizeLabel(field.label).toLowerCase() })}
           onAutoGenerate={onAutoGenerate}
         />
       )
@@ -162,7 +204,7 @@ export function DynamicFieldRenderer({
         <NumberField
           value={value}
           onChange={onChange}
-          placeholder={`Enter ${normalizeLabel(field.label).toLowerCase()}`}
+          placeholder={t('placeholders.number', { label: normalizeLabel(field.label).toLowerCase() })}
           id={fieldId}
         />
       )
@@ -193,7 +235,7 @@ export function DynamicFieldRenderer({
           <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-200 border-t-gray-900 dark:border-gray-700 dark:border-t-gray-100 mx-auto mb-4"></div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Checking configuration...</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{t('s3.checking')}</p>
             </div>
           </div>
         )
@@ -213,17 +255,17 @@ export function DynamicFieldRenderer({
                 <h3
                   className={`${variant === 'compact' ? 'text-xs' : 'text-sm'} font-medium text-amber-800 dark:text-amber-200 mb-1`}
                 >
-                  S3 not configured
+                  {t('s3.notConfigured')}
                 </h3>
                 <p
                   className={`${variant === 'compact' ? 'text-[11px]' : 'text-xs'} text-amber-700 dark:text-amber-300 mb-3`}
                 >
-                  To upload images you need to configure AWS S3 first
+                  {t('s3.setupInstructions')}
                 </p>
                 <Link href="/admin/dashboard/plugins">
                   <ThemedButton size="sm" className="bg-amber-600 hover:bg-amber-700 text-white">
                     <Settings className="h-4 w-4 mr-2" />
-                    Configure S3
+                    {t('s3.configureButton')}
                   </ThemedButton>
                 </Link>
               </div>
@@ -322,6 +364,25 @@ export function DynamicFieldRenderer({
           )}
         </div>
       )
+
+    case 'SELECT': {
+      const rawOptions = (field.metadata as any)?.options || []
+      const options = rawOptions.map((opt: string) => ({
+        label: opt,
+        value: opt
+      }))
+
+      return (
+        <Combobox
+          options={options}
+          value={value || ''}
+          onChange={onChange}
+          placeholder={t('placeholders.select', { label: normalizeLabel(field.label).toLowerCase() })}
+          emptyMessage="No option found."
+          clearable={!field.isRequired}
+        />
+      )
+    }
 
     default:
       return (

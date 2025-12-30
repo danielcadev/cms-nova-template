@@ -17,7 +17,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
 import { toCamelCase } from '@/utils/formatters'
-import { TemplateHeader } from '@/components/admin/dashboard/TemplatesPage/TemplateHeader'
+import { TemplateHeader } from '@/components/admin/shared/TemplateHeader'
 import { PremiumLoading } from '@/components/admin/dashboard/PremiumLoading'
 import FieldsBuilder from './FieldsBuilder/index'
 
@@ -25,9 +25,11 @@ const fieldSchema = z.object({
   id: z.string(),
   label: z.string().min(1, 'Label is required'),
   apiIdentifier: z.string().min(1, 'API identifier is required'),
-  type: z.enum(['TEXT', 'RICH_TEXT', 'NUMBER', 'BOOLEAN', 'DATE', 'MEDIA', 'SLUG']),
+  type: z.enum(['TEXT', 'RICH_TEXT', 'NUMBER', 'BOOLEAN', 'DATE', 'MEDIA', 'SLUG', 'SELECT']),
   isRequired: z.boolean().optional(),
+  isList: z.boolean().optional(),
   slugRoute: z.string().optional(),
+  options: z.string().optional(),
 })
 
 const contentTypeSchema = z.object({
@@ -113,16 +115,23 @@ export default function ContentTypeForm({
       const blogFields = [
         // Core Info
         { id: Math.random().toString(36).slice(2, 9), label: 'Title', apiIdentifier: 'title', type: 'TEXT', isRequired: true },
-        { id: Math.random().toString(36).slice(2, 9), label: 'Slug', apiIdentifier: 'slug', type: 'SLUG', isRequired: true },
+        {
+          id: Math.random().toString(36).slice(2, 9),
+          label: 'Slug',
+          apiIdentifier: 'slug',
+          type: 'SLUG',
+          isRequired: true,
+          slugRoute: 'Regiones/[regionName]/[subRegionName]/[zonaName]/[slug]' // Added [slug]
+        },
         { id: Math.random().toString(36).slice(2, 9), label: 'Main Image', apiIdentifier: 'mainImage', type: 'MEDIA', isRequired: true }, // Changed to MEDIA
 
         // Content Block 1 (Intro)
         { id: Math.random().toString(36).slice(2, 9), label: 'Introduction (Content 1)', apiIdentifier: 'content1', type: 'RICH_TEXT', isRequired: true },
-        { id: Math.random().toString(36).slice(2, 9), label: 'Gallery 1', apiIdentifier: 'image1', type: 'MEDIA', isRequired: false }, // Multiple images handled by mapping later if needed, but MEDIA type supports it
+        { id: Math.random().toString(36).slice(2, 9), label: 'Gallery 1', apiIdentifier: 'image1', type: 'MEDIA', isRequired: false, isList: true }, // List support enabled
 
         // Content Block 2 (Deep Dive)
         { id: Math.random().toString(36).slice(2, 9), label: 'Deep Dive (Content 2)', apiIdentifier: 'content2', type: 'RICH_TEXT', isRequired: false },
-        { id: Math.random().toString(36).slice(2, 9), label: 'Gallery 2', apiIdentifier: 'image2', type: 'MEDIA', isRequired: false },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Gallery 2', apiIdentifier: 'image2', type: 'MEDIA', isRequired: false, isList: true },
 
         // Content Block 3 (Conclusion)
         { id: Math.random().toString(36).slice(2, 9), label: 'Conclusion (Content 3)', apiIdentifier: 'content3', type: 'RICH_TEXT', isRequired: false },
@@ -130,15 +139,20 @@ export default function ContentTypeForm({
         // Extra
         { id: Math.random().toString(36).slice(2, 9), label: 'Video URL', apiIdentifier: 'videoUrl', type: 'TEXT', isRequired: false },
 
+        // Classification
+        { id: Math.random().toString(36).slice(2, 9), label: 'Región', apiIdentifier: 'regionName', type: 'SELECT', isRequired: false, options: 'Amazonas,Andina,Caribe,Orinoquía,Pacífico,Insular' },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Subregión', apiIdentifier: 'subRegionName', type: 'SELECT', isRequired: false },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Zona', apiIdentifier: 'zonaName', type: 'SELECT', isRequired: false },
+
         // Standard SEO & Metadata
-        { id: Math.random().toString(36).slice(2, 9), label: 'Meta Title', apiIdentifier: 'metaTitle', type: 'TEXT', isRequired: false },
-        { id: Math.random().toString(36).slice(2, 9), label: 'Meta Description', apiIdentifier: 'metaDescription', type: 'TEXT', isRequired: false },
-        { id: Math.random().toString(36).slice(2, 9), label: 'Category', apiIdentifier: 'category', type: 'TEXT', isRequired: false },
-        { id: Math.random().toString(36).slice(2, 9), label: 'Tags', apiIdentifier: 'tags', type: 'TEXT', isRequired: false },
-        { id: Math.random().toString(36).slice(2, 9), label: 'Publish Date', apiIdentifier: 'publishDate', type: 'DATE', isRequired: false },
-        { id: Math.random().toString(36).slice(2, 9), label: 'Updated Date', apiIdentifier: 'updatedDate', type: 'DATE', isRequired: false },
-        { id: Math.random().toString(36).slice(2, 9), label: 'Is Published', apiIdentifier: 'isPublished', type: 'BOOLEAN', isRequired: false },
-        { id: Math.random().toString(36).slice(2, 9), label: 'Canonical URL', apiIdentifier: 'canonicalUrl', type: 'TEXT', isRequired: false },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Meta Título', apiIdentifier: 'metaTitle', type: 'TEXT', isRequired: false },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Meta Descripción', apiIdentifier: 'metaDescription', type: 'TEXT', isRequired: false },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Categoría', apiIdentifier: 'category', type: 'TEXT', isRequired: false },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Etiquetas', apiIdentifier: 'tags', type: 'TEXT', isRequired: false },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Fecha de Publicación', apiIdentifier: 'publishDate', type: 'DATE', isRequired: false },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Fecha de Actualización', apiIdentifier: 'updatedDate', type: 'DATE', isRequired: false },
+        { id: Math.random().toString(36).slice(2, 9), label: 'Publicado', apiIdentifier: 'isPublished', type: 'BOOLEAN', isRequired: false },
+        { id: Math.random().toString(36).slice(2, 9), label: 'URL Canónica', apiIdentifier: 'canonicalUrl', type: 'TEXT', isRequired: false },
       ]
 
       setValue('fields', blogFields as any, { shouldDirty: true, shouldValidate: true })
@@ -270,7 +284,7 @@ export default function ContentTypeForm({
                           id={apiIdentifierId}
                           placeholder={t('apiIdentifierPlaceholder')}
                           {...register('apiIdentifier')}
-                          className="h-12 bg-zinc-50/50 border-zinc-200 rounded-2xl focus:ring-zinc-900 focus:border-zinc-900 transition-all font-mono text-sm uppercase tracking-wider"
+                          className="h-12 bg-zinc-50/50 border-zinc-200 rounded-2xl focus:ring-zinc-900 focus:border-zinc-900 transition-all font-mono text-sm"
                         />
                         {errors.apiIdentifier && <p className="text-xs text-red-500 ml-1 font-medium">{errors.apiIdentifier.message}</p>}
                       </div>

@@ -1,7 +1,6 @@
-'use client'
-
 import { Image as ImageIcon, Upload } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import type { ImageDropZoneProps } from './data'
 
 export function ImageDropZone({
@@ -10,6 +9,7 @@ export function ImageDropZone({
     onFileSelect,
     variant = 'default',
 }: ImageDropZoneProps) {
+    const t = useTranslations('dynamicFields.media')
     const [isDragOver, setIsDragOver] = useState(false)
 
     const handleDragOver = (e: React.DragEvent) => {
@@ -60,8 +60,8 @@ export function ImageDropZone({
         <button
             type="button"
             className={`relative border-2 border-dashed ${outerClasses} transition-all duration-200 ${isDragOver
-                    ? 'border-gray-400 bg-gray-50/70 dark:bg-gray-800/40 scale-[1.01]'
-                    : 'border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600'
+                ? 'border-gray-400 bg-gray-50/70 dark:bg-gray-800/40 scale-[1.01]'
+                : 'border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600'
                 } ${isUploading ? 'pointer-events-none opacity-75' : 'cursor-pointer bg-white/60 dark:bg-gray-900/60 hover:bg-white/80 dark:hover:bg-gray-900/80'}`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -75,10 +75,10 @@ export function ImageDropZone({
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-200 border-t-blue-600 mx-auto mb-3"></div>
                         <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Uploading image...
+                            {t('uploading')}
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            This may take a few seconds
+                            {t('uploadingSub')}
                         </p>
                     </div>
                 </div>
@@ -104,10 +104,10 @@ export function ImageDropZone({
                     <h3
                         className={`text-lg font-semibold mb-2 transition-colors duration-200 text-gray-900 dark:text-gray-100`}
                     >
-                        {isDragOver ? 'Drop the image here!' : 'Upload image'}
+                        {isDragOver ? t('dropActive') : t('dropInactive')}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {isDragOver ? 'Drop the file to upload' : 'Drag and drop an image or click to select'}
+                        {isDragOver ? t('dropInstructionsActive') : t('dropInstructionsInactive')}
                     </p>
                 </div>
 
@@ -115,25 +115,25 @@ export function ImageDropZone({
                 <div className="mb-4">
                     <div
                         className={`inline-flex items-center ${variant === 'compact' ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'} rounded-lg font-medium transition-all duration-200 ${isDragOver
-                                ? 'bg-gray-900 text-white shadow'
-                                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                            ? 'bg-gray-900 text-white shadow'
+                            : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                             }`}
                     >
                         <Upload className="h-4 w-4 mr-2" />
-                        {isDragOver ? 'Soltar archivo' : 'Seleccionar archivo'}
+                        {isDragOver ? t('dropFile') : t('selectFile')}
                     </div>
                 </div>
 
                 {/* File info */}
                 <div className="space-y-1">
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Supported formats: PNG, JPG, GIF, WebP
+                        {t('supportedFormats')}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Max size: 10MB</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{t('maxSize')}</p>
                     <div className="flex items-center justify-center gap-1 mt-2">
                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                         <p className="text-xs text-green-600 dark:text-green-400 font-medium">
-                            Stored in AWS S3
+                            {t('storedS3')}
                         </p>
                     </div>
                 </div>

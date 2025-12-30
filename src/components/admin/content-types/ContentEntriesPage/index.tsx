@@ -1,6 +1,7 @@
 'use client'
 
-import { TemplateHeader } from '@/components/admin/dashboard/TemplatesPage/TemplateHeader'
+import { TemplateHeader } from '@/components/admin/shared/TemplateHeader'
+import { useTranslations } from 'next-intl'
 import { Plus, Search, FileCode } from 'lucide-react'
 import Link from 'next/link'
 import { Input } from '@/components/ui/input'
@@ -10,6 +11,7 @@ import type { ContentEntriesPageProps } from './data'
 import { useContentEntries } from './useContentEntries'
 
 export function ContentEntriesPage({ contentType }: ContentEntriesPageProps) {
+  const t = useTranslations('contentEntries')
   const { searchTerm, setSearchTerm, statusFilter, setStatusFilter, filteredEntries, handleDelete, getEntryTitle } =
     useContentEntries(contentType)
 
@@ -17,7 +19,7 @@ export function ContentEntriesPage({ contentType }: ContentEntriesPageProps) {
     <div className="min-h-screen bg-white">
       <TemplateHeader
         title={contentType.name}
-        subtitle={contentType.description || `Manage ${contentType.name} entries`}
+        subtitle={contentType.description || t('description', { name: contentType.name })}
         backHref="/admin/dashboard/content-types"
         rightActions={
           <Button
@@ -26,7 +28,7 @@ export function ContentEntriesPage({ contentType }: ContentEntriesPageProps) {
           >
             <Link href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/create`}>
               <Plus className="h-4 w-4 mr-2" />
-              New Entry
+              {t('newEntry')}
             </Link>
           </Button>
         }
@@ -39,7 +41,7 @@ export function ContentEntriesPage({ contentType }: ContentEntriesPageProps) {
           <div className="flex-1 max-w-md relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-400" />
             <Input
-              placeholder="Search entries..."
+              placeholder={t('searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 border-zinc-200 focus:ring-zinc-900/10 focus:border-zinc-900 rounded-xl h-10"
@@ -51,10 +53,10 @@ export function ContentEntriesPage({ contentType }: ContentEntriesPageProps) {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-4 py-2 border border-zinc-200 rounded-xl bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all cursor-pointer hover:border-zinc-300"
           >
-            <option value="all">All statuses</option>
-            <option value="published">Published</option>
-            <option value="draft">Draft</option>
-            <option value="archived">Archived</option>
+            <option value="all">{t('statusOptions.all')}</option>
+            <option value="published">{t('statusOptions.published')}</option>
+            <option value="draft">{t('statusOptions.draft')}</option>
+            <option value="archived">{t('statusOptions.archived')}</option>
           </select>
         </div>
 
@@ -65,12 +67,10 @@ export function ContentEntriesPage({ contentType }: ContentEntriesPageProps) {
               <FileCode className="w-8 h-8 text-zinc-300" />
             </div>
             <h3 className="text-lg font-medium text-zinc-900 mb-2">
-              No entries found
+              {searchTerm ? t('noMatch', { query: searchTerm }) : t('noEntries')}
             </h3>
             <p className="text-zinc-500 text-sm mb-6 max-w-sm mx-auto">
-              {searchTerm
-                ? `No entries match "${searchTerm}"`
-                : `Start by creating your first ${contentType.name} entry`}
+              {!searchTerm && t('createFirst', { name: contentType.name })}
             </p>
             {!searchTerm && (
               <Button
@@ -81,7 +81,7 @@ export function ContentEntriesPage({ contentType }: ContentEntriesPageProps) {
                   href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/create`}
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Create {contentType.name}
+                  {t('createButton', { name: contentType.name })}
                 </Link>
               </Button>
             )}

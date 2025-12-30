@@ -162,7 +162,14 @@ export function useCreateContentEntry(contentType: ContentType) {
         const requiredFields = contentType.fields.filter((field) => field.isRequired)
         return requiredFields.every((field) => {
             const value = formData[field.apiIdentifier]
-            return value !== undefined && value !== null && value !== ''
+            if (value === undefined || value === null || value === '') return false
+
+            // Special check for MEDIA
+            if (field.type === 'MEDIA') {
+                return !!(value as any)?.url
+            }
+
+            return true
         })
     }
 
@@ -292,12 +299,15 @@ export function useCreateContentEntry(contentType: ContentType) {
         }
     }
 
+    // Flag to prevent loop
+    const [isCreated, setIsCreated] = useState(false)
+
     // Auto-create draft when title is typed
     useEffect(() => {
         const titleValue = titleField ? formData[titleField.apiIdentifier] : null
 
         // Only trigger if we have a title, it's long enough, and we haven't started saving/creating yet
-        if (titleValue && typeof titleValue === 'string' && titleValue.length > 3 && !isCreatingDraft && !isSaving) {
+        if (titleValue && typeof titleValue === 'string' && titleValue.length > 3 && !isCreatingDraft && !isSaving && !isCreated) {
 
             const timer = setTimeout(async () => {
                 // Prepare payload
@@ -325,7 +335,9 @@ export function useCreateContentEntry(contentType: ContentType) {
 
                     if (response.ok) {
                         const result = await response.json()
-                        router.push(`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/${result.id}`)
+                        setIsCreated(true) // Prevent re-entry
+                        // Use window.location.href for hard redirect to ensure fresh state/avoid router issues
+                        window.location.href = `/admin/dashboard/content-types/${contentType.apiIdentifier}/content/${result.id}`
                     } else {
                         // Silent fail or minimal error log for auto-draft
                         console.warn('Auto-draft failed with status:', response.status)
@@ -338,7 +350,7 @@ export function useCreateContentEntry(contentType: ContentType) {
             }, 2000) // 2 second delay to debounce typing
             return () => clearTimeout(timer)
         }
-    }, [formData, titleField, isCreatingDraft, isSaving, contentType.apiIdentifier, legacySlug, typePath, router])
+    }, [formData, titleField, isCreatingDraft, isSaving, contentType.apiIdentifier, legacySlug, typePath, router, isCreated])
 
     const openAIModal = (fieldId: string, label: string) => {
         setAiModal({

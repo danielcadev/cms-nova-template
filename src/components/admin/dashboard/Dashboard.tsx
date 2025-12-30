@@ -5,19 +5,19 @@ import { es, enUS } from 'date-fns/locale'
 import { Calendar, FileText, Image as ImageIcon, Settings, UserPlus, Users } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl'
-import { useMemo } from 'react'
+import { useCallback, useEffect, useState, useMemo } from 'react'
 import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
 import { useCurrentUser } from '@/hooks/use-current-user'
 import { useUsers } from '@/hooks/use-users'
-import { usePlans } from '@/hooks/usePlans'
 import { cn } from '@/lib/utils'
 
 export function Dashboard() {
   const t = useTranslations('dashboard')
   const locale = useLocale()
   const { user } = useCurrentUser()
-  const { plans, isLoading: plansLoading } = usePlans()
   const { users, loading: usersLoading } = useUsers()
+  const [entries, setEntries] = useState<any[]>([])
+  const [entriesLoading, setEntriesLoading] = useState(true)
 
   const userName = user?.name || 'Administrator'
   const currentHour = new Date().getHours()
@@ -28,15 +28,35 @@ export function Dashboard() {
     return t('greeting.evening')
   }, [currentHour, t])
 
-  const dateLocale = locale === 'es' ? es : enUS
-  const isLoading = plansLoading || usersLoading
+  const isLoading = usersLoading || entriesLoading
+
+  // Fetch recent entries across all content types
+  useEffect(() => {
+    async function fetchRecent() {
+      try {
+        const res = await fetch('/api/content-entries?limit=20')
+        const data = await res.json()
+        if (data.success) {
+          setEntries(data.entries)
+        }
+      } catch (err) {
+        console.error('Failed to fetch recent entries for dashboard:', err)
+      } finally {
+        setEntriesLoading(false)
+      }
+    }
+    fetchRecent()
+  }, [])
 
   const activities = useMemo(() => {
     const allActivities = [
-      ...plans.map((plan) => ({
-        id: `plan-${plan.id}`,
-        text: t('widgets.activity.newPlan', { name: plan.mainTitle }),
-        date: new Date(plan.createdAt),
+      ...entries.map((entry) => ({
+        id: `entry-${entry.id}`,
+        text: t('widgets.activity.newEntry', {
+          name: entry.title,
+          type: entry.contentType?.name || 'Content'
+        }),
+        date: new Date(entry.createdAt),
         color: 'bg-emerald-500',
         icon: FileText,
       })),
@@ -54,9 +74,12 @@ export function Dashboard() {
       .slice(0, 10)
       .map((activity) => ({
         ...activity,
-        time: formatDistanceToNow(activity.date, { addSuffix: true, locale: es }),
+        time: formatDistanceToNow(activity.date, {
+          addSuffix: true,
+          locale: locale === 'es' ? es : enUS
+        }),
       }))
-  }, [plans, users])
+  }, [entries, users, t, locale])
 
   if (isLoading) {
     return (

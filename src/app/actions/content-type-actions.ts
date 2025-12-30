@@ -7,9 +7,11 @@ import { prisma } from '@/lib/prisma'
 const fieldSchema = z.object({
   label: z.string().min(3, 'Label is required.'),
   apiIdentifier: z.string(),
-  type: z.enum(['TEXT', 'RICH_TEXT', 'NUMBER', 'BOOLEAN', 'DATE', 'MEDIA', 'SLUG']),
+  type: z.enum(['TEXT', 'RICH_TEXT', 'NUMBER', 'BOOLEAN', 'DATE', 'MEDIA', 'SLUG', 'SELECT']),
   isRequired: z.boolean().optional().default(false),
+  isList: z.boolean().optional().default(false),
   slugRoute: z.string().optional(),
+  options: z.string().optional(),
 })
 
 const contentTypeSchema = z.object({
@@ -46,7 +48,11 @@ export async function createContentTypeAction(data: ContentTypeFormValues) {
             apiIdentifier: field.apiIdentifier,
             type: field.type,
             isRequired: field.isRequired,
-            metadata: field.slugRoute ? { slugRoute: field.slugRoute } : undefined,
+            metadata: {
+              ...(field.slugRoute ? { slugRoute: field.slugRoute } : {}),
+              ...(field.isList ? { isList: field.isList } : {}),
+              ...(field.options ? { options: field.options.split(',').map((s: string) => s.trim()).filter(Boolean) } : {}),
+            },
           })),
         },
       },
@@ -122,7 +128,11 @@ export async function updateContentTypeAction(id: string, data: ContentTypeFormV
               apiIdentifier: fieldData.apiIdentifier,
               type: fieldData.type,
               isRequired: fieldData.isRequired,
-              metadata: (fieldData as any).slugRoute ? { slugRoute: (fieldData as any).slugRoute } : undefined,
+              metadata: {
+                ...(fieldData as any).slugRoute ? { slugRoute: (fieldData as any).slugRoute } : {},
+                ...(fieldData as any).isList ? { isList: (fieldData as any).isList } : {},
+                ...(fieldData as any).options ? { options: (fieldData as any).options.split(',').map((s: string) => s.trim()).filter(Boolean) } : {},
+              },
             },
           })
         } else {
@@ -134,7 +144,11 @@ export async function updateContentTypeAction(id: string, data: ContentTypeFormV
               apiIdentifier: fieldData.apiIdentifier,
               type: fieldData.type,
               isRequired: fieldData.isRequired,
-              metadata: (fieldData as any).slugRoute ? { slugRoute: (fieldData as any).slugRoute } : undefined,
+              metadata: {
+                ...(fieldData as any).slugRoute ? { slugRoute: (fieldData as any).slugRoute } : {},
+                ...(fieldData as any).isList ? { isList: (fieldData as any).isList } : {},
+                ...(fieldData as any).options ? { options: (fieldData as any).options.split(',').map((s: string) => s.trim()).filter(Boolean) } : {},
+              },
             },
           })
         }
