@@ -60,7 +60,7 @@ function EditPlanFormInner({ planId, initialData }: EditPlanFormProps) {
     async (data: PlanFormValues) => {
       try {
         setIsAutoSaving(true)
-        const result = await updatePlanDataAction(planId, data)
+        const result = await updatePlanDataAction(planId, data, true)
         if (!result.success) {
           throw new Error(result.error || 'Failed to save')
         }

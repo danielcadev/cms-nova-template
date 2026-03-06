@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import { prisma } from '@/lib/prisma'
+import { getAdminSession } from '@/lib/server-session'
 
 interface RouteParams {
   params: Promise<{ id: string }>
@@ -10,6 +11,9 @@ export async function PATCH(request: Request, { params }: RouteParams) {
   const { id } = await params
 
   try {
+    const session = await getAdminSession()
+    if (!session) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+
     const payload = await request.json().catch(() => ({}))
     const { published } = payload as { published?: boolean }
 
@@ -36,6 +40,9 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
   const { id } = await params
 
   try {
+    const session = await getAdminSession()
+    if (!session) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+
     await (prisma as any).experience.delete({ where: { id } })
     return NextResponse.json({ success: true })
   } catch (error) {

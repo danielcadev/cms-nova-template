@@ -27,8 +27,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Password length validation
-    if (password.length < 8) {
-      return NextResponse.json({ error: 'Password must be at least 8 characters' }, { status: 400 })
+    if (password.length < 6) {
+      return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 })
     }
 
     // Ensure email is not already registered
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
           name,
           email,
           password: hashedPassword,
-          role: 'ADMIN',
+          role: 'admin',
           emailVerified: true,
         },
         select: {

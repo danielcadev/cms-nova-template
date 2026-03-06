@@ -5,6 +5,7 @@ import slugify from 'slugify'
 
 import { prisma } from '@/lib/prisma'
 import { type ExperienceFormValues, experienceSchema } from '@/schemas/experience'
+import { getAdminSession } from '@/lib/server-session'
 
 function generateExperienceTags(data: ExperienceFormValues, locationAlias: string) {
   const tags = new Set<string>()
@@ -60,6 +61,9 @@ export async function createExperienceAction(
   payload: ExperienceFormValues,
   options: { mode?: ExperienceActionMode } = {},
 ): Promise<CreateExperienceResult> {
+  const session = await getAdminSession()
+  if (!session) return { success: false, error: 'Unauthorized' }
+
   const mode = options.mode ?? 'draft'
   const isDraft = mode === 'draft'
 
@@ -158,6 +162,9 @@ export async function updateExperienceAction(
   payload: ExperienceFormValues,
   options: { mode?: ExperienceActionMode } = {},
 ): Promise<UpdateExperienceResult> {
+  const session = await getAdminSession()
+  if (!session) return { success: false, error: 'Unauthorized' }
+
   const parsed = experienceSchema.safeParse(payload)
   if (!parsed.success) {
     const first = parsed.error.issues.at(0)

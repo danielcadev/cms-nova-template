@@ -4,10 +4,19 @@ import { revalidatePath } from 'next/cache'
 import slugify from 'slugify'
 import { prisma } from '@/lib/prisma'
 import type { PlanFormValues } from '@/schemas/plan'
+import { getAdminSession } from '@/lib/server-session'
 
 // Función para actualizar plan con objeto JavaScript (para auto-save)
-export async function updatePlanDataAction(planId: string, data: PlanFormValues) {
+// Función para actualizar plan con objeto JavaScript (para auto-save)
+export async function updatePlanDataAction(
+  planId: string,
+  data: PlanFormValues,
+  isAutosave = false,
+) {
   try {
+    const session = await getAdminSession()
+    if (!session) return { success: false, error: 'Unauthorized' }
+
     if (!planId) {
       return { success: false, error: 'Plan ID is required' }
     }
@@ -50,8 +59,11 @@ export async function updatePlanDataAction(planId: string, data: PlanFormValues)
       },
     })
 
-    revalidatePath('/admin/dashboard/plans')
-    revalidatePath(`/admin/dashboard/plans/edit/${planId}`)
+    // Solo revalidar si NO es un autoguardado para evitar reseteo de scroll y estado de UI
+    if (!isAutosave) {
+      revalidatePath('/admin/dashboard/plans')
+      revalidatePath(`/admin/dashboard/plans/edit/${planId}`)
+    }
 
     return { success: true }
   } catch (error) {
@@ -83,6 +95,9 @@ export async function updatePlanDataAction(planId: string, data: PlanFormValues)
 
 export async function createDraftPlanAction(data: PlanFormValues) {
   try {
+    const session = await getAdminSession()
+    if (!session) return { success: false, error: 'Unauthorized' }
+
     // Crear el plan borrador en la base de datos
     const timestamp = Date.now()
     const randomSuffix = Math.random().toString(36).substring(2, 8)
@@ -154,6 +169,9 @@ export async function createDraftPlanAction(data: PlanFormValues) {
 
 export async function updatePlanAction(_prevState: any, formData: FormData) {
   try {
+    const session = await getAdminSession()
+    if (!session) return { success: false, error: 'Unauthorized' }
+
     const planId = formData.get('planId') as string
 
     if (!planId) {
@@ -198,7 +216,7 @@ export async function updatePlanAction(_prevState: any, formData: FormData) {
             try {
               data[key as keyof PlanFormValues] = JSON.parse(v) as any
               break
-            } catch {}
+            } catch { }
           }
           // When UI sends an empty string or a transient non-JSON value, coerce to []
           if (v === '' || v === undefined || v === null) {
@@ -214,7 +232,7 @@ export async function updatePlanAction(_prevState: any, formData: FormData) {
         case 'categoryAlias':
         case 'section': {
           const v = String(value || '').trim()
-          ;(data as any)[key] = slugify(v, { lower: true, strict: true })
+            ; (data as any)[key] = slugify(v, { lower: true, strict: true })
           break
         }
         case 'allowGroundTransport': {
@@ -291,6 +309,9 @@ export async function updatePlanAction(_prevState: any, formData: FormData) {
 
 export async function deletePlanAction(planId: string) {
   try {
+    const session = await getAdminSession()
+    if (!session) return { success: false, error: 'Unauthorized' }
+
     if (!planId) {
       return { success: false, error: 'ID del plan es requerido' }
     }
@@ -338,6 +359,9 @@ export async function publishPlanAction(
   opts?: { articleAlias?: string; categoryAlias?: string; section?: string },
 ) {
   try {
+    const session = await getAdminSession()
+    if (!session) return { success: false, error: 'Unauthorized' }
+
     if (!planId) return { success: false, error: 'Plan ID is required' }
 
     const existing = await prisma.plan.findUnique({ where: { id: planId } })
@@ -412,6 +436,9 @@ export async function publishPlanAction(
 // Función para despublicar un plan
 export async function unpublishPlanAction(planId: string) {
   try {
+    const session = await getAdminSession()
+    if (!session) return { success: false, error: 'Unauthorized' }
+
     if (!planId) return { success: false, error: 'Plan ID is required' }
 
     const existing = await prisma.plan.findUnique({ where: { id: planId } })

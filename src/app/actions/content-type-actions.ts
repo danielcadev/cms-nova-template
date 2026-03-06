@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
+import { getAdminSession } from '@/lib/server-session'
 
 const fieldSchema = z.object({
   label: z.string().min(3, 'Label is required.'),
@@ -24,6 +25,9 @@ const contentTypeSchema = z.object({
 type ContentTypeFormValues = z.input<typeof contentTypeSchema>
 
 export async function createContentTypeAction(data: ContentTypeFormValues) {
+  const session = await getAdminSession()
+  if (!session) return { success: false, message: 'Unauthorized' }
+
   const validatedFields = contentTypeSchema.safeParse(data)
 
   if (!validatedFields.success) {
@@ -73,6 +77,9 @@ export async function createContentTypeAction(data: ContentTypeFormValues) {
 }
 
 export async function updateContentTypeAction(id: string, data: ContentTypeFormValues) {
+  const session = await getAdminSession()
+  if (!session) return { success: false, message: 'Unauthorized' }
+
   const validatedFields = contentTypeSchema.safeParse(data)
 
   if (!validatedFields.success) {

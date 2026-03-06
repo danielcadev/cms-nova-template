@@ -1,6 +1,7 @@
-import { notFound } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import ContentTypeForm from '@/components/admin/content-types/ContentTypesManager/components/ContentTypeForm'
 import { prisma } from '@/lib/prisma'
+import { getAdminSession } from '@/lib/server-session'
 
 async function getContentType(slug: string) {
   try {
@@ -34,9 +35,14 @@ interface EditContentTypePageProps {
 }
 
 export default async function EditContentTypePageRoute({ params }: EditContentTypePageProps) {
+  const session = await getAdminSession()
+  if (!session) {
+    redirect('/admin/login')
+  }
+
   const { slug } = await params
   const contentType = await getContentType(slug)
-  if (!contentType) notFound()
+  if (!contentType) redirect('/404')
 
   return <ContentTypeForm initialData={contentType} contentTypeId={contentType.id} />
 }

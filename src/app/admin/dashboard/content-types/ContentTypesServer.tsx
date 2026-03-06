@@ -1,5 +1,7 @@
+import { redirect } from 'next/navigation'
 import { ContentTypesPage } from '@/components/admin/dashboard/ContentTypesPage'
 import { prisma } from '@/lib/prisma'
+import { getAdminSession } from '@/lib/server-session'
 
 async function getContentTypes() {
   try {
@@ -23,6 +25,11 @@ async function getContentTypes() {
 }
 
 export default async function ContentTypesServer() {
+  const session = await getAdminSession()
+  if (!session) {
+    redirect('/admin/login')
+  }
+
   const contentTypes = await getContentTypes()
   return <ContentTypesPage initialContentTypes={contentTypes} />
 }

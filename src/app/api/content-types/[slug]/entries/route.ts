@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getAdminSession } from '@/lib/server-session'
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
@@ -34,8 +35,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const body = await request.json()
 
     // Get the current user session
-    const session = await auth.api.getSession({ headers: request.headers })
-    if (!session?.user) {
+    const session = await getAdminSession()
+    if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

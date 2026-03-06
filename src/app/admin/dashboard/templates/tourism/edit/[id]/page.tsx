@@ -1,8 +1,9 @@
 import type { Plan as PrismaPlan } from '@prisma/client'
-import { notFound } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { EditPlanForm } from '@/components/templates'
 import { prisma } from '@/lib/prisma'
+import { getAdminSession } from '@/lib/server-session'
 import type { PlanFormValues } from '@/schemas/plan'
 
 // Función para transformar los datos de Prisma al formato del formulario
@@ -62,13 +63,18 @@ async function getPlanData(id: string) {
   })
 
   if (!plan) {
-    notFound() // Redirige a 404 si el plan no se encuentra
+    redirect('/404') // Redirige a 404 si el plan no se encuentra
   }
 
   return plan
 }
 
 export default async function EditTourismPlanPage({ params }: { params: { id: string } }) {
+  const session = await getAdminSession()
+  if (!session) {
+    redirect('/admin/login')
+  }
+
   // Solución según la documentación de Next.js: "esperamos" a que los parámetros estén listos.
   const awaitedParams = await params
   const prismaPlan = await getPlanData(awaitedParams.id)

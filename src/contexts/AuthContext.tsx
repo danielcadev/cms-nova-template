@@ -50,12 +50,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const hasUser = !!session.data?.user
       if (hasUser) {
-        // Check if user has admin permissions
-        try {
-          const adminCheck = await authClient.admin.listUsers({ query: { limit: 1 } })
+        // Check if user has admin permissions directly from session
+        const userRole = session.data?.user?.role
+        if (userRole === 'admin' || userRole === 'ADMIN') {
           setUser(session.data?.user || null)
           setIsAuthenticated(true)
-        } catch (adminError) {
+          return true
+        } else {
+          // User exists but is not admin
           setUser(null)
           setIsAuthenticated(false)
           return false
@@ -65,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsAuthenticated(false)
       }
 
-      return hasUser
+      return false
     } catch (_error) {
       setUser(null)
       setIsAuthenticated(false)

@@ -1,9 +1,14 @@
 
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getAdminSession } from '@/lib/server-session'
 
 export async function GET() {
     try {
+        const session = await getAdminSession()
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
         // Find Content Type - Broad search to find ANYTHING helpful
         // But primarily target 'sEOBlog' since we know it exists
         const contentType = await prisma.contentType.findFirst({

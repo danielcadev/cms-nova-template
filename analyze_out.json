@@ -1,0 +1,482 @@
+{
+  "results": [
+    {
+      "fileName": "src/app/actions/content-type-actions.ts",
+      "funcName": "createContentTypeAction",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/actions/content-type-actions.ts",
+      "funcName": "updateContentTypeAction",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/actions/experience-actions.ts",
+      "funcName": "createExperienceAction",
+      "category": "Utility/Internal",
+      "dbAccess": false,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/actions/experience-actions.ts",
+      "funcName": "updateExperienceAction",
+      "category": "Utility/Internal",
+      "dbAccess": false,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/actions/plan-actions.ts",
+      "funcName": "updatePlanDataAction",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/actions/plan-actions.ts",
+      "funcName": "createDraftPlanAction",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/actions/plan-actions.ts",
+      "funcName": "updatePlanAction",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/actions/plan-actions.ts",
+      "funcName": "deletePlanAction",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/actions/plan-actions.ts",
+      "funcName": "publishPlanAction",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/actions/plan-actions.ts",
+      "funcName": "unpublishPlanAction",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/actions/slug-data.ts",
+      "funcName": "getSlugHierarchy",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": false
+    },
+    {
+      "fileName": "src/app/actions/slug-data.ts",
+      "funcName": "createSlugItem",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/actions/slug-data.ts",
+      "funcName": "deleteSlugItem",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/admin/ai/generate/route.ts",
+      "funcName": "POST",
+      "category": "Admin-labeled",
+      "dbAccess": false,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/admin/check-first-admin/route.ts",
+      "funcName": "GET",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": false
+    },
+    {
+      "fileName": "src/app/api/admin/content-types/[id]/route.ts",
+      "funcName": "DELETE",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/admin/create-first-admin/route.ts",
+      "funcName": "POST",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": false
+    },
+    {
+      "fileName": "src/app/api/admin/create-user/route.ts",
+      "funcName": "POST",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/admin/delete-user/route.ts",
+      "funcName": "POST",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/admin/system/debug-fields/route.ts",
+      "funcName": "GET",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/admin/system/fix-selects/route.ts",
+      "funcName": "GET",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/admin/system/fix-seo/route.ts",
+      "funcName": "GET",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/admin/system/inspect-fields/route.ts",
+      "funcName": "GET",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/admin/system/repopulate-options/route.ts",
+      "funcName": "GET",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/admin/system/routes/route.ts",
+      "funcName": "GET",
+      "category": "Admin-labeled",
+      "dbAccess": false,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/admin/users/route.ts",
+      "funcName": "GET",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/categories/route.ts",
+      "funcName": "GET",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": false
+    },
+    {
+      "fileName": "src/app/api/content-entries/route.ts",
+      "funcName": "POST",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/content-entries/route.ts",
+      "funcName": "GET",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": false
+    },
+    {
+      "fileName": "src/app/api/content-types/route.ts",
+      "funcName": "GET",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": false
+    },
+    {
+      "fileName": "src/app/api/content-types/[slug]/entries/route.ts",
+      "funcName": "GET",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": false
+    },
+    {
+      "fileName": "src/app/api/content-types/[slug]/entries/route.ts",
+      "funcName": "POST",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/content-types/[slug]/entries/[id]/route.ts",
+      "funcName": "GET",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": false
+    },
+    {
+      "fileName": "src/app/api/content-types/[slug]/entries/[id]/route.ts",
+      "funcName": "PUT",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/content-types/[slug]/entries/[id]/route.ts",
+      "funcName": "DELETE",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/content-types/[slug]/route.ts",
+      "funcName": "GET",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": false
+    },
+    {
+      "fileName": "src/app/api/experiences/route.ts",
+      "funcName": "GET",
+      "category": "Utility/Internal",
+      "dbAccess": false,
+      "authPresence": false
+    },
+    {
+      "fileName": "src/app/api/experiences/[id]/route.ts",
+      "funcName": "PATCH",
+      "category": "Admin-labeled",
+      "dbAccess": false,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/experiences/[id]/route.ts",
+      "funcName": "DELETE",
+      "category": "Admin-labeled",
+      "dbAccess": false,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/media/cleanup/route.ts",
+      "funcName": "POST",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/media/folders/route.ts",
+      "funcName": "GET",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": false
+    },
+    {
+      "fileName": "src/app/api/media/folders/route.ts",
+      "funcName": "POST",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/media/folders/route.ts",
+      "funcName": "DELETE",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/media/register/route.ts",
+      "funcName": "POST",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/media/replace/route.ts",
+      "funcName": "POST",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/media/route.ts",
+      "funcName": "GET",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": false
+    },
+    {
+      "fileName": "src/app/api/plans/route.ts",
+      "funcName": "GET",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/plans/route.ts",
+      "funcName": "POST",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/plans/[id]/route.ts",
+      "funcName": "GET",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": false
+    },
+    {
+      "fileName": "src/app/api/plans/[id]/route.ts",
+      "funcName": "PATCH",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/plans/[id]/route.ts",
+      "funcName": "DELETE",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/plugins/public-typepaths/route.ts",
+      "funcName": "GET",
+      "category": "Utility/Internal",
+      "dbAccess": false,
+      "authPresence": false
+    },
+    {
+      "fileName": "src/app/api/plugins/s3/route.ts",
+      "funcName": "GET",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/plugins/s3/route.ts",
+      "funcName": "POST",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/plugins/[id]/route.ts",
+      "funcName": "GET",
+      "category": "Utility/Internal",
+      "dbAccess": false,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/plugins/[id]/route.ts",
+      "funcName": "POST",
+      "category": "Admin-labeled",
+      "dbAccess": false,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/system/encryption-status/route.ts",
+      "funcName": "GET",
+      "category": "Utility/Internal",
+      "dbAccess": false,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/templates/tourism/route.ts",
+      "funcName": "GET",
+      "category": "Utility/Internal",
+      "dbAccess": false,
+      "authPresence": false
+    },
+    {
+      "fileName": "src/app/api/templates/tourism/[id]/route.ts",
+      "funcName": "GET",
+      "category": "Utility/Internal",
+      "dbAccess": false,
+      "authPresence": false
+    },
+    {
+      "fileName": "src/app/api/templates/tourism/[id]/route.ts",
+      "funcName": "PUT",
+      "category": "Admin-labeled",
+      "dbAccess": false,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/templates/tourism/[id]/route.ts",
+      "funcName": "DELETE",
+      "category": "Admin-labeled",
+      "dbAccess": false,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/upload/presign/route.ts",
+      "funcName": "POST",
+      "category": "Admin-labeled",
+      "dbAccess": false,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/upload/presign/route.ts",
+      "funcName": "OPTIONS",
+      "category": "Utility/Internal",
+      "dbAccess": false,
+      "authPresence": false
+    },
+    {
+      "fileName": "src/app/api/upload/route.ts",
+      "funcName": "POST",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/upload/route.ts",
+      "funcName": "DELETE",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/users/create/route.ts",
+      "funcName": "POST",
+      "category": "Admin-labeled",
+      "dbAccess": true,
+      "authPresence": true
+    },
+    {
+      "fileName": "src/app/api/users/is-first-admin/route.ts",
+      "funcName": "GET",
+      "category": "Utility/Internal",
+      "dbAccess": true,
+      "authPresence": true
+    }
+  ],
+  "stats": {
+    "total": 67,
+    "adminLabeled": 35,
+    "adminNoAuth": 2,
+    "pctAdminNoAuth": 5.714285714285714,
+    "utilityDB": 23,
+    "utilityDBNoAuth": 10,
+    "pctUtilityDBNoAuth": 43.47826086956522
+  }
+}

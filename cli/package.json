@@ -1,0 +1,42 @@
+{
+    "name": "create-cms-nova",
+    "version": "6.0.0",
+    "description": "CLI to create and upgrade CMS Nova projects - A complete headless CMS with Next.js, Prisma and Better Auth",
+    "bin": {
+        "create-cms-nova": "./create-cms-nova.mjs"
+    },
+    "files": [
+        "create-cms-nova.mjs",
+        "README.md",
+        "LICENSE"
+    ],
+    "scripts": {
+        "test": "node create-cms-nova.mjs --help"
+    },
+    "keywords": [
+        "cms",
+        "headless",
+        "nextjs",
+        "prisma",
+        "cli",
+        "create",
+        "template",
+        "starter",
+        "boilerplate",
+        "content-management",
+        "better-auth"
+    ],
+    "author": "Daniel CA <tu-email@gmail.com> (https://github.com/danielcadev)",
+    "license": "MIT",
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/danielcadev/cms-nova-template.git"
+    },
+    "homepage": "https://github.com/danielcadev/cms-nova-template#readme",
+    "bugs": {
+        "url": "https://github.com/danielcadev/cms-nova-template/issues"
+    }
+}

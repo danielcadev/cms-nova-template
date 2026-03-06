@@ -1,6 +1,7 @@
 'use server'
 
 import { prisma } from '@/lib/prisma'
+import { getAdminSession } from '@/lib/server-session'
 
 export type RegionHierarchy = {
     id: string
@@ -46,6 +47,9 @@ export async function createSlugItem(
     parentId?: string
 ) {
     try {
+        const session = await getAdminSession()
+        if (!session) throw new Error('Unauthorized')
+
         // Support bulk creation (comma separated or new lines)
         const names = name.split(/[,\n\/]+/).map(n => n.trim()).filter(Boolean)
 
@@ -95,6 +99,9 @@ async function performSingleCreate(
  */
 export async function deleteSlugItem(type: 'region' | 'subRegion' | 'zone', id: string) {
     try {
+        const session = await getAdminSession()
+        if (!session) throw new Error('Unauthorized')
+
         if (type === 'region') {
             return await prisma.region.delete({ where: { id } })
         }

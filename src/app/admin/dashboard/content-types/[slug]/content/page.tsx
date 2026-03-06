@@ -1,6 +1,7 @@
-import { notFound } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import { ContentEntriesPage } from '@/components/admin/content-types/ContentEntriesPage'
 import { prisma } from '@/lib/prisma'
+import { getAdminSession } from '@/lib/server-session'
 
 async function getContentTypeWithEntries(slug: string) {
   try {
@@ -39,11 +40,16 @@ interface ContentEntriesPageProps {
 }
 
 export default async function ContentEntriesPageRoute({ params }: ContentEntriesPageProps) {
+  const session = await getAdminSession()
+  if (!session) {
+    redirect('/admin/login')
+  }
+
   const { slug } = await params
   const contentType = await getContentTypeWithEntries(slug)
 
   if (!contentType) {
-    notFound()
+    redirect('/404')
   }
 
   return <ContentEntriesPage contentType={contentType} />

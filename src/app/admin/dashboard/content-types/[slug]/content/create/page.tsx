@@ -1,7 +1,8 @@
-import { notFound } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import { CreateContentEntryPage } from '@/components/admin/content-types/CreateContentEntryPage'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { prisma } from '@/lib/prisma'
+import { getAdminSession } from '@/lib/server-session'
 
 async function getContentType(slug: string) {
   try {
@@ -32,11 +33,16 @@ interface CreateContentEntryPageProps {
 }
 
 export default async function CreateContentEntryPageRoute({ params }: CreateContentEntryPageProps) {
+  const session = await getAdminSession()
+  if (!session) {
+    redirect('/admin/login')
+  }
+
   const { slug } = await params
   const contentType = await getContentType(slug)
 
   if (!contentType) {
-    notFound()
+    redirect('/404')
   }
 
   return (

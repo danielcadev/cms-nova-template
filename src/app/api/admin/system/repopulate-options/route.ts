@@ -1,6 +1,7 @@
 
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getAdminSession } from '@/lib/server-session'
 import fs from 'fs'
 import path from 'path'
 
@@ -33,6 +34,10 @@ function getFiles(dir: string, files: string[] = []) {
 
 export async function GET() {
     try {
+        const session = await getAdminSession()
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
         const dataSamplePath = path.join(process.cwd(), 'data_sample/regions')
         const files = getFiles(dataSamplePath)
 

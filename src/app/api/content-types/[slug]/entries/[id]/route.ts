@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getAdminSession } from '@/lib/server-session'
 
 export async function GET(
   _request: NextRequest,
@@ -50,6 +51,11 @@ export async function PUT(
   { params }: { params: Promise<{ slug: string; id: string }> },
 ) {
   try {
+    const session = await getAdminSession()
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { slug, id } = await params
     const body = await request.json()
 
@@ -138,6 +144,11 @@ export async function DELETE(
   { params }: { params: Promise<{ slug: string; id: string }> },
 ) {
   try {
+    const session = await getAdminSession()
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { slug, id } = await params
 
     // Find the content type

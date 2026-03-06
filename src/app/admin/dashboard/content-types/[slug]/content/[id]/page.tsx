@@ -1,6 +1,7 @@
-import { notFound } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import { EditContentEntryPage } from '@/components/admin/content-types/EditContentEntryPage'
 import { prisma } from '@/lib/prisma'
+import { getAdminSession } from '@/lib/server-session'
 
 async function getContentEntry(slug: string, entryId: string) {
   try {
@@ -28,6 +29,7 @@ async function getContentEntry(slug: string, entryId: string) {
       ...entry,
       createdAt: entry.createdAt.toISOString(),
       updatedAt: entry.updatedAt.toISOString(),
+      publishedAt: entry.publishedAt ? entry.publishedAt.toISOString() : null,
       contentType: {
         ...entry.contentType,
         createdAt: entry.contentType.createdAt.toISOString(),
@@ -50,11 +52,16 @@ interface EditContentEntryPageRouteProps {
 export default async function EditContentEntryPageRoute({
   params,
 }: EditContentEntryPageRouteProps) {
+  const session = await getAdminSession()
+  if (!session) {
+    redirect('/admin/login')
+  }
+
   const { slug, id } = await params
   const entry = await getContentEntry(slug, id)
 
   if (!entry) {
-    notFound()
+    redirect('/404')
   }
 
   return <EditContentEntryPage entry={entry} />

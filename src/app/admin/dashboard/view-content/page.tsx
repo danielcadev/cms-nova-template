@@ -1,6 +1,8 @@
+import { redirect } from 'next/navigation'
 import { ClientOverlay } from '@/components/admin/dashboard/ViewContentPage/ClientOverlay'
 import { ViewContentComponent } from '@/components/admin/dashboard/ViewContentPage/ViewContentComponent'
 import { prisma } from '@/lib/prisma'
+import { getAdminSession } from '@/lib/server-session'
 
 async function getContentData() {
   // Ejecutamos todas las consultas en paralelo para mayor rapidez
@@ -45,6 +47,11 @@ async function getContentData() {
 }
 
 export default async function ViewContentPage() {
+  const session = await getAdminSession()
+  if (!session) {
+    redirect('/admin/login')
+  }
+
   const { contentTypes, plans, allContentEntries } = await getContentData()
 
   return (
