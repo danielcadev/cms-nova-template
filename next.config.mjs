@@ -1,6 +1,5 @@
 import createNextIntlPlugin from 'next-intl/plugin'
 
-
 // Trigger restart......
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
@@ -25,9 +24,6 @@ const nextConfig = {
   // Configuration for deployment
   // output: 'standalone', // Deshabilitado - causa problemas con archivos estáticos
   serverExternalPackages: ['@prisma/client'],
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },

@@ -39,6 +39,8 @@ next-env.d.ts
 .Trashes
 ehthumbs.db
 Thumbs.db
+NUL
+nul
 
 # Logs
 logs
