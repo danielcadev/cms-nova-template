@@ -1,210 +1,200 @@
-<div align="center">
+# CMS Nova
 
-# 🚀 CMS Nova
+CMS Nova is a reusable CMS platform built with Next.js, Prisma, and Better Auth.
 
-**Modern Headless CMS with Notion-style Design**
+It combines three goals in one repository:
 
-[![Next.js](https://img.shields.io/badge/Next.js-15+-black.svg)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19+-blue.svg)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5+-blue.svg)](https://www.typescriptlang.org/)
-[![Prisma](https://img.shields.io/badge/Prisma-Latest-green.svg)](https://www.prisma.io/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+- a headless CMS core with dynamic content types and entries,
+- vertical packs for domain-specific products such as tourism and experiences,
+- a research-grade case study on security and structural integrity in AI-assisted software development.
 
-*A complete headless CMS with visual content builder, user management, and modern admin interface*
+Alternative positioning versions:
 
-</div>
+- `README.academic.md` for research and case-study framing
+- `README.commercial.md` for product/platform framing
 
----
+Choose one path:
 
-## 🚀 Quick Start
+- Building/using the CMS: start with `README.commercial.md`
+- Reading the case study: start with `README.academic.md`
 
-### Prerequisites
+## What It Is
 
-- Node.js 18+ 
-- npm/yarn/pnpm
-- Database (PostgreSQL, MySQL, or SQLite)
+CMS Nova is not just an admin panel.
 
-### Installation
+It is a platform-oriented codebase designed to support:
+
+- custom CMS deployments,
+- multi-project reuse,
+- public headless routes,
+- plugin-based behavior,
+- media management,
+- and vertical product layers such as travel or destination platforms.
+
+The repository is also used as the main case study for `Vibe-Guard`, a structural auditing proposal focused on the security risks of AI-generated code.
+
+## Core Capabilities
+
+- Dynamic content types with field builders
+- Content entries with public headless routes
+- Better Auth integration and admin access control
+- Media library and S3-related workflows
+- Plugin configuration and feature gating
+- Vertical packs for tourism and experiences
+- CLI support for productization and reuse
+
+## Architecture Direction
+
+The codebase is being organized around explicit ownership boundaries:
+
+```text
+src/
+  app/        # route registration and composition
+  server/     # privileged runtime behavior
+  modules/    # reusable CMS capabilities
+  shared/     # cross-project helpers and UI
+  verticals/  # domain-specific product packs
+```
+
+Current examples:
+
+- `src/server/auth/`
+- `src/server/observability/`
+- `src/modules/auth/`
+- `src/modules/plugins/`
+- `src/modules/content/`
+- `src/verticals/tourism/`
+- `src/verticals/experiences/`
+
+This structure supports both product reuse and research on architectural integrity.
+
+## Research Context
+
+CMS Nova is the primary artifact for an ongoing investigation into AI-assisted coding security.
+
+The research focuses on:
+
+- `Naming Bias`
+- `Minimum Viable Understanding (MVU)`
+- lack of global context in coding models
+- route exposure and authorization drift
+- centralized policy enforcement through `Vibe-Guard`
+
+Key research documents:
+
+- `docs/research/executive-summary.md`
+- `docs/research/case-study-cms-nova.md`
+- `docs/research/architecture-evolution.md`
+- `docs/research/findings-matrix.md`
+- `docs/research/portfolio-statement.md`
+
+## Security Direction
+
+The repository has already gone through a substantial security-focused refactor.
+
+Major improvements include:
+
+- tighter public route gating,
+- restored publication-state checks,
+- reduced plugin secret exposure,
+- sanitized centralized logging,
+- restricted admin-only API surfaces,
+- hardened first-admin bootstrap,
+- thinner route and action layers.
+
+Security documentation:
+
+- `docs/security/security-audit.md`
+- `docs/security/vulnerability-catalog.md`
+- `docs/security/fix-vs-regression-analysis.md`
+- `docs/security/error-log.md`
+- `docs/security/remediation-log.md`
+
+## Quick Start
+
+Requirements:
+
+- Node.js 18+
+- npm
+- a supported database configured through Prisma
+
+Setup:
 
 ```bash
-# Install dependencies
 npm install --legacy-peer-deps
-
-# Configure environment
-cp .env.example .env
-# Edit DATABASE_URL in .env
-
-# Setup database
-npx prisma db push
-npx prisma generate
-
-# Start development server
+npm run generate
+npm run db:push
 npm run dev
 ```
 
-### First Steps
+Then open `http://localhost:3000`.
 
-1. 🌐 Visit **http://localhost:3000** → Redirects to admin setup
-2. 👤 Go to **/admin/signup** → Create your first admin account  
-3. 🎛️ Access **/admin** → Full-featured dashboard
-4. 🎉 **Start building your content!**
-
----
-
-## ✨ Features
-
-### 🎯 **Core CMS Features**
-- ✅ **Headless Architecture** with REST APIs
-- ✅ **Visual Content Builder** with drag & drop
-- ✅ **Dynamic Content Types** - create any structure
-- ✅ **Rich Media Management** - images, files, galleries
-- ✅ **SEO Optimization** - built-in meta management
-- ✅ **Multi-language Support** - i18n ready
-
-### 🔐 **Authentication & Security**
-- ✅ **Better Auth Integration** - secure authentication
-- ✅ **Role-based Permissions** - granular access control
-- ✅ **User Management** - complete admin interface
-- ✅ **Secure APIs** - authentication & authorization
-- ✅ **Audit Logging** - track all changes
-
-### 🎨 **Admin Interface**
-- ✅ **Notion-style Design** - clean & intuitive
-- ✅ **Dark/Light Mode** - automatic theme switching
-- ✅ **Fully Responsive** - mobile-first design
-- ✅ **Custom Components** - no external dependencies
-- ✅ **Accessibility** - WCAG compliant
-
----
-
-## 🛠️ Tech Stack
-
-| Category | Technology |
-|----------|------------|
-| **Framework** | Next.js 15 with App Router |
-| **Frontend** | React 19, TypeScript |
-| **Database** | Prisma ORM (PostgreSQL/MySQL/SQLite) |
-| **Authentication** | Better Auth |
-| **Styling** | Tailwind CSS |
-| **UI Components** | Custom Radix UI components |
-| **File Upload** | AWS S3 integration |
-| **Deployment** | Vercel, Railway, Docker |
-
----
-
-## 📁 Project Structure
-
-```
-cms-nova/
-├── 📱 src/app/                 # Next.js App Router
-│   ├── 🔐 admin/              # Admin dashboard
-│   ├── 🌐 api/                # REST API routes
-│   └── 📄 (pages)/            # Public pages
-├── 🧩 src/components/          # Reusable components
-│   ├── 🎛️ admin/              # Admin UI components
-│   ├── 📝 cms/                # CMS core components
-│   └── 🎨 ui/                 # Base UI components
-├── 🗄️ prisma/                 # Database schema & migrations
-├── 🔧 src/lib/                # Utilities & configurations
-└── 📊 src/types/              # TypeScript definitions
-```
-
----
-
-## 🚀 Available Scripts
+## Main Scripts
 
 ```bash
-# Development
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
-
-# Database
-npm run db:generate  # Generate Prisma client
-npm run db:push      # Push schema to database
-npm run db:migrate   # Run database migrations
-npm run db:studio    # Open Prisma Studio
-npm run db:seed      # Seed database with sample data
-
-# Code Quality
-npm run lint         # Run ESLint
-npm run type-check   # Run TypeScript checks
+npm run dev
+npm run build
+npm run start
+npm run type-check
+npm run lint
+npm run security:check-api
+npm run generate
+npm run db:push
+npm run migrate
+npm run db:studio
 ```
 
----
+## Environment
 
-## 🌐 Environment Variables
-
-Create a `.env` file in the root directory:
+Typical variables include:
 
 ```env
-# Database
-DATABASE_URL="postgresql://username:password@localhost:5432/cms_nova"
+DATABASE_URL=
+BETTER_AUTH_SECRET=
+BETTER_AUTH_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 
-# Authentication
-BETTER_AUTH_SECRET="your-secret-key"
-BETTER_AUTH_URL="http://localhost:3000"
-
-# AWS S3 (Optional)
-AWS_ACCESS_KEY_ID="your-access-key"
-AWS_SECRET_ACCESS_KEY="your-secret-key"
-AWS_REGION="us-east-1"
-AWS_S3_BUCKET="your-bucket-name"
-
-# Next.js
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
+# Optional
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_REGION=us-east-1
+AWS_S3_BUCKET=
+ENCRYPTION_KEY=
+NOVA_SETUP_TOKEN=
 ```
 
----
+Use `.env.example` as the base reference when available in your local copy.
 
-## 🧠 Headless CMS & Public Type Paths
+## Headless Routing
 
-CMS Nova works headless by default. There are no special Blog routes: use type paths based on your Content Types’ `apiIdentifier`.
+CMS Nova supports public type-path routing through content types.
 
-- Headless type paths (controlled by plugin):
-  - Requires enabling the `public-typepaths` plugin in Admin → Plugins.
-  - Index: `/{[typePath]}` — lists published entries for the Content Type (`apiIdentifier`).
-  - Detail: `/{[typePath]}/{[slug]}` — renders a single published entry.
-  - Invalid types or no published entries return 404.
+- `/{typePath}` lists published entries for a content type
+- `/{typePath}/{slug}` renders a published entry
+- exposure is controlled by the `public-typepaths` plugin
 
-- Dynamic navigation for type paths (separate plugin):
-  - Enable the `dynamic-nav` plugin in Admin → Plugins to add items to the navbar.
-  - Modes:
-    - `auto`: discovers Content Types from `/api/content-types` and creates links per `apiIdentifier`.
-    - `include`: manually list which `typePaths` to show.
-  - Options: `exclude` to omit, and `titleCase` to format labels.
+Dynamic navigation can also be enabled through the `dynamic-nav` plugin.
 
-- Starter pages for Plans/Circuits (optional and independent from type paths):
-  - When disabled, `/planes` or `/circuitos` show a “disabled” notice with a link to the Dashboard.
-  - When enabled, they render category indexes based on published entries.
+## Documentation
 
-Note: For a blog, create a Content Type (e.g. `blog`) and use the headless type paths `/{[typePath]}` and `/{[typePath]}/{[slug]}` instead of special routes like `/blog`.
+- `docs/README.md`
+- `docs/architecture/folder-structure.md`
+- `docs/architecture/core-vs-verticals.md`
+- `docs/architecture/dead-code-audit.md`
+- `docs/vibe-guard/protocol-overview.md`
 
-## 📚 Documentation
+## Status
 
-- 📖 **[API Documentation](./docs/api.md)**
-- 🎨 **[Theming Guide](./docs/theming.md)**
-- 🔧 **[Configuration](./docs/configuration.md)**
-- 🚀 **[Deployment Guide](./docs/deployment.md)**
+The repository is in active architectural consolidation.
 
----
+It already functions as:
 
-## 🤝 Contributing
+- a working CMS platform,
+- a reusable base for downstream projects,
+- and a documented research artifact.
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+Some migration bridges still remain, but the structure is now significantly clearer than the original organically grown version.
 
----
+## License
 
-## 📄 License
-
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
-
----
-
-<div align="center">
-
-**Built with ❤️ by [Daniel CA](https://github.com/danielcadev)**
-
-*If you find this project helpful, please consider giving it a ⭐*
-
-</div>
+MIT
