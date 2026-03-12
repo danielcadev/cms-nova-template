@@ -14,7 +14,7 @@ Requirements:
 Setup:
 
 ```bash
-npm install --legacy-peer-deps
+npm install
 npm run generate
 npm run db:push
 npm run dev

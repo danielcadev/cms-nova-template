@@ -151,7 +151,7 @@ function createProject(projectName) {
     }
 
     console.log(c.info('\n📦 Installing dependencies...'));
-    execSync('npm install --legacy-peer-deps', { stdio: 'inherit' });
+    execSync('npm install', { stdio: 'inherit' });
 
     console.log('\n' + c.banner(' SUCCESS '));
     console.log(c.success('\n✅ CMS Nova project created!\n'));
