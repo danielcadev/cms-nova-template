@@ -6,6 +6,12 @@ CMS Nova is a reusable CMS platform built for teams that want to launch custom c
 
 It combines a flexible headless CMS core with business-specific vertical packs such as tourism and experiences, making it suitable for agency work, product studios, travel platforms, and multi-project deployments.
 
+Quick links:
+
+- Developer guide: [docs/dev/README.md](./docs/dev/README.md)
+- Docs index: [docs/README.md](./docs/README.md)
+- Academic version: [README.academic.md](./README.academic.md)
+
 ## Product Positioning
 
 CMS Nova is designed as:
@@ -84,11 +90,11 @@ npm run lint
 
 ## Documentation
 
-- `docs/dev/README.md`
-- `docs/README.md`
-- `docs/architecture/folder-structure.md`
-- `docs/architecture/core-vs-verticals.md`
-- `docs/security/security-audit.md`
+- [docs/dev/README.md](./docs/dev/README.md)
+- [docs/README.md](./docs/README.md)
+- [docs/architecture/folder-structure.md](./docs/architecture/folder-structure.md)
+- [docs/architecture/core-vs-verticals.md](./docs/architecture/core-vs-verticals.md)
+- [docs/security/security-audit.md](./docs/security/security-audit.md)
 
 ## License
 

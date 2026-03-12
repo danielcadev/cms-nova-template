@@ -6,7 +6,14 @@ CMS Nova is a research-oriented case study on the security and structural integr
 
 The repository combines a working Next.js CMS platform with a documented architectural intervention process. It is used to study how coding models can produce locally plausible code while weakening system-wide guarantees such as authorization, publication policy, secret boundaries, and route exposure control.
 
-If you’re primarily trying to use CMS Nova as a platform/template, start with `README.commercial.md` and `docs/dev/README.md`.
+Quick links:
+
+- Executive summary: [docs/research/executive-summary.md](./docs/research/executive-summary.md)
+- Vibe-Guard protocol: [docs/vibe-guard/protocol-overview.md](./docs/vibe-guard/protocol-overview.md)
+- Commercial version: [README.commercial.md](./README.commercial.md)
+- Developer guide: [docs/dev/README.md](./docs/dev/README.md)
+
+If you’re primarily trying to use CMS Nova as a platform/template, start with [README.commercial.md](./README.commercial.md) and [docs/dev/README.md](./docs/dev/README.md).
 
 ## Research Focus
 
@@ -65,21 +72,21 @@ src/
 
 ## Research Documents
 
-- `docs/research/executive-summary.md`
-- `docs/research/core-concepts.md`
-- `docs/research/methodology.md`
-- `docs/research/case-study-cms-nova.md`
-- `docs/research/architecture-evolution.md`
-- `docs/research/findings-matrix.md`
-- `docs/research/portfolio-statement.md`
+- [docs/research/executive-summary.md](./docs/research/executive-summary.md)
+- [docs/research/core-concepts.md](./docs/research/core-concepts.md)
+- [docs/research/methodology.md](./docs/research/methodology.md)
+- [docs/research/case-study-cms-nova.md](./docs/research/case-study-cms-nova.md)
+- [docs/research/architecture-evolution.md](./docs/research/architecture-evolution.md)
+- [docs/research/findings-matrix.md](./docs/research/findings-matrix.md)
+- [docs/research/portfolio-statement.md](./docs/research/portfolio-statement.md)
 
 ## Security Documents
 
-- `docs/security/security-audit.md`
-- `docs/security/vulnerability-catalog.md`
-- `docs/security/fix-vs-regression-analysis.md`
-- `docs/security/error-log.md`
-- `docs/security/remediation-log.md`
+- [docs/security/security-audit.md](./docs/security/security-audit.md)
+- [docs/security/vulnerability-catalog.md](./docs/security/vulnerability-catalog.md)
+- [docs/security/fix-vs-regression-analysis.md](./docs/security/fix-vs-regression-analysis.md)
+- [docs/security/error-log.md](./docs/security/error-log.md)
+- [docs/security/remediation-log.md](./docs/security/remediation-log.md)
 
 ## Expected Use
 

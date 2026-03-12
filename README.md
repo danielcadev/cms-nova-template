@@ -1,5 +1,7 @@
 # CMS Nova
 
+[![CI](https://github.com/danielcadev/cms-nova-template/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danielcadev/cms-nova-template/actions/workflows/ci.yml)
+
 CMS Nova is a reusable CMS platform built with Next.js, Prisma, and Better Auth.
 
 It combines three goals in one repository:
@@ -8,15 +10,20 @@ It combines three goals in one repository:
 - vertical packs for domain-specific products such as tourism and experiences,
 - a research-grade case study on security and structural integrity in AI-assisted software development.
 
-Alternative positioning versions:
+## Quick Links
 
-- `README.academic.md` for research and case-study framing
-- `README.commercial.md` for product/platform framing
+- Commercial overview: [README.commercial.md](./README.commercial.md)
+- Academic overview: [README.academic.md](./README.academic.md)
+- Developer guide: [docs/dev/README.md](./docs/dev/README.md)
+- Docs index: [docs/README.md](./docs/README.md)
+- Security audit: [docs/security/security-audit.md](./docs/security/security-audit.md)
+- Vibe-Guard protocol: [docs/vibe-guard/protocol-overview.md](./docs/vibe-guard/protocol-overview.md)
+- CLI: [cli/README.md](./cli/README.md)
 
 Choose one path:
 
-- Building/using the CMS: start with `README.commercial.md`
-- Reading the case study: start with `README.academic.md`
+- Building/using the CMS: start with [README.commercial.md](./README.commercial.md)
+- Reading the case study: start with [README.academic.md](./README.academic.md)
 
 ## What It Is
 
@@ -82,11 +89,11 @@ The research focuses on:
 
 Key research documents:
 
-- `docs/research/executive-summary.md`
-- `docs/research/case-study-cms-nova.md`
-- `docs/research/architecture-evolution.md`
-- `docs/research/findings-matrix.md`
-- `docs/research/portfolio-statement.md`
+- [docs/research/executive-summary.md](./docs/research/executive-summary.md)
+- [docs/research/case-study-cms-nova.md](./docs/research/case-study-cms-nova.md)
+- [docs/research/architecture-evolution.md](./docs/research/architecture-evolution.md)
+- [docs/research/findings-matrix.md](./docs/research/findings-matrix.md)
+- [docs/research/portfolio-statement.md](./docs/research/portfolio-statement.md)
 
 ## Security Direction
 
@@ -104,11 +111,11 @@ Major improvements include:
 
 Security documentation:
 
-- `docs/security/security-audit.md`
-- `docs/security/vulnerability-catalog.md`
-- `docs/security/fix-vs-regression-analysis.md`
-- `docs/security/error-log.md`
-- `docs/security/remediation-log.md`
+- [docs/security/security-audit.md](./docs/security/security-audit.md)
+- [docs/security/vulnerability-catalog.md](./docs/security/vulnerability-catalog.md)
+- [docs/security/fix-vs-regression-analysis.md](./docs/security/fix-vs-regression-analysis.md)
+- [docs/security/error-log.md](./docs/security/error-log.md)
+- [docs/security/remediation-log.md](./docs/security/remediation-log.md)
 
 ## Quick Start
 
@@ -177,11 +184,12 @@ Dynamic navigation can also be enabled through the `dynamic-nav` plugin.
 
 ## Documentation
 
-- `docs/README.md`
-- `docs/architecture/folder-structure.md`
-- `docs/architecture/core-vs-verticals.md`
-- `docs/architecture/dead-code-audit.md`
-- `docs/vibe-guard/protocol-overview.md`
+- [docs/README.md](./docs/README.md)
+- [docs/dev/README.md](./docs/dev/README.md)
+- [docs/architecture/folder-structure.md](./docs/architecture/folder-structure.md)
+- [docs/architecture/core-vs-verticals.md](./docs/architecture/core-vs-verticals.md)
+- [docs/architecture/dead-code-audit.md](./docs/architecture/dead-code-audit.md)
+- [docs/vibe-guard/protocol-overview.md](./docs/vibe-guard/protocol-overview.md)
 
 ## Status
 
