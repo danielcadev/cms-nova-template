@@ -1,8 +1,8 @@
 'use client'
 
 import { Ban, CheckCircle, Crown, Edit, Mail, Trash2, User } from 'lucide-react'
-import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ConfirmationModal } from '@/components/ui/ConfirmationModal'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -107,12 +107,12 @@ export function UserDetailModal({
     const config = shouldBan
       ? confirmationPresets.banUser(user.name || user.email)
       : {
-        title: t('actions.unbanUserTitle'),
-        description: t('actions.unbanUserDesc', { name: user.name || user.email }),
-        confirmText: t('actions.unban'),
-        variant: 'info' as const,
-        icon: 'shield' as const,
-      }
+          title: t('actions.unbanUserTitle'),
+          description: t('actions.unbanUserDesc', { name: user.name || user.email }),
+          confirmText: t('actions.unban'),
+          variant: 'info' as const,
+          icon: 'shield' as const,
+        }
 
     confirmation.confirm(config, async () => {
       setIsUpdating(true)
@@ -138,7 +138,9 @@ export function UserDetailModal({
         ) : (
           <>
             <DialogHeader className="p-6 border-b border-zinc-100">
-              <DialogTitle className="text-xl font-bold text-zinc-900">{t('details.title')}</DialogTitle>
+              <DialogTitle className="text-xl font-bold text-zinc-900">
+                {t('details.title')}
+              </DialogTitle>
             </DialogHeader>
 
             <div className="p-6 space-y-8">
@@ -184,7 +186,9 @@ export function UserDetailModal({
                     {t('details.joined')}
                   </div>
                   <div className="text-sm font-medium text-zinc-900">
-                    {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : t('card.unknownDate')}
+                    {user.createdAt
+                      ? new Date(user.createdAt).toLocaleDateString()
+                      : t('card.unknownDate')}
                   </div>
                 </div>
                 <div className="text-center">

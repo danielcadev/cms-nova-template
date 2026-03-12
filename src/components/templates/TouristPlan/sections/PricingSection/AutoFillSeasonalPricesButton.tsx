@@ -1,10 +1,10 @@
 'use client'
 
 import { Wand2 } from 'lucide-react'
-import { useFormContext } from 'react-hook-form'
 import { useTranslations } from 'next-intl'
+import { useFormContext } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
-import type { PlanFormValues } from '@/schemas/plan'
+import type { PlanFormValues } from '@/verticals/tourism'
 
 export function AutoFillSeasonalPricesButton() {
   const t = useTranslations('templates.tourism.edit.sections.pricing')

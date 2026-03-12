@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { rateLimit } from '@/lib/rate-limit'
-import { getAdminSession } from '@/lib/server-session'
+import { getAdminSession } from '@/server/auth/session'
+import logger from '@/server/observability/logger'
 import { ApiResponseBuilder as R } from '@/utils/api-response'
-import logger from '@/utils/logger'
 
 const S3_CONFIG_KEY = 's3-credentials'
 

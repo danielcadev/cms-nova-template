@@ -1,14 +1,25 @@
 'use client'
 
-import { Eye, EyeOff, Globe, Info, Lock, RefreshCw, Save, ShieldAlert, Sparkles, X, Zap } from 'lucide-react'
-import { useEffect, useId, useMemo, useRef, useState } from 'react'
-import Image from 'next/image'
+import {
+  Eye,
+  EyeOff,
+  Globe,
+  Info,
+  Lock,
+  RefreshCw,
+  Save,
+  ShieldAlert,
+  Sparkles,
+  X,
+  Zap,
+} from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ModalBase, ModalBody, ModalFooter } from '@/components/ui/Modal'
-import type { Plugin } from '@/lib/plugins/config'
+import type { Plugin } from '@/modules/plugins/config'
 import { TypePathsSelector } from './TypePathsSelector'
 
 interface PluginConfigModalProps {
@@ -59,7 +70,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
   const [hasExistingAiConfig, setHasExistingAiConfig] = useState(false)
 
   const pluginId = plugin?.id || ''
-  const isS3 = pluginId === 's3' || pluginId === 's3-storage'
+  const isS3 = pluginId === 's3-storage'
   const isDynamicNav = pluginId === 'dynamic-nav'
   const isGemini = pluginId === 'google-gemini'
 
@@ -128,7 +139,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
     return () => {
       ignore = true
     }
-  }, [isS3])
+  }, [isS3, isGemini])
 
   const title = useMemo(() => {
     if (isS3) return t('config.titles.s3')
@@ -155,7 +166,11 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
         if (aiConfig.provider === 'google' && !payload.googleApiKey && hasExistingAiConfig) {
           payload.googleApiKey = '••••••••'
         }
-        if (aiConfig.provider === 'openrouter' && !payload.openRouterApiKey && hasExistingAiConfig) {
+        if (
+          aiConfig.provider === 'openrouter' &&
+          !payload.openRouterApiKey &&
+          hasExistingAiConfig
+        ) {
           payload.openRouterApiKey = '••••••••'
         }
         await onSave(payload)
@@ -262,7 +277,9 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                 <div className="rounded-xl border border-red-200 bg-red-50 p-4 flex gap-3">
                   <ShieldAlert className="w-5 h-5 text-red-600 shrink-0" />
                   <div className="space-y-1">
-                    <p className="text-sm font-medium text-red-900">{t('config.s3.encryptionMissing')}</p>
+                    <p className="text-sm font-medium text-red-900">
+                      {t('config.s3.encryptionMissing')}
+                    </p>
                     <p className="text-xs text-red-700 leading-relaxed">
                       {t('config.s3.encryptionDescription')}
                     </p>
@@ -305,7 +322,9 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                       setS3Config((prev) => ({ ...prev, secretAccessKey: e.target.value }))
                     }
                     placeholder={
-                      hasExistingConfig ? t('config.s3.secretPlaceholderExisting') : t('config.s3.secretPlaceholder')
+                      hasExistingConfig
+                        ? t('config.s3.secretPlaceholderExisting')
+                        : t('config.s3.secretPlaceholder')
                     }
                     disabled={encryptionOk === false}
                     className="rounded-xl border-zinc-200 bg-zinc-50/50 focus:bg-white transition-all font-mono text-sm"
@@ -320,9 +339,7 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                 {t('config.s3.instructions')}
               </div>
               <div className="space-y-2 text-xs text-blue-800">
-                <p>
-                  {t('config.s3.iamNotice')}
-                </p>
+                <p>{t('config.s3.iamNotice')}</p>
                 <p>{t('config.s3.corsNotice')}</p>
                 <pre className="bg-blue-900/5 p-2 rounded-lg overflow-x-auto font-mono text-[10px] text-blue-900 mt-1">
                   {`[
@@ -431,21 +448,25 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                   <button
                     type="button"
                     onClick={() => setAiConfig((p) => ({ ...p, provider: 'google' }))}
-                    className={`flex items-center gap-2 p-3 rounded-xl border transition-all text-sm font-medium ${aiConfig.provider === 'google'
-                      ? 'border-zinc-900 bg-zinc-900 text-white'
-                      : 'border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-600'
-                      }`}
+                    className={`flex items-center gap-2 p-3 rounded-xl border transition-all text-sm font-medium ${
+                      aiConfig.provider === 'google'
+                        ? 'border-zinc-900 bg-zinc-900 text-white'
+                        : 'border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-600'
+                    }`}
                   >
-                    <Sparkles className={`w-4 h-4 ${aiConfig.provider === 'google' ? 'text-zinc-100' : 'text-zinc-400'}`} />
+                    <Sparkles
+                      className={`w-4 h-4 ${aiConfig.provider === 'google' ? 'text-zinc-100' : 'text-zinc-400'}`}
+                    />
                     {t('config.gemini.providerGoogle')}
                   </button>
                   <button
                     type="button"
                     onClick={() => setAiConfig((p) => ({ ...p, provider: 'openrouter' }))}
-                    className={`flex items-center gap-2 p-3 rounded-xl border transition-all text-sm font-medium ${aiConfig.provider === 'openrouter'
-                      ? 'border-zinc-900 bg-zinc-900 text-white'
-                      : 'border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-600'
-                      }`}
+                    className={`flex items-center gap-2 p-3 rounded-xl border transition-all text-sm font-medium ${
+                      aiConfig.provider === 'openrouter'
+                        ? 'border-zinc-900 bg-zinc-900 text-white'
+                        : 'border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-600'
+                    }`}
                   >
                     <Globe className="w-4 h-4" />
                     {t('config.gemini.providerOpenRouter')}
@@ -457,7 +478,9 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                 <div className="rounded-xl border border-red-200 bg-red-50 p-4 flex gap-3">
                   <ShieldAlert className="w-5 h-5 text-red-600 shrink-0" />
                   <div className="space-y-1">
-                    <p className="text-sm font-medium text-red-900">{t('config.s3.encryptionMissing')}</p>
+                    <p className="text-sm font-medium text-red-900">
+                      {t('config.s3.encryptionMissing')}
+                    </p>
                     <p className="text-xs text-red-700 leading-relaxed">
                       {t('config.s3.encryptionDescription')}
                     </p>
@@ -483,7 +506,9 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                           setAiConfig((prev) => ({ ...prev, googleApiKey: e.target.value }))
                         }
                         placeholder={
-                          hasExistingAiConfig ? t('config.s3.secretPlaceholderExisting') : t('config.gemini.googleApiKeyPlaceholder')
+                          hasExistingAiConfig
+                            ? t('config.s3.secretPlaceholderExisting')
+                            : t('config.gemini.googleApiKeyPlaceholder')
                         }
                         disabled={encryptionOk === false}
                         className="rounded-xl border-zinc-200 bg-zinc-50/50 focus:bg-white transition-all font-mono text-sm pr-10"
@@ -519,16 +544,24 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                     <select
                       id={`${id}-google-model`}
                       value={aiConfig.googleModel}
-                      onChange={(e) => setAiConfig((prev) => ({ ...prev, googleModel: e.target.value }))}
+                      onChange={(e) =>
+                        setAiConfig((prev) => ({ ...prev, googleModel: e.target.value }))
+                      }
                       className="w-full px-3 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50/50 focus:bg-white focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 outline-none transition-all text-sm"
                     >
                       <option value="gemini-3-pro-preview">{t('config.gemini.model3Pro')}</option>
-                      <option value="gemini-3-flash-preview">{t('config.gemini.model3Flash')}</option>
+                      <option value="gemini-3-flash-preview">
+                        {t('config.gemini.model3Flash')}
+                      </option>
                       <option value="gemini-2.5-pro">{t('config.gemini.model25Pro')}</option>
                       <option value="gemini-2.5-flash">{t('config.gemini.model25Flash')}</option>
-                      <option value="gemini-2.5-flash-lite">{t('config.gemini.model25FlashLite')}</option>
+                      <option value="gemini-2.5-flash-lite">
+                        {t('config.gemini.model25FlashLite')}
+                      </option>
                       <option value="gemini-2.0-flash">{t('config.gemini.model20Flash')}</option>
-                      <option value="gemini-2.0-flash-lite">{t('config.gemini.model20FlashLite')}</option>
+                      <option value="gemini-2.0-flash-lite">
+                        {t('config.gemini.model20FlashLite')}
+                      </option>
                       <option value="gemini-1.5-pro">{t('config.gemini.model15Pro')}</option>
                       <option value="gemini-1.5-flash">{t('config.gemini.model15Flash')}</option>
                     </select>
@@ -552,7 +585,9 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                           setAiConfig((prev) => ({ ...prev, openRouterApiKey: e.target.value }))
                         }
                         placeholder={
-                          hasExistingAiConfig ? t('config.s3.secretPlaceholderExisting') : t('config.gemini.openRouterApiKeyPlaceholder')
+                          hasExistingAiConfig
+                            ? t('config.s3.secretPlaceholderExisting')
+                            : t('config.gemini.openRouterApiKeyPlaceholder')
                         }
                         disabled={encryptionOk === false}
                         className="rounded-xl border-zinc-200 bg-zinc-50/50 focus:bg-white transition-all font-mono text-sm pr-10"
@@ -605,10 +640,11 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
                           key={m}
                           type="button"
                           onClick={() => setAiConfig((prev) => ({ ...prev, openRouterModel: m }))}
-                          className={`px-2 py-1 text-[10px] rounded-md border transition-all ${aiConfig.openRouterModel === m
-                            ? 'bg-zinc-900 border-zinc-900 text-white font-medium'
-                            : 'bg-white border-zinc-200 text-zinc-500 hover:border-zinc-400'
-                            }`}
+                          className={`px-2 py-1 text-[10px] rounded-md border transition-all ${
+                            aiConfig.openRouterModel === m
+                              ? 'bg-zinc-900 border-zinc-900 text-white font-medium'
+                              : 'bg-white border-zinc-200 text-zinc-500 hover:border-zinc-400'
+                          }`}
                         >
                           {m.split('/')[1]}
                         </button>
@@ -622,7 +658,9 @@ export function PluginConfigModal({ plugin, isOpen, onClose, onSave }: PluginCon
             <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex gap-3">
               <Zap className="w-5 h-5 text-emerald-600 shrink-0" />
               <div className="space-y-1">
-                <p className="text-sm font-medium text-emerald-900">{t('config.gemini.featuresTitle')}</p>
+                <p className="text-sm font-medium text-emerald-900">
+                  {t('config.gemini.featuresTitle')}
+                </p>
                 <p className="text-xs text-emerald-700 leading-relaxed">
                   {t('config.gemini.featuresDesc')}
                 </p>

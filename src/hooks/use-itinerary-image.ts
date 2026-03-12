@@ -2,8 +2,8 @@
 import { useCallback, useState } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { useImageUpload } from '@/contexts/ImageUploadContext'
-import type { PlanFormValues } from '@/schemas/plan'
 import { validateImage } from '@/utils/image-utils'
+import type { PlanFormValues } from '@/verticals/tourism'
 
 interface UseItineraryImageProps {
   form: UseFormReturn<PlanFormValues>
@@ -175,19 +175,12 @@ export function useItineraryImage({
           setError('S3 storage is not configured. Please configure it before uploading.')
           return
         }
-        console.debug('[ItineraryImage] handleImageUpload:start', {
-          dayIndex,
-          name: file.name,
-          type: file.type,
-          size: file.size,
-        })
         setIsUploading(true)
         addUploadingItem(uploadId)
         setError(null)
 
         // Validate image
         const validation = validateImage(file)
-        console.debug('[ItineraryImage] validation', validation)
         if (!validation.isValid) {
           throw new Error(validation.error)
         }
@@ -197,33 +190,22 @@ export function useItineraryImage({
         const currentDay = currentItinerary[dayIndex]
         const previousImage = currentDay?.image
 
-        console.debug('[ItineraryImage] previousImage', previousImage)
-
         // Try fast path (presigned S3 PUT), fallback to server upload
         let result: { url: string; key: string }
         try {
           const uploadFile = await maybeCompressImage(file)
-          console.debug('[ItineraryImage] presignedUpload:attempt', {
-            originalSize: file.size,
-            uploadSize: uploadFile.size,
-            type: uploadFile.type,
-          })
           result = await presignedUpload(uploadFile)
-          console.debug('[ItineraryImage] presignedUpload:success', result)
-        } catch (e) {
-          console.warn('[ItineraryImage] presignedUpload:failed, falling back to serverUpload', e)
+        } catch (_e) {
+          // Fallback to server upload if presigned PUT fails.
           const uploadFile = await maybeCompressImage(file)
           result = await serverUpload(uploadFile)
-          console.debug('[ItineraryImage] serverUpload:success', result)
         }
 
         // Update form with new image
-        console.debug('[ItineraryImage] form.setValue')
         form.setValue(`itinerary.${dayIndex}.image`, result.url, {
           shouldValidate: true,
           shouldDirty: true,
         })
-        console.debug('[ItineraryImage] form.setValue done')
 
         // Delete previous image if exists (best-effort)
         if (previousImage && typeof previousImage === 'string') {
@@ -275,8 +257,6 @@ export function useItineraryImage({
       const currentDay = currentItinerary[dayIndex]
       const currentImage = currentDay?.image
 
-      console.debug('[ItineraryImage] handleImageDelete:currentImage', currentImage)
-
       // If no image, do nothing
       if (!currentImage) return
 
@@ -295,26 +275,22 @@ export function useItineraryImage({
       // If there's a key, try to delete the image from S3
       if (imageKey && isConfigured) {
         try {
-          console.debug('[ItineraryImage] delete:attempt', imageKey)
-          const res = await fetchWithTimeout('/api/upload', {
+          await fetchWithTimeout('/api/upload', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ key: imageKey }),
             timeoutMs: 10000,
           })
-          console.debug('[ItineraryImage] delete:status', res.status)
         } catch (_error) {
-          console.warn('[ItineraryImage] delete:failed')
+          // Ignore delete failures.
         }
       }
 
       // Clear the image field in the form
-      console.debug('[ItineraryImage] clearing form itinerary image')
       form.setValue(`itinerary.${dayIndex}.image`, '', {
         shouldValidate: true,
         shouldDirty: true,
       })
-      console.debug('[ItineraryImage] cleared')
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       setError(errorMessage)

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { rateLimit } from '@/lib/rate-limit'
-import { getAdminSession } from '@/lib/server-session'
+import { getAdminSession } from '@/server/auth/session'
 
 export async function GET(request: Request) {
   const session = await getAdminSession()

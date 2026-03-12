@@ -1,15 +1,21 @@
-﻿'use client'
+'use client'
 
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, Link2, RefreshCw, Trash2, List } from 'lucide-react'
+import { GripVertical, Link2, RefreshCw, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { toCamelCase } from '@/utils/formatters'
 import type { ContentTypeFormValues } from '../ContentTypeForm'
 import { fieldTypes } from './constants'
@@ -34,7 +40,7 @@ export function SortableFieldRow({ field, index, remove }: SortableFieldRowProps
   const [routes, setRoutes] = useState<{ value: string; label: string }[]>([])
   const [loadingRoutes, setLoadingRoutes] = useState(false)
 
-  const fetchRoutes = async (silent = false) => {
+  const fetchRoutes = useCallback(async (silent = false) => {
     if (!silent) setLoadingRoutes(true)
     try {
       const response = await fetch('/api/admin/system/routes')
@@ -42,12 +48,11 @@ export function SortableFieldRow({ field, index, remove }: SortableFieldRowProps
       if (data.success && data.routes) {
         setRoutes(data.routes)
       }
-    } catch (error) {
-      console.error('Error fetching routes:', error)
+    } catch {
     } finally {
       if (!silent) setLoadingRoutes(false)
     }
-  }
+  }, [])
 
   const fieldTypeInfo = fieldTypes.find((ft) => ft.type === field.type)
   const slugRouteValue = useWatch({ control, name: `fields.${index}.slugRoute` })
@@ -57,7 +62,7 @@ export function SortableFieldRow({ field, index, remove }: SortableFieldRowProps
     if (fieldTypeInfo?.type === 'SLUG' && slugRouteValue) {
       fetchRoutes(true)
     }
-  }, [fieldTypeInfo?.type, slugRouteValue])
+  }, [fieldTypeInfo?.type, slugRouteValue, fetchRoutes])
 
   useEffect(() => {
     if (labelValue) setValue(`fields.${index}.apiIdentifier`, toCamelCase(labelValue))
@@ -109,10 +114,11 @@ export function SortableFieldRow({ field, index, remove }: SortableFieldRowProps
                         <button
                           type="button"
                           onClick={() => switchField.onChange(!switchField.value)}
-                          className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${switchField.value
-                            ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
-                            : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700'
-                            }`}
+                          className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                            switchField.value
+                              ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                              : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700'
+                          }`}
                         >
                           {switchField.value ? 'Required' : 'Optional'}
                         </button>
@@ -155,7 +161,9 @@ export function SortableFieldRow({ field, index, remove }: SortableFieldRowProps
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Link2 className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                    <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{t('slugRouteMapping')}</span>
+                    <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      {t('slugRouteMapping')}
+                    </span>
                   </div>
                   <Button
                     type="button"
@@ -181,17 +189,29 @@ export function SortableFieldRow({ field, index, remove }: SortableFieldRowProps
                       <Select onValueChange={slugField.onChange} value={slugField.value}>
                         <FormControl>
                           <SelectTrigger className="h-10 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
-                            <SelectValue placeholder={routes.length === 0 ? t('scanRoutesPlaceholder') : t('selectRoute')} />
+                            <SelectValue
+                              placeholder={
+                                routes.length === 0 ? t('scanRoutesPlaceholder') : t('selectRoute')
+                              }
+                            />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="max-h-[300px]">
                           {routes.length === 0 ? (
-                            <SelectItem value="__placeholder__" disabled className="text-gray-500 italic">
+                            <SelectItem
+                              value="__placeholder__"
+                              disabled
+                              className="text-gray-500 italic"
+                            >
                               {t('noRoutesFound')}
                             </SelectItem>
                           ) : (
                             routes.map((route) => (
-                              <SelectItem key={route.value} value={route.value} className="font-mono text-sm">
+                              <SelectItem
+                                key={route.value}
+                                value={route.value}
+                                className="font-mono text-sm"
+                              >
                                 {route.value}
                               </SelectItem>
                             ))

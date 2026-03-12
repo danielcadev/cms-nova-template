@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getAdminSession } from '@/lib/server-session'
+import { getAdminSession } from '@/server/auth/session'
+import logger from '@/server/observability/logger'
 
 const FOLDERS_CONFIG_KEY = 'media-folders'
 
@@ -21,6 +22,10 @@ async function setConfiguredFolders(folders: string[]) {
 
 export async function GET(_req: NextRequest) {
   try {
+    const session = await getAdminSession()
+    if (!session)
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+
     const dbFolders = await prisma.asset.findMany({
       distinct: ['folder'],
       select: { folder: true },
@@ -33,7 +38,7 @@ export async function GET(_req: NextRequest) {
 
     return NextResponse.json({ success: true, folders: Array.from(set).sort() })
   } catch (e) {
-    console.error('Error fetching folders', e)
+    logger.error('Error fetching folders', e)
     return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
   }
 }
@@ -99,12 +104,12 @@ export async function POST(req: NextRequest) {
       }
     } catch (err) {
       // Do not fail folder creation if S3 marker fails; log only
-      console.warn('S3 folder marker creation failed:', err)
+      logger.warn('S3 folder marker creation failed', err)
     }
 
     return NextResponse.json({ success: true })
   } catch (e) {
-    console.error('Error creating folder', e)
+    logger.error('Error creating folder', e)
     return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
   }
 }
@@ -183,7 +188,7 @@ export async function DELETE(req: NextRequest) {
         } while (ContinuationToken)
       }
     } catch (err) {
-      console.warn('S3 folder deletion failed:', err)
+      logger.warn('S3 folder deletion failed', err)
     }
 
     // Delete DB assets under folder
@@ -196,7 +201,7 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json({ success: true })
   } catch (e) {
-    console.error('Error deleting folder', e)
+    logger.error('Error deleting folder', e)
     return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 })
   }
 }

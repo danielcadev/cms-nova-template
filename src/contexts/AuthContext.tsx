@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation'
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { useToast } from '@/hooks/use-toast'
-import { authClient } from '@/lib/auth-client'
+import { authClient } from '@/modules/auth/client'
 import type {
   BetterAuthResponse,
   BetterAuthUser,
@@ -100,7 +100,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         if (!formData.email || !formData.password) throw new Error('Please fill in all fields')
         if (!formData.email.includes('@')) throw new Error('Please enter a valid email')
-
 
         // Intentar directamente sign in (usuarios deben crearse desde /admin/users)
 

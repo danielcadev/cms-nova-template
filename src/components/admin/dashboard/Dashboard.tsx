@@ -1,15 +1,15 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
-import { es, enUS } from 'date-fns/locale'
+import { enUS, es } from 'date-fns/locale'
 import { Calendar, FileText, Image as ImageIcon, Settings, UserPlus, Users } from 'lucide-react'
 import Link from 'next/link'
-import { useTranslations, useLocale } from 'next-intl'
-import { useCallback, useEffect, useState, useMemo } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
+import { useEffect, useMemo, useState } from 'react'
 import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
 import { useCurrentUser } from '@/hooks/use-current-user'
-import { useUsers } from '@/hooks/use-users'
 import { cn } from '@/lib/utils'
+import { useUsers } from '@/modules/users/client/useUsers'
 
 export function Dashboard() {
   const t = useTranslations('dashboard')
@@ -54,7 +54,7 @@ export function Dashboard() {
         id: `entry-${entry.id}`,
         text: t('widgets.activity.newEntry', {
           name: entry.title,
-          type: entry.contentType?.name || 'Content'
+          type: entry.contentType?.name || 'Content',
         }),
         date: new Date(entry.createdAt),
         color: 'bg-emerald-500',
@@ -76,7 +76,7 @@ export function Dashboard() {
         ...activity,
         time: formatDistanceToNow(activity.date, {
           addSuffix: true,
-          locale: locale === 'es' ? es : enUS
+          locale: locale === 'es' ? es : enUS,
         }),
       }))
   }, [entries, users, t, locale])
@@ -84,12 +84,7 @@ export function Dashboard() {
   if (isLoading) {
     return (
       <div className="relative min-h-screen">
-        <AdminLoading
-          title={t('title')}
-          message={t('loading')}
-          variant="content"
-          fullScreen
-        />
+        <AdminLoading title={t('title')} message={t('loading')} variant="content" fullScreen />
       </div>
     )
   }

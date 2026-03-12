@@ -3,12 +3,12 @@ import { Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 import { cookies } from 'next/headers'
 import { NextIntlClientProvider } from 'next-intl'
-import { getMessages, getLocale } from 'next-intl/server'
+import { getLocale, getMessages } from 'next-intl/server'
 import { Toaster } from '@/components/ui/toaster'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ErrorProvider } from '@/contexts/ErrorContext'
 import { ThemeProvider } from '@/contexts/ThemeContext'
-import { isDarkThemeId, normalizeTheme, type Theme } from '@/lib/theme'
+import { normalizeTheme, type Theme } from '@/lib/theme'
 
 const fontSans = Plus_Jakarta_Sans({
   subsets: ['latin'],

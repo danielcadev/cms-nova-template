@@ -2,16 +2,15 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { rateLimit } from '@/lib/rate-limit'
+import { getAdminSession } from '@/server/auth/session'
+import logger from '@/server/observability/logger'
 import { ApiResponseBuilder as R } from '@/utils/api-response'
-import logger from '@/utils/logger'
 
 const createEntrySchema = z.object({
   contentTypeId: z.string().min(1),
   data: z.any(),
 })
 
-// POST: Create content entry
-import { getAdminSession } from '@/lib/server-session'
 export async function POST(request: Request) {
   try {
     const session = await getAdminSession()
@@ -66,6 +65,9 @@ export async function POST(request: Request) {
 // GET: Get content entries (optional filters)
 export async function GET(request: Request) {
   try {
+    const session = await getAdminSession()
+    if (!session) return R.error('Unauthorized', 401)
+
     const rl = rateLimit(request, { limit: 60, windowMs: 60_000, key: 'content-entries:GET' })
     if (!rl.allowed) return R.error('Too many requests. Please try again later.', 429)
 

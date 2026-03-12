@@ -3,9 +3,8 @@
 
 import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
-// import { useToast } from '@/hooks/use-toast';
-import { authClient } from '@/lib/auth-client'
-import { isAdminUser } from '@/lib/auth-utils'
+import { authClient } from '@/modules/auth/client'
+import { isAdminUser } from '@/modules/auth/utils'
 import type { BetterAuthResponse, GetSessionResponse, UserResponse } from '@/types/user'
 
 interface LoginFormData {
@@ -23,35 +22,35 @@ export function useAuth() {
 
       try {
         if (!formData.email || !formData.password) {
-          throw new Error('Por favor, complete todos los campos')
+          throw new Error('Please fill in all fields')
         }
         if (!formData.email.includes('@')) {
-          throw new Error('Por favor, ingrese un email válido')
+          throw new Error('Please enter a valid email')
         }
 
-        // Intentar inicio de sesión
+        // Attempt sign-in.
         const signInResponse = (await authClient.signIn.email({
           email: formData.email,
           password: formData.password,
         })) as BetterAuthResponse<UserResponse>
 
         if (signInResponse.error) {
-          throw new Error(signInResponse.error.message || 'Error al iniciar sesión')
+          throw new Error(signInResponse.error.message || 'Failed to sign in')
         }
 
-        // Esperar un momento para que se establezca la sesión
+        // Wait briefly for session propagation.
         await new Promise((resolve) => setTimeout(resolve, 700))
 
-        // Verificar que sea admin
+        // Ensure admin access.
         const session = (await authClient.getSession()) as GetSessionResponse
         if (session.error || !isAdminUser(session.data)) {
           await authClient.signOut()
-          throw new Error('No tienes permisos de administrador')
+          throw new Error('You do not have admin permissions')
         }
 
         router.replace('/admin/dashboard')
       } catch (_error: unknown) {
-        // El manejo visual de error se centraliza en AuthContext
+        // Visual error handling is centralized in AuthContext.
       } finally {
         setIsLoading(false)
       }
@@ -64,7 +63,7 @@ export function useAuth() {
       await authClient.signOut()
       router.push('/admin/login')
     } catch (_error) {
-      // El manejo visual de error de logout se centraliza en AuthContext
+      // Visual logout error handling is centralized in AuthContext.
     }
   }, [router])
 

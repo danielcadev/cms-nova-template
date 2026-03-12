@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { useEffect, useState } from 'react'
 import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
 import { MediaGrid } from './MediaGrid'
 import { MediaList } from './MediaList'
@@ -22,12 +22,7 @@ export default function MediaPageContent() {
   if (introLoading) {
     return (
       <div className="px-6 pt-6 relative">
-        <AdminLoading
-          title={t('title')}
-          message={t('loading')}
-          variant="content"
-          fullScreen
-        />
+        <AdminLoading title={t('title')} message={t('loading')} variant="content" fullScreen />
       </div>
     )
   }
@@ -87,9 +82,7 @@ function MediaLibraryLayout() {
                 {uploading ? '⏳' : '📁'}
               </div>
               <h3 className="text-xl font-bold text-zinc-900 mb-2">{t('empty.title')}</h3>
-              <p className="text-zinc-500 max-w-md mx-auto">
-                {t('empty.description')}
-              </p>
+              <p className="text-zinc-500 max-w-md mx-auto">{t('empty.description')}</p>
             </div>
           )}
 
@@ -103,7 +96,8 @@ function MediaLibraryLayout() {
         {/* Pagination Footer */}
         <div className="border-t border-zinc-100 p-4 bg-zinc-50/50 flex items-center justify-between">
           <div className="text-sm text-zinc-500 font-medium">
-            {t('pagination.page', { current: page, total: totalPages })} • {t('pagination.items', { count: total })}
+            {t('pagination.page', { current: page, total: totalPages })} •{' '}
+            {t('pagination.items', { count: total })}
           </div>
           <div className="flex gap-2">
             <button

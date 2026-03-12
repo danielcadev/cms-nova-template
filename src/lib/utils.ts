@@ -23,5 +23,8 @@ export function compareUrlParams(a: string, b: string) {
 }
 
 export function normalizeZoneName(name: string) {
-  return name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]/g, '')
 }

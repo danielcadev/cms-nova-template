@@ -1,7 +1,8 @@
 import { redirect } from 'next/navigation'
 import { ContentTypesPage } from '@/components/admin/dashboard/ContentTypesPage'
 import { prisma } from '@/lib/prisma'
-import { getAdminSession } from '@/lib/server-session'
+import { getAdminSession } from '@/server/auth/session'
+import logger from '@/server/observability/logger'
 
 async function getContentTypes() {
   try {
@@ -14,14 +15,14 @@ async function getContentTypes() {
       },
       orderBy: { createdAt: 'desc' },
     })
-    // Serializar las fechas para evitar problemas de hidratación
+    // Serialize dates to avoid hydration mismatches.
     return contentTypes.map((ct) => ({
       ...ct,
       createdAt: ct.createdAt.toISOString(),
       updatedAt: ct.updatedAt.toISOString(),
     }))
   } catch (error) {
-    console.error('Error fetching content types:', error)
+    logger.error('Error fetching content types', error)
     return []
   }
 }

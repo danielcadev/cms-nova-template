@@ -72,9 +72,7 @@ export function ViewContentComponent({
                 <Database className="h-6 w-6 text-zinc-400" />
               </div>
               <h3 className="text-lg font-medium text-zinc-900">{t('noModels.title')}</h3>
-              <p className="text-zinc-500 text-sm mt-1 mb-6">
-                {t('noModels.description')}
-              </p>
+              <p className="text-zinc-500 text-sm mt-1 mb-6">{t('noModels.description')}</p>
               <Link href="/admin/dashboard/content-types/create">
                 <button
                   type="button"
@@ -162,7 +160,9 @@ export function ViewContentComponent({
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-zinc-400 text-center py-4">{t('recentEntries.noEntries')}</p>
+                <p className="text-sm text-zinc-400 text-center py-4">
+                  {t('recentEntries.noEntries')}
+                </p>
               )}
             </div>
           </div>
@@ -176,9 +176,7 @@ export function ViewContentComponent({
                 </div>
                 <h3 className="font-bold text-lg">{t('templates.title')}</h3>
               </div>
-              <p className="text-zinc-400 text-sm mb-6">
-                {t('templates.description')}
-              </p>
+              <p className="text-zinc-400 text-sm mb-6">{t('templates.description')}</p>
               <Link href="/admin/dashboard/templates">
                 <button
                   type="button"

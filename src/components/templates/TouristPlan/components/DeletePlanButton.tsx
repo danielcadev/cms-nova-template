@@ -18,9 +18,9 @@ export function DeletePlanButton({ planId, planTitle, onDelete, disabled }: Dele
   const handleDelete = () => {
     confirmation.confirm(
       {
-        title: 'Eliminar Plan',
-        description: `¿Estás seguro de que quieres eliminar ${planTitle ? `"${planTitle}"` : 'este plan'}?\n\nEsta acción no se puede deshacer y toda la información del plan será eliminada permanentemente.`,
-        confirmText: 'Eliminar Plan',
+        title: 'Delete Plan',
+        description: `Are you sure you want to delete ${planTitle ? `"${planTitle}"` : 'this plan'}?\n\nThis action cannot be undone and all plan information will be permanently deleted.`,
+        confirmText: 'Delete Plan',
         variant: 'destructive',
         icon: 'delete',
       },

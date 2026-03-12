@@ -2,11 +2,11 @@
 
 import { ArrowLeft, Loader2, Lock, Mail, Package } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useId, useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { useId, useState } from 'react'
+import { LanguageSwitcher } from '@/components/admin/shared/LanguageSwitcher'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { LanguageSwitcher } from '@/components/admin/shared/LanguageSwitcher'
 import { useAuthContext } from '@/contexts/AuthContext'
 
 export default function SignIn() {
@@ -138,8 +138,9 @@ export default function SignIn() {
                     placeholder={t('emailPlaceholder')}
                     value={formData.email}
                     onChange={handleChange}
-                    className={`pl-10 bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 ${errors.email ? 'border-red-300 focus:border-red-400 focus:ring-red-400' : ''
-                      }`}
+                    className={`pl-10 bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 ${
+                      errors.email ? 'border-red-300 focus:border-red-400 focus:ring-red-400' : ''
+                    }`}
                     autoComplete="email"
                     disabled={isLoading}
                   />
@@ -166,10 +167,11 @@ export default function SignIn() {
                     placeholder={t('passwordPlaceholder')}
                     value={formData.password}
                     onChange={handleChange}
-                    className={`pl-10 bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 ${errors.password
-                      ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
-                      : ''
-                      }`}
+                    className={`pl-10 bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 ${
+                      errors.password
+                        ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
+                        : ''
+                    }`}
                     autoComplete="current-password"
                     disabled={isLoading}
                   />
@@ -214,5 +216,3 @@ export default function SignIn() {
     </div>
   )
 }
-
-

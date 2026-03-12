@@ -2,8 +2,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { PublicNavbar } from '@/components/layout/PublicNavbar'
-import { defaultConfig } from '@/config/default-config'
 import { prisma } from '@/lib/prisma'
+import { isPublicTypePathsEnabled } from '@/server/plugins/public-typepaths'
+import { sanitizeHtmlContent } from '@/shared/security/html'
 
 export const revalidate = 60
 
@@ -12,22 +13,23 @@ interface PageProps {
 }
 
 async function getEntry(typePath: string, slug: string) {
-  let contentType = await prisma.contentType.findFirst({
+  const contentType = await prisma.contentType.findFirst({
     where: {
       apiIdentifier: {
         equals: typePath,
-        mode: 'insensitive'
-      }
+        mode: 'insensitive',
+      },
     },
     include: { fields: true },
   })
 
-  // If content type not found by identifier, we still try to find the entry by slug 
-  // since slugs are globally unique.
+  if (!contentType) return null
+
   const entry = await prisma.contentEntry.findFirst({
     where: {
-      slug: slug,
-      ...(contentType ? { contentTypeId: contentType.id } : {}),
+      contentTypeId: contentType.id,
+      slug,
+      status: 'published',
     },
     include: {
       contentType: {
@@ -38,32 +40,23 @@ async function getEntry(typePath: string, slug: string) {
     },
   })
 
-  console.log('[PublicEntry] Search result:', {
-    typePath,
-    slug,
-    contentTypeFound: !!contentType,
-    entryFound: !!entry,
-    entryId: entry?.id
-  })
-
   if (!entry) return null
 
   return {
     contentType: entry.contentType || contentType,
-    entry
+    entry,
   }
 }
 
 export default async function PublicEntryPage({ params }: PageProps) {
-  // Gate public headless routes via plugin (fallback to config flag)
-  // ... (keep plugin check)
+  if (!(await isPublicTypePathsEnabled())) {
+    notFound()
+  }
 
   const { typePath, slug } = await params
-  console.log('[PublicEntry] Rendering:', typePath, slug)
 
   const result = await getEntry(typePath, slug)
   if (!result) {
-    console.log('[PublicEntry] Result null -> 404')
     notFound()
   }
 
@@ -124,7 +117,9 @@ export default async function PublicEntryPage({ params }: PageProps) {
   // Determine main rich text content
   const richTextFields = (contentType?.fields || []).filter((f) => f.type === 'RICH_TEXT')
   const mainRichField = richTextFields[0]?.apiIdentifier
-  const mainHtml = (mainRichField && data?.[mainRichField]) || data.content || data.contenido || ''
+  const mainHtml = sanitizeHtmlContent(
+    (mainRichField && data?.[mainRichField]) || data.content || data.contenido || '',
+  )
 
   // Helper to gather all media URLs from any shape
   const getAllUrlsFromValue = (v: any): string[] => {
@@ -215,7 +210,7 @@ export default async function PublicEntryPage({ params }: PageProps) {
                       </h3>
                       <div
                         className="prose prose-gray dark:prose-invert max-w-none"
-                        dangerouslySetInnerHTML={{ __html: String(value || '') }}
+                        dangerouslySetInnerHTML={{ __html: sanitizeHtmlContent(value) }}
                       />
                     </div>
                   )
@@ -258,10 +253,11 @@ export default async function PublicEntryPage({ params }: PageProps) {
                         {label}:
                       </span>
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${v
-                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                          : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
-                          }`}
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                          v
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                            : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+                        }`}
                       >
                         {v ? 'Yes' : 'No'}
                       </span>
@@ -288,10 +284,10 @@ export default async function PublicEntryPage({ params }: PageProps) {
                   const formatted = Number.isNaN(d.getTime())
                     ? String(value)
                     : d.toLocaleDateString(undefined, {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                    })
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })
                   return (
                     <div key={key}>
                       <span className="text-sm font-medium text-gray-600 dark:text-gray-300">

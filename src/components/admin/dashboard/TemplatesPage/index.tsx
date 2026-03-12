@@ -1,19 +1,11 @@
 'use client'
 
-import {
-  Clock,
-  FileText,
-  LayoutTemplate,
-  Plus,
-  RefreshCw,
-  Search,
-} from 'lucide-react'
+import { Clock, FileText, LayoutTemplate, Plus, RefreshCw, Search } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { AdminLoading } from '../AdminLoading'
-import { TemplateHeader } from '@/components/admin/shared/TemplateHeader'
 import { TemplateCard } from './TemplateCard'
 import { useTemplatesPage } from './useTemplatesPage'
 
@@ -30,14 +22,7 @@ export function TemplatesPage() {
   } = useTemplatesPage()
 
   if (loading) {
-    return (
-      <AdminLoading
-        title={t('title')}
-        message={t('loading')}
-        variant="content"
-        fullScreen
-      />
-    )
+    return <AdminLoading title={t('title')} message={t('loading')} variant="content" fullScreen />
   }
 
   return (
@@ -67,7 +52,10 @@ export function TemplatesPage() {
             <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
             {t('refresh')}
           </Button>
-          <Button asChild className="rounded-2xl bg-zinc-900 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-900/20">
+          <Button
+            asChild
+            className="rounded-2xl bg-zinc-900 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-900/20"
+          >
             <Link href="/admin/dashboard/content-types/create">
               <Plus className="h-4 w-4 mr-2" />
               {t('newTemplate')}
@@ -81,12 +69,7 @@ export function TemplatesPage() {
         <div className="lg:col-span-2 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredTemplates.map((template, idx) => (
-              <TemplateCard
-                key={template.id}
-                template={template}
-                index={idx}
-                onViewDetails={() => { }} // Placeholder for now
-              />
+              <TemplateCard key={template.id} template={template} index={idx} />
             ))}
           </div>
 
@@ -96,9 +79,7 @@ export function TemplatesPage() {
                 <LayoutTemplate className="w-6 h-6 text-zinc-400" />
               </div>
               <h3 className="text-lg font-medium text-zinc-900 mb-1">{t('noTemplates')}</h3>
-              <p className="text-zinc-500 text-sm">
-                {t('noTemplatesDesc')}
-              </p>
+              <p className="text-zinc-500 text-sm">{t('noTemplatesDesc')}</p>
             </div>
           )}
         </div>
@@ -111,9 +92,7 @@ export function TemplatesPage() {
               <LayoutTemplate className="w-4 h-4" />
               {t('structure.title')}
             </h3>
-            <p className="text-xs text-blue-800 leading-relaxed">
-              {t('structure.description')}
-            </p>
+            <p className="text-xs text-blue-800 leading-relaxed">{t('structure.description')}</p>
           </div>
 
           {/* Recent Content */}
@@ -166,6 +145,4 @@ export function TemplatesPage() {
   )
 }
 
-// Export additional components
-export { EditTourismTemplate } from './EditTourismTemplate'
 export type { Template } from './data'

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
-import type { PlanFormValues } from '@/schemas/plan'
+import type { PlanFormValues } from '@/verticals/tourism'
 
 // Re-exportar PlanFormValues para que esté disponible desde @/types/form
 export type { PlanFormValues }
@@ -138,7 +138,6 @@ export interface StepLayoutProps extends StepProps {
   PreviewComponent?: ReactNode
   mode?: FormMode // Agregar modo aquí
 }
-
 
 // Interfaces para API y búsqueda
 export interface GetPlansOptions {

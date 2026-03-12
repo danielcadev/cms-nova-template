@@ -1,11 +1,11 @@
 'use client'
 
 import { Plus } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { memo, useMemo } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
-import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
-import type { PlanFormValues } from '@/schemas/plan'
+import type { PlanFormValues } from '@/verticals/tourism'
 import { AutoFillSeasonalPricesButton } from './AutoFillSeasonalPricesButton'
 import { PriceOptionCard } from './PriceOptionCard'
 

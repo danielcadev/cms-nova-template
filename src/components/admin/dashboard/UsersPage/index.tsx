@@ -1,13 +1,13 @@
 'use client'
 
-import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { useMemo, useState } from 'react'
+import { useUsers } from '@/modules/users/client/useUsers'
 import type { User } from '@/types/user'
 import { AdminLoading } from '../AdminLoading'
 import { UserDetailModal } from './UserDetailModal'
 import { UsersGrid } from './UsersGrid'
 import { UsersHeader } from './UsersHeader'
-import { useUsers } from './useUsers'
 
 export function UsersPage() {
   const { users, loading, error, currentUserId, updateUserRole, deleteUser, refreshUsers } =
@@ -34,9 +34,7 @@ export function UsersPage() {
   }
 
   const handleDeleteUser = async (user: User) => {
-    if (
-      window.confirm(t('deleteConfirm'))
-    ) {
+    if (window.confirm(t('deleteConfirm'))) {
       await deleteUser(user.id)
     }
   }
@@ -44,12 +42,7 @@ export function UsersPage() {
   if (loading) {
     return (
       <div className="px-6 pt-6 relative">
-        <AdminLoading
-          title={t('title')}
-          message={t('loading')}
-          variant="content"
-          fullScreen
-        />
+        <AdminLoading title={t('title')} message={t('loading')} variant="content" fullScreen />
       </div>
     )
   }
@@ -79,7 +72,7 @@ export function UsersPage() {
           const user = users.find((u) => u.id === userId)
           if (user) await handleDeleteUser(user)
         }}
-        onToggleBan={async () => { }}
+        onToggleBan={async () => {}}
         isFirstUser={false}
       />
     </div>

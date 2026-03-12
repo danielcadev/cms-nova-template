@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { decrypt } from '@/lib/encryption'
 import { prisma } from '@/lib/prisma'
 import { rateLimit } from '@/lib/rate-limit'
-import { getAdminSession } from '@/lib/server-session'
+import { getAdminSession } from '@/server/auth/session'
 import { ApiResponseBuilder as R } from '@/utils/api-response'
 
 const S3_CONFIG_KEY = 's3-credentials'

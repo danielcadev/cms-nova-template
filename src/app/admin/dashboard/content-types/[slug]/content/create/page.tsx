@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation'
 import { CreateContentEntryPage } from '@/components/admin/content-types/CreateContentEntryPage'
-import { AdminLayout } from '@/components/admin/AdminLayout'
 import { prisma } from '@/lib/prisma'
-import { getAdminSession } from '@/lib/server-session'
+import { getAdminSession } from '@/server/auth/session'
+import logger from '@/server/observability/logger'
 
 async function getContentType(slug: string) {
   try {
@@ -21,7 +21,7 @@ async function getContentType(slug: string) {
       updatedAt: contentType.updatedAt.toISOString(),
     }
   } catch (error) {
-    console.error('Error fetching content type:', error)
+    logger.error('Error fetching content type', error)
     return null
   }
 }
@@ -45,7 +45,5 @@ export default async function CreateContentEntryPageRoute({ params }: CreateCont
     redirect('/404')
   }
 
-  return (
-    <CreateContentEntryPage contentType={contentType} />
-  )
+  return <CreateContentEntryPage contentType={contentType} />
 }

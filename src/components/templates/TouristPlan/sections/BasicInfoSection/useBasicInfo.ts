@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import slugify from 'slugify'
 import type { ComboboxOption } from '@/components/ui/combobox'
-import type { PlanFormValues } from '@/schemas/plan'
+import type { PlanFormValues } from '@/verticals/tourism'
 
 export function useBasicInfo() {
   const form = useFormContext<PlanFormValues>()

@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { rateLimit } from '@/lib/rate-limit'
-import logger from '@/utils/logger'
+import logger from '@/server/observability/logger'
 
 export async function GET(request: Request) {
   try {
@@ -14,9 +14,10 @@ export async function GET(request: Request) {
     if (!rl.allowed) return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
 
     const userCount = await prisma.user.count()
-    return NextResponse.json({ hasAdmin: userCount > 0, userCount })
+    // Only expose the boolean needed for the bootstrap UI.
+    return NextResponse.json({ hasAdmin: userCount > 0 })
   } catch (error) {
     logger.error('Error checking admin:', error)
-    return NextResponse.json({ hasAdmin: false, userCount: 0, error: 'Database not configured' })
+    return NextResponse.json({ hasAdmin: false, error: 'Database not configured' })
   }
 }

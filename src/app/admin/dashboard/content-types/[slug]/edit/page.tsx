@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import ContentTypeForm from '@/components/admin/content-types/ContentTypesManager/components/ContentTypeForm'
 import { prisma } from '@/lib/prisma'
-import { getAdminSession } from '@/lib/server-session'
+import { getAdminSession } from '@/server/auth/session'
 
 async function getContentType(slug: string) {
   try {

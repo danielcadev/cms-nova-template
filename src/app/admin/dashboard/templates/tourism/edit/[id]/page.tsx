@@ -1,10 +1,9 @@
 import type { Plan as PrismaPlan } from '@prisma/client'
 import { redirect } from 'next/navigation'
 import { AdminLayout } from '@/components/admin/AdminLayout'
-import { EditPlanForm } from '@/components/templates'
 import { prisma } from '@/lib/prisma'
-import { getAdminSession } from '@/lib/server-session'
-import type { PlanFormValues } from '@/schemas/plan'
+import { getAdminSession } from '@/server/auth/session'
+import { EditPlanForm, type PlanFormValues } from '@/verticals/tourism'
 
 // Función para transformar los datos de Prisma al formato del formulario
 function transformPrismaPlanToFormValues(plan: PrismaPlan): PlanFormValues {

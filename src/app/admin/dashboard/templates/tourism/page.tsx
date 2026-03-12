@@ -3,8 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
 import { AdminLayout } from '@/components/admin/AdminLayout'
-import { TouristPlansView } from '@/components/templates/TemplatesManager/TouristPlansView'
-import { usePlans } from '@/hooks/usePlans'
+import { TouristPlansView, usePlans } from '@/verticals/tourism'
 
 export default function TourismPage() {
   const router = useRouter()
@@ -29,7 +28,7 @@ export default function TourismPage() {
   const handleDeletePlan = useCallback(
     async (planId: string) => {
       const success = await deletePlan(planId)
-      if (!success) throw new Error('No se pudo eliminar el plan')
+      if (!success) throw new Error('Could not delete the plan')
       return true
     },
     [deletePlan],
@@ -38,7 +37,7 @@ export default function TourismPage() {
   const handleDuplicatePlan = useCallback(
     async (planId: string) => {
       const duplicated = await duplicatePlan(planId)
-      if (!duplicated) throw new Error('No se pudo duplicar el plan')
+      if (!duplicated) throw new Error('Could not duplicate the plan')
       return duplicated
     },
     [duplicatePlan],
@@ -47,7 +46,7 @@ export default function TourismPage() {
   const handleTogglePublished = useCallback(
     async (planId: string) => {
       const success = await togglePublished(planId)
-      if (!success) throw new Error('No se pudo actualizar el estado del plan')
+      if (!success) throw new Error('Could not update plan state')
       return success
     },
     [togglePublished],

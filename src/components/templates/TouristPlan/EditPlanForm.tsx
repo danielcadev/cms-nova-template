@@ -1,17 +1,20 @@
 'use client'
 
-import { Eye } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useTranslations } from 'next-intl'
-import { publishPlanAction, updatePlanDataAction } from '@/app/actions/plan-actions'
+import { TemplateHeader } from '@/components/admin/shared/TemplateHeader'
 import { Button } from '@/components/ui/button'
 import { ImageUploadProvider, useImageUpload } from '@/contexts/ImageUploadContext'
-import { TemplateHeader } from '@/components/admin/shared/TemplateHeader'
 import { useToast } from '@/hooks/use-toast'
-import { type PlanFormValues, planSchema } from '@/schemas/plan'
+import {
+  type PlanFormValues,
+  planSchema,
+  publishPlanAction,
+  updatePlanDataAction,
+} from '@/verticals/tourism'
 import { BasicInfoSection } from './sections/BasicInfoSection'
 import { IncludesSection } from './sections/IncludesSection'
 import { ItinerarySection } from './sections/ItinerarySection'

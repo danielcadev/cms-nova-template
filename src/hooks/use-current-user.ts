@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { authClient } from '@/lib/auth-client'
+import { authClient } from '@/modules/auth/client'
 import type { BetterAuthUser, GetSessionResponse } from '@/types/user'
 
 export function useCurrentUser() {

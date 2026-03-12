@@ -1,17 +1,14 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, Eye, Loader2, Save } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useEffect, useMemo, useState, useTransition } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useTranslations } from 'next-intl'
-
-import { createExperienceAction, updateExperienceAction } from '@/app/actions/experience-actions'
-import { AdminLayout } from '@/components/admin/AdminLayout'
-import { MediaPicker } from '@/components/admin/media/MediaPicker'
 import { PremiumLoading } from '@/components/admin/dashboard/PremiumLoading'
+import { MediaPicker } from '@/components/admin/media/MediaPicker'
+import { TemplateHeader } from '@/components/admin/shared/TemplateHeader'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -41,7 +38,7 @@ import {
   experienceSchema,
 } from '@/schemas/experience'
 import { getExperienceMediaFolder } from '@/utils/experience-media'
-import { TemplateHeader } from '@/components/admin/shared/TemplateHeader'
+import { createExperienceAction, updateExperienceAction } from '@/verticals/experiences'
 
 interface ExperienceFormProps {
   mode?: 'create' | 'edit'
@@ -199,7 +196,13 @@ export function CreateExperienceForm({
 
   // Auto-create draft when title is typed
   useEffect(() => {
-    if (formMode === 'create' && isDirty && !isCreatingDraft && !hasStartedCreation && experienceTitle.length > 5) {
+    if (
+      formMode === 'create' &&
+      isDirty &&
+      !isCreatingDraft &&
+      !hasStartedCreation &&
+      experienceTitle.length > 5
+    ) {
       setHasStartedCreation(true)
       startDraftTransition(async () => {
         try {
@@ -227,15 +230,20 @@ export function CreateExperienceForm({
         }
       })
     }
-  }, [formMode, isDirty, isCreatingDraft, hasStartedCreation, experienceTitle, form, router, toast, baseT])
+  }, [
+    formMode,
+    isDirty,
+    isCreatingDraft,
+    hasStartedCreation,
+    experienceTitle,
+    form,
+    router,
+    toast,
+    baseT,
+  ])
 
   if (isCreatingDraft || hasStartedCreation) {
-    return (
-      <PremiumLoading
-        title={t('edit.createTitle')}
-        subtitle={t('edit.headerDesc')}
-      />
-    )
+    return <PremiumLoading title={t('edit.createTitle')} subtitle={t('edit.headerDesc')} />
   }
 
   return (
@@ -274,10 +282,14 @@ export function CreateExperienceForm({
                   {baseT('saveDraft')}
                 </Button>
               }
-              onView={formMode === 'edit' ? () => {
-                setPendingAction('publish_view');
-                form.handleSubmit(onSubmit)();
-              } : undefined}
+              onView={
+                formMode === 'edit'
+                  ? () => {
+                      setPendingAction('publish_view')
+                      form.handleSubmit(onSubmit)()
+                    }
+                  : undefined
+              }
               viewLabel={baseT('view')}
             />
 
@@ -286,9 +298,7 @@ export function CreateExperienceForm({
               <section className="bg-white rounded-3xl border border-zinc-200/50 p-8 shadow-sm">
                 <div className="mb-6">
                   <h2 className="text-lg font-bold text-zinc-900">{t('edit.basics.title')}</h2>
-                  <p className="text-sm text-zinc-500 font-medium">
-                    {t('edit.basics.desc')}
-                  </p>
+                  <p className="text-sm text-zinc-500 font-medium">{t('edit.basics.desc')}</p>
                 </div>
                 <div className="grid gap-8 md:grid-cols-2">
                   <FormField
@@ -317,7 +327,9 @@ export function CreateExperienceForm({
                       <FormItem>
                         <FormLabel className="text-zinc-900 font-medium">
                           {t('edit.basics.fields.slug')}{' '}
-                          <span className="text-zinc-400 font-normal">{t('edit.basics.fields.optional')}</span>
+                          <span className="text-zinc-400 font-normal">
+                            {t('edit.basics.fields.optional')}
+                          </span>
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -340,7 +352,9 @@ export function CreateExperienceForm({
                       <FormItem>
                         <FormLabel className="text-zinc-900 font-medium">
                           {t('edit.basics.fields.location')}{' '}
-                          <span className="text-zinc-400 font-normal">{t('edit.basics.fields.optional')}</span>
+                          <span className="text-zinc-400 font-normal">
+                            {t('edit.basics.fields.optional')}
+                          </span>
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -360,7 +374,9 @@ export function CreateExperienceForm({
                       <FormItem>
                         <FormLabel className="text-zinc-900 font-medium">
                           {t('edit.basics.fields.hostName')}{' '}
-                          <span className="text-zinc-400 font-normal">{t('edit.basics.fields.optional')}</span>
+                          <span className="text-zinc-400 font-normal">
+                            {t('edit.basics.fields.optional')}
+                          </span>
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -382,7 +398,9 @@ export function CreateExperienceForm({
                       <FormItem>
                         <FormLabel className="text-zinc-900 font-medium">
                           {t('edit.basics.hostBio')}{' '}
-                          <span className="text-zinc-400 font-normal">{t('edit.basics.fields.optional')}</span>
+                          <span className="text-zinc-400 font-normal">
+                            {t('edit.basics.fields.optional')}
+                          </span>
                         </FormLabel>
                         <FormControl>
                           <Textarea
@@ -403,9 +421,7 @@ export function CreateExperienceForm({
               <section className="bg-white rounded-3xl border border-zinc-200/50 p-8 shadow-sm">
                 <div className="mb-6">
                   <h2 className="text-lg font-bold text-zinc-900">{t('edit.gallery.title')}</h2>
-                  <p className="text-sm text-zinc-500 font-medium">
-                    {t('edit.gallery.desc')}
-                  </p>
+                  <p className="text-sm text-zinc-500 font-medium">{t('edit.gallery.desc')}</p>
                 </div>
 
                 {isS3Loading ? (
@@ -436,8 +452,8 @@ export function CreateExperienceForm({
                   render={({ field }) => {
                     const value = Array.isArray(field.value)
                       ? field.value.filter(
-                        (item) => typeof item === 'string' && item.trim().length > 0,
-                      )
+                          (item) => typeof item === 'string' && item.trim().length > 0,
+                        )
                       : []
 
                     const handleRemove = (index: number) => {
@@ -534,10 +550,10 @@ export function CreateExperienceForm({
               {/* Storytelling */}
               <section className="bg-white rounded-3xl border border-zinc-200/50 p-8 shadow-sm">
                 <div className="mb-6">
-                  <h2 className="text-lg font-bold text-zinc-900">{t('edit.storytelling.title')}</h2>
-                  <p className="text-sm text-zinc-500 font-medium">
-                    {t('edit.storytelling.desc')}
-                  </p>
+                  <h2 className="text-lg font-bold text-zinc-900">
+                    {t('edit.storytelling.title')}
+                  </h2>
+                  <p className="text-sm text-zinc-500 font-medium">{t('edit.storytelling.desc')}</p>
                 </div>
                 <div className="space-y-6">
                   <FormField
@@ -546,7 +562,8 @@ export function CreateExperienceForm({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-zinc-900 font-medium">
-                          {t('edit.storytelling.fields.summary')} <span className="text-red-500">*</span>
+                          {t('edit.storytelling.fields.summary')}{' '}
+                          <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
                           <Textarea
@@ -566,7 +583,8 @@ export function CreateExperienceForm({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-zinc-900 font-medium">
-                          {t('edit.storytelling.fields.narrative')} <span className="text-red-500">*</span>
+                          {t('edit.storytelling.fields.narrative')}{' '}
+                          <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
                           <Textarea
@@ -587,7 +605,9 @@ export function CreateExperienceForm({
                       <FormItem>
                         <FormLabel className="text-zinc-900 font-medium">
                           {t('edit.storytelling.fields.activities')}{' '}
-                          <span className="text-zinc-400 font-normal">{t('edit.basics.fields.optional')}</span>
+                          <span className="text-zinc-400 font-normal">
+                            {t('edit.basics.fields.optional')}
+                          </span>
                         </FormLabel>
                         <FormControl>
                           <Textarea
@@ -608,9 +628,7 @@ export function CreateExperienceForm({
               <section className="bg-white rounded-3xl border border-zinc-200/50 p-8 shadow-sm">
                 <div className="mb-6">
                   <h2 className="text-lg font-bold text-zinc-900">{t('edit.logistics.title')}</h2>
-                  <p className="text-sm text-zinc-500 font-medium">
-                    {t('edit.logistics.desc')}
-                  </p>
+                  <p className="text-sm text-zinc-500 font-medium">{t('edit.logistics.desc')}</p>
                 </div>
                 <div className="grid gap-8 md:grid-cols-2">
                   <FormField
@@ -619,12 +637,15 @@ export function CreateExperienceForm({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-zinc-900 font-medium">
-                          {t('edit.logistics.fields.durationType')} <span className="text-red-500">*</span>
+                          {t('edit.logistics.fields.durationType')}{' '}
+                          <span className="text-red-500">*</span>
                         </FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger className="bg-zinc-50 border-zinc-200 focus:ring-zinc-900 shadow-sm transition-all hover:bg-zinc-100">
-                              <SelectValue placeholder={t('edit.logistics.fields.durationPlaceholder')} />
+                              <SelectValue
+                                placeholder={t('edit.logistics.fields.durationPlaceholder')}
+                              />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -646,7 +667,9 @@ export function CreateExperienceForm({
                       <FormItem>
                         <FormLabel className="text-zinc-900 font-medium">
                           {t('edit.logistics.fields.durationDetails')}{' '}
-                          <span className="text-zinc-400 font-normal">{t('edit.basics.fields.optional')}</span>
+                          <span className="text-zinc-400 font-normal">
+                            {t('edit.basics.fields.optional')}
+                          </span>
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -669,7 +692,9 @@ export function CreateExperienceForm({
                       <FormItem>
                         <FormLabel className="text-zinc-900 font-medium">
                           {t('edit.logistics.fields.availableDays')}{' '}
-                          <span className="text-zinc-400 font-normal">{t('edit.basics.fields.optional')}</span>
+                          <span className="text-zinc-400 font-normal">
+                            {t('edit.basics.fields.optional')}
+                          </span>
                         </FormLabel>
                         <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 mt-2">
                           {DAY_OPTIONS.map((day) => {
@@ -687,10 +712,11 @@ export function CreateExperienceForm({
                                   }
                                   field.onChange(Array.from(current))
                                 }}
-                                className={`rounded-lg border px-3 py-2 text-sm transition-all duration-200 ${selected
-                                  ? 'border-zinc-900 bg-zinc-900 text-white shadow-md'
-                                  : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50'
-                                  }`}
+                                className={`rounded-lg border px-3 py-2 text-sm transition-all duration-200 ${
+                                  selected
+                                    ? 'border-zinc-900 bg-zinc-900 text-white shadow-md'
+                                    : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50'
+                                }`}
                               >
                                 {DAY_LABELS[day]}
                               </button>
@@ -714,7 +740,9 @@ export function CreateExperienceForm({
                       <FormItem>
                         <FormLabel className="text-zinc-900 font-medium">
                           {t('edit.logistics.fields.timeWindowFrequency')}{' '}
-                          <span className="text-zinc-400 font-normal">{t('edit.basics.fields.optional')}</span>
+                          <span className="text-zinc-400 font-normal">
+                            {t('edit.basics.fields.optional')}
+                          </span>
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -734,7 +762,9 @@ export function CreateExperienceForm({
                       <FormItem>
                         <FormLabel className="text-zinc-900 font-medium">
                           {t('edit.logistics.fields.scheduleNote')}{' '}
-                          <span className="text-zinc-400 font-normal">{t('edit.basics.fields.optional')}</span>
+                          <span className="text-zinc-400 font-normal">
+                            {t('edit.basics.fields.optional')}
+                          </span>
                         </FormLabel>
                         <FormControl>
                           <Textarea
@@ -758,7 +788,9 @@ export function CreateExperienceForm({
                       <FormItem>
                         <FormLabel className="text-zinc-900 font-medium">
                           {t('edit.logistics.fields.referencePrice')}{' '}
-                          <span className="text-zinc-400 font-normal">{t('edit.basics.fields.optional')}</span>
+                          <span className="text-zinc-400 font-normal">
+                            {t('edit.basics.fields.optional')}
+                          </span>
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -777,12 +809,15 @@ export function CreateExperienceForm({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-zinc-900 font-medium">
-                          {t('edit.logistics.fields.currency')} <span className="text-red-500">*</span>
+                          {t('edit.logistics.fields.currency')}{' '}
+                          <span className="text-red-500">*</span>
                         </FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger className="bg-zinc-50 border-zinc-200 focus:ring-zinc-900 shadow-sm transition-all hover:bg-zinc-100">
-                              <SelectValue placeholder={t('edit.logistics.fields.currencyPlaceholder')} />
+                              <SelectValue
+                                placeholder={t('edit.logistics.fields.currencyPlaceholder')}
+                              />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -805,7 +840,9 @@ export function CreateExperienceForm({
                       <FormItem>
                         <FormLabel className="text-zinc-900 font-medium">
                           {t('edit.logistics.fields.inclusions')}{' '}
-                          <span className="text-zinc-400 font-normal">{t('edit.basics.fields.optional')}</span>
+                          <span className="text-zinc-400 font-normal">
+                            {t('edit.basics.fields.optional')}
+                          </span>
                         </FormLabel>
                         <FormControl>
                           <Textarea
@@ -826,7 +863,9 @@ export function CreateExperienceForm({
                       <FormItem>
                         <FormLabel className="text-zinc-900 font-medium">
                           {t('edit.logistics.fields.exclusions')}{' '}
-                          <span className="text-zinc-400 font-normal">{t('edit.basics.fields.optional')}</span>
+                          <span className="text-zinc-400 font-normal">
+                            {t('edit.basics.fields.optional')}
+                          </span>
                         </FormLabel>
                         <FormControl>
                           <Textarea

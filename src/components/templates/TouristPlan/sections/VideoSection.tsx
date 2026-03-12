@@ -1,9 +1,9 @@
 'use client'
 
 import { CheckCircle2, XCircle, Youtube } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { memo } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { useTranslations } from 'next-intl'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
@@ -61,9 +61,9 @@ export const VideoSection = memo(function VideoSection() {
                         className={cn(
                           'pl-12 text-base py-3',
                           currentVideoUrl &&
-                          (isValid
-                            ? 'border-green-500 focus:border-green-500 focus:ring-green-500'
-                            : 'border-red-500 focus:border-red-500 focus:ring-red-500'),
+                            (isValid
+                              ? 'border-green-500 focus:border-green-500 focus:ring-green-500'
+                              : 'border-red-500 focus:border-red-500 focus:ring-red-500'),
                         )}
                       />
                       {currentVideoUrl && (
@@ -85,7 +85,8 @@ export const VideoSection = memo(function VideoSection() {
             <div className="bg-zinc-50 rounded-lg p-4 border border-zinc-100">
               <p className="text-sm text-zinc-600 leading-relaxed">
                 <strong className="text-zinc-900">{t('fields.tipsTitle')}</strong>
-                <br />{t('fields.tipsList')}
+                <br />
+                {t('fields.tipsList')}
               </p>
             </div>
           </div>
@@ -108,9 +109,7 @@ export const VideoSection = memo(function VideoSection() {
                   <div className="text-center px-4">
                     <Youtube className="h-12 w-12 text-zinc-300 mx-auto mb-3" />
                     <p className="text-zinc-500 font-medium text-base">{t('fields.preview')}</p>
-                    <p className="text-sm text-zinc-400 mt-1">
-                      {t('fields.previewPlaceholder')}
-                    </p>
+                    <p className="text-sm text-zinc-400 mt-1">{t('fields.previewPlaceholder')}</p>
                   </div>
                 </div>
               )}

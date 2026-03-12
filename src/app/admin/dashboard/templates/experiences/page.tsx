@@ -1,5 +1,5 @@
 import { AdminLayout } from '@/components/admin/AdminLayout'
-import { ExperiencesView } from '@/components/templates/TemplatesManager/ExperiencesView'
+import { ExperiencesView } from '@/verticals/experiences'
 
 export default function ExperiencesTemplatesPage() {
   return (

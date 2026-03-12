@@ -1,6 +1,6 @@
 'use client'
 
-import { Hash, Type, Sparkles } from 'lucide-react'
+import { Hash, Sparkles, Type } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 
@@ -34,8 +34,9 @@ export function TextField({
     <div className="space-y-2">
       <div className="flex gap-2">
         <div
-          className={`relative flex-1 transition-all duration-200 border rounded-xl overflow-hidden ${isFocused ? 'ring-2 border-[var(--theme-accent)]' : 'border-[var(--theme-border)]'
-            }`}
+          className={`relative flex-1 transition-all duration-200 border rounded-xl overflow-hidden ${
+            isFocused ? 'ring-2 border-[var(--theme-accent)]' : 'border-[var(--theme-border)]'
+          }`}
           style={{
             backgroundColor: 'var(--theme-card)',
             borderColor: isFocused ? 'var(--theme-accent)' : 'var(--theme-border)',
@@ -57,8 +58,9 @@ export function TextField({
             onChange={(e) => onChange(e.target.value)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            className={`w-full pl-10 pr-4 py-3 bg-transparent focus:outline-none text-base ${isSlug ? 'font-mono tracking-tight text-sm' : 'font-medium'
-              }`}
+            className={`w-full pl-10 pr-4 py-3 bg-transparent focus:outline-none text-base ${
+              isSlug ? 'font-mono tracking-tight text-sm' : 'font-medium'
+            }`}
             style={{
               color: 'var(--theme-text-primary)',
             }}

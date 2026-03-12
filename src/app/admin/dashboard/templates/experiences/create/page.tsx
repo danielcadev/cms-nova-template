@@ -1,5 +1,5 @@
-import { CreateExperienceForm } from '@/components/templates'
 import { AdminLayout } from '@/components/admin/AdminLayout'
+import { CreateExperienceForm } from '@/verticals/experiences'
 
 export default function CreateExperiencePage() {
   return (

@@ -1,21 +1,30 @@
 'use client'
 
+import { Eye, Loader2, Save } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { PremiumLoading } from '@/components/admin/dashboard/PremiumLoading'
 import { TemplateHeader } from '@/components/admin/shared/TemplateHeader'
 import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { AIPromptModal } from '../AIPromptModal'
 import { DynamicFieldRenderer } from '../DynamicFieldRenderer'
 import type { CreateContentEntryPageProps } from './data'
 import { useCreateContentEntry } from './useCreateContentEntry'
-import { PremiumLoading } from '@/components/admin/dashboard/PremiumLoading'
-import { Save, Eye, Loader2 } from 'lucide-react'
-import { AIPromptModal } from '../AIPromptModal'
 
 export function CreateContentEntryPage({ contentType }: CreateContentEntryPageProps) {
   const t = useTranslations('createEntry')
   const { state, ids, fields, actions } = useCreateContentEntry(contentType)
   const { formData, status, isSaving, mounted, isFormValid, slug, aiModal } = state
-  const { statusId, getFieldId } = ids
-  const { titleField, imageField, slugField, metaTitleField, metaDescriptionField, imageAltField, tagsField } = fields
+  const { getFieldId } = ids
+  const {
+    titleField,
+    imageField,
+    slugField,
+    metaTitleField,
+    metaDescriptionField,
+    imageAltField,
+    tagsField,
+  } = fields
   const {
     setStatus,
     handleFieldChange,
@@ -30,7 +39,6 @@ export function CreateContentEntryPage({ contentType }: CreateContentEntryPagePr
     closeAIModal,
     handleAIApply,
   } = actions
-
 
   if (state.isCreatingDraft) {
     return (
@@ -52,7 +60,7 @@ export function CreateContentEntryPage({ contentType }: CreateContentEntryPagePr
         statusOptions={{
           draft: t('statusOptions.draft'),
           published: t('statusOptions.published'),
-          archived: t('statusOptions.archived')
+          archived: t('statusOptions.archived'),
         }}
         rightActions={
           <>
@@ -61,7 +69,11 @@ export function CreateContentEntryPage({ contentType }: CreateContentEntryPagePr
               disabled={isSaving || state.isCreatingDraft || !isFormValid}
               className="bg-zinc-900 text-white hover:bg-zinc-800 rounded-xl"
             >
-              {(isSaving || state.isCreatingDraft) ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+              {isSaving || state.isCreatingDraft ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
               {isSaving || state.isCreatingDraft ? t('saving') : t('saveDraft')}
             </Button>
             <Button
@@ -78,19 +90,20 @@ export function CreateContentEntryPage({ contentType }: CreateContentEntryPagePr
       />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-
         {/* Form Container */}
         <div className="bg-white rounded-3xl border border-zinc-200 p-8 shadow-sm space-y-8">
-
           {/* Featured Fields (Image & Title) */}
           {(titleField || imageField) && (
             <div className="space-y-6">
               {imageField && (
                 <div>
-                  <label className="block text-sm font-bold text-zinc-900 mb-2">
+                  <Label
+                    htmlFor={getFieldId(imageField.id)}
+                    className="block text-sm font-bold text-zinc-900 mb-2"
+                  >
                     {imageField.label}
                     {imageField.isRequired && <span className="text-red-500 ml-1">*</span>}
-                  </label>
+                  </Label>
                   <DynamicFieldRenderer
                     field={imageField}
                     value={formData[imageField.apiIdentifier]}
@@ -103,10 +116,13 @@ export function CreateContentEntryPage({ contentType }: CreateContentEntryPagePr
 
               {titleField && (
                 <div>
-                  <label className="block text-sm font-bold text-zinc-900 mb-2">
+                  <Label
+                    htmlFor={getFieldId(titleField.id)}
+                    className="block text-sm font-bold text-zinc-900 mb-2"
+                  >
                     {titleField.label}
                     {titleField.isRequired && <span className="text-red-500 ml-1">*</span>}
-                  </label>
+                  </Label>
                   <DynamicFieldRenderer
                     field={titleField}
                     value={formData[titleField.apiIdentifier]}
@@ -123,11 +139,17 @@ export function CreateContentEntryPage({ contentType }: CreateContentEntryPagePr
             {contentType.fields
               .filter((f) => f.id !== titleField?.id && f.id !== imageField?.id)
               .map((field) => (
-                <div key={field.id} className="pt-4 border-t border-zinc-100 first:border-0 first:pt-0">
-                  <label className="block text-sm font-bold text-zinc-900 mb-2">
+                <div
+                  key={field.id}
+                  className="pt-4 border-t border-zinc-100 first:border-0 first:pt-0"
+                >
+                  <Label
+                    htmlFor={getFieldId(field.id)}
+                    className="block text-sm font-bold text-zinc-900 mb-2"
+                  >
                     {field.label}
                     {field.isRequired && <span className="text-red-500 ml-1">*</span>}
-                  </label>
+                  </Label>
                   {mounted ? (
                     <DynamicFieldRenderer
                       field={field}
@@ -135,12 +157,17 @@ export function CreateContentEntryPage({ contentType }: CreateContentEntryPagePr
                       onChange={(value) => handleFieldChange(field.apiIdentifier, value)}
                       fieldId={getFieldId(field.id)}
                       onAutoGenerate={
-                        field.type === 'SLUG' ? generateSlugFromTitle :
-                          field.id === metaTitleField?.id ? generateMetaTitle :
-                            field.id === metaDescriptionField?.id ? generateMetaDescription :
-                              field.id === imageAltField?.id ? generateImageAlt :
-                                field.id === tagsField?.id ? generateTags :
-                                  () => openAIModal(field.apiIdentifier, field.label)
+                        field.type === 'SLUG'
+                          ? generateSlugFromTitle
+                          : field.id === metaTitleField?.id
+                            ? generateMetaTitle
+                            : field.id === metaDescriptionField?.id
+                              ? generateMetaDescription
+                              : field.id === imageAltField?.id
+                                ? generateImageAlt
+                                : field.id === tagsField?.id
+                                  ? generateTags
+                                  : () => openAIModal(field.apiIdentifier, field.label)
                       }
                     />
                   ) : (

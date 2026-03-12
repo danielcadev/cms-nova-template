@@ -1,12 +1,18 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getAdminSession } from '@/lib/server-session'
+import { getAdminSession } from '@/server/auth/session'
+import logger from '@/server/observability/logger'
 
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ slug: string; id: string }> },
 ) {
   try {
+    const session = await getAdminSession()
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { slug, id } = await params
 
     // Find the content type
@@ -41,7 +47,7 @@ export async function GET(
 
     return NextResponse.json(response)
   } catch (error) {
-    console.error('Error fetching content entry:', error)
+    logger.error('Error fetching content entry', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -80,7 +86,15 @@ export async function PUT(
     const rawData = hasDataEnvelope ? (body.data ?? {}) : (body ?? {})
     const newStatus = hasDataEnvelope ? body.status : body.status
 
-    const { slug: entrySlug, title: entryTitle, seoOptions, isFeatured, category, tags, ...dataToStore } = rawData || {}
+    const {
+      slug: entrySlug,
+      title: entryTitle,
+      seoOptions,
+      isFeatured,
+      category,
+      tags,
+      ...dataToStore
+    } = rawData || {}
 
     // Validate
     if (!entrySlug) {
@@ -134,7 +148,7 @@ export async function PUT(
 
     return NextResponse.json(updatedEntry)
   } catch (error) {
-    console.error('Error updating content entry:', error)
+    logger.error('Error updating content entry', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -179,7 +193,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Error deleting content entry:', error)
+    logger.error('Error deleting content entry', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

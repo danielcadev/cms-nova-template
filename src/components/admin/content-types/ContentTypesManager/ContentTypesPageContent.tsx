@@ -3,8 +3,8 @@
 import { Database, FileCode, Plus, Settings, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { useState } from 'react'
 import { AdminLoading } from '@/components/admin/dashboard/AdminLoading'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -55,7 +55,7 @@ export function ContentTypesPageContent({
     if (deletingId) return
 
     const confirmed = confirm(
-      `¿Estás seguro de que quieres eliminar "${contentType.name}"?\n\nEsta acción no se puede deshacer y eliminará todas las entradas asociadas.`
+      `Are you sure you want to delete "${contentType.name}"?\n\nThis action cannot be undone and will delete all associated entries.`,
     )
 
     if (!confirmed) return
@@ -71,22 +71,21 @@ export function ContentTypesPageContent({
 
       if (result.success) {
         toast({
-          title: 'Tipo de contenido eliminado',
-          description: `"${contentType.name}" ha sido eliminado exitosamente.`,
+          title: 'Content type deleted',
+          description: `"${contentType.name}" was deleted successfully.`,
         })
         router.refresh()
       } else {
         toast({
           title: 'Error',
-          description: result.message || 'No se pudo eliminar el tipo de contenido.',
+          description: result.message || 'Could not delete content type.',
           variant: 'destructive',
         })
       }
-    } catch (error) {
-      console.error('Error deleting content type:', error)
+    } catch (_error) {
       toast({
         title: 'Error',
-        description: 'Ocurrió un error al eliminar el tipo de contenido.',
+        description: 'An error occurred while deleting the content type.',
         variant: 'destructive',
       })
     } finally {
@@ -97,12 +96,7 @@ export function ContentTypesPageContent({
   if (loading) {
     return (
       <div className="px-6 pt-6 relative">
-        <AdminLoading
-          title={t('title')}
-          message={t('loading')}
-          variant="content"
-          fullScreen
-        />
+        <AdminLoading title={t('title')} message={t('loading')} variant="content" fullScreen />
       </div>
     )
   }
@@ -249,7 +243,9 @@ export function ContentTypesPageContent({
                   href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content`}
                   className="absolute inset-0 z-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2"
                 >
-                  <span className="sr-only">{t('card.viewEntries', { name: contentType.name })}</span>
+                  <span className="sr-only">
+                    {t('card.viewEntries', { name: contentType.name })}
+                  </span>
                 </Link>
               </div>
             ))}
@@ -261,9 +257,7 @@ export function ContentTypesPageContent({
             </div>
             <h3 className="text-lg font-medium text-zinc-900 mb-2">{t('empty.title')}</h3>
             <p className="text-zinc-500 text-sm mb-6 max-w-sm mx-auto">
-              {searchValue
-                ? t('empty.noMatch', { query: searchValue })
-                : t('empty.createFirst')}
+              {searchValue ? t('empty.noMatch', { query: searchValue }) : t('empty.createFirst')}
             </p>
             {!searchValue && (
               <Button asChild className="rounded-xl bg-zinc-900 text-white hover:bg-zinc-800">

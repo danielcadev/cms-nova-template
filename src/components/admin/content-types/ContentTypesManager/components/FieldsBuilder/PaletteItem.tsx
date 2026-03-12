@@ -1,8 +1,8 @@
 ﻿'use client'
 
-import React from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import { useTranslations } from 'next-intl'
+import type React from 'react'
 
 interface FieldType {
   type: string

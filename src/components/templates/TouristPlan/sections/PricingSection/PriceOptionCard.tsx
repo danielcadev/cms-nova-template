@@ -2,9 +2,9 @@
 'use client'
 
 import { X } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import type React from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
-import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import type { PlanFormValues } from '@/schemas/plan'
+import type { PlanFormValues } from '@/verticals/tourism'
 
 interface PriceOptionCardProps {
   index: number
@@ -144,30 +144,33 @@ export function PriceOptionCard({
         <div className="inline-flex rounded-lg border border-zinc-200 p-1 bg-zinc-50 w-full sm:w-auto">
           <button
             type="button"
-            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${currentMode === 'simple'
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+              currentMode === 'simple'
                 ? 'bg-white text-zinc-900 shadow-sm'
                 : 'text-zinc-500 hover:text-zinc-900'
-              } ${hasOtherGeneralPrice && currentMode !== 'simple' ? 'opacity-50 cursor-not-allowed' : ''}`}
+            } ${hasOtherGeneralPrice && currentMode !== 'simple' ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={() => !hasOtherGeneralPrice && handleModeChange('simple')}
           >
             {t('modes.simple')}
           </button>
           <button
             type="button"
-            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${currentMode === 'advanced'
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+              currentMode === 'advanced'
                 ? 'bg-white text-zinc-900 shadow-sm'
                 : 'text-zinc-500 hover:text-zinc-900'
-              }`}
+            }`}
             onClick={() => handleModeChange('advanced')}
           >
             {t('modes.advanced')}
           </button>
           <button
             type="button"
-            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${currentMode === 'seasonal'
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+              currentMode === 'seasonal'
                 ? 'bg-white text-zinc-900 shadow-sm'
                 : 'text-zinc-500 hover:text-zinc-900'
-              }`}
+            }`}
             onClick={() => handleModeChange('seasonal')}
           >
             {t('modes.seasonal')}
@@ -201,7 +204,11 @@ export function PriceOptionCard({
                       {t('description')}
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder={t('descriptionPlaceholder')} className="text-sm" />
+                      <Input
+                        {...field}
+                        placeholder={t('descriptionPlaceholder')}
+                        className="text-sm"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -329,7 +336,9 @@ export function PriceOptionCard({
                         }
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-xs text-zinc-500">{t('accommodation')}</FormLabel>
+                            <FormLabel className="text-xs text-zinc-500">
+                              {t('accommodation')}
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 {...field}

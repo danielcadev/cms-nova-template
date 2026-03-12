@@ -3,17 +3,17 @@
 import { AlertTriangle, Image as ImageIcon, Loader2, Upload, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { useCallback, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { useTranslations } from 'next-intl'
 import { MediaPicker } from '@/components/admin/media/MediaPicker'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useItineraryImage } from '@/hooks/use-itinerary-image'
 import { useS3Config } from '@/hooks/use-s3-config'
 import { cn } from '@/lib/utils'
-import type { PlanFormValues } from '@/schemas/plan'
 import { getPlanMediaFolder } from '@/utils/plan-media'
+import type { PlanFormValues } from '@/verticals/tourism'
 
 interface ItineraryDayImageProps {
   fieldIndex: number
@@ -41,7 +41,7 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
   const imageUrl = currentImage || ''
 
   const [pickerOpen, setPickerOpen] = useState(false)
-  const [isDragging, setIsDragging] = useState(false)
+  const [_isDragging, setIsDragging] = useState(false)
   const fileInputId = useMemo(() => `day-image-${fieldIndex}`, [fieldIndex])
 
   // Handle file selection from input
@@ -75,7 +75,7 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
     setIsDragging(true)
   }, [])
 
-  const handleDragLeave = useCallback((e: React.DragEvent<HTMLElement>) => {
+  const _handleDragLeave = useCallback((e: React.DragEvent<HTMLElement>) => {
     e.preventDefault()
     setIsDragging(false)
   }, [])
@@ -232,7 +232,9 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
               {isUploading ? (
                 <div className="flex flex-col items-center gap-2">
                   <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 animate-spin" />
-                  <p className="text-xs sm:text-sm text-blue-600 font-medium">{t('uploadingDesc')}</p>
+                  <p className="text-xs sm:text-sm text-blue-600 font-medium">
+                    {t('uploadingDesc')}
+                  </p>
                 </div>
               ) : (
                 <>
@@ -240,9 +242,7 @@ export function ItineraryDayImage({ fieldIndex }: ItineraryDayImageProps) {
                   <p className="text-xs sm:text-sm text-gray-600 font-medium mb-1">
                     {t('uploadImage')}
                   </p>
-                  <p className="text-xs text-gray-500 text-center px-2">
-                    {t('uploadDesc')}
-                  </p>
+                  <p className="text-xs text-gray-500 text-center px-2">{t('uploadDesc')}</p>
                 </>
               )}
             </button>

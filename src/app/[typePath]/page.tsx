@@ -2,8 +2,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { PublicNavbar } from '@/components/layout/PublicNavbar'
-import { defaultConfig } from '@/config/default-config'
 import { prisma } from '@/lib/prisma'
+import { isPublicTypePathsEnabled } from '@/server/plugins/public-typepaths'
 
 export const revalidate = 60
 
@@ -33,23 +33,8 @@ async function getPublishedEntries(typePath: string) {
 }
 
 export default async function TypeIndexPage({ params }: PageProps) {
-  // Gate public headless routes via plugin (fallback to config flag)
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_APP_URL || ''}/api/plugins/public-typepaths`,
-      { cache: 'no-store' },
-    )
-    if (res.ok) {
-      const data = await res.json()
-      const enabled = !!data?.success
-      if (!enabled) notFound()
-    } else if (!defaultConfig.features?.publicTypePaths) {
-      notFound()
-    }
-  } catch {
-    if (!defaultConfig.features?.publicTypePaths) {
-      notFound()
-    }
+  if (!(await isPublicTypePathsEnabled())) {
+    notFound()
   }
 
   const { typePath } = await params

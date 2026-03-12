@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl'
 import { useFormContext } from 'react-hook-form'
 import { FormControl, FormField, FormLabel } from '@/components/ui/form'
 import { Switch } from '@/components/ui/switch'
-import type { PlanFormValues } from '@/schemas/plan'
+import type { PlanFormValues } from '@/verticals/tourism'
 
 export function TransportConfig() {
   const t = useTranslations('templates.tourism.edit.sections.transport')

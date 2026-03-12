@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { CURRENCY_OPTIONS, type PricePackage } from '@/schemas/plan'
+import { CURRENCY_OPTIONS, type PricePackage } from '@/verticals/tourism'
 
 interface PricePackageFieldProps {
   package: PricePackage

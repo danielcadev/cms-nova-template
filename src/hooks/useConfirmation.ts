@@ -38,44 +38,44 @@ export function useConfirmation() {
   }
 }
 
-// Configuraciones predefinidas para casos comunes
+// Presets for common confirmation flows.
 export const confirmationPresets = {
   deleteUser: (userName: string): ConfirmationConfig => ({
-    title: 'Eliminar Usuario',
-    description: `¿Estás seguro de que quieres eliminar a ${userName}?\n\nEsta acción no se puede deshacer. Toda la información del usuario será eliminada permanentemente.`,
-    confirmText: 'Eliminar Usuario',
+    title: 'Delete User',
+    description: `Are you sure you want to delete ${userName}?\n\nThis action cannot be undone. All user data will be permanently deleted.`,
+    confirmText: 'Delete User',
     variant: 'destructive' as const,
     icon: 'delete' as const,
   }),
 
   deleteContent: (contentName: string): ConfirmationConfig => ({
-    title: 'Eliminar Contenido',
-    description: `¿Estás seguro de que quieres eliminar "${contentName}"?\n\nEsta acción no se puede deshacer.`,
-    confirmText: 'Eliminar',
+    title: 'Delete Content',
+    description: `Are you sure you want to delete "${contentName}"?\n\nThis action cannot be undone.`,
+    confirmText: 'Delete',
     variant: 'destructive' as const,
     icon: 'file' as const,
   }),
 
   banUser: (userName: string): ConfirmationConfig => ({
-    title: 'Banear Usuario',
-    description: `¿Estás seguro de que quieres banear a ${userName}?\n\nEl usuario no podrá acceder al sistema hasta que sea desbaneado.`,
-    confirmText: 'Banear Usuario',
+    title: 'Ban User',
+    description: `Are you sure you want to ban ${userName}?\n\nThey will not be able to access the system until unbanned.`,
+    confirmText: 'Ban User',
     variant: 'warning' as const,
     icon: 'ban' as const,
   }),
 
   deleteDay: (dayNumber: number): ConfirmationConfig => ({
-    title: 'Eliminar Día del Itinerario',
-    description: `¿Estás seguro de que quieres eliminar el Día ${dayNumber}?\n\nEsta acción no se puede deshacer. Toda la información del día será eliminada permanentemente.`,
-    confirmText: 'Eliminar Día',
+    title: 'Delete Itinerary Day',
+    description: `Are you sure you want to delete Day ${dayNumber}?\n\nThis action cannot be undone. All day information will be permanently deleted.`,
+    confirmText: 'Delete Day',
     variant: 'destructive' as const,
     icon: 'delete' as const,
   }),
 
   removeAdmin: (userName: string): ConfirmationConfig => ({
-    title: 'Remover Permisos de Admin',
-    description: `¿Estás seguro de que quieres remover los permisos de administrador de ${userName}?\n\nEl usuario perderá acceso a todas las funciones administrativas.`,
-    confirmText: 'Remover Admin',
+    title: 'Remove Admin Access',
+    description: `Are you sure you want to remove admin permissions from ${userName}?\n\nThey will lose access to all administrative features.`,
+    confirmText: 'Remove Admin',
     variant: 'warning' as const,
     icon: 'shield' as const,
   }),

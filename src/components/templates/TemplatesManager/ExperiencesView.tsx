@@ -1,9 +1,21 @@
 'use client'
 
-import { Edit, ExternalLink, MapPin, Plus, RefreshCw, Trash, Wand2, ArrowLeft, Layout, X, Check, Search } from 'lucide-react'
+import {
+  ArrowLeft,
+  Edit,
+  ExternalLink,
+  Layout,
+  MapPin,
+  Plus,
+  RefreshCw,
+  Search,
+  Trash,
+  Wand2,
+  X,
+} from 'lucide-react'
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ConfirmationModal } from '@/components/ui/ConfirmationModal'
 import { Input } from '@/components/ui/input'
@@ -13,7 +25,7 @@ import { useConfirmation } from '@/hooks/useConfirmation'
 
 import { useExperiences } from './useExperiences'
 
-const DURATION_LABELS: Record<string, string> = {
+const _DURATION_LABELS: Record<string, string> = {
   flexible: 'Flexible',
   'single-day': 'Single day',
   'multi-day': 'Multi-day',
@@ -117,9 +129,7 @@ export function ExperiencesView() {
               </Button>
               <h1 className="text-3xl font-bold text-zinc-900 tracking-tight">{t('title')}</h1>
             </div>
-            <p className="text-zinc-500 ml-13">
-              {t('subtitle')}
-            </p>
+            <p className="text-zinc-500 ml-13">{t('subtitle')}</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <Button
@@ -144,9 +154,7 @@ export function ExperiencesView() {
               <Layout className="h-6 w-6 text-zinc-900" />
             </div>
             <div>
-              <h3 className="font-bold text-zinc-900 flex items-center gap-2">
-                {t('info.title')}
-              </h3>
+              <h3 className="font-bold text-zinc-900 flex items-center gap-2">{t('info.title')}</h3>
               <p className="text-sm text-zinc-600 mt-1 max-w-2xl leading-relaxed font-medium">
                 {t('info.description')}
               </p>
@@ -200,7 +208,10 @@ export function ExperiencesView() {
                 {searchTerm ? t('noResultsDesc') : t('noExperiencesDesc')}
               </p>
               {!searchTerm && (
-                <Button asChild className="rounded-2xl bg-zinc-900 text-white hover:bg-zinc-800 shadow-xl shadow-zinc-900/20 px-10 py-7 text-lg font-bold transition-all hover:scale-[1.05] active:scale-[0.95]">
+                <Button
+                  asChild
+                  className="rounded-2xl bg-zinc-900 text-white hover:bg-zinc-800 shadow-xl shadow-zinc-900/20 px-10 py-7 text-lg font-bold transition-all hover:scale-[1.05] active:scale-[0.95]"
+                >
                   <Link href="/admin/dashboard/templates/experiences/create">
                     <Plus className="h-6 w-6 mr-3" strokeWidth={3} />
                     {t('createExperience')}
@@ -243,9 +254,7 @@ export function ExperiencesView() {
                           {experience.location ?? 'Pending'}
                         </div>
                         {experience.hostName && (
-                          <div className="text-xs text-zinc-400">
-                            Host: {experience.hostName}
-                          </div>
+                          <div className="text-xs text-zinc-400">Host: {experience.hostName}</div>
                         )}
                       </div>
                     </div>
@@ -270,7 +279,9 @@ export function ExperiencesView() {
                           asChild
                           className="flex-1 h-8 rounded-lg text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100"
                         >
-                          <Link href={`/admin/dashboard/templates/experiences/edit/${experience.id}`}>
+                          <Link
+                            href={`/admin/dashboard/templates/experiences/edit/${experience.id}`}
+                          >
                             <Edit className="h-3 w-3 mr-2" />
                             Edit
                           </Link>

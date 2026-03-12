@@ -3,9 +3,9 @@
 import type React from 'react'
 import { createContext, type ReactNode, useCallback, useContext, useState } from 'react'
 import { useToast } from '@/hooks/use-toast'
-import logger from '@/utils/logger'
+import logger from '@/server/observability/logger'
 
-// Tipos de error que podemos manejar
+// Error types the app can categorize.
 export enum ErrorType {
   VALIDATION = 'validation',
   API = 'api',
@@ -14,7 +14,7 @@ export enum ErrorType {
   UNKNOWN = 'unknown',
 }
 
-// Estructura estándar para errores en la aplicación
+// Standardized error shape for app-level errors.
 export interface AppError {
   type: ErrorType
   message: string
@@ -22,7 +22,7 @@ export interface AppError {
   timestamp: Date
 }
 
-// Interfaz del contexto de errores
+// Error context interface.
 interface ErrorContextType {
   errors: AppError[]
   hasErrors: boolean
@@ -31,24 +31,24 @@ interface ErrorContextType {
   clearError: (index: number) => void
 }
 
-// Crear el contexto
+// Create the context.
 const ErrorContext = createContext<ErrorContextType | undefined>(undefined)
 
-// Proveedor del contexto de errores
+// Error context provider.
 export function ErrorProvider({ children }: { children: ReactNode }) {
   const [errors, setErrors] = useState<AppError[]>([])
   const { toast } = useToast()
 
-  // Determinar si hay errores
+  // Whether any errors are currently captured.
   const hasErrors = errors.length > 0
 
-  // Función para capturar errores
+  // Capture and optionally toast an error.
   const captureError = useCallback(
     (error: Error | unknown, type: ErrorType = ErrorType.UNKNOWN, showToast = true) => {
-      let message = 'Ocurrió un error inesperado'
+      let message = 'An unexpected error occurred'
       let details: unknown
 
-      // Procesar el error según su tipo
+      // Normalize the error shape.
       if (error instanceof Error) {
         message = error.message
         details = error.stack
@@ -59,7 +59,7 @@ export function ErrorProvider({ children }: { children: ReactNode }) {
         details = error
       }
 
-      // Crear el objeto de error estandarizado
+      // Build the standardized error object.
       const appError: AppError = {
         type,
         message,
@@ -70,7 +70,7 @@ export function ErrorProvider({ children }: { children: ReactNode }) {
       // Save the error in state
       setErrors((prev) => [...prev, appError])
 
-      // Log the error in the logging system
+      // Log to the centralized logger.
       logger.error('Error captured:', appError)
 
       // Show a toast notification if requested
@@ -101,12 +101,12 @@ export function ErrorProvider({ children }: { children: ReactNode }) {
     setErrors([])
   }, [])
 
-  // Función para limpiar un error específico
+  // Clear a single error by index.
   const clearError = useCallback((index: number) => {
     setErrors((prev) => prev.filter((_, i) => i !== index))
   }, [])
 
-  // Valor del contexto
+  // Context value.
   const contextValue: ErrorContextType = {
     errors,
     hasErrors,
@@ -118,22 +118,22 @@ export function ErrorProvider({ children }: { children: ReactNode }) {
   return <ErrorContext.Provider value={contextValue}>{children}</ErrorContext.Provider>
 }
 
-// Hook para usar el contexto de errores
+// Hook to access the error context.
 export function useErrors() {
   const context = useContext(ErrorContext)
   if (context === undefined) {
-    throw new Error('useErrors debe ser usado dentro de un ErrorProvider')
+    throw new Error('useErrors must be used within an ErrorProvider')
   }
   return context
 }
 
-// Hook para simplificar la captura de errores
+// Convenience hook for captureError.
 export function useCaptureError() {
   const { captureError } = useErrors()
   return captureError
 }
 
-// Componente de orden superior (HOC) para envolver componentes y capturar sus errores
+// Higher-order component (HOC) that catches render errors.
 export function withErrorHandling<P extends object>(
   Component: React.ComponentType<P>,
 ): React.FC<P> {
@@ -144,7 +144,7 @@ export function withErrorHandling<P extends object>(
       return <Component {...props} />
     } catch (error) {
       captureError(error)
-      return <div>Ocurrió un error al cargar este componente.</div>
+      return <div>There was an error loading this component.</div>
     }
   }
 

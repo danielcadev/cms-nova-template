@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation'
 import { AdminLayout } from '@/components/admin/AdminLayout'
-import { CreateExperienceForm } from '@/components/templates/Experience/CreateExperienceForm'
 import { prisma } from '@/lib/prisma'
 import type { ExperienceFormValues } from '@/schemas/experience'
+import { CreateExperienceForm } from '@/verticals/experiences'
 
 interface EditExperiencePageProps {
   params: Promise<{ id: string }>
@@ -40,8 +40,8 @@ export default async function EditExperiencePage({ params }: EditExperiencePageP
     exclusions: experience.exclusions ?? '',
     gallery: Array.isArray(experience.gallery)
       ? (experience.gallery as string[]).filter(
-        (value) => typeof value === 'string' && value.trim().length > 0,
-      )
+          (value) => typeof value === 'string' && value.trim().length > 0,
+        )
       : [],
     featured: experience.featured ?? false,
   }

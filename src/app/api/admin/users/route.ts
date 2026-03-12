@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { rateLimit } from '@/lib/rate-limit'
-import { getAdminSession } from '@/lib/server-session'
+import { getAdminSession } from '@/server/auth/session'
+import logger from '@/server/observability/logger'
 import { ApiResponseBuilder as R } from '@/utils/api-response'
-import logger from '@/utils/logger'
 export async function GET(request: Request) {
   try {
     const session = await getAdminSession()

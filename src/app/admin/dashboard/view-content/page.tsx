@@ -2,12 +2,12 @@ import { redirect } from 'next/navigation'
 import { ClientOverlay } from '@/components/admin/dashboard/ViewContentPage/ClientOverlay'
 import { ViewContentComponent } from '@/components/admin/dashboard/ViewContentPage/ViewContentComponent'
 import { prisma } from '@/lib/prisma'
-import { getAdminSession } from '@/lib/server-session'
+import { getAdminSession } from '@/server/auth/session'
 
 async function getContentData() {
-  // Ejecutamos todas las consultas en paralelo para mayor rapidez
+  // Run all queries in parallel for speed.
   const [contentTypes, allContentEntries, plans] = await Promise.all([
-    // Obtenemos tipos de contenido con conteo simple
+    // Content types with a simple entries count.
     prisma.contentType.findMany({
       include: {
         _count: {
@@ -15,10 +15,10 @@ async function getContentData() {
         },
       },
       orderBy: { createdAt: 'desc' },
-      take: 5, // Solo los primeros 5 para mostrar
+      take: 5, // Only the first 5 for the dashboard
     }),
 
-    // Solo contamos las entradas totales, no traemos toda la data
+    // Recent entries (metadata only).
     prisma.contentEntry.findMany({
       select: {
         id: true,
@@ -31,7 +31,7 @@ async function getContentData() {
       take: 10,
     }),
 
-    // Solo los datos básicos de planes
+    // Recent plans (basic fields only).
     prisma.plan.findMany({
       select: {
         id: true,

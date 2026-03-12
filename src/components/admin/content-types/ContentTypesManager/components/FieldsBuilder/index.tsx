@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import {
   closestCenter,
@@ -33,10 +33,11 @@ function EmptyDropZone({ activeId }: { activeId: string | null }) {
   return (
     <div
       ref={setNodeRef}
-      className={`text-center py-16 border-2 border-dashed rounded-xl transition-all duration-300 ${isOver || activeId?.startsWith('palette-')
-        ? 'border-zinc-400 bg-zinc-50'
-        : 'border-zinc-200 bg-zinc-50/50'
-        }`}
+      className={`text-center py-16 border-2 border-dashed rounded-xl transition-all duration-300 ${
+        isOver || activeId?.startsWith('palette-')
+          ? 'border-zinc-400 bg-zinc-50'
+          : 'border-zinc-200 bg-zinc-50/50'
+      }`}
     >
       <div className="w-12 h-12 mx-auto bg-white border border-zinc-200 rounded-xl flex items-center justify-center mb-4 shadow-sm">
         <Plus className="h-6 w-6 text-zinc-400" />
@@ -53,6 +54,7 @@ function EmptyDropZone({ activeId }: { activeId: string | null }) {
 
 export default function FieldsBuilder() {
   const t = useTranslations('contentTypes.form.builder')
+  const tForm = useTranslations('contentTypes.form')
   const { control, setValue } = useFormContext<ContentTypeFormValues>()
   const { fields, append, remove, move } = useFieldArray({ control, name: 'fields' })
   const [activeId, setActiveId] = useState<string | null>(null)
@@ -133,7 +135,7 @@ export default function FieldsBuilder() {
 
   const activeItem = activeId
     ? fieldTypes.find((f) => `palette-${f.type}` === activeId) ||
-    fields.find((f) => f.id === activeId)
+      fields.find((f) => f.id === activeId)
     : null
 
   if (!isMounted) {
@@ -167,7 +169,9 @@ export default function FieldsBuilder() {
         {/* Fields List */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-zinc-900">{t('fieldsCount', { count: fields.length })}</h3>
+            <h3 className="text-sm font-semibold text-zinc-900">
+              {t('fieldsCount', { count: fields.length })}
+            </h3>
             {fields.length > 0 && <span className="text-xs text-zinc-500">Drag to reorder</span>}
           </div>
 
@@ -203,7 +207,7 @@ export default function FieldsBuilder() {
                 <div className="flex flex-col">
                   <span className="font-semibold text-zinc-900 text-sm">
                     {activeId?.startsWith('palette-') && (activeItem as any)?.labelKey
-                      ? useTranslations('contentTypes.form')((activeItem as any).labelKey)
+                      ? tForm((activeItem as any).labelKey)
                       : (activeItem as any)?.label}
                   </span>
                   <span className="text-xs text-zinc-500">{t('row.moving')}</span>

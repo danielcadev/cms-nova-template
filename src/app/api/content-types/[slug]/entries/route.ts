@@ -1,10 +1,18 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { getAdminSession } from '@/lib/server-session'
+import { getAdminSession } from '@/server/auth/session'
+import logger from '@/server/observability/logger'
 
-export async function GET(_request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ slug: string }> },
+) {
   try {
+    const session = await getAdminSession()
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { slug } = await params
 
     // First, find the content type
@@ -24,12 +32,15 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
     return NextResponse.json(entries)
   } catch (error) {
-    console.error('Error fetching content entries:', error)
+    logger.error('Error fetching content entries', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
-export async function POST(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ slug: string }> },
+) {
   try {
     const { slug } = await params
     const body = await request.json()
@@ -54,7 +65,15 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     // Extract data and status from body
     const { data: rawData, status } = body
-    const { slug: entrySlug, title: entryTitle, seoOptions, isFeatured, category, tags, ...fieldData } = rawData || {}
+    const {
+      slug: entrySlug,
+      title: entryTitle,
+      seoOptions,
+      isFeatured,
+      category,
+      tags,
+      ...fieldData
+    } = rawData || {}
 
     // Validate required fields
     if (!entrySlug) {
@@ -102,7 +121,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     return NextResponse.json(entry, { status: 201 })
   } catch (error) {
-    console.error('Error creating content entry:', error)
+    logger.error('Error creating content entry', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

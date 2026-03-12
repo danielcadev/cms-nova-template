@@ -1,19 +1,26 @@
 'use client'
 
-import { TemplateHeader } from '@/components/admin/shared/TemplateHeader'
-import { useTranslations } from 'next-intl'
-import { Plus, Search, FileCode } from 'lucide-react'
+import { FileCode, Plus, Search } from 'lucide-react'
 import Link from 'next/link'
-import { Input } from '@/components/ui/input'
+import { useTranslations } from 'next-intl'
+import { TemplateHeader } from '@/components/admin/shared/TemplateHeader'
 import { Button } from '@/components/ui/button'
-import { EntryRow } from './EntryRow'
+import { Input } from '@/components/ui/input'
 import type { ContentEntriesPageProps } from './data'
+import { EntryRow } from './EntryRow'
 import { useContentEntries } from './useContentEntries'
 
 export function ContentEntriesPage({ contentType }: ContentEntriesPageProps) {
   const t = useTranslations('contentEntries')
-  const { searchTerm, setSearchTerm, statusFilter, setStatusFilter, filteredEntries, handleDelete, getEntryTitle } =
-    useContentEntries(contentType)
+  const {
+    searchTerm,
+    setSearchTerm,
+    statusFilter,
+    setStatusFilter,
+    filteredEntries,
+    handleDelete,
+    getEntryTitle,
+  } = useContentEntries(contentType)
 
   return (
     <div className="min-h-screen bg-white">
@@ -22,11 +29,10 @@ export function ContentEntriesPage({ contentType }: ContentEntriesPageProps) {
         subtitle={contentType.description || t('description', { name: contentType.name })}
         backHref="/admin/dashboard/content-types"
         rightActions={
-          <Button
-            asChild
-            className="bg-zinc-900 text-white hover:bg-zinc-800 rounded-xl"
-          >
-            <Link href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/create`}>
+          <Button asChild className="bg-zinc-900 text-white hover:bg-zinc-800 rounded-xl">
+            <Link
+              href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/create`}
+            >
               <Plus className="h-4 w-4 mr-2" />
               {t('newEntry')}
             </Link>
@@ -35,7 +41,6 @@ export function ContentEntriesPage({ contentType }: ContentEntriesPageProps) {
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-
         {/* Search and Filter */}
         <div className="flex items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-zinc-200 shadow-sm">
           <div className="flex-1 max-w-md relative">
@@ -73,10 +78,7 @@ export function ContentEntriesPage({ contentType }: ContentEntriesPageProps) {
               {!searchTerm && t('createFirst', { name: contentType.name })}
             </p>
             {!searchTerm && (
-              <Button
-                asChild
-                className="bg-zinc-900 text-white hover:bg-zinc-800 rounded-xl"
-              >
+              <Button asChild className="bg-zinc-900 text-white hover:bg-zinc-800 rounded-xl">
                 <Link
                   href={`/admin/dashboard/content-types/${contentType.apiIdentifier}/content/create`}
                 >

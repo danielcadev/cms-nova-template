@@ -1,10 +1,30 @@
 // api/admin/create-first-admin/route.ts - Create first administrator
 import { type NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { rateLimit } from '@/lib/rate-limit'
+import { auth } from '@/server/auth/config'
+import logger from '@/server/observability/logger'
 
 export async function POST(request: NextRequest) {
   try {
+    const rl = rateLimit(request, {
+      limit: 5,
+      windowMs: 60_000,
+      key: 'admin:create-first-admin:POST',
+    })
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 },
+      )
+    }
+
+    const setupTokenHeader = request.headers.get('x-setup-token')
+    const requiredSetupToken = process.env.NOVA_SETUP_TOKEN || process.env.SETUP_TOKEN || ''
+    if (requiredSetupToken && setupTokenHeader !== requiredSetupToken) {
+      return NextResponse.json({ error: 'Invalid setup token' }, { status: 403 })
+    }
+
     const { name, email, password } = await request.json()
 
     if (!name || !email || !password) {
@@ -81,7 +101,7 @@ export async function POST(request: NextRequest) {
       admin,
     })
   } catch (error) {
-    console.error('Error creating first admin:', error)
+    logger.error('Error creating first admin', error)
 
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }

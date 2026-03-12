@@ -1,12 +1,12 @@
 'use client'
 
-import { type ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react'
+import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 import { useMediaFetch } from './hooks/useMediaFetch'
 import { useMediaMutations } from './hooks/useMediaMutations'
 import { type MediaLibraryState, useMediaReducer } from './hooks/useMediaReducer'
 export type { MediaLibraryState }
 
-import type { MediaItem, SortOption, UploadResult, ViewOption } from './types'
+import type { SortOption, UploadResult, ViewOption } from './types'
 
 interface MediaLibraryContextValue extends MediaLibraryState {
   totalPages: number

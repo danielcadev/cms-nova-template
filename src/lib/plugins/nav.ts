@@ -1,4 +1,4 @@
-import { getPluginConfig } from './service'
+import { getPluginConfig } from '@/modules/plugins/service'
 
 export interface NavItem {
   href: string
@@ -72,8 +72,8 @@ export async function getDynamicTypePathNav(): Promise<NavItem[]> {
           .map((ct: any) => ct?.apiIdentifier || ct?.slug || ct?.typePath || ct?.name)
           .filter(Boolean)
       }
-    } catch (e) {
-      console.error('getDynamicTypePathNav: failed to load content types', e)
+    } catch (_e) {
+      // Ignore failures; nav is best-effort.
     }
   }
 

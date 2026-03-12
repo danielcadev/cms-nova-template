@@ -2,11 +2,11 @@
 
 import { ArrowLeft, CheckCircle, Loader2, Lock, Mail, Package, Shield, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useId, useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { useEffect, useId, useState } from 'react'
+import { LanguageSwitcher } from '@/components/admin/shared/LanguageSwitcher'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { LanguageSwitcher } from '@/components/admin/shared/LanguageSwitcher'
 
 export default function SignUp() {
   const t = useTranslations('auth.signUp')
@@ -185,7 +185,9 @@ export default function SignUp() {
                   <Shield className="h-8 w-8 text-zinc-400" />
                 </div>
 
-                <h2 className="text-xl font-bold text-zinc-900 mb-3">{t('registrationDisabled')}</h2>
+                <h2 className="text-xl font-bold text-zinc-900 mb-3">
+                  {t('registrationDisabled')}
+                </h2>
 
                 <p className="text-zinc-500 mb-8 text-sm leading-relaxed">
                   {t('registrationDisabledDesc')}
@@ -193,15 +195,14 @@ export default function SignUp() {
 
                 <div className="space-y-4">
                   <button
+                    type="button"
                     onClick={() => router.push('/admin/login')}
                     className="w-full inline-flex items-center justify-center px-4 py-3 bg-zinc-900 text-white rounded-xl hover:bg-zinc-800 transition-all shadow-lg shadow-zinc-900/10 font-medium"
                   >
                     {t('signIn')}
                   </button>
 
-                  <p className="text-xs text-zinc-400">
-                    {t('createMoreUsers')}
-                  </p>
+                  <p className="text-xs text-zinc-400">{t('createMoreUsers')}</p>
                 </div>
               </div>
             </div>
@@ -266,8 +267,9 @@ export default function SignUp() {
                     placeholder={t('namePlaceholder')}
                     value={formData.name}
                     onChange={handleChange}
-                    className={`pl-10 bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 ${errors.name ? 'border-red-300 focus:border-red-400 focus:ring-red-400' : ''
-                      }`}
+                    className={`pl-10 bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 ${
+                      errors.name ? 'border-red-300 focus:border-red-400 focus:ring-red-400' : ''
+                    }`}
                     autoComplete="name"
                     disabled={isLoading}
                   />
@@ -291,8 +293,9 @@ export default function SignUp() {
                     placeholder={t('emailPlaceholder')}
                     value={formData.email}
                     onChange={handleChange}
-                    className={`pl-10 bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 ${errors.email ? 'border-red-300 focus:border-red-400 focus:ring-red-400' : ''
-                      }`}
+                    className={`pl-10 bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 ${
+                      errors.email ? 'border-red-300 focus:border-red-400 focus:ring-red-400' : ''
+                    }`}
                     autoComplete="email"
                     disabled={isLoading}
                   />
@@ -316,10 +319,11 @@ export default function SignUp() {
                     placeholder={t('passwordPlaceholder')}
                     value={formData.password}
                     onChange={handleChange}
-                    className={`pl-10 bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 ${errors.password
+                    className={`pl-10 bg-zinc-50 border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 ${
+                      errors.password
                         ? 'border-red-300 focus:border-red-400 focus:ring-red-400'
                         : ''
-                      }`}
+                    }`}
                     autoComplete="new-password"
                     disabled={isLoading}
                   />

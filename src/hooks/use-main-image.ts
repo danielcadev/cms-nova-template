@@ -2,8 +2,8 @@
 import { useCallback, useState } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { useImageUpload } from '@/contexts/ImageUploadContext'
-import type { PlanFormValues } from '@/schemas/plan'
 import { validateImage } from '@/utils/image-utils'
+import type { PlanFormValues } from '@/verticals/tourism'
 
 interface UseMainImageProps {
   form: UseFormReturn<PlanFormValues>
@@ -46,7 +46,7 @@ export function useMainImage({ form, isConfigured, mediaFolder }: UseMainImagePr
       })
       const json = (await res.json().catch(() => ({}))) as any
       if (!res.ok || !json?.success) {
-        throw new Error(json?.error || 'Error al subir el archivo')
+        throw new Error(json?.error || 'Failed to upload file')
       }
       const payload = json?.data ?? {}
       return { url: payload.url as string, key: payload.key as string }
@@ -169,51 +169,36 @@ export function useMainImage({ form, isConfigured, mediaFolder }: UseMainImagePr
       }
       const uploadId = `main-image-${Date.now()}`
       try {
-        console.debug('[MainImage] handleImageUpload:start', {
-          name: file.name,
-          type: file.type,
-          size: file.size,
-        })
         setIsUploading(true)
         addUploadingItem(uploadId)
         setError(null)
 
-        // Validar imagen
+        // Validate image.
         const validation = validateImage(file)
-        console.debug('[MainImage] validation', validation)
         if (!validation.isValid) {
           throw new Error(validation.error)
         }
 
-        // Conservar imagen previa para borrarla solo si la nueva sube bien
+        // Keep the previous image so we only delete it after the new one succeeds.
         const previousImage = form.getValues('mainImage')
-        console.debug('[MainImage] previousImage', previousImage)
 
         // Try fast path (presigned S3 PUT), fallback to server upload
         let result: { url: string; key: string }
         try {
           const uploadFile = await maybeCompressImage(file)
-          console.debug('[MainImage] presignedUpload:attempt', {
-            originalSize: file.size,
-            uploadSize: uploadFile.size,
-            type: uploadFile.type,
-          })
           result = await presignedUpload(uploadFile)
-          console.debug('[MainImage] presignedUpload:success', result)
-        } catch (e) {
-          console.warn('[MainImage] presignedUpload:failed, falling back to serverUpload', e)
+        } catch (_e) {
+          // Fallback to server upload if presigned PUT fails.
           const uploadFile = await maybeCompressImage(file)
           result = await serverUpload(uploadFile)
-          console.debug('[MainImage] serverUpload:success', result)
         }
 
-        // Actualizar formulario con nueva imagen
-        console.debug('[MainImage] form.setValue(mainImage)')
+        // Update form with the new image.
         form.setValue(
           'mainImage',
           {
             url: result.url,
-            alt: form.getValues('mainTitle') || 'Imagen principal del plan turístico',
+            alt: form.getValues('mainTitle') || 'Main image',
             width: 1200,
             height: 630,
             caption: '',
@@ -224,9 +209,8 @@ export function useMainImage({ form, isConfigured, mediaFolder }: UseMainImagePr
             shouldDirty: true,
           },
         )
-        console.debug('[MainImage] form.setValue done')
 
-        // Borrado robusto server-side durante el registro (evita duplicación)
+        // Prefer server-side replacement to avoid orphaned assets.
         try {
           let previousKeyToDelete: string | undefined
           if (typeof previousImage === 'object' && previousImage?.key) {
@@ -250,7 +234,7 @@ export function useMainImage({ form, isConfigured, mediaFolder }: UseMainImagePr
             timeoutMs: 10000,
           })
         } catch {
-          // fallback: intentar DELETE directo de la anterior (best-effort)
+          // Fallback: best-effort direct delete of the previous asset.
           try {
             let imageKey: string | undefined
             if (typeof previousImage === 'object' && previousImage?.key) {
@@ -270,7 +254,7 @@ export function useMainImage({ form, isConfigured, mediaFolder }: UseMainImagePr
           } catch {}
         }
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
         setError(errorMessage)
       } finally {
         setIsUploading(false)
@@ -293,47 +277,42 @@ export function useMainImage({ form, isConfigured, mediaFolder }: UseMainImagePr
   const handleImageDelete = useCallback(async () => {
     try {
       const currentImage = form.getValues('mainImage')
-      console.debug('[MainImage] handleImageDelete:currentImage', currentImage)
 
-      // Si no hay imagen, no hacer nada
+      // If there is no image, there is nothing to do.
       if (!currentImage) return
 
-      // Determinar la key de la imagen para eliminar de S3
+      // Derive the S3 key to delete.
       let imageKey: string | undefined
 
       if (typeof currentImage === 'object' && (currentImage as any).key) {
         imageKey = (currentImage as any).key
       } else if (typeof currentImage === 'string') {
-        // Si es una URL, extraer la key del final
+        // If this is a URL, derive the key from the pathname.
         const url = new URL(currentImage)
-        imageKey = url.pathname.substring(1) // Quitar el primer "/"
+        imageKey = url.pathname.substring(1)
       }
 
-      // Si hay una key, intentar eliminar la imagen de S3
+      // Best-effort delete.
       if (imageKey && isConfigured) {
         try {
-          console.debug('[MainImage] delete:attempt', imageKey)
-          const res = await fetchWithTimeout('/api/upload', {
+          await fetchWithTimeout('/api/upload', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ key: imageKey }),
             timeoutMs: 10000,
           })
-          console.debug('[MainImage] delete:status', res.status)
         } catch (_error) {
-          console.warn('[MainImage] delete:failed')
+          // Ignore delete failures.
         }
       }
 
-      // Limpiar el campo de imagen en el formulario
-      console.debug('[MainImage] clearing form mainImage')
+      // Clear the image field in the form.
       form.setValue('mainImage', null, {
         shouldValidate: true,
         shouldDirty: true,
       })
-      console.debug('[MainImage] cleared')
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       setError(errorMessage)
     }
   }, [form, fetchWithTimeout, isConfigured])

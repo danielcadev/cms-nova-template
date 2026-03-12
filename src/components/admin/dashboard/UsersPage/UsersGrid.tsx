@@ -82,9 +82,7 @@ function ErrorState() {
           <AlertCircle className="w-6 h-6" />
         </div>
         <h3 className="text-lg font-bold text-red-900 mb-2">{t('grid.errorTitle')}</h3>
-        <p className="text-sm text-red-600 mb-6">
-          {t('grid.errorDesc')}
-        </p>
+        <p className="text-sm text-red-600 mb-6">{t('grid.errorDesc')}</p>
         <Button
           variant="outline"
           className="bg-white border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800"

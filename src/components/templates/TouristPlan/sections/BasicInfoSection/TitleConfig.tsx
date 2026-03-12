@@ -110,7 +110,7 @@ export function TitleConfig() {
                             CATEGORY_KEY,
                             JSON.stringify(categoryOptions.filter((o) => o.value !== val)),
                           )
-                        } catch { }
+                        } catch {}
                       }}
                       placeholder={t('fields.destination')}
                       emptyMessage="..."
@@ -149,7 +149,7 @@ export function TitleConfig() {
                             SLUG_KEY,
                             JSON.stringify(planSlugOptions.filter((o) => o.value !== val)),
                           )
-                        } catch { }
+                        } catch {}
                       }}
                       placeholder={t('fields.slug')}
                       emptyMessage="..."

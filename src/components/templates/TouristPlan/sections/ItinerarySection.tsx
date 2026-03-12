@@ -1,8 +1,8 @@
 'use client'
 
 import { PlusCircle, Trash2 } from 'lucide-react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useTranslations } from 'next-intl'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { ConfirmationModal } from '@/components/ui/ConfirmationModal'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'

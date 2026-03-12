@@ -1,23 +1,22 @@
 'use client'
 
 import {
+  ArrowLeft,
   Calendar,
   Copy,
   Edit,
-  ExternalLink,
+  Layout,
   MapPin,
   Plus,
   RefreshCw,
   Search,
   Trash2,
-  ArrowLeft,
-  Layout,
   X,
 } from 'lucide-react'
-import { useMemo, useState } from 'react'
-import { useTranslations } from 'next-intl'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ConfirmationModal } from '@/components/ui/ConfirmationModal'
 import { Input } from '@/components/ui/input'
@@ -119,6 +118,10 @@ export function TouristPlansView({
       toast({
         title: t('duplicate.success', { title: planTitle }),
       })
+
+      if (duplicated?.id) {
+        router.push(`/admin/dashboard/templates/tourism/edit/${duplicated.id}`)
+      }
     } catch (_error) {
       toast({
         title: 'Error',
@@ -214,9 +217,7 @@ export function TouristPlansView({
               </Button>
               <h1 className="text-3xl font-bold text-zinc-900 tracking-tight">{t('title')}</h1>
             </div>
-            <p className="text-zinc-500 ml-13">
-              {t('subtitle')}
-            </p>
+            <p className="text-zinc-500 ml-13">{t('subtitle')}</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <Button
@@ -239,9 +240,7 @@ export function TouristPlansView({
               <Layout className="h-6 w-6 text-zinc-900" />
             </div>
             <div>
-              <h3 className="font-bold text-zinc-900 flex items-center gap-2">
-                {t('info.title')}
-              </h3>
+              <h3 className="font-bold text-zinc-900 flex items-center gap-2">{t('info.title')}</h3>
               <p className="text-sm text-zinc-600 mt-1 max-w-2xl leading-relaxed font-medium">
                 {t('info.description')}
               </p>
@@ -301,12 +300,13 @@ export function TouristPlansView({
               {searchQuery ? t('noPlansMatch', { query: searchQuery }) : t('noPlans')}
             </h3>
             <p className="text-zinc-500 font-medium mb-8 max-w-sm mx-auto leading-relaxed">
-              {searchQuery
-                ? t('noTemplatesDesc')
-                : t('noPlansDesc')}
+              {searchQuery ? t('noTemplatesDesc') : t('noPlansDesc')}
             </p>
             {!searchQuery && (
-              <Button onClick={handleCreatePlan} className="rounded-2xl bg-zinc-900 text-white hover:bg-zinc-800 shadow-xl shadow-zinc-900/20 px-10 py-7 text-lg font-bold transition-all hover:scale-[1.05] active:scale-[0.95]">
+              <Button
+                onClick={handleCreatePlan}
+                className="rounded-2xl bg-zinc-900 text-white hover:bg-zinc-800 shadow-xl shadow-zinc-900/20 px-10 py-7 text-lg font-bold transition-all hover:scale-[1.05] active:scale-[0.95]"
+              >
                 <Plus className="h-6 w-6 mr-3" strokeWidth={3} />
                 {t('createPlan')}
               </Button>

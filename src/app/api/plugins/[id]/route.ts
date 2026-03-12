@@ -1,39 +1,81 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
 import { type NextRequest, NextResponse } from 'next/server'
-import { AVAILABLE_PLUGINS } from '@/lib/plugins/config'
-import { getAdminSession } from '@/lib/server-session'
+import { prisma } from '@/lib/prisma'
+import { AVAILABLE_PLUGINS } from '@/modules/plugins/config'
+import { getAdminSession } from '@/server/auth/session'
+import logger from '@/server/observability/logger'
 
-const STORE_DIR = join(process.cwd(), 'src', 'lib', 'plugins')
-const STORE_PATH = join(STORE_DIR, 'store.json')
+const PLUGIN_STORE_PREFIX = 'plugin:'
 
-// Store shape persisted on disk
-// {
-//   configs: { [id: string]: Record<string, any> },
-//   states: { [id: string]: boolean }
-// }
+function storeKey(pluginId: string) {
+  return `${PLUGIN_STORE_PREFIX}${pluginId}`
+}
 
-async function readStore(): Promise<{
-  configs: Record<string, any>
-  states: Record<string, boolean>
-}> {
+function isSensitiveKey(key: string) {
+  const k = key.toLowerCase()
+  return ['key', 'secret', 'token', 'password', 'authorization', 'cookie', 'apikey'].some(
+    (needle) => k.includes(needle),
+  )
+}
+
+function looksEncryptedString(value: string) {
+  const parts = value.split(':')
+  if (parts.length !== 3) return false
+  const [iv, tag, data] = parts
+  const isHex = (s: string) => /^[0-9a-fA-F]+$/.test(s)
+  return (
+    isHex(iv) &&
+    iv.length === 32 &&
+    isHex(tag) &&
+    tag.length === 32 &&
+    isHex(data) &&
+    data.length >= 2
+  )
+}
+
+function sanitizeConfigForClient(config: Record<string, any>) {
+  const safeConfig: Record<string, any> = {}
+
+  for (const [key, value] of Object.entries(config || {})) {
+    if (typeof value === 'string' && value) {
+      safeConfig[key] = isSensitiveKey(key) || looksEncryptedString(value) ? '••••••••' : value
+    } else {
+      safeConfig[key] = value
+    }
+  }
+
+  return safeConfig
+}
+
+async function readPluginRecord(
+  pluginId: string,
+): Promise<{ enabled?: boolean; config?: Record<string, any> }> {
   try {
-    const buf = await readFile(STORE_PATH, 'utf-8')
-    const raw = JSON.parse(buf)
-    // Backward compatibility with legacy shape { [id]: config }
-    const configs: Record<string, any> = raw?.configs || (raw && typeof raw === 'object' ? raw : {})
-    const states: Record<string, boolean> = raw?.states || {}
-    return { configs, states }
-  } catch {
-    return { configs: {}, states: {} }
+    const row = await prisma.novaConfig.findUnique({ where: { key: storeKey(pluginId) } })
+    const raw = row?.value
+    if (!raw || typeof raw !== 'object') return {}
+    const obj = raw as any
+    return {
+      enabled: typeof obj.enabled === 'boolean' ? obj.enabled : undefined,
+      config:
+        obj.config && typeof obj.config === 'object'
+          ? (obj.config as Record<string, any>)
+          : undefined,
+    }
+  } catch (e) {
+    logger.error('plugins: failed reading NovaConfig', { pluginId, error: e })
+    return {}
   }
 }
 
-async function writeStore(data: { configs: Record<string, any>; states: Record<string, boolean> }) {
-  try {
-    await mkdir(STORE_DIR, { recursive: true })
-  } catch { }
-  await writeFile(STORE_PATH, JSON.stringify(data, null, 2), 'utf-8')
+async function writePluginRecord(
+  pluginId: string,
+  data: { enabled: boolean; config: Record<string, any> },
+) {
+  await prisma.novaConfig.upsert({
+    where: { key: storeKey(pluginId) },
+    update: { value: data, category: 'plugin' },
+    create: { key: storeKey(pluginId), value: data, category: 'plugin' },
+  })
 }
 
 export async function GET(req: NextRequest) {
@@ -43,18 +85,19 @@ export async function GET(req: NextRequest) {
   const url = new URL(req.url)
   const id = url.pathname.split('/').pop() || ''
   try {
-    const store = await readStore()
+    const stored = await readPluginRecord(id)
     const plugin = AVAILABLE_PLUGINS.find((p) => p.id === id)
     if (!plugin) {
       return NextResponse.json({ success: false, error: 'Plugin not found' }, { status: 404 })
     }
 
-    const config = store.configs[id] ?? plugin.settings ?? {}
-    const enabled = store.states[id] ?? plugin.enabled ?? false
+    const mergedConfig = { ...(plugin.settings ?? {}), ...(stored.config ?? {}) }
+    const config = sanitizeConfigForClient(mergedConfig)
+    const enabled = stored.enabled ?? plugin.enabled ?? false
 
     return NextResponse.json({ success: true, enabled, config })
   } catch (e) {
-    console.error('GET /api/plugins/[id] error', e)
+    logger.error('GET /api/plugins/[id] error', e)
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -67,23 +110,26 @@ export async function POST(req: NextRequest) {
   const id = url.pathname.split('/').pop() || ''
   try {
     const incoming = (await req.json()) as Record<string, any>
-    const store = await readStore()
+
+    const plugin = AVAILABLE_PLUGINS.find((p) => p.id === id)
+    if (!plugin) {
+      return NextResponse.json({ success: false, error: 'Plugin not found' }, { status: 404 })
+    }
+
+    const stored = await readPluginRecord(id)
+    const currentEnabled = stored.enabled ?? plugin.enabled ?? false
+    const currentConfig = { ...(plugin.settings ?? {}), ...(stored.config ?? {}) }
 
     // If payload contains only 'enabled' (or includes it), update states
     if (Object.hasOwn(incoming, 'enabled')) {
-      const nextEnabled = !!incoming.enabled
-      store.states[id] = nextEnabled
+      // handled below
     }
 
     // If there are other keys besides enabled, treat them as config updates
     const { enabled: _omit, ...configPatch } = incoming
     if (Object.keys(configPatch).length > 0) {
-      // Logic for sensitive fields (encryption)
-      const sensitiveKeys = ['key', 'secret', 'token', 'password']
-      const hasSensitive = Object.keys(configPatch).some((k) =>
-        sensitiveKeys.some((sk) => k.toLowerCase().includes(sk)),
-      )
-
+      // Handle sensitive fields (encrypt at rest)
+      const hasSensitive = Object.keys(configPatch).some((key) => isSensitiveKey(key))
       if (hasSensitive) {
         const encryptionKey = process.env.ENCRYPTION_KEY || ''
         const isHex64 = /^[0-9a-fA-F]{64}$/.test(encryptionKey)
@@ -99,39 +145,38 @@ export async function POST(req: NextRequest) {
 
         const { encrypt } = await import('@/lib/encryption')
         for (const [k, v] of Object.entries(configPatch)) {
-          if (
-            sensitiveKeys.some((sk) => k.toLowerCase().includes(sk)) &&
-            typeof v === 'string' &&
-            v.trim() &&
-            !v.includes('••••') // Don't encrypt if it's the UI mask
-          ) {
-            configPatch[k] = encrypt(v)
-          } else if (
-            sensitiveKeys.some((sk) => k.toLowerCase().includes(sk)) &&
-            v === '' // Clearing secret
-          ) {
-            configPatch[k] = ''
-          } else if (
-            sensitiveKeys.some((sk) => k.toLowerCase().includes(sk)) &&
-            v.includes('••••') // UI placeholder, don't overwrite the stored secret
-          ) {
+          if (!isSensitiveKey(k)) continue
+          if (typeof v === 'string' && v.includes('••••')) {
             delete configPatch[k]
+            continue
           }
+          if (v === '') {
+            configPatch[k] = ''
+            continue
+          }
+          if (typeof v === 'string' && v.trim()) {
+            configPatch[k] = encrypt(v)
+            continue
+          }
+          // Ignore invalid shapes
+          delete configPatch[k]
         }
       }
-
-      const current = store.configs[id] || {}
-      store.configs[id] = { ...current, ...configPatch }
     }
 
-    await writeStore(store)
-    const plugin = AVAILABLE_PLUGINS.find((p) => p.id === id)
-    const mergedConfig = store.configs[id] ?? plugin?.settings ?? {}
-    const enabled = store.states[id] ?? plugin?.enabled ?? false
+    const nextEnabled = Object.hasOwn(incoming, 'enabled') ? !!incoming.enabled : currentEnabled
+    const nextConfig =
+      Object.keys(configPatch).length > 0 ? { ...currentConfig, ...configPatch } : currentConfig
 
-    return NextResponse.json({ success: true, enabled, config: mergedConfig })
+    await writePluginRecord(id, { enabled: nextEnabled, config: nextConfig })
+
+    return NextResponse.json({
+      success: true,
+      enabled: nextEnabled,
+      config: sanitizeConfigForClient(nextConfig),
+    })
   } catch (e) {
-    console.error('POST /api/plugins/[id] error', e)
+    logger.error('POST /api/plugins/[id] error', e)
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 })
   }
 }

@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { useEffect, useMemo, useState } from 'react'
 
 type Props = {
   mode: 'auto' | 'include'
@@ -54,7 +54,7 @@ export function TypePathsSelector({ mode, include, setInclude }: Props) {
     return () => {
       active = false
     }
-  }, [])
+  }, [t])
 
   const selected = useMemo(() => new Set((include || []).map((s) => s.toLowerCase())), [include])
 
@@ -77,8 +77,7 @@ export function TypePathsSelector({ mode, include, setInclude }: Props) {
 
   if (loading) return <div className="text-sm theme-text-secondary">{t('loading')}</div>
   if (error) return <div className="text-sm text-red-600">{error}</div>
-  if (!available.length)
-    return <div className="text-sm theme-text-secondary">{t('noTypes')}</div>
+  if (!available.length) return <div className="text-sm theme-text-secondary">{t('noTypes')}</div>
 
   return (
     <div className="mt-1 flex flex-wrap gap-4">

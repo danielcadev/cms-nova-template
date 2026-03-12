@@ -1,7 +1,8 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getRequestSession } from '@/server/auth/guards'
+import logger from '@/server/observability/logger'
 
 const deleteUserSchema = z.object({
   userId: z.string().min(1, 'User ID is required'),
@@ -9,37 +10,37 @@ const deleteUserSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    // Verificar que el usuario actual es admin
-    const session = await auth.api.getSession({ headers: request.headers })
+    // Ensure the requester is an authenticated admin.
+    const session = await getRequestSession(request)
     if (!session?.user) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Verificar que es admin
+    // Check role.
     const currentUser = await prisma.user.findUnique({
       where: { id: session.user.id },
       select: { role: true, createdAt: true },
     })
 
     if (!currentUser?.role || !['admin', 'ADMIN'].includes(currentUser.role)) {
-      return NextResponse.json({ error: 'Permisos insuficientes' }, { status: 403 })
+      return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
     }
 
-    // Validar datos
+    // Validate input.
     const body = await request.json()
     const { userId } = deleteUserSchema.parse(body)
 
-    // Verificar que el usuario a eliminar existe
+    // Ensure the user exists.
     const userToDelete = await prisma.user.findUnique({
       where: { id: userId },
       select: { id: true, email: true, role: true, createdAt: true },
     })
 
     if (!userToDelete) {
-      return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // No permitir eliminar el primer admin
+    // Do not allow deleting the first (primary) admin.
     const firstAdmin = await prisma.user.findFirst({
       where: {
         role: {
@@ -53,57 +54,51 @@ export async function POST(request: NextRequest) {
     if (firstAdmin?.id === userId) {
       return NextResponse.json(
         {
-          error: 'No se puede eliminar al administrador principal',
+          error: 'The primary admin cannot be deleted',
         },
         { status: 403 },
       )
     }
 
-    // No permitir que el usuario se elimine a sí mismo
+    // Prevent self-deletion.
     if (session.user.id === userId) {
       return NextResponse.json(
         {
-          error: 'No puedes eliminarte a ti mismo',
+          error: 'You cannot delete your own account',
         },
         { status: 403 },
       )
     }
 
-    // Eliminar usuario y cuenta relacionada en una transacción
+    // Delete user and related records in a transaction.
     await prisma.$transaction(async (tx) => {
-      // Eliminar cuenta asociada primero (si existe)
+      // Delete linked accounts first.
       await tx.account.deleteMany({
         where: { userId: userId },
       })
 
-      // Eliminar sesiones asociadas
+      // Delete sessions.
       await tx.session.deleteMany({
         where: { userId: userId },
       })
 
-      // Eliminar usuario
+      // Delete the user.
       await tx.user.delete({
         where: { id: userId },
       })
     })
 
-    console.log('✅ Usuario eliminado:', {
-      userId: userId,
-      email: userToDelete.email,
-      deletedBy: session.user.id,
-    })
-
     return NextResponse.json({
       success: true,
-      message: 'Usuario eliminado exitosamente',
+      message: 'User deleted successfully',
     })
   } catch (error) {
-    console.error('Error deleting user:', error)
+    logger.error('Error deleting user', error)
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
-          error: 'Datos inválidos',
+          error: 'Invalid request data',
           details: error.issues.map((e) => e.message),
         },
         { status: 400 },
@@ -112,7 +107,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        error: 'Error interno del servidor',
+        error: 'Internal server error',
       },
       { status: 500 },
     )

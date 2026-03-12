@@ -4,9 +4,9 @@ import { z } from 'zod'
 import { decrypt } from '@/lib/encryption'
 import { prisma } from '@/lib/prisma'
 import { rateLimit } from '@/lib/rate-limit'
-import { getAdminSession } from '@/lib/server-session'
+import { getAdminSession } from '@/server/auth/session'
+import logger from '@/server/observability/logger'
 import { ApiResponseBuilder as R } from '@/utils/api-response'
-import logger from '@/utils/logger'
 
 const S3_CONFIG_KEY = 's3-credentials'
 const MAX_FILE_SIZE = 15 * 1024 * 1024 // 15MB
@@ -171,7 +171,7 @@ export async function DELETE(request: NextRequest) {
 
     try {
       await prisma.asset.delete({ where: { key: parsed.data.key } })
-    } catch { }
+    } catch {}
 
     return R.success({ key: parsed.data.key }, 'File deleted')
   } catch (error) {

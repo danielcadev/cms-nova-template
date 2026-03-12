@@ -1,14 +1,14 @@
 'use client'
 
 import { CheckCircle2, Plus, Trash2, XCircle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import type { IncludeSection, PlanFormValues } from '@/schemas/plan'
+import type { IncludeSection, PlanFormValues } from '@/verticals/tourism'
 
 export function IncludesSection() {
   const t = useTranslations('templates.tourism.edit.sections.includes')

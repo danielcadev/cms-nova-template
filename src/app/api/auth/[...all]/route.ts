@@ -1,11 +1,4 @@
 import { toNextJsHandler } from 'better-auth/next-js'
-import { auth } from '@/lib/auth'
-
-// Debug info solo en desarrollo
-if (process.env.NODE_ENV === 'development') {
-  console.log('🚀 Auth route handler loaded!')
-  console.log('Environment:', process.env.NODE_ENV)
-  console.log('Base URL:', process.env.BETTER_AUTH_URL || 'http://localhost:3000')
-}
+import { auth } from '@/server/auth/config'
 
 export const { GET, POST } = toNextJsHandler(auth)

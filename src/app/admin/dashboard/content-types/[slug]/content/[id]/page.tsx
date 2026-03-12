@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { EditContentEntryPage } from '@/components/admin/content-types/EditContentEntryPage'
 import { prisma } from '@/lib/prisma'
-import { getAdminSession } from '@/lib/server-session'
+import { getAdminSession } from '@/server/auth/session'
 
 async function getContentEntry(slug: string, entryId: string) {
   try {

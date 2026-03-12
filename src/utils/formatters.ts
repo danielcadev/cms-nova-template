@@ -83,8 +83,7 @@ export function formatDuration(title: string): string {
  */
 export const toCamelCase = (str: string) => {
   if (!str) return ''
-  return slugify(str, { lower: true, strict: true })
-    .replace(/-(\w)/g, (_, c) => c.toUpperCase())
+  return slugify(str, { lower: true, strict: true }).replace(/-(\w)/g, (_, c) => c.toUpperCase())
 }
 
 /**

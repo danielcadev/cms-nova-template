@@ -9,13 +9,13 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 shadow-sm border border-transparent',
+        default:
+          'bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 shadow-sm border border-transparent',
         destructive:
           'bg-red-500 text-zinc-50 hover:bg-red-500/90 shadow-sm border border-transparent',
         outline:
           'border border-zinc-200 bg-white hover:bg-zinc-100 hover:text-zinc-900 shadow-sm text-zinc-700',
-        secondary:
-          'bg-zinc-100 text-zinc-900 hover:bg-zinc-200/80 border border-transparent',
+        secondary: 'bg-zinc-100 text-zinc-900 hover:bg-zinc-200/80 border border-transparent',
         ghost: 'hover:bg-zinc-100 hover:text-zinc-900 text-zinc-600',
         link: 'text-zinc-900 underline-offset-4 hover:underline',
       },
@@ -35,7 +35,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-  VariantProps<typeof buttonVariants> {
+    VariantProps<typeof buttonVariants> {
   asChild?: boolean
 }
 

@@ -1,17 +1,15 @@
 'use client'
 
-import { ArrowRight, FileText, MoreHorizontal, Tag } from 'lucide-react'
+import { ArrowRight, FileText, Tag } from 'lucide-react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
 import type { Template } from './index'
 
 interface TemplateCardProps {
   template: Template
   index: number
-  onViewDetails: (template: Template) => void
 }
 
-export function TemplateCard({ template, index, onViewDetails }: TemplateCardProps) {
+export function TemplateCard({ template, index }: TemplateCardProps) {
   const IconComponent = template.icon
 
   const getStatusBadge = (status: string) => {
@@ -21,13 +19,6 @@ export function TemplateCard({ template, index, onViewDetails }: TemplateCardPro
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             Active
-          </span>
-        )
-      case 'coming-soon':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-100">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-            Coming Soon
           </span>
         )
       default:
@@ -74,7 +65,6 @@ export function TemplateCard({ template, index, onViewDetails }: TemplateCardPro
           )}
         </div>
 
-        {/* Action Area */}
         <div className="flex items-center justify-between pt-2">
           {template.status === 'active' && template.route ? (
             <span className="text-sm font-medium text-blue-600 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
@@ -85,19 +75,6 @@ export function TemplateCard({ template, index, onViewDetails }: TemplateCardPro
               Not Available
             </span>
           )}
-
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              onViewDetails(template)
-            }}
-            className="h-8 w-8 p-0 rounded-full hover:bg-zinc-100 text-zinc-400 hover:text-zinc-900"
-          >
-            <MoreHorizontal className="w-4 h-4" />
-          </Button>
         </div>
       </div>
     </div>

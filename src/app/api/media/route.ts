@@ -1,11 +1,15 @@
 import type { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { rateLimit } from '@/lib/rate-limit'
+import { getAdminSession } from '@/server/auth/session'
+import logger from '@/server/observability/logger'
 import { ApiResponseBuilder as R } from '@/utils/api-response'
-import logger from '@/utils/logger'
 
 export async function GET(req: NextRequest) {
   try {
+    const session = await getAdminSession()
+    if (!session) return R.error('Unauthorized', 401)
+
     const rl = rateLimit(req as unknown as Request, {
       limit: 60,
       windowMs: 60_000,

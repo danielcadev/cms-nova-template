@@ -121,7 +121,7 @@ const TransportOptionSchema = z.object({
 })
 
 export const planSchema = z.object({
-  // Información básica
+  // Basic info
   mainTitle: z
     .string()
     .min(3, 'Main title must be at least 3 characters')
@@ -132,13 +132,13 @@ export const planSchema = z.object({
   articleAlias: z.string().max(100, 'Alias cannot exceed 100 characters').optional(),
   categoryAlias: z.string().max(100, 'Category alias cannot exceed 100 characters').optional(),
 
-  // Texto promocional
+  // Promotional text
   promotionalText: z
     .string()
     .max(1000, 'Promotional text cannot exceed 1000 characters')
     .optional(),
 
-  // Secciones de contenido
+  // Content sections
   attractionsTitle: z
     .string()
     .max(150, 'Attractions title cannot exceed 150 characters')
@@ -154,65 +154,55 @@ export const planSchema = z.object({
   holidayTitle: z.string().max(150, 'Holiday title cannot exceed 150 characters').optional(),
   holidayText: z.string().max(2000, 'Holiday text cannot exceed 2000 characters').optional(),
 
-  // Arrays de datos estructurados
-  itinerary: z
-    .array(ItineraryDaySchema)
-    .max(30, 'No se permiten itinerarios de más de 30 días')
-    .optional(),
-  priceOptions: z
-    .array(NewPriceOptionSchema)
-    .max(20, 'No se permiten más de 20 opciones de precio')
-    .optional(),
+  // Structured arrays
+  itinerary: z.array(ItineraryDaySchema).max(30, 'Itinerary cannot exceed 30 days').optional(),
+  priceOptions: z.array(NewPriceOptionSchema).max(20, 'Price options cannot exceed 20').optional(),
 
-  // Imagen principal
+  // Main image
   mainImage: z.any().optional(),
 
-  // Contenido detallado de inclusiones
+  // Includes and exclusions
   includes: z
     .union([
-      z.string().max(5000, 'Las inclusiones no pueden exceder 5000 caracteres'),
-      z.array(includeSectionSchema).max(50, 'No se permiten más de 50 secciones de inclusiones'),
+      z.string().max(5000, 'Includes cannot exceed 5000 characters'),
+      z.array(includeSectionSchema).max(50, 'Includes sections cannot exceed 50'),
     ])
     .optional(),
-  notIncludes: z.string().max(2000, 'Las exclusiones no pueden exceder 2000 caracteres').optional(),
+  notIncludes: z.string().max(2000, 'Exclusions cannot exceed 2000 characters').optional(),
 
-  // Políticas y transporte
-  generalPolicies: z
-    .string()
-    .max(5000, 'Las políticas generales no pueden exceder 5000 caracteres'),
-  transportOptions: z
-    .array(TransportOptionSchema)
-    .max(10, 'No se permiten más de 10 opciones de transporte'),
+  // Policies and transport
+  generalPolicies: z.string().max(5000, 'General policies cannot exceed 5000 characters'),
+  transportOptions: z.array(TransportOptionSchema).max(10, 'Transport options cannot exceed 10'),
 
-  // Video promocional
+  // Promotional video
   videoUrl: z
     .string()
-    .url('Debe ser una URL válida')
+    .url('Must be a valid URL')
     .refine((url) => {
       const youtubeRegex = /^https:\/\/(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[a-zA-Z0-9_-]+/
       return youtubeRegex.test(url)
-    }, 'Debe ser una URL válida de YouTube')
+    }, 'Must be a valid YouTube URL')
     .optional()
     .or(z.literal('')),
 
-  // Campo interno para seguimiento del paso actual
+  // Internal field: tracks the current wizard step
   _lastStep: z
     .number()
-    .min(0, 'El paso debe ser mayor o igual a 0')
-    .max(10, 'Paso fuera de rango')
+    .min(0, 'Step must be greater than or equal to 0')
+    .max(10, 'Step out of range')
     .optional(),
 
-  // Estado de publicación
+  // Publish state
   published: z.boolean(),
 })
 
 export type PlanFormValues = z.infer<typeof planSchema>
 
-// Tipos exportados para las secciones de incluye
+// Exported types for includes sections
 export type IncludeSection = z.infer<typeof includeSectionSchema>
 
-// Tipo exportado para opciones de precios
+// Exported type for price options
 export type PriceOption = z.infer<typeof NewPriceOptionSchema>
 
-// Tipo exportado para opciones de transporte
+// Exported type for transport options
 export type TransportOption = z.infer<typeof TransportOptionSchema>

@@ -1,7 +1,7 @@
 'use client'
 
 import { Crown, Edit, Eye, MoreHorizontal, ShieldCheck, Trash2, User } from 'lucide-react'
-import { useTranslations, useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -118,9 +118,9 @@ export function UserCard({ user, onViewDetails, onDeleteUser, currentUserId }: U
             {t('card.joined')}{' '}
             {user.createdAt
               ? new Date(user.createdAt).toLocaleDateString(locale, {
-                month: 'short',
-                year: 'numeric',
-              })
+                  month: 'short',
+                  year: 'numeric',
+                })
               : t('card.unknownDate')}
           </span>
         </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import type { Plugin } from '@/lib/plugins/config'
+import type { Plugin } from '@/modules/plugins/config'
 import { PluginConfigModal } from './PluginConfigModal'
 import { PluginsPageContent } from './PluginsPageContent'
 import { usePlugins } from './usePlugins'

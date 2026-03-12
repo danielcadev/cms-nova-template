@@ -2,17 +2,15 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { useToast } from '@/hooks/use-toast'
-import type { Plugin } from '@/lib/plugins/config'
+import type { Plugin } from '@/modules/plugins/config'
 import {
   getAllPlugins,
   togglePlugin as togglePluginService,
   updatePluginConfig,
-} from '@/lib/plugins/service'
-
-import { availablePlugins } from './data'
+} from '@/modules/plugins/service'
 
 export function usePlugins() {
-  const [plugins, setPlugins] = useState<Plugin[]>(availablePlugins)
+  const [plugins, setPlugins] = useState<Plugin[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const { toast } = useToast()
 
@@ -21,38 +19,7 @@ export function usePlugins() {
       setIsLoading(true)
       const pluginData = await getAllPlugins()
 
-      // Merge enabled state with any locally toggled states stored in localStorage
-      const persisted = JSON.parse(localStorage.getItem('nova-plugin-states') || '{}') as Record<
-        string,
-        boolean
-      >
-
-      // Also check S3 status specifically
-      try {
-        const s3Response = await fetch('/api/plugins/s3')
-        const s3Data = await s3Response.json()
-
-        setPlugins(
-          pluginData.map((p) => {
-            let enabled = persisted[p.id] ?? p.enabled
-
-            if (p.id === 's3') {
-              const s3Enabled = !!(s3Data.success && s3Data.config)
-              enabled = s3Enabled
-              return {
-                ...p,
-                enabled,
-                installDate: s3Enabled ? new Date().toISOString().split('T')[0] : undefined,
-              }
-            }
-
-            return { ...p, enabled }
-          }),
-        )
-      } catch (_error) {
-        // Fallback if S3 check fails
-        setPlugins(pluginData.map((p) => ({ ...p, enabled: persisted[p.id] ?? p.enabled })))
-      }
+      setPlugins(pluginData)
     } catch (error) {
       console.error('Error loading plugins:', error)
       toast({
@@ -74,14 +41,6 @@ export function usePlugins() {
     async (pluginId: string) => {
       try {
         const newState = await togglePluginService(pluginId)
-
-        // Persist state locally
-        const persisted = JSON.parse(localStorage.getItem('nova-plugin-states') || '{}') as Record<
-          string,
-          boolean
-        >
-        persisted[pluginId] = newState
-        localStorage.setItem('nova-plugin-states', JSON.stringify(persisted))
 
         // Update local state
         setPlugins((prev) =>
@@ -110,7 +69,7 @@ export function usePlugins() {
   const savePluginConfig = async (plugin: Plugin, config: Record<string, any>) => {
     try {
       // For S3, save directly to the API
-      if (plugin.id === 's3-storage' || plugin.id === 's3') {
+      if (plugin.id === 's3-storage') {
         const response = await fetch('/api/plugins/s3', {
           method: 'POST',
           headers: {
@@ -140,19 +99,6 @@ export function usePlugins() {
           detail: { id: plugin.id, config },
         })
         window.dispatchEvent(evt)
-
-        // Force update navbar from localStorage
-        try {
-          const key = 'nova-plugin-configs'
-          const current = JSON.parse(localStorage.getItem(key) || '{}')
-          localStorage.setItem(
-            key,
-            JSON.stringify({
-              ...current,
-              [plugin.id]: { ...(current?.[plugin.id] || {}), ...config },
-            }),
-          )
-        } catch {}
       } catch {}
 
       await loadPlugins() // Reload to get updated config

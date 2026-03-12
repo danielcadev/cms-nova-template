@@ -67,7 +67,7 @@ export const defaultConfig: NovaConfig = {
     enableCORS: true,
     allowedOrigins: ['http://localhost:3000'],
     enableRateLimiting: true,
-    rateLimitWindow: 15 * 60 * 1000, // 15 minutos
+    rateLimitWindow: 15 * 60 * 1000, // 15 minutes
     rateLimitMaxRequests: 100,
     enableFileUploadSecurity: true,
     maxRequestSize: '1mb',
@@ -82,7 +82,7 @@ export const defaultConfig: NovaConfig = {
     enableSitemap: true,
     enableRobots: true,
     defaultMetaTitle: 'Nova CMS',
-    defaultMetaDescription: 'Sistema de gestión de contenido modular y profesional',
+    defaultMetaDescription: 'A modular, professional content management system.',
     enableOpenGraph: true,
     enableTwitterCards: true,
   },

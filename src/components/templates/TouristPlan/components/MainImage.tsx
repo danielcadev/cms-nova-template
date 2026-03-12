@@ -14,8 +14,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { useMainImage } from '@/hooks/use-main-image'
 import { useS3Config } from '@/hooks/use-s3-config'
 import { cn } from '@/lib/utils'
-import type { PlanFormValues } from '@/schemas/plan'
 import { getPlanMediaFolder } from '@/utils/plan-media'
+import type { PlanFormValues } from '@/verticals/tourism'
 
 interface MainImageProps {
   form: UseFormReturn<PlanFormValues>

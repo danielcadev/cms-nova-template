@@ -1,5 +1,4 @@
 import { CreateContentTypeForm } from './CreateContentTypeForm'
-import { CreateContentTypeHeader } from './CreateContentTypeHeader'
 
 interface CreateContentTypePageProps {
   initialData?: any
@@ -11,5 +10,5 @@ export function CreateContentTypePage({ initialData, contentTypeId }: CreateCont
 }
 
 export { CreateContentTypeForm } from './CreateContentTypeForm'
-// Exportamos también los componentes individuales
+// Also export individual components.
 export { CreateContentTypeHeader } from './CreateContentTypeHeader'

@@ -1,25 +1,21 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { AlertCircle, Settings, X } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-
-import type { Field } from '../EditContentEntryPage/data'
-import { AlertCircle, Image as ImageIcon, Settings, X } from 'lucide-react'
-
-import { Switch } from '@/components/ui/switch'
 import { Combobox } from '@/components/ui/combobox'
+import { Switch } from '@/components/ui/switch'
 import { ThemedButton } from '@/components/ui/ThemedButton'
-
-import { TextField } from '../fields/TextField'
-import { RichTextField } from '../fields/RichTextField'
+import type { Field } from '../EditContentEntryPage/data'
 import { NumberField } from '../fields/NumberField'
+import { RichTextField } from '../fields/RichTextField'
 import { SlugField } from '../fields/SlugField'
-
+import { TextField } from '../fields/TextField'
 import { ImageDropZone } from './ImageDropZone'
 import { SmartSlugRenderer } from './SmartSlugRenderer'
-import { useTranslations } from 'next-intl'
 
 export interface DynamicFieldRendererProps {
   field: Field
@@ -41,6 +37,7 @@ export function DynamicFieldRenderer({
   allFields, // Destructure
 }: DynamicFieldRendererProps) {
   const t = useTranslations('dynamicFields')
+  const formContext = useFormContext()
 
   // Translate common Spanish labels to English for display only
   const normalizeLabel = (label: string): string => {
@@ -125,7 +122,7 @@ export function DynamicFieldRenderer({
         })
       } else {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Error al subir el archivo')
+        throw new Error(errorData.error || 'Failed to upload file')
       }
     } catch (error) {
       console.error('Error uploading file:', error)
@@ -162,8 +159,6 @@ export function DynamicFieldRenderer({
     }
 
     case 'SLUG': {
-      const formContext = useFormContext()
-
       if (formContext) {
         return (
           <SmartSlugRenderer
@@ -193,7 +188,9 @@ export function DynamicFieldRenderer({
         <RichTextField
           value={value}
           onChange={onChange}
-          placeholder={t('placeholders.richText', { label: normalizeLabel(field.label).toLowerCase() })}
+          placeholder={t('placeholders.richText', {
+            label: normalizeLabel(field.label).toLowerCase(),
+          })}
           onAutoGenerate={onAutoGenerate}
         />
       )
@@ -204,7 +201,9 @@ export function DynamicFieldRenderer({
         <NumberField
           value={value}
           onChange={onChange}
-          placeholder={t('placeholders.number', { label: normalizeLabel(field.label).toLowerCase() })}
+          placeholder={t('placeholders.number', {
+            label: normalizeLabel(field.label).toLowerCase(),
+          })}
           id={fieldId}
         />
       )
@@ -369,7 +368,7 @@ export function DynamicFieldRenderer({
       const rawOptions = (field.metadata as any)?.options || []
       const options = rawOptions.map((opt: string) => ({
         label: opt,
-        value: opt
+        value: opt,
       }))
 
       return (
@@ -377,7 +376,9 @@ export function DynamicFieldRenderer({
           options={options}
           value={value || ''}
           onChange={onChange}
-          placeholder={t('placeholders.select', { label: normalizeLabel(field.label).toLowerCase() })}
+          placeholder={t('placeholders.select', {
+            label: normalizeLabel(field.label).toLowerCase(),
+          })}
           emptyMessage="No option found."
           clearable={!field.isRequired}
         />

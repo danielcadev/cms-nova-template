@@ -232,7 +232,9 @@ function SidebarComponent({ isOpen, onClose }: SidebarProps) {
 
             <div className="flex flex-1 flex-col overflow-hidden">
               <span className="truncate text-sm font-bold text-zinc-900">{t('admin')}</span>
-              <span className="truncate text-[10px] font-medium text-zinc-400">{t('viewProfile')}</span>
+              <span className="truncate text-[10px] font-medium text-zinc-400">
+                {t('viewProfile')}
+              </span>
             </div>
 
             <Button

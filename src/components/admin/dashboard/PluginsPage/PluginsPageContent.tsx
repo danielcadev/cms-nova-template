@@ -1,12 +1,12 @@
 'use client'
 
-import { Puzzle, RefreshCw, Search, Settings, Cloud, Compass, Globe, Sparkles } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { Cloud, Compass, Globe, Puzzle, RefreshCw, Search, Settings, Sparkles } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
-import type { Plugin } from '@/lib/plugins/config'
+import type { Plugin } from '@/modules/plugins/config'
 import { AdminLoading } from '../AdminLoading'
 
 interface PluginsPageContentProps {
@@ -20,7 +20,7 @@ interface PluginsPageContentProps {
 type FilterStatus = 'all' | 'enabled' | 'disabled'
 
 const GET_ICON = (iconName: string, id: string) => {
-  const props = { className: "w-6 h-6" }
+  const props = { className: 'w-6 h-6' }
   if (id === 's3-storage') return <Cloud {...props} />
   if (id === 'dynamic-nav') return <Compass {...props} />
   if (id === 'public-typepaths') return <Globe {...props} />
@@ -28,11 +28,16 @@ const GET_ICON = (iconName: string, id: string) => {
 
   // Fallback to name-based if id doesn't match
   switch (iconName) {
-    case 'Cloud': return <Cloud {...props} />
-    case 'Compass': return <Compass {...props} />
-    case 'Globe': return <Globe {...props} />
-    case 'Sparkles': return <Sparkles {...props} />
-    default: return <Puzzle {...props} />
+    case 'Cloud':
+      return <Cloud {...props} />
+    case 'Compass':
+      return <Compass {...props} />
+    case 'Globe':
+      return <Globe {...props} />
+    case 'Sparkles':
+      return <Sparkles {...props} />
+    default:
+      return <Puzzle {...props} />
   }
 }
 
@@ -80,12 +85,7 @@ export function PluginsPageContent({
   if (isLoading)
     return (
       <div className="relative">
-        <AdminLoading
-          title={t('title')}
-          message={t('loading')}
-          variant="content"
-          fullScreen
-        />
+        <AdminLoading title={t('title')} message={t('loading')} variant="content" fullScreen />
       </div>
     )
 
@@ -127,10 +127,11 @@ export function PluginsPageContent({
                 type="button"
                 key={status}
                 onClick={() => setFilterStatus(status)}
-                className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${filterStatus === status
-                  ? 'bg-white text-zinc-900 shadow-sm ring-1 ring-zinc-200'
-                  : 'text-zinc-500 hover:text-zinc-700 hover:bg-white/50'
-                  }`}
+                className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                  filterStatus === status
+                    ? 'bg-white text-zinc-900 shadow-sm ring-1 ring-zinc-200'
+                    : 'text-zinc-500 hover:text-zinc-700 hover:bg-white/50'
+                }`}
               >
                 {t(`filters.${status}`)}
               </button>
@@ -146,9 +147,7 @@ export function PluginsPageContent({
             <Puzzle className="w-10 h-10 text-zinc-300" />
           </div>
           <h3 className="text-xl font-bold text-zinc-900 mb-2">{t('empty.noAvailable')}</h3>
-          <p className="text-zinc-500 text-base max-w-md mx-auto">
-            {t('empty.description')}
-          </p>
+          <p className="text-zinc-500 text-base max-w-md mx-auto">{t('empty.description')}</p>
         </div>
       ) : filteredPlugins.length === 0 ? (
         <div className="text-center py-24 bg-white rounded-[2.5rem] border border-zinc-200 shadow-sm">
@@ -187,10 +186,11 @@ export function PluginsPageContent({
                   {GET_ICON(plugin.icon, plugin.id)}
                 </div>
                 <div
-                  className={`inline-flex items-center px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase border-2 ${plugin.enabled
-                    ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
-                    : 'bg-zinc-50 text-zinc-500 border-zinc-100'
-                    }`}
+                  className={`inline-flex items-center px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase border-2 ${
+                    plugin.enabled
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                      : 'bg-zinc-50 text-zinc-500 border-zinc-100'
+                  }`}
                 >
                   {plugin.enabled ? t('card.enabled') : t('card.disabled')}
                 </div>
@@ -201,7 +201,9 @@ export function PluginsPageContent({
                   <h3 className="text-xl font-black text-zinc-900 tracking-tight group-hover:text-zinc-700 transition-colors">
                     {t.has(`list.${plugin.id}.name`) ? t(`list.${plugin.id}.name`) : plugin.name}
                   </h3>
-                  <span className="text-[10px] font-bold text-zinc-400 bg-zinc-50 px-2 py-0.5 rounded-md uppercase">v{plugin.version}</span>
+                  <span className="text-[10px] font-bold text-zinc-400 bg-zinc-50 px-2 py-0.5 rounded-md uppercase">
+                    v{plugin.version}
+                  </span>
                 </div>
                 <p className="text-base text-zinc-500 leading-relaxed line-clamp-2 h-12">
                   {t.has(`list.${plugin.id}.description`)
@@ -223,7 +225,9 @@ export function PluginsPageContent({
                       {t('card.configure')}
                     </Button>
                   ) : (
-                    <span className="text-xs font-bold text-zinc-400 px-4">{t('card.notConfigurable')}</span>
+                    <span className="text-xs font-bold text-zinc-400 px-4">
+                      {t('card.notConfigurable')}
+                    </span>
                   )}
                 </div>
 
