@@ -8,7 +8,7 @@ If you’re here for the case study / Vibe-Guard research docs, start at `docs/r
 
 Requirements:
 
-- Node.js 18+
+- Node.js 20.19+
 - A database supported by Prisma (Postgres recommended)
 
 Setup:
