@@ -30,7 +30,7 @@ jobs:
           cache: "npm"
 
       - name: Install
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Generate
         run: npm run generate
@@ -46,4 +46,3 @@ jobs:
 
       - name: Build
         run: npm run build
-
