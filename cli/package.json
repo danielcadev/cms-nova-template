@@ -1,17 +1,18 @@
 {
     "name": "create-cms-nova",
-    "version": "6.0.0",
+    "version": "6.1.0",
     "description": "CLI to create and upgrade CMS Nova projects - A complete headless CMS with Next.js, Prisma and Better Auth",
+    "type": "module",
     "bin": {
-        "create-cms-nova": "./create-cms-nova.mjs"
+        "create-cms-nova": "./create-cms-nova.js"
     },
     "files": [
-        "create-cms-nova.mjs",
+        "create-cms-nova.js",
         "README.md",
         "LICENSE"
     ],
     "scripts": {
-        "test": "node create-cms-nova.mjs --help"
+        "test": "node create-cms-nova.js --help"
     },
     "keywords": [
         "cms",

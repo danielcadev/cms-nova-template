@@ -5,7 +5,7 @@
   "private": true,
   "type": "module",
   "bin": {
-    "create-cms-nova": "./cli/create-cms-nova.mjs"
+    "create-cms-nova": "./cli/create-cms-nova.js"
   },
   "scripts": {
     "build": "prisma generate && next build",
@@ -16,11 +16,12 @@
     "format": "npx @biomejs/biome format .",
     "format:write": "npx @biomejs/biome format --write .",
     "type-check": "tsc --noEmit",
+    "security:check-api": "node scripts/security/check-api-policy.js",
     "generate": "prisma generate",
     "migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "nova:upgrade": "node cli/create-cms-nova.mjs upgrade",
+    "nova:upgrade": "node cli/create-cms-nova.js upgrade",
     "nova:publish": "cd cli && npm publish"
   },
   "dependencies": {
