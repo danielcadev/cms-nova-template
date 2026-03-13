@@ -15,6 +15,7 @@ It combines three goals in one repository:
 - Commercial overview: [README.commercial.md](./README.commercial.md)
 - Academic overview: [README.academic.md](./README.academic.md)
 - Developer guide: [docs/dev/README.md](./docs/dev/README.md)
+- Research guide: [docs/research/README.md](./docs/research/README.md)
 - Docs index: [docs/README.md](./docs/README.md)
 - Security audit: [docs/security/security-audit.md](./docs/security/security-audit.md)
 - Vibe-Guard protocol: [docs/vibe-guard/protocol-overview.md](./docs/vibe-guard/protocol-overview.md)

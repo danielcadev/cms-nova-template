@@ -26,6 +26,7 @@ If you’re reading the repository as a research artifact, jump to the Research 
 
 ## Research
 
+- [Research Guide (Start Here)](./research/README.md)
 - [Executive Summary](./research/executive-summary.md)
 - [Core Concepts](./research/core-concepts.md)
 - [Methodology](./research/methodology.md)

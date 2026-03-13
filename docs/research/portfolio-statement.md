@@ -1,5 +1,14 @@
 # Portfolio Statement
 
+## TL;DR (1 minute)
+
+I study how AI-assisted coding can introduce security regressions that are hard to see in a single file, and I build policy-centered guardrails (e.g., Vibe-Guard-style checks) to detect those regressions earlier.
+
+## Plain-language (ELI5)
+
+AI can help you write code fast, but sometimes it forgets important “rules of the building” (who is allowed to do what, what is public, what is secret).
+My work is about finding those rule breaks and turning the rules into checks that are hard to accidentally remove.
+
 ## Research Statement
 
 My research focuses on the security of AI-assisted software development, especially on how coding models often compromise system integrity when they operate without stable global context.

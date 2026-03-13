@@ -1,5 +1,19 @@
 # Executive Summary
 
+## TL;DR (1 minute)
+
+- AI-assisted coding can generate changes that look correct **inside one file**, but break **system-wide security rules** (auth boundaries, publication rules, route visibility, secret handling).
+- `CMS Nova` is used as a realistic case study; audits of AI-assisted paths surfaced **24 vulnerabilities** across multiple systems.
+- The proposed mitigation is `Vibe-Guard`: move critical expectations into **central policy** and check changes against them automatically.
+
+## Plain-language (ELI5)
+
+Think of software like a big LEGO city.
+An AI helper can build one LEGO house very fast, and that house can look “correct”.
+But cities also have rules: “only grown-ups can open this door” and “don’t put secrets outside”.
+AI systems often follow the house-level logic but forget the city-level rules unless those rules are written down and checked.
+`Vibe-Guard` is the idea of writing the city rules once and having an automated guard verify every change.
+
 This research investigates the security behavior of AI-assisted software development through a real-world case study: `CMS Nova`, a Next.js-based headless CMS that evolved through iterative human-AI collaboration.
 
 The central claim is that modern coding models often preserve local correctness while weakening global system integrity. In practice, they can produce working code that appears reasonable inside a single file, yet violates cross-cutting security invariants such as authorization boundaries, publication rules, route exposure constraints, and secret-handling policies.

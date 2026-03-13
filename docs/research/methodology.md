@@ -1,5 +1,20 @@
 # Methodology
 
+## TL;DR (1 minute)
+
+- **Baseline phase:** study how the system naturally evolved (including AI-assisted changes) and record structural security failures.
+- **Intervention phase:** refactor toward explicit boundaries + centralized policy, then compare posture “before vs after”.
+- The repo includes one concrete policy check (`npm run security:check-api`) to demonstrate “policy as code”.
+
+## Plain-language (ELI5)
+
+We do two things:
+
+1. **Look:** we inspect the system as it grew and write down the problems we see.
+2. **Fix the rules:** we change the structure and add simple automated rules that fail if we accidentally reintroduce the same class of mistake.
+
+This matters because AI can help you write code quickly, but security depends on rules that span many files.
+
 ## Research Goal
 
 The goal of this research is to study how AI-assisted coding affects software security at the structural level, with particular attention to cases where locally plausible code compromises global system integrity.
@@ -39,6 +54,14 @@ To reduce reliance on per-file reasoning (and to capture AI-assisted regressions
 - `scripts/security/check-api-policy.js` scans `src/app/api/**/route.ts` (following re-exports) and fails if a non-public route lacks an auth guard.
 
 This converts an implicit security assumption into an explicit, testable rule.
+
+## Reproducibility (What You Can Run)
+
+- `npm run security:check-api`
+  - Scans `src/app/api/**/route.ts` and fails if a **non-public** route does not contain (or re-export) an auth guard marker.
+  - Uses the public allowlist in `src/server/policy/api-visibility.js`.
+
+This is intentionally lightweight: it is not a full verifier, but it demonstrates how “global policy” can become a CI-enforced artifact.
 
 ## Analytical Lens
 

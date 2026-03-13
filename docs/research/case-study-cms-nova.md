@@ -1,5 +1,18 @@
 # Case Study: CMS Nova
 
+## TL;DR (1 minute)
+
+- AI-assisted changes can improve one visible security issue while silently weakening another cross-cutting rule.
+- The most common failures were not “syntax bugs”, but **policy bugs**: what should be public, who can mutate state, what counts as “published”, and where secrets/logs can go.
+- This repo includes a small “default private” guardrail for `/api/*` routes as an example of policy externalization.
+
+## Plain-language (ELI5)
+
+`CMS Nova` is like a school with many rooms.
+Some rooms are public (hallway), some are private (teacher office).
+AI helpers often build features fast, but sometimes they accidentally leave a door unlocked because the door is in a different file than the feature they were working on.
+The case study is about finding those “unlocked doors” and then writing down rules so they are harder to reintroduce.
+
 ## Why CMS Nova Matters
 
 `CMS Nova` is a strong research artifact because it is neither a toy example nor a narrowly scoped demo. It contains dynamic content modeling, authentication, admin workflows, plugin configuration, public routing, file handling, and productization efforts through a CLI. That combination makes it large enough for structural failures to emerge.

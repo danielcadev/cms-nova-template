@@ -2,7 +2,7 @@
 
 This guide is for engineers using `CMS Nova` as a reusable Next.js CMS template (not the research angle).
 
-If you’re here for the case study / Vibe-Guard research docs, start at `docs/research/executive-summary.md`.
+If you’re here for the case study / Vibe-Guard research docs, start at `docs/research/README.md`.
 
 ## Quick Start (Local)
 

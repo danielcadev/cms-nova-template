@@ -8,6 +8,7 @@ The repository combines a working Next.js CMS platform with a documented archite
 
 Quick links:
 
+- Research guide: [docs/research/README.md](./docs/research/README.md)
 - Executive summary: [docs/research/executive-summary.md](./docs/research/executive-summary.md)
 - Vibe-Guard protocol: [docs/vibe-guard/protocol-overview.md](./docs/vibe-guard/protocol-overview.md)
 - Commercial version: [README.commercial.md](./README.commercial.md)

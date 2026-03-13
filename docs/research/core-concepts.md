@@ -1,5 +1,12 @@
 # Core Concepts
 
+## Plain-language (ELI5)
+
+- **Naming Bias:** trusting the *label* on a box instead of checking what’s inside.
+- **Lack of Global Context:** fixing one room in a house without understanding how the whole house works.
+- **MVU:** the minimum “map” a human needs to notice when something is locally fine but globally unsafe.
+- **Vibe-Guard:** a rulebook + a referee (central rules that can be checked automatically).
+
 ## Naming Bias
 
 `Naming Bias` describes the tendency of AI coding systems to use names as security signals. If a file, route, variable, or module sounds harmless, the model may infer that it is safe to expose, relax, or bypass. This inference is often made without validating the actual sensitivity of the underlying data or checking project-wide policies.

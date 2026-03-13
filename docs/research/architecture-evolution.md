@@ -1,5 +1,17 @@
 # Architecture Evolution
 
+## TL;DR (1 minute)
+
+- The initial repo worked, but boundaries were blurry: server/client concerns mixed, public/admin rules scattered, and business-specific features leaked into “core”.
+- The intervention encodes boundaries in folders (`server/`, `modules/`, `shared/`, `verticals/`) and makes policy-sensitive behavior harder to change accidentally.
+- This supports the research thesis: AI can keep local code correct while eroding global integrity unless architecture + policy are explicit.
+
+## Plain-language (ELI5)
+
+Think of the repo like a big house.
+If everything is thrown into one big room, it’s easy to accidentally grab the wrong thing and break a rule.
+By putting things into labeled rooms (server-only, shared, business-specific), we make it easier for humans and tools to follow “house rules” consistently.
+
 ## Purpose
 
 This document explains the structural evolution of `CMS Nova` from an organically grown application into a more explicit platform architecture. It is written as both a technical record and a research artifact for the Vibe-Guard case study.

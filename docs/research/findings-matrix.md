@@ -1,5 +1,16 @@
 # Findings Matrix
 
+## How to Use This (30 seconds)
+
+- Each row is one “what went wrong” story: **Issue → Root cause → AI failure mode → Intervention → Outcome**.
+- Read it as a map from *symptom* to *structural fix*, not as a list of random bugs.
+- If you only read one thing: look for repeated patterns in the **AI Failure Mode** column.
+
+## Plain-language (ELI5)
+
+This table is like a “mistake notebook”.
+It lists the same kind of mistakes happening again and again (e.g., leaving a door unlocked), and then shows the fix (e.g., adding a lock that is checked every time).
+
 ## Purpose
 
 This matrix summarizes the main findings from the `CMS Nova` case study in a format suitable for research writing, portfolio presentation, and discussion of the Vibe-Guard proposal.
