@@ -7,11 +7,37 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "America/Bogota"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 3
     labels:
       - "dependencies"
     commit-message:
       prefix: "chore(deps)"
+    groups:
+      prisma:
+        patterns:
+          - "prisma"
+          - "@prisma/*"
+      next-stack:
+        patterns:
+          - "next"
+          - "react"
+          - "react-dom"
+          - "next-intl"
+      tailwind:
+        patterns:
+          - "tailwindcss"
+          - "@tailwindcss/*"
+          - "postcss"
+          - "autoprefixer"
+      aws:
+        patterns:
+          - "@aws-sdk/*"
+      tooling:
+        patterns:
+          - "@biomejs/biome"
+          - "typescript"
+          - "tsx"
+          - "@types/*"
     ignore:
       - dependency-name: "*"
         update-types:
@@ -25,4 +51,7 @@ updates:
       - "dependencies"
     commit-message:
       prefix: "chore(deps)"
-
+    groups:
+      actions:
+        patterns:
+          - "*"
