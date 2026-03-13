@@ -1,18 +1,16 @@
 import 'dotenv/config'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '@prisma/client'
-import pg from 'pg'
 
 declare global {
   // Global variable for Prisma client in development
   var __prisma: PrismaClient | undefined
 }
 
-const connectionString = `${process.env.DATABASE_URL}`
+const connectionString = process.env.DATABASE_URL ?? ''
 
 const createPrismaClient = () => {
-  const pool = new pg.Pool({ connectionString })
-  const adapter = new PrismaPg(pool)
+  const adapter = new PrismaPg({ connectionString })
   return new PrismaClient({
     adapter,
   })
