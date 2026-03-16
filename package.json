@@ -71,7 +71,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.3.8",
+    "@biomejs/biome": "^2.4.7",
     "@swc/helpers": "0.5.19",
     "@types/bcryptjs": "^3.0.0",
     "@types/node": "^24.12.0",
